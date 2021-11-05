@@ -1,0 +1,548 @@
+{
+  "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IConfig",
+          "name": "config",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "config",
+      "outputs": [
+        {
+          "internalType": "contract IConfig",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "usage",
+          "type": "uint256"
+        }
+      ],
+      "name": "consume",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "estimateFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "fee",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "usage",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IFee.UsageInfo",
+          "name": "ui",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "estimateUsage",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "usage",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "estimateWithdrawableAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        }
+      ],
+      "name": "estimateWithdrawableTimestamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userDeposit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userTotalAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userUsage",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "usage",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "desiredAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x4a7632307959ba8dc4f4cb3c710814be124373095d4420e7fd315e47d1256b58",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "transactionIndex": 0,
+    "gasUsed": "1116911",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x2c0696cdc88a59a89b7c400980a0eb03ae2706abc2b948fad8c41390257d969d",
+    "transactionHash": "0x4a7632307959ba8dc4f4cb3c710814be124373095d4420e7fd315e47d1256b58",
+    "logs": [],
+    "blockNumber": 9,
+    "cumulativeGasUsed": "1116911",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  ],
+  "solcInputHash": "140b184ea212973259cc7f2e35ce1b61",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.2+commit.bacdbe57\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IConfig\",\"name\":\"config\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"by\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Deposit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"by\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Withdraw\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"config\",\"outputs\":[{\"internalType\":\"contract IConfig\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"usage\",\"type\":\"uint256\"}],\"name\":\"consume\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"estimateFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"usage\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"internalType\":\"struct IFee.UsageInfo\",\"name\":\"ui\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"estimateUsage\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"usage\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"estimateWithdrawableAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"}],\"name\":\"estimateWithdrawableTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userDeposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userTotalAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userUsage\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"usage\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"desiredAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAmount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"consume(address,uint256)\":{\"details\":\"Consume user fee, can only be called by the system caller.\",\"params\":{\"usage\":\"Number of usage fee\",\"user\":\"User address\"}},\"deposit(address)\":{\"details\":\"Deposit amount to target user.\",\"params\":{\"user\":\"Target user address\"}},\"estimateFee(address,uint256)\":{\"details\":\"Estimate user fee.     userFee = userTotalAmount * dailyFee / totalAmount - userUsage\",\"params\":{\"timestamp\":\"Current timestamp\",\"user\":\"User address\"}},\"estimateUsage((uint256,uint256),uint256)\":{\"details\":\"Estimate user usage     *      T: current timestamp     T': last timestamp     userUsage': last fee usage     *      if T - T' < feeRecoverInterval         userUsage = (1 - (T - T') / feeRecoverInterval) * userUsage'     else         userUsage = 0\",\"params\":{\"timestamp\":\"Current timestamp\",\"ui\":\"Usage information\"}},\"estimateWithdrawableAmount(address,uint256)\":{\"details\":\"Estimate wtihdrawable amount.\",\"params\":{\"timestamp\":\"Current timestamp\",\"user\":\"Target user address\"}},\"estimateWithdrawableTimestamp(address,address)\":{\"details\":\"Estimate wtihdrawable timestamp,     if the estimation fails, return 0.\",\"params\":{\"from\":\"From user address\",\"user\":\"Target user address\"}},\"withdraw(address,uint256,uint256)\":{\"details\":\"Withdraw amount from target user.\",\"params\":{\"desiredAmount\":\"Desired withdraw amount\",\"minAmount\":\"Min withdraw amount\",\"user\":\"Target user address\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"src/Fee.sol\":\"Fee\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/math/SafeMath.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.6.0;\\n\\n/**\\n * @dev Wrappers over Solidity's arithmetic operations with added overflow\\n * checks.\\n *\\n * Arithmetic operations in Solidity wrap on overflow. This can easily result\\n * in bugs, because programmers usually assume that an overflow raises an\\n * error, which is the standard behavior in high level programming languages.\\n * `SafeMath` restores this intuition by reverting the transaction when an\\n * operation overflows.\\n *\\n * Using this library instead of the unchecked operations eliminates an entire\\n * class of bugs, so it's recommended to use it always.\\n */\\nlibrary SafeMath {\\n    /**\\n     * @dev Returns the addition of two unsigned integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `+` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Addition cannot overflow.\\n     */\\n    function add(uint256 a, uint256 b) internal pure returns (uint256) {\\n        uint256 c = a + b;\\n        require(c >= a, \\\"SafeMath: addition overflow\\\");\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two unsigned integers, reverting on\\n     * overflow (when the result is negative).\\n     *\\n     * Counterpart to Solidity's `-` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Subtraction cannot overflow.\\n     */\\n    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return sub(a, b, \\\"SafeMath: subtraction overflow\\\");\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on\\n     * overflow (when the result is negative).\\n     *\\n     * Counterpart to Solidity's `-` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Subtraction cannot overflow.\\n     */\\n    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b <= a, errorMessage);\\n        uint256 c = a - b;\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the multiplication of two unsigned integers, reverting on\\n     * overflow.\\n     *\\n     * Counterpart to Solidity's `*` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - Multiplication cannot overflow.\\n     */\\n    function mul(uint256 a, uint256 b) internal pure returns (uint256) {\\n        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\\n        // benefit is lost if 'b' is also tested.\\n        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522\\n        if (a == 0) {\\n            return 0;\\n        }\\n\\n        uint256 c = a * b;\\n        require(c / a == b, \\\"SafeMath: multiplication overflow\\\");\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the integer division of two unsigned integers. Reverts on\\n     * division by zero. The result is rounded towards zero.\\n     *\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function div(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return div(a, b, \\\"SafeMath: division by zero\\\");\\n    }\\n\\n    /**\\n     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on\\n     * division by zero. The result is rounded towards zero.\\n     *\\n     * Counterpart to Solidity's `/` operator. Note: this function uses a\\n     * `revert` opcode (which leaves remaining gas untouched) while Solidity\\n     * uses an invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b > 0, errorMessage);\\n        uint256 c = a / b;\\n        // assert(a == b * c + a % b); // There is no case in which this doesn't hold\\n\\n        return c;\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\n     * Reverts when dividing by zero.\\n     *\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\n     * invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function mod(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return mod(a, b, \\\"SafeMath: modulo by zero\\\");\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),\\n     * Reverts with custom message when dividing by zero.\\n     *\\n     * Counterpart to Solidity's `%` operator. This function uses a `revert`\\n     * opcode (which leaves remaining gas untouched) while Solidity uses an\\n     * invalid opcode to revert (consuming all remaining gas).\\n     *\\n     * Requirements:\\n     *\\n     * - The divisor cannot be zero.\\n     */\\n    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {\\n        require(b != 0, errorMessage);\\n        return a % b;\\n    }\\n}\\n\",\"keccak256\":\"0x9a9cf02622cd7a64261b10534fc3260449da25c98c9e96d1b4ae8110a20e5806\"},\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.6.0;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\ncontract ReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant _NOT_ENTERED = 1;\\n    uint256 private constant _ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    constructor () internal {\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and make it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        // On the first call to nonReentrant, _notEntered will be true\\n        require(_status != _ENTERED, \\\"ReentrancyGuard: reentrant call\\\");\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = _ENTERED;\\n\\n        _;\\n\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = _NOT_ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x7ff0067f2d7df4187eaa1cb4800949b929602c9d9cb20fcaee6922a7613ef2fb\"},\"src/Fee.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n\\npragma solidity ^0.6.0;\\npragma experimental ABIEncoderV2;\\n\\nimport \\\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\\\";\\nimport \\\"@openzeppelin/contracts/math/SafeMath.sol\\\";\\nimport \\\"./interfaces/IFee.sol\\\";\\nimport \\\"./Only.sol\\\";\\n\\ncontract Fee is ReentrancyGuard, Only, IFee {\\n    using SafeMath for uint256;\\n\\n    // user total amount\\n    mapping(address => uint256) public override userTotalAmount;\\n    // user usage information\\n    mapping(address => UsageInfo) public override userUsage;\\n    // user deposit information\\n    mapping(address => mapping(address => DepositInfo)) public override userDeposit;\\n\\n    // total deposit amount\\n    uint256 public override totalAmount;\\n\\n    /**\\n     * @dev Emit when user deposits.\\n     * @param by        Deposit user\\n     * @param to        Receiver user\\n     * @param amount    Deposit amount\\n     */\\n    event Deposit(address indexed by, address indexed to, uint256 indexed amount);\\n\\n    /**\\n     * @dev Emit when user withdraws.\\n     * @param by        Withdraw user\\n     * @param from      From user\\n     * @param amount    Withdraw amount\\n     */\\n    event Withdraw(address indexed by, address indexed from, uint256 indexed amount);\\n\\n    constructor(IConfig config) public Only(config) {}\\n\\n    /**\\n     * @dev Deposit amount to target user.\\n     * @param user      Target user address\\n     */\\n    function deposit(address user) external payable override nonReentrant {\\n        require(msg.value > 0, \\\"Fee: invalid value\\\");\\n        require(uint160(user) > 2000, \\\"Fee: invalid user\\\");\\n        DepositInfo storage di = userDeposit[user][msg.sender];\\n        di.amount = di.amount.add(msg.value);\\n        di.timestamp = block.timestamp;\\n        userTotalAmount[user] = userTotalAmount[user].add(msg.value);\\n        totalAmount = totalAmount.add(msg.value);\\n        emit Deposit(msg.sender, user, msg.value);\\n    }\\n\\n    /**\\n     * @dev Withdraw amount from target user.\\n     * @param user              Target user address\\n     * @param desiredAmount     Desired withdraw amount\\n     * @param minAmount         Min withdraw amount\\n     */\\n    function withdraw(\\n        address user,\\n        uint256 desiredAmount,\\n        uint256 minAmount\\n    ) external override nonReentrant {\\n        require(minAmount > 0 && desiredAmount >= minAmount, \\\"Fee: invalid desired amount or min amount\\\");\\n        uint256 withdrawableAmount = estimateWithdrawableAmount(user, block.timestamp);\\n        if (desiredAmount < withdrawableAmount) {\\n            withdrawableAmount = desiredAmount;\\n        } else {\\n            require(withdrawableAmount >= minAmount, \\\"Fee: withdrawable amount is too small\\\");\\n        }\\n\\n        DepositInfo storage di = userDeposit[user][msg.sender];\\n        // adding two timestamps will never overflow\\n        require(di.timestamp + config.withdrawDelay() < block.timestamp, \\\"Fee: invalid withdraw delay\\\");\\n        di.amount = di.amount.sub(withdrawableAmount);\\n        userTotalAmount[user] = userTotalAmount[user].sub(withdrawableAmount);\\n        totalAmount = totalAmount.sub(withdrawableAmount);\\n        msg.sender.transfer(withdrawableAmount);\\n        emit Withdraw(msg.sender, user, withdrawableAmount);\\n    }\\n\\n    /**\\n     * @dev Estimate wtihdrawable timestamp,\\n     *      if the estimation fails, return 0.\\n     * @param user      Target user address\\n     * @param from      From user address\\n     */\\n    function estimateWithdrawableTimestamp(address user, address from) external view override returns (uint256 timestamp) {\\n        DepositInfo memory di = userDeposit[user][from];\\n        if (di.timestamp == 0) {\\n            return 0;\\n        }\\n        timestamp = di.timestamp + config.withdrawDelay();\\n\\n        if (totalAmount == 0) {\\n            return 0;\\n        }\\n        UsageInfo memory ui = userUsage[user];\\n        uint256 usage = estimateUsage(ui, block.timestamp);\\n        uint256 fee = userTotalAmount[user].mul(config.dailyFee()) / totalAmount;\\n        // if the usage is greater than the fee, it means that the user has debts that need to be repaid\\n        if (usage > fee) {\\n            uint256 recoverInterval = config.feeRecoverInterval();\\n            /**\\n             * userUsage = (1 - (block.timestamp - ui.timestamp) / recoverInterval) * ui.usage\\n             * userUsage' = (1 - (repayTimestamp - ui.timestamp) / recoverInterval) * ui.usage\\n             * debt = usage - fee = userUsage - userUsage'\\n             * repayTimestamp = debt * recoverInterval / ui.usage + block.timestamp\\n             */\\n            uint256 repayTimestamp = ((usage - fee).mul(recoverInterval) / ui.usage).add(block.timestamp); // if usage is greater than fee, ui.usage will never be zero\\n            uint256 maxRepayTimestamp = block.timestamp.add(recoverInterval);\\n            if (repayTimestamp > maxRepayTimestamp) {\\n                // this shouldn't happen, we just make sure this\\n                repayTimestamp = maxRepayTimestamp;\\n            }\\n            // if the time required to repay the debt is greater than withdrawDelay, then we use repayTimestamp\\n            if (repayTimestamp > timestamp) {\\n                timestamp = repayTimestamp;\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev Estimate wtihdrawable amount.\\n     * @param user      Target user address\\n     * @param timestamp Current timestamp\\n     */\\n    function estimateWithdrawableAmount(address user, uint256 timestamp) public view override returns (uint256) {\\n        uint256 fee = estimateFee(user, timestamp);\\n        uint256 dailyFee = config.dailyFee();\\n        if (fee == 0 || dailyFee == 0) {\\n            return 0;\\n        }\\n        return fee.mul(totalAmount) / dailyFee;\\n    }\\n\\n    /**\\n     * @dev Estimate user fee.\\n     *      userFee = userTotalAmount * dailyFee / totalAmount - userUsage\\n     * @param user      User address\\n     * @param timestamp Current timestamp\\n     */\\n    function estimateFee(address user, uint256 timestamp) public view override returns (uint256 fee) {\\n        if (totalAmount == 0) {\\n            return 0;\\n        }\\n        fee = userTotalAmount[user].mul(config.dailyFee()) / totalAmount;\\n        uint256 usage = estimateUsage(userUsage[user], timestamp);\\n        fee = fee > usage ? fee - usage : 0;\\n    }\\n\\n    /**\\n     * @dev Estimate user usage\\n     *\\n     *      T: current timestamp\\n     *      T': last timestamp\\n     *      userUsage': last fee usage\\n     *\\n     *      if T - T' < feeRecoverInterval\\n     *          userUsage = (1 - (T - T') / feeRecoverInterval) * userUsage'\\n     *      else\\n     *          userUsage = 0\\n     *\\n     * @param ui        Usage information\\n     * @param timestamp Current timestamp\\n     */\\n    function estimateUsage(UsageInfo memory ui, uint256 timestamp) public view override returns (uint256 usage) {\\n        uint256 interval = timestamp > ui.timestamp ? timestamp - ui.timestamp : 0;\\n        if (interval == 0) {\\n            return ui.usage;\\n        }\\n        uint256 recoverInterval = config.feeRecoverInterval();\\n        if (ui.usage > 0 && interval < recoverInterval) {\\n            usage = recoverInterval.sub(interval).mul(ui.usage) / recoverInterval;\\n        }\\n    }\\n\\n    /**\\n     * @dev Consume user fee, can only be called by the system caller.\\n     * @param user      User address\\n     * @param usage     Number of usage fee\\n     */\\n    function consume(address user, uint256 usage) external override nonReentrant onlyRouter {\\n        require(usage > 0, \\\"Fee: invalid usage\\\");\\n        UsageInfo storage ui = userUsage[user];\\n        ui.usage = estimateUsage(ui, block.timestamp).add(usage);\\n        // update timestamp, because we want to record the latest timestamp in the last 24 hours\\n        ui.timestamp = block.timestamp;\\n    }\\n}\\n\",\"keccak256\":\"0xf551551261335eeedef11a8046a2879493d8eb546e3fd25fc5fa2ae1307ff21b\"},\"src/Only.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n\\npragma solidity ^0.6.0;\\n\\nimport \\\"./interfaces/IConfig.sol\\\";\\nimport \\\"./interfaces/IOnly.sol\\\";\\n\\nabstract contract Only is IOnly {\\n    IConfig public override config;\\n\\n    modifier onlyStakeManager() {\\n        require(msg.sender == config.stakeManager(), \\\"Only: only stake manager\\\");\\n        _;\\n    }\\n\\n    modifier onlyRouter() {\\n        require(msg.sender == config.router(), \\\"Only: only router\\\");\\n        _;\\n    }\\n\\n    constructor(IConfig _config) public {\\n        config = _config;\\n    }\\n}\\n\",\"keccak256\":\"0x6334ad4d511fd73468895b026c14825d00367996d37f525aa37cd77250025ff8\"},\"src/interfaces/IConfig.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n\\npragma solidity ^0.6.0;\\n\\n/**\\n * @dev see {Config}\\n */\\ninterface IConfig {\\n    function stakeManager() external view returns (address);\\n\\n    function systemCaller() external view returns (address);\\n\\n    function unstakePool() external view returns (address);\\n\\n    function validatorRewardPool() external view returns (address);\\n\\n    function fee() external view returns (address);\\n\\n    function freeFee() external view returns (address);\\n\\n    function feePool() external view returns (address);\\n\\n    function router() external view returns (address);\\n\\n    function contractFee() external view returns (address);\\n\\n    function unstakeDelay() external view returns (uint256);\\n\\n    function withdrawDelay() external view returns (uint256);\\n\\n    function dailyFee() external view returns (uint256);\\n\\n    function dailyFreeFee() external view returns (uint256);\\n\\n    function userFreeFeeLimit() external view returns (uint256);\\n\\n    function feeRecoverInterval() external view returns (uint256);\\n\\n    function freeFeeRecoverInterval() external view returns (uint256);\\n\\n    function feePoolLiquidateInterval() external view returns (uint256);\\n\\n    function minIndexVotingPower() external view returns (uint256);\\n\\n    function getFactorByReason(uint8 reason) external view returns (uint8);\\n\\n    function setCommissionRateInterval() external view returns (uint256);\\n\\n    function minerRewardFactor() external view returns (uint8);\\n}\\n\",\"keccak256\":\"0xa9ae74ba454e5c3b9d0847d251b3cd90171cbfb106df2462f84d73a5dbcac053\"},\"src/interfaces/IFee.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n\\npragma solidity ^0.6.0;\\npragma experimental ABIEncoderV2;\\n\\nimport \\\"./IOnly.sol\\\";\\n\\n/**\\n * @dev see {Fee}\\n */\\ninterface IFee is IOnly {\\n    /**\\n     * @dev `DepositInfo` records the information about deposit.\\n     */\\n    struct DepositInfo {\\n        uint256 amount;\\n        uint256 timestamp;\\n    }\\n\\n    /**\\n     * @dev `DepositInfo` records the information about usage.\\n     *      If the timestamp interval is less than `feeRecoverInterval`, the usage will accumulate,\\n     *      Otherwise it will be cleared\\n     */\\n    struct UsageInfo {\\n        uint256 usage;\\n        uint256 timestamp;\\n    }\\n\\n    function userTotalAmount(address user) external view returns (uint256);\\n\\n    function userUsage(address user) external view returns (uint256, uint256);\\n\\n    function userDeposit(address user1, address user2) external view returns (uint256, uint256);\\n\\n    function totalAmount() external view returns (uint256);\\n\\n    function deposit(address user) external payable;\\n\\n    function withdraw(\\n        address user,\\n        uint256 desiredAmount,\\n        uint256 minAmount\\n    ) external;\\n\\n    function estimateWithdrawableTimestamp(address user, address from) external view returns (uint256);\\n\\n    function estimateWithdrawableAmount(address user, uint256 timestamp) external view returns (uint256);\\n\\n    function estimateFee(address user, uint256 timestamp) external view returns (uint256);\\n\\n    function estimateUsage(UsageInfo calldata ui, uint256 timestamp) external view returns (uint256);\\n\\n    function consume(address user, uint256 usage) external;\\n}\\n\",\"keccak256\":\"0x4d6ef2139cbf2fca1babeab9e77897f5d07ba1b54e7094921265f31aab5ee683\"},\"src/interfaces/IOnly.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n\\npragma solidity ^0.6.0;\\n\\nimport \\\"./IConfig.sol\\\";\\n\\ninterface IOnly {\\n    function config() external view returns (IConfig);\\n}\\n\",\"keccak256\":\"0x091ba53f009ccd75749a6d1453ef05e9071607991e1e7a85ba3f4b6d97e514fb\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516112fd3803806112fd83398101604081905261002f91610059565b6001600081905580546001600160a01b0319166001600160a01b0392909216919091179055610087565b60006020828403121561006a578081fd5b81516001600160a01b0381168114610080578182fd5b9392505050565b611267806100966000396000f3fe6080604052600436106100a75760003560e01c80637dbfb5dc116100645780637dbfb5dc1461017b5780638629b6b21461019b578063b0527b97146101c9578063b5c5f672146101e9578063c18402fa14610209578063f340fa0114610229576100a7565b806317e33f15146100ac5780631a39d8ef146100e2578063224b5c72146100f757806346bc45d2146101195780636a1ad1331461013957806379502c5514610159575b600080fd5b3480156100b857600080fd5b506100cc6100c7366004610ea4565b61023c565b6040516100d99190611202565b60405180910390f35b3480156100ee57600080fd5b506100cc61035f565b34801561010357600080fd5b50610117610112366004610ea4565b610365565b005b34801561012557600080fd5b506100cc610134366004610ea4565b6104c4565b34801561014557600080fd5b506100cc610154366004610e6c565b61059f565b34801561016557600080fd5b5061016e610893565b6040516100d99190610f79565b34801561018757600080fd5b506100cc610196366004610e34565b6108a2565b3480156101a757600080fd5b506101bb6101b6366004610e6c565b6108b4565b6040516100d992919061120b565b3480156101d557600080fd5b506100cc6101e4366004610f03565b6108d8565b3480156101f557600080fd5b50610117610204366004610ecf565b6109c5565b34801561021557600080fd5b506101bb610224366004610e34565b610bed565b610117610237366004610e34565b610c06565b60006005546000141561025157506000610359565b60055460015460408051639306fd3d60e01b815290516102f7926001600160a01b031691639306fd3d916004808301926020929190829003018186803b15801561029a57600080fd5b505afa1580156102ae573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506102d29190810190610f61565b6001600160a01b0386166000908152600260205260409020549063ffffffff610d4b16565b816102fe57fe5b6001600160a01b038516600090815260036020908152604080832081518083019092528054825260010154918101919091529290910492509061034190846108d8565b9050808211610351576000610355565b8082035b9150505b92915050565b60055481565b600260005414156103915760405162461bcd60e51b8152600401610388906111a0565b60405180910390fd5b6002600055600154604080516303e21fa960e61b815290516001600160a01b039092169163f887ea4091600480820192602092909190829003018186803b1580156103db57600080fd5b505afa1580156103ef573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506104139190810190610e50565b6001600160a01b0316336001600160a01b0316146104435760405162461bcd60e51b8152600401610388906111d7565b600081116104635760405162461bcd60e51b8152600401610388906110d1565b6001600160a01b038216600090815260036020908152604091829020825180840190935280548352600181015491830191909152906104b49083906104a890426108d8565b9063ffffffff610d8c16565b8155426001918201556000555050565b6000806104d1848461023c565b90506000600160009054906101000a90046001600160a01b03166001600160a01b0316639306fd3d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561052357600080fd5b505afa158015610537573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061055b9190810190610f61565b9050811580610568575080155b1561057857600092505050610359565b8061058e60055484610d4b90919063ffffffff16565b8161059557fe5b0495945050505050565b60006105a9610e1a565b506001600160a01b038084166000908152600460209081526040808320938616835292815290829020825180840190935280548352600101549082018190526105f6576000915050610359565b600160009054906101000a90046001600160a01b03166001600160a01b0316630288a39c6040518163ffffffff1660e01b815260040160206040518083038186803b15801561064457600080fd5b505afa158015610658573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061067c9190810190610f61565b816020015101915060055460001415610699576000915050610359565b6106a1610e1a565b506001600160a01b03841660009081526003602090815260408083208151808301909252805482526001015491810191909152906106df82426108d8565b90506000600554610794600160009054906101000a90046001600160a01b03166001600160a01b0316639306fd3d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561073757600080fd5b505afa15801561074b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061076f9190810190610f61565b6001600160a01b038a166000908152600260205260409020549063ffffffff610d4b16565b8161079b57fe5b049050808211156108895760015460408051636d9f598b60e11b815290516000926001600160a01b03169163db3eb316916004808301926020929190829003018186803b1580156107eb57600080fd5b505afa1580156107ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506108239190810190610f61565b84519091506000906108579042906108438688038663ffffffff610d4b16565b8161084a57fe5b049063ffffffff610d8c16565b9050600061086b428463ffffffff610d8c16565b905080821115610879578091505b87821115610885578197505b5050505b5050505092915050565b6001546001600160a01b031681565b60026020526000908152604090205481565b60046020908152600092835260408084209091529082529020805460019091015482565b600080836020015183116108ed5760006108f5565b836020015183035b9050806109055750508151610359565b60015460408051636d9f598b60e11b815290516000926001600160a01b03169163db3eb316916004808301926020929190829003018186803b15801561094a57600080fd5b505afa15801561095e573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506109829190810190610f61565b85519091501580159061099457508082105b156109bd578451819061058e906109b1838663ffffffff610db116565b9063ffffffff610d4b16565b505092915050565b600260005414156109e85760405162461bcd60e51b8152600401610388906111a0565b600260005580158015906109fc5750808210155b610a185760405162461bcd60e51b815260040161038890610fe0565b6000610a2484426104c4565b905080831015610a35575081610a55565b81811015610a555760405162461bcd60e51b81526004016103889061108c565b6001600160a01b038085166000908152600460208181526040808420338552825292839020600154845162a228e760e21b8152945191954295911693630288a39c93828201939092909190829003018186803b158015610ab457600080fd5b505afa158015610ac8573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610aec9190810190610f61565b82600101540110610b0f5760405162461bcd60e51b81526004016103889061113e565b8054610b21908363ffffffff610db116565b81556001600160a01b038516600090815260026020526040902054610b4c908363ffffffff610db116565b6001600160a01b038616600090815260026020526040902055600554610b78908363ffffffff610db116565b600555604051339083156108fc029084906000818181858888f19350505050158015610ba8573d6000803e3d6000fd5b5060405182906001600160a01b0387169033907f9b1bfa7fa9ee420a16e124f794c35ac9f90472acc99140eb2f6447c714cad8eb90600090a450506001600055505050565b6003602052600090815260409020805460019091015482565b60026000541415610c295760405162461bcd60e51b8152600401610388906111a0565b600260005534610c4b5760405162461bcd60e51b815260040161038890611060565b6107d0816001600160a01b031611610c755760405162461bcd60e51b815260040161038890611175565b6001600160a01b038116600090815260046020908152604080832033845290915290208054610caa903463ffffffff610d8c16565b81554260018201556001600160a01b038216600090815260026020526040902054610cdb903463ffffffff610d8c16565b6001600160a01b038316600090815260026020526040902055600554610d07903463ffffffff610d8c16565b60055560405134906001600160a01b0384169033907f5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f6290600090a450506001600055565b600082610d5a57506000610359565b82820282848281610d6757fe5b0414610d855760405162461bcd60e51b8152600401610388906110fd565b9392505050565b600082820183811015610d855760405162461bcd60e51b815260040161038890611029565b6000610d8583836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f77000081525060008184841115610e125760405162461bcd60e51b81526004016103889190610f8d565b505050900390565b604051806040016040528060008152602001600081525090565b600060208284031215610e45578081fd5b8135610d8581611219565b600060208284031215610e61578081fd5b8151610d8581611219565b60008060408385031215610e7e578081fd5b8235610e8981611219565b91506020830135610e9981611219565b809150509250929050565b60008060408385031215610eb6578182fd5b8235610ec181611219565b946020939093013593505050565b600080600060608486031215610ee3578081fd5b8335610eee81611219565b95602085013595506040909401359392505050565b6000808284036060811215610f16578283fd5b6040811215610f23578283fd5b506040516040810181811067ffffffffffffffff82111715610f43578384fd5b60409081528435825260208086013590830152909593013593505050565b600060208284031215610f72578081fd5b5051919050565b6001600160a01b0391909116815260200190565b6000602080835283518082850152825b81811015610fb957858101830151858201604001528201610f9d565b81811115610fca5783604083870101525b50601f01601f1916929092016040019392505050565b60208082526029908201527f4665653a20696e76616c6964206465736972656420616d6f756e74206f72206d6040820152681a5b88185b5bdd5b9d60ba1b606082015260800190565b6020808252601b908201527f536166654d6174683a206164646974696f6e206f766572666c6f770000000000604082015260600190565b6020808252601290820152714665653a20696e76616c69642076616c756560701b604082015260600190565b60208082526025908201527f4665653a20776974686472617761626c6520616d6f756e7420697320746f6f206040820152641cdb585b1b60da1b606082015260800190565b6020808252601290820152714665653a20696e76616c696420757361676560701b604082015260600190565b60208082526021908201527f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f6040820152607760f81b606082015260800190565b6020808252601b908201527f4665653a20696e76616c69642077697468647261772064656c61790000000000604082015260600190565b6020808252601190820152702332b29d1034b73b30b634b2103ab9b2b960791b604082015260600190565b6020808252601f908201527f5265656e7472616e637947756172643a207265656e7472616e742063616c6c00604082015260600190565b60208082526011908201527027b7363c9d1037b7363c903937baba32b960791b604082015260600190565b90815260200190565b918252602082015260400190565b6001600160a01b038116811461122e57600080fd5b5056fea2646970667358221220d8350bbd6bfacee4df9f6ba0353b23ae3da60a66aa97fbe100048fa2ffac89f864736f6c63430006020033",
+  "deployedBytecode": "0x6080604052600436106100a75760003560e01c80637dbfb5dc116100645780637dbfb5dc1461017b5780638629b6b21461019b578063b0527b97146101c9578063b5c5f672146101e9578063c18402fa14610209578063f340fa0114610229576100a7565b806317e33f15146100ac5780631a39d8ef146100e2578063224b5c72146100f757806346bc45d2146101195780636a1ad1331461013957806379502c5514610159575b600080fd5b3480156100b857600080fd5b506100cc6100c7366004610ea4565b61023c565b6040516100d99190611202565b60405180910390f35b3480156100ee57600080fd5b506100cc61035f565b34801561010357600080fd5b50610117610112366004610ea4565b610365565b005b34801561012557600080fd5b506100cc610134366004610ea4565b6104c4565b34801561014557600080fd5b506100cc610154366004610e6c565b61059f565b34801561016557600080fd5b5061016e610893565b6040516100d99190610f79565b34801561018757600080fd5b506100cc610196366004610e34565b6108a2565b3480156101a757600080fd5b506101bb6101b6366004610e6c565b6108b4565b6040516100d992919061120b565b3480156101d557600080fd5b506100cc6101e4366004610f03565b6108d8565b3480156101f557600080fd5b50610117610204366004610ecf565b6109c5565b34801561021557600080fd5b506101bb610224366004610e34565b610bed565b610117610237366004610e34565b610c06565b60006005546000141561025157506000610359565b60055460015460408051639306fd3d60e01b815290516102f7926001600160a01b031691639306fd3d916004808301926020929190829003018186803b15801561029a57600080fd5b505afa1580156102ae573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506102d29190810190610f61565b6001600160a01b0386166000908152600260205260409020549063ffffffff610d4b16565b816102fe57fe5b6001600160a01b038516600090815260036020908152604080832081518083019092528054825260010154918101919091529290910492509061034190846108d8565b9050808211610351576000610355565b8082035b9150505b92915050565b60055481565b600260005414156103915760405162461bcd60e51b8152600401610388906111a0565b60405180910390fd5b6002600055600154604080516303e21fa960e61b815290516001600160a01b039092169163f887ea4091600480820192602092909190829003018186803b1580156103db57600080fd5b505afa1580156103ef573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506104139190810190610e50565b6001600160a01b0316336001600160a01b0316146104435760405162461bcd60e51b8152600401610388906111d7565b600081116104635760405162461bcd60e51b8152600401610388906110d1565b6001600160a01b038216600090815260036020908152604091829020825180840190935280548352600181015491830191909152906104b49083906104a890426108d8565b9063ffffffff610d8c16565b8155426001918201556000555050565b6000806104d1848461023c565b90506000600160009054906101000a90046001600160a01b03166001600160a01b0316639306fd3d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561052357600080fd5b505afa158015610537573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061055b9190810190610f61565b9050811580610568575080155b1561057857600092505050610359565b8061058e60055484610d4b90919063ffffffff16565b8161059557fe5b0495945050505050565b60006105a9610e1a565b506001600160a01b038084166000908152600460209081526040808320938616835292815290829020825180840190935280548352600101549082018190526105f6576000915050610359565b600160009054906101000a90046001600160a01b03166001600160a01b0316630288a39c6040518163ffffffff1660e01b815260040160206040518083038186803b15801561064457600080fd5b505afa158015610658573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061067c9190810190610f61565b816020015101915060055460001415610699576000915050610359565b6106a1610e1a565b506001600160a01b03841660009081526003602090815260408083208151808301909252805482526001015491810191909152906106df82426108d8565b90506000600554610794600160009054906101000a90046001600160a01b03166001600160a01b0316639306fd3d6040518163ffffffff1660e01b815260040160206040518083038186803b15801561073757600080fd5b505afa15801561074b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061076f9190810190610f61565b6001600160a01b038a166000908152600260205260409020549063ffffffff610d4b16565b8161079b57fe5b049050808211156108895760015460408051636d9f598b60e11b815290516000926001600160a01b03169163db3eb316916004808301926020929190829003018186803b1580156107eb57600080fd5b505afa1580156107ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506108239190810190610f61565b84519091506000906108579042906108438688038663ffffffff610d4b16565b8161084a57fe5b049063ffffffff610d8c16565b9050600061086b428463ffffffff610d8c16565b905080821115610879578091505b87821115610885578197505b5050505b5050505092915050565b6001546001600160a01b031681565b60026020526000908152604090205481565b60046020908152600092835260408084209091529082529020805460019091015482565b600080836020015183116108ed5760006108f5565b836020015183035b9050806109055750508151610359565b60015460408051636d9f598b60e11b815290516000926001600160a01b03169163db3eb316916004808301926020929190829003018186803b15801561094a57600080fd5b505afa15801561095e573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052506109829190810190610f61565b85519091501580159061099457508082105b156109bd578451819061058e906109b1838663ffffffff610db116565b9063ffffffff610d4b16565b505092915050565b600260005414156109e85760405162461bcd60e51b8152600401610388906111a0565b600260005580158015906109fc5750808210155b610a185760405162461bcd60e51b815260040161038890610fe0565b6000610a2484426104c4565b905080831015610a35575081610a55565b81811015610a555760405162461bcd60e51b81526004016103889061108c565b6001600160a01b038085166000908152600460208181526040808420338552825292839020600154845162a228e760e21b8152945191954295911693630288a39c93828201939092909190829003018186803b158015610ab457600080fd5b505afa158015610ac8573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250610aec9190810190610f61565b82600101540110610b0f5760405162461bcd60e51b81526004016103889061113e565b8054610b21908363ffffffff610db116565b81556001600160a01b038516600090815260026020526040902054610b4c908363ffffffff610db116565b6001600160a01b038616600090815260026020526040902055600554610b78908363ffffffff610db116565b600555604051339083156108fc029084906000818181858888f19350505050158015610ba8573d6000803e3d6000fd5b5060405182906001600160a01b0387169033907f9b1bfa7fa9ee420a16e124f794c35ac9f90472acc99140eb2f6447c714cad8eb90600090a450506001600055505050565b6003602052600090815260409020805460019091015482565b60026000541415610c295760405162461bcd60e51b8152600401610388906111a0565b600260005534610c4b5760405162461bcd60e51b815260040161038890611060565b6107d0816001600160a01b031611610c755760405162461bcd60e51b815260040161038890611175565b6001600160a01b038116600090815260046020908152604080832033845290915290208054610caa903463ffffffff610d8c16565b81554260018201556001600160a01b038216600090815260026020526040902054610cdb903463ffffffff610d8c16565b6001600160a01b038316600090815260026020526040902055600554610d07903463ffffffff610d8c16565b60055560405134906001600160a01b0384169033907f5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f6290600090a450506001600055565b600082610d5a57506000610359565b82820282848281610d6757fe5b0414610d855760405162461bcd60e51b8152600401610388906110fd565b9392505050565b600082820183811015610d855760405162461bcd60e51b815260040161038890611029565b6000610d8583836040518060400160405280601e81526020017f536166654d6174683a207375627472616374696f6e206f766572666c6f77000081525060008184841115610e125760405162461bcd60e51b81526004016103889190610f8d565b505050900390565b604051806040016040528060008152602001600081525090565b600060208284031215610e45578081fd5b8135610d8581611219565b600060208284031215610e61578081fd5b8151610d8581611219565b60008060408385031215610e7e578081fd5b8235610e8981611219565b91506020830135610e9981611219565b809150509250929050565b60008060408385031215610eb6578182fd5b8235610ec181611219565b946020939093013593505050565b600080600060608486031215610ee3578081fd5b8335610eee81611219565b95602085013595506040909401359392505050565b6000808284036060811215610f16578283fd5b6040811215610f23578283fd5b506040516040810181811067ffffffffffffffff82111715610f43578384fd5b60409081528435825260208086013590830152909593013593505050565b600060208284031215610f72578081fd5b5051919050565b6001600160a01b0391909116815260200190565b6000602080835283518082850152825b81811015610fb957858101830151858201604001528201610f9d565b81811115610fca5783604083870101525b50601f01601f1916929092016040019392505050565b60208082526029908201527f4665653a20696e76616c6964206465736972656420616d6f756e74206f72206d6040820152681a5b88185b5bdd5b9d60ba1b606082015260800190565b6020808252601b908201527f536166654d6174683a206164646974696f6e206f766572666c6f770000000000604082015260600190565b6020808252601290820152714665653a20696e76616c69642076616c756560701b604082015260600190565b60208082526025908201527f4665653a20776974686472617761626c6520616d6f756e7420697320746f6f206040820152641cdb585b1b60da1b606082015260800190565b6020808252601290820152714665653a20696e76616c696420757361676560701b604082015260600190565b60208082526021908201527f536166654d6174683a206d756c7469706c69636174696f6e206f766572666c6f6040820152607760f81b606082015260800190565b6020808252601b908201527f4665653a20696e76616c69642077697468647261772064656c61790000000000604082015260600190565b6020808252601190820152702332b29d1034b73b30b634b2103ab9b2b960791b604082015260600190565b6020808252601f908201527f5265656e7472616e637947756172643a207265656e7472616e742063616c6c00604082015260600190565b60208082526011908201527027b7363c9d1037b7363c903937baba32b960791b604082015260600190565b90815260200190565b918252602082015260400190565b6001600160a01b038116811461122e57600080fd5b5056fea2646970667358221220d8350bbd6bfacee4df9f6ba0353b23ae3da60a66aa97fbe100048fa2ffac89f864736f6c63430006020033",
+  "devdoc": {
+    "methods": {
+      "consume(address,uint256)": {
+        "details": "Consume user fee, can only be called by the system caller.",
+        "params": {
+          "usage": "Number of usage fee",
+          "user": "User address"
+        }
+      },
+      "deposit(address)": {
+        "details": "Deposit amount to target user.",
+        "params": {
+          "user": "Target user address"
+        }
+      },
+      "estimateFee(address,uint256)": {
+        "details": "Estimate user fee.     userFee = userTotalAmount * dailyFee / totalAmount - userUsage",
+        "params": {
+          "timestamp": "Current timestamp",
+          "user": "User address"
+        }
+      },
+      "estimateUsage((uint256,uint256),uint256)": {
+        "details": "Estimate user usage     *      T: current timestamp     T': last timestamp     userUsage': last fee usage     *      if T - T' < feeRecoverInterval         userUsage = (1 - (T - T') / feeRecoverInterval) * userUsage'     else         userUsage = 0",
+        "params": {
+          "timestamp": "Current timestamp",
+          "ui": "Usage information"
+        }
+      },
+      "estimateWithdrawableAmount(address,uint256)": {
+        "details": "Estimate wtihdrawable amount.",
+        "params": {
+          "timestamp": "Current timestamp",
+          "user": "Target user address"
+        }
+      },
+      "estimateWithdrawableTimestamp(address,address)": {
+        "details": "Estimate wtihdrawable timestamp,     if the estimation fails, return 0.",
+        "params": {
+          "from": "From user address",
+          "user": "Target user address"
+        }
+      },
+      "withdraw(address,uint256,uint256)": {
+        "details": "Withdraw amount from target user.",
+        "params": {
+          "desiredAmount": "Desired withdraw amount",
+          "minAmount": "Min withdraw amount",
+          "user": "Target user address"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {}
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1404,
+        "contract": "src/Fee.sol:Fee",
+        "label": "_status",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3757,
+        "contract": "src/Fee.sol:Fee",
+        "label": "config",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IConfig)6296"
+      },
+      {
+        "astId": 2476,
+        "contract": "src/Fee.sol:Fee",
+        "label": "userTotalAmount",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 2481,
+        "contract": "src/Fee.sol:Fee",
+        "label": "userUsage",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_struct(UsageInfo)6376_storage)"
+      },
+      {
+        "astId": 2488,
+        "contract": "src/Fee.sol:Fee",
+        "label": "userDeposit",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_struct(DepositInfo)6371_storage))"
+      },
+      {
+        "astId": 2491,
+        "contract": "src/Fee.sol:Fee",
+        "label": "totalAmount",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IConfig)6296": {
+        "encoding": "inplace",
+        "label": "contract IConfig",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_struct(DepositInfo)6371_storage))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => struct IFee.DepositInfo))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_struct(DepositInfo)6371_storage)"
+      },
+      "t_mapping(t_address,t_struct(DepositInfo)6371_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct IFee.DepositInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(DepositInfo)6371_storage"
+      },
+      "t_mapping(t_address,t_struct(UsageInfo)6376_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct IFee.UsageInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(UsageInfo)6376_storage"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(DepositInfo)6371_storage": {
+        "encoding": "inplace",
+        "label": "struct IFee.DepositInfo",
+        "members": [
+          {
+            "astId": 6368,
+            "contract": "src/Fee.sol:Fee",
+            "label": "amount",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 6370,
+            "contract": "src/Fee.sol:Fee",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(UsageInfo)6376_storage": {
+        "encoding": "inplace",
+        "label": "struct IFee.UsageInfo",
+        "members": [
+          {
+            "astId": 6373,
+            "contract": "src/Fee.sol:Fee",
+            "label": "usage",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 6375,
+            "contract": "src/Fee.sol:Fee",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

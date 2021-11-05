@@ -1,0 +1,75 @@
+{
+  "name": "StakingUI",
+  "description": "staking to validate node",
+  "version": "1.0.0",
+  "author": "haifun <haifuncn@gmail.com> (https://github.com/haifun)",
+  "contributors": [
+    "haifun <haifuncn@gmail.com> (https://github.com/haifun/)"
+  ],
+  "scripts": {
+    "serve": "vue-cli-service serve --mode development",
+    "build": "vue-cli-service build --mode production",
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.js'",
+    "deploy": "npm run build && surge --project dist && vercel --prod",
+    "start": "npm run serve"
+  },
+  "dependencies": {
+    "@metamask/jazzicon": "^2.0.0",
+    "@remix-project/remix-solidity": "^0.3.32",
+    "@walletconnect/web3-provider": "^1.3.0",
+    "axios": "^0.18.0",
+    "core-js": "^3.6.5",
+    "lodash": "^4.17.21",
+    "prismjs": "^1.22.0",
+    "qr.js": "0.0.0",
+    "vue": "^2.6.11",
+    "vue-i18n": "^8.17.3",
+    "vue-jazzicon": "^0.1.3",
+    "vue-router": "^3.2.0",
+    "vuetify": "^2.2.11",
+    "vuetify-dialog": "^2.0.10",
+    "vuetify-toast-snackbar-ng": "^0.7.3",
+    "vuex": "^3.4.0",
+    "web3": "^1.3.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.6",
+    "@vue/cli-plugin-vuex": "^4.5.6",
+    "@vue/cli-service": "~4.5.0",
+    "archiver": "^5.0.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "ora": "^5.1.0",
+    "sass": "^1.19.0",
+    "sass-loader": "^8.0.0",
+    "shelljs": "^0.8.4",
+    "vue-cli-plugin-axios": "0.0.4",
+    "vue-cli-plugin-i18n": "^1.0.1",
+    "vue-cli-plugin-vuetify": "~2.0.7",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.3.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
