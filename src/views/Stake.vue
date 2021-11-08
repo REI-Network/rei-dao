@@ -10,6 +10,7 @@
                     text
                     outlined
                     color="primary"
+                    v-if="isNode"
                     @click="setRate"
                     >
                     {{$t('stake.set_commission_rate')}}
@@ -18,6 +19,7 @@
                     text
                     outlined
                     color="primary"
+                    v-if="connection.address"
                     @click="stakeToNode"
                 >
                 {{$t('stake.stake_to_other_node')}}
@@ -62,6 +64,7 @@
                             small
                             color="success"
                             class="mr-4"
+                            v-if='connection.address'
                             @click="handleStaking(item)"
                             >
                             {{$t('stake.staking')}}
@@ -71,6 +74,7 @@
                             small
                             color="success"
                             class="mr-4"
+                            v-if='connection.address'
                             @click="handleClaim(item)"
                             >
                             {{$t('stake.claim')}}
@@ -85,6 +89,9 @@
                             >
                             {{$t('stake.get_reward')}}
                             </v-btn>
+                            <span v-if='!connection.address'>
+                                -
+                            </span>
                         </td>
                         </tr>
                     </tbody>
@@ -161,9 +168,14 @@
                 v-model="form.amount"
                 :label="$t('stake.amount')"
                 required
-                clearable
                 :rules="amountRules"
-            ></v-text-field>
+            ><template v-slot:append>
+                <v-btn text @click="setAll('form')">
+                {{ $t('stake.max') }}
+                </v-btn>
+                    
+                </template>
+            </v-text-field>
             <div class="text-center">
                 <v-btn
                 class="mr-4"
@@ -201,9 +213,14 @@
                 v-model="stakeForm.amount"
                 :label="$t('stake.amount')"
                 required
-                clearable
                 :rules="amountRules"
-            ></v-text-field>
+            >
+                <template v-slot:append>
+                    <v-btn text @click="setAll('stakeForm')">
+                    {{ $t('stake.max') }}
+                    </v-btn>
+                </template>
+            </v-text-field>
             <div class="text-center">
                 <v-btn
                 class="mr-4"
@@ -237,9 +254,13 @@
                 v-on:keyup="calculateAmount"
                 outlined
                 required
-                clearable
                 :rules="amountRules"
-            ></v-text-field>
+            ><template v-slot:append>
+                    <v-btn text @click="claimAll()">
+                    {{ $t('stake.max') }}
+                    </v-btn>
+                </template>
+            </v-text-field>
             <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} GXC</div>
             
             <div class="text-center">
@@ -275,9 +296,13 @@
                 :label="$t('stake.amount')"
                 outlined
                 required
-                clearable
                 :rules="amountRules"
-            ></v-text-field>
+            ><template v-slot:append>
+                    <v-btn text @click="setAllReward()">
+                    {{ $t('stake.max') }}
+                    </v-btn>
+                </template>
+            </v-text-field>
             
             <div class="text-center">
                 <v-btn
@@ -305,8 +330,8 @@
             ref="form"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.commission_rate')}}: {{currentItem.commissionRate}}%</div>
-             <div class="pb-1 text-body-1" v-if="currentItem.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentItem.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</div>
+            <div class="pb-1 text-body-1">{{$t('stake.commission_rate')}}: {{currentAddress.commissionRate}}%</div>
+             <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</div>
             <v-text-field
                 v-model="rateForm.amount"
                 :label="$t('stake.commission_rate')"
@@ -357,6 +382,7 @@ export default {
   filters,
   data() {
     return {
+        isNode: false,
         tab1: null,
         dialog: false,
         claimDialog: false,
@@ -380,6 +406,7 @@ export default {
             amount: 0
         },
         currentItem:'',
+        currentAddress: {},
         stakeManagerContract:'',
         stakeManageInstance: '',
         validatorRewardPoolContract:'',
@@ -391,6 +418,7 @@ export default {
         rewardBalance: 0,
         nodeList: [],
         notActiveList: [],
+        indexedNodeList: [],
         receiveBalance: 0,
         commissionShare:'',
         commissionRateInterval:0,
@@ -435,8 +463,6 @@ export default {
         const activeValidatorsLength = await this.stakeManageInstance.methods.activeValidatorsLength().call()
         const indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call()
 
-        console.log('indexedValidatorsLength',indexedValidatorsLength)
-        console.log('activeValidatorsLength',activeValidatorsLength)
 
         let indexedValidatorsArr = Array.from(new Array(Number(indexedValidatorsLength)), (n,i) => i)
 
@@ -488,8 +514,15 @@ export default {
            }
         }
 
-        this.nodeList = activeList
-        this.notActiveList = notActiveList
+        let validate_node = this.connection.address != null? find(indexedNodeList, item => item.address==this.connection.address) : false;
+        if(validate_node) {
+            this.isNode = true;
+        } else {
+            this.isNode = false;
+        }
+        this.indexedNodeList = indexedNodeList;
+        this.nodeList = activeList;
+        this.notActiveList = notActiveList;
     },
     
     async getBalanceOfShare(activeValidatorsShare) {
@@ -510,6 +543,15 @@ export default {
     handleClaim(item) {
         this.currentItem = item;
         this.claimDialog = true;
+    },
+    setAll(obj){
+        this[obj].amount = this.connection.balance;
+    },
+    claimAll() {
+        this.claimForm.amount = this.currentItem.balannceOfShare;
+    },
+    setAllReward() {
+        this.rewardForm.amount = this.rewardBalance;
     },
     async submitStaking() {
         try{
@@ -551,9 +593,6 @@ export default {
     },
     async submitClaim() {
         const allowance = await this.currentItem.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
-        console.log('option.address',this.currentItem.commissionShare.options.address)
-        console.log('this.stakeManagerContract',this.stakeManagerContract)
-        console.log('allowance',allowance)
         if(allowance != 0){
             this.startUnstake();
         } else {
@@ -679,13 +718,13 @@ export default {
         this.rewardLoading = false;
     },
     setRate(){
-        for(let i = 0; i< this.nodeList.length; i++) {
-            if(this.nodeList[i].address == this.connection.address){
-                this.currentItem = this.nodeList[i];
+        for(let i = 0; i< this.indexedNodeList.length; i++) {
+            if(this.indexedNodeList[i].address == this.connection.address){
+                this.currentAddress = this.indexedNodeList[i];
                 break;
             }
         }
-        this.rateForm.amount = this.currentItem.commissionRate
+        this.rateForm.amount = this.currentAddress.commissionRate
         this.setCommissionRateDialog = true;
     },
     async submitSetRate() {

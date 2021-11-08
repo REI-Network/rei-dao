@@ -67,7 +67,8 @@ export default {
     commission_rate: 'Commission rate: ',
     last_update_time: 'Last update time: ',
     active_nodelist: 'Active Validator',
-    not_active_nodelist: 'Inactive Validator'
+    not_active_nodelist: 'Inactive Validator',
+    max: 'Max'
   },
   msg: {
     please_input_number: 'Please enter the number',

@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   isNumber(val) {
-    return /^\d+(\.\d{0,5})?$/.test(val);
+    return /^\d+(\.\d{0,18})?$/.test(val);
   },
   isInteger(val){
     return /^[1-9]\d*$/.test(val);

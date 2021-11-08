@@ -73,7 +73,8 @@ export default {
     commission_rate: '分红比例',
     last_update_time: '上次更新时间',
     active_nodelist: '已激活节点',
-    not_active_nodelist: '未激活节点'
+    not_active_nodelist: '未激活节点',
+    max: '全部'
   },
   msg: {
     please_input_number: '请输入数字',
