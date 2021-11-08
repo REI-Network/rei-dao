@@ -2,13 +2,17 @@
   <div>
     <div class="ops">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
+      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'gxchain2'" rounded @click="switchGXChainNet()">
+        <v-icon small class="btn-icon">mdi-resistor</v-icon>
+        网络错误
+      </v-btn>
       <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded @click="connect('metamask')">
         {{ $t('account.unlock') }}
       </v-btn>
       <div class="account-balance grey" :class="dark ? 'darken-2' : 'lighten-2'" v-if="connection.address">
         <span class="amount">
           <v-progress-circular indeterminate size="18" :width="2" v-if="connection.loading"></v-progress-circular>
-          <span v-else class="bebas">{{ connection.balance | asset(2) }} GXC</span>
+          <span v-else class="bebas">{{ connection.balance | asset(2) }} {{getSymbol}}</span>
         </span>
         <v-btn depressed rounded @click="dialogAcc = true" class="blue-grey" :class="dark ? 'darken-2' : 'lighten-2'">
           <jazzicon v-if="pendingTxs.length == 0" class="d-flex" :address="connection.address" :diameter="16"></jazzicon>
@@ -110,7 +114,7 @@ const NETWORKS = {
   4: 'rinkeby',
   5: 'goerli',
   42: 'kovan',
-  12357: 'GXChain2.0 Testnet'
+  12357: 'gxchain2'
 };
 
 export default {
@@ -127,7 +131,10 @@ export default {
     }),
     networkPrefix() {
       return this.connection.network == 'mainnet' ? '' : `${this.connection.network}.`;
-    }
+    },
+    getSymbol() {
+      return this.connection.network == 'gxchain2' ? 'GXC' : `ETH`;
+    },
   },
   data() {
     return {
@@ -319,7 +326,36 @@ export default {
           console.log(`Ethereum Provider connection closed: ${reason}. Code: ${code}`);
         });
       }
-    }
+    },
+    async switchGXChainNet() {
+        try {
+            await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x3045' }],
+            });
+        } catch (error) {
+            if (error.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method:'wallet_addEthereumChain',
+                        params:[{
+                        "chainId": "0x3045",
+                        "chainName": "GXChain2 Testnet",
+                        "rpcUrls": ["http://112.124.66.233:3030"],
+                        "nativeCurrency": {
+                            "name": "GXChain2",
+                            "symbol": "GXC",
+                            "decimals": 18
+                        },
+                        "blockExplorerUrls": ["https://testnet2.gxchain.org/"]
+                        }]
+                    })
+                } catch (addError) {
+                    console.log('res',addError)
+                }
+            }
+        }
+    },
   }
 };
 </script>
