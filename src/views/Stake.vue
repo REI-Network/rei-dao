@@ -24,8 +24,8 @@
             </v-btn>
             </v-card-actions>   
             <v-tabs v-model="tab1" align-with-title>
-                <v-tab key="1">已激活节点</v-tab>
-                <v-tab key="2">未激活节点</v-tab> 
+                <v-tab key="1">{{$t('stake.active_nodelist')}}</v-tab>
+                <v-tab key="2">{{$t('stake.not_active_nodelist')}}</v-tab> 
             </v-tabs>
           <v-divider />
           <v-tabs-items v-model="tab1">

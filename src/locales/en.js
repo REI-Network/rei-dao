@@ -65,7 +65,9 @@ export default {
     reward_info: 'Reward info',
     reward_balance: 'Reward balance: ',
     commission_rate: 'Commission rate: ',
-    last_update_time: 'Last update time: '
+    last_update_time: 'Last update time: ',
+    active_nodelist: 'Active Validator',
+    not_active_nodelist: 'Inactive Validator'
   },
   msg: {
     please_input_number: 'Please enter the number',
