@@ -165,7 +165,7 @@ export default {
     },
     claimStatus(item) {
         let now = Date.now();
-        return item.timestamp >= now || item.state==1
+        return item.timestamp*1000 >= now || item.state==1
     }
   },
   computed: {
