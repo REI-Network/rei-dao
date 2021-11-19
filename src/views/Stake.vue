@@ -4,7 +4,21 @@
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
             <v-card-actions>
-                <v-card-title>{{$t('stake.node_list')}}</v-card-title>
+                <v-card-title>{{$t('stake.node_list')}}
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            color="primary"
+                            dark
+                            v-bind="attrs"
+                            v-on="on"
+                            >
+                            mdi-help-circle-outline
+                            </v-icon>
+                        </template>
+                        <span>节点获得投票超过{{minIndexVotingPower | asset(2)}}票，才会被列入未激活列表</span>
+                    </v-tooltip>
+                </v-card-title>
                 <v-spacer></v-spacer>
                 <v-btn
                     text
@@ -164,14 +178,18 @@
             ref="stakeform"
             lazy-validation
           >
+            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }}</div>
             <v-text-field
                 v-model="form.amount"
                 :label="$t('stake.amount')"
                 required
                 :rules="amountRules"
             ><template v-slot:append>
-                <v-btn text @click="setAll('form')">
-                {{ $t('stake.max') }}
+                <v-btn
+                  text
+                  x-small
+                  @click="setAll('form')">
+                  {{ $t('stake.max') }}
                 </v-btn>
                     
                 </template>
@@ -216,8 +234,11 @@
                 :rules="amountRules"
             >
                 <template v-slot:append>
-                    <v-btn text @click="setAll('stakeForm')">
-                    {{ $t('stake.max') }}
+                    <v-btn
+                        text
+                        x-small
+                        @click="setAll('stakeForm')">
+                        {{ $t('stake.max') }}
                     </v-btn>
                 </template>
             </v-text-field>
@@ -240,7 +261,8 @@
     </v-dialog>
     <v-dialog v-model="claimDialog" width="500">
       <v-card>
-          <v-card-title>{{$t('stake.claim_info')}}</v-card-title>
+          <v-card-title>{{$t('stake.claim_info')}}
+          </v-card-title>
           <v-divider></v-divider>
         <v-list rounded class="ma-4">
           <v-form
@@ -252,21 +274,34 @@
                 v-model="claimForm.amount"
                 :label="$t('stake.amount')"
                 v-on:keyup="calculateAmount"
-                outlined
                 required
                 :rules="amountRules"
             ><template v-slot:append>
-                    <v-btn text @click="claimAll()">
+                    <v-btn 
+                    text
+                    x-small
+                    @click="claimAll()">
                     {{ $t('stake.max') }}
                     </v-btn>
                 </template>
             </v-text-field>
-            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} GXC</div>
+            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
+            <div class="pb-3 text-caption"><strong class="text--secondary">须知：发起赎回操作{{timeToFormat(unstakeDelay)}}，可以在赎回页面领取</strong></div>
             
             <div class="text-center">
                 <v-btn
                 class="mr-4"
                 color="primary"
+                v-if="!approved"
+                :loading="approveLoading"
+                @click="submitApprove"
+                >
+                {{$t('stake.approve')}}
+                </v-btn>
+                <v-btn
+                class="mr-4"
+                color="primary"
+                :disabled="!approved"
                 :loading="claimLoading"
                 @click="submitClaim"
                 >
@@ -412,6 +447,7 @@ export default {
         validatorRewardPoolContract:'',
         stakeLoading: false,
         claimLoading: false,
+        approveLoading: false,
         stakeToNodeLoading: false,
         rewardLoading: false,
         setRateLoading: false,
@@ -422,8 +458,11 @@ export default {
         receiveBalance: 0,
         commissionShare:'',
         commissionRateInterval:0,
+        minIndexVotingPower:0,
+        unstakeDelay:0,
+        approved: true,
         rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
-        amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num')],
+        amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v>0) || this.$t('msg.please_input_not_zero')],
         addressRules: [(v) => !!v || this.$t('msg.please_input_address')]
     };
   },
@@ -454,6 +493,11 @@ export default {
         this.stakeManagerContract = await contract.methods.stakeManager().call();
         this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
         console.log(this.commissionRateInterval)
+        this.unstakeDelay = await contract.methods.unstakeDelay().call();
+        console.log('unstakeDelay',this.unstakeDelay)
+        let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
+        this.minIndexVotingPower = web3.utils.fromWei(web3.utils.toBN(minIndexVotingPower))
+        console.log('minIndexVotingPower',this.minIndexVotingPower)
         let validatorRewardPool = await contract.methods.validatorRewardPool().call();
         
         this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool,validatorRewardPool);
@@ -538,17 +582,31 @@ export default {
     },
     handleStaking(item){
         this.currentItem = item;
+        this.$refs.stakeform&&this.$refs.stakeform.reset();
+        this.form.amount = 0;
         this.dialog = true;
+        
     },
-    handleClaim(item) {
+    async handleClaim(item) {
         this.currentItem = item;
+        this.$refs.claimform&&this.$refs.claimform.reset();
+        this.receiveBalance = 0;
+        this.claimForm.amount = 0;
+        const allowance = await this.currentItem.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
+        if(allowance != 0){
+            this.approved = true;
+        } else {
+            this.approved = false;
+        }
         this.claimDialog = true;
+        
     },
     setAll(obj){
         this[obj].amount = this.connection.balance;
     },
     claimAll() {
         this.claimForm.amount = this.currentItem.balannceOfShare;
+        this.calculateAmount()
     },
     setAllReward() {
         this.rewardForm.amount = this.rewardBalance;
@@ -586,20 +644,21 @@ export default {
         this.stakeLoading = false;
     },
     cancelStaking() {
+        this.$refs.stakeform&&this.$refs.stakeform.reset();
         this.dialog = false;
     },
     cancelClaim(){
+        this.$refs.claimform&&this.$refs.claimform.reset();
         this.claimDialog = false;
     },
+    async submitApprove() {
+        this.approveLoading = true;
+        await this.currentItem.commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address});
+        this.approveLoading = false;
+        this.approved = true;
+    },
     async submitClaim() {
-        const allowance = await this.currentItem.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
-        if(allowance != 0){
-            this.startUnstake();
-        } else {
-            let approveRes = await this.currentItem.commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address});
-            console.log(approveRes)
-            this.startUnstake();
-        }
+        this.startUnstake();
     },
     async startUnstake() {
         try {
@@ -758,6 +817,18 @@ export default {
     },
     cancelSetRate() {
         this.setCommissionRateDialog = false;
+    },
+    timeToFormat(val) {
+        let str = '';
+        let resdays = Math.floor(val/60/60/24)
+        if(resdays > 0){
+            str = resdays + '天后';
+        } else if(Math.floor(val/60/60) > 0){
+            str = Math.floor(val/60/60)+'小时后'
+        } else {
+            str = val/60 + '分后';
+        }
+        return str;
     }
   },
   computed: {
