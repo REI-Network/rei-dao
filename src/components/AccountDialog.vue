@@ -2,7 +2,7 @@
   <div>
     <div class="ops">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
-      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'gxchain2'" rounded @click="switchGXChainNet()">
+      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'gxchain2Test'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
         网络错误
       </v-btn>
@@ -114,7 +114,7 @@ const NETWORKS = {
   4: 'rinkeby',
   5: 'goerli',
   42: 'kovan',
-  12357: 'gxchain2'
+  12357: 'gxchain2Test'
 };
 
 export default {
@@ -133,7 +133,7 @@ export default {
       return this.connection.network == 'mainnet' ? '' : `${this.connection.network}.`;
     },
     getSymbol() {
-      return this.connection.network == 'gxchain2' ? 'GXC' : `ETH`;
+      return this.connection.network == 'gxchain2Test' ? 'REI' : `ETH`;
     },
   },
   data() {
