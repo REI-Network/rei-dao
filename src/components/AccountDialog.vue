@@ -65,7 +65,7 @@
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://${networkPrefix}etherscan.io/address/${connection.address}`"><v-icon small>mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://testnet2.gxchain.org/address/${connection.address}`"><v-icon small>mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -80,7 +80,7 @@
             <div class="txs">
               <div class="d-flex align-baseline py-1" v-for="tx in txs" :key="tx.txid">
                 <div class="d-flex flex-column">
-                  <a class="text-body-2 text-decoration-none" :href="`https://${networkPrefix}etherscan.io/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon>{{ $t(`txs.${tx.type}`, tx.data) }}</a>
+                  <a class="text-body-2 text-decoration-none" :href="`https://testnet2.gxchain.org/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon>{{ $t(`txs.${tx.type}`, tx.data) }}</a>
                   <span class="text-caption font-weight-light">({{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }})</span>
                 </div>
                 <v-spacer />
