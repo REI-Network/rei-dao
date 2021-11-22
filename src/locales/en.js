@@ -30,7 +30,7 @@ export default {
     copy_address: 'Copy Address',
     copied: 'Copied',
     pending_txs: '{count} Pending|{count} Pendings',
-    view_on_etherscan: 'View on Etherscan',
+    view_on_etherscan: 'View on Block Explorer',
     tip: 'Your transactions will appear here...',
     rencent_txs: 'Rencent Transactions',
     clear_all: 'clear all'
@@ -68,20 +68,24 @@ export default {
     last_update_time: 'Last update time: ',
     active_nodelist: 'Active Validator',
     not_active_nodelist: 'Inactive Validator',
-    max: 'Max'
+    max: 'Max',
+    approve: 'Approve',
+    wallet_balance: 'Balance'
   },
   msg: {
     please_input_number: 'Please enter the number',
     please_input_1_100_num: 'Please enter an integer from 1-100',
     please_input_amount: 'Please input amount',
     please_input_correct_num: 'Please enter the correct number',
-    please_input_address: 'Please enter the address'
+    please_input_address: 'Please enter the address',
+    please_input_not_zero: 'Please enter a number greater than 0'
   },
   unstake:{
     title: 'Unstake',
     list_title: 'Unstake list',
     node: 'Node',
     create_time: 'Create time',
+    unstake_available: 'Available Time',
     shares: 'Unstake Shares',
     get_value: 'Unstake Value',
     status: 'Status',

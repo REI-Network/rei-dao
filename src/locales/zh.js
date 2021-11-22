@@ -35,7 +35,7 @@ export default {
     copy_address: '复制地址',
     copied: '已复制',
     pending_txs: '{count}笔等待',
-    view_on_etherscan: '在Etherscan查看',
+    view_on_etherscan: '在区块浏览器查看',
     tip: '待打包交易将出现在这里...',
     rencent_txs: '最近交易',
     clear_all: '清空'
@@ -74,20 +74,24 @@ export default {
     last_update_time: '上次更新时间',
     active_nodelist: '已激活节点',
     not_active_nodelist: '未激活节点',
-    max: '全部'
+    max: '全部',
+    approve: '授权',
+    wallet_balance: '钱包余额'
   },
   msg: {
     please_input_number: '请输入数字',
     please_input_1_100_num: '请输入1-100的整数',
     please_input_amount: '请输入金额',
     please_input_correct_num: '请输入正确的数字',
-    please_input_address: '请输入地址'
+    please_input_address: '请输入地址',
+    please_input_not_zero: '请输入大于0的数字'
   },
   unstake:{
     title: '赎回',
     list_title: '赎回列表',
     node: '节点',
     create_time: '创建时间',
+    unstake_available: '可取回时间',
     shares: '销毁的份额',
     get_value: '期望取回的资产',
     status: '状态',
