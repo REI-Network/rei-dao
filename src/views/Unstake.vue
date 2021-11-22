@@ -18,6 +18,9 @@
                     {{$t('unstake.create_time')}}
                 </th>
                 <th class="text-left">
+                    {{$t('unstake.unstake_available')}}
+                </th>
+                <th class="text-left">
                     {{$t('unstake.shares')}}
                 </th>
                 <th class="text-left">
@@ -38,6 +41,7 @@
                 >
                 <td>{{ item.validator | addr }}</td>
                 <td>{{ item.createdAt | dateFormat('YYYY-MM-dd hh:mm:ss') }}</td>
+                <td>{{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}</td>
                 <td>{{ formatAsset(item.unstakeShares) | asset(2)  }}</td>
                 <td>{{ formatAsset(item.value) | asset(2)  }}</td>
                 <td>{{ statusMap[item.state]  }}</td>
@@ -49,7 +53,7 @@
                     :disabled="claimStatus(item)"
                     @click="unstake(item)"
                     >
-                    {{$t('unstake.gettitle')}}
+                    {{ $t('unstake.gettitle')}}
                     </v-btn>
                 </td>
                 </tr>
@@ -166,6 +170,18 @@ export default {
     claimStatus(item) {
         let now = Date.now();
         return item.timestamp*1000 >= now || item.state==1
+    },
+    timeToFormat(val) {
+        let str = '';
+        let resdays = Math.floor(val/60/60/24)
+        if(resdays > 0){
+            str = resdays + '天后';
+        } else if(Math.floor(val/60/60) > 0){
+            str = Math.floor(val/60/60)+'小时后'
+        } else {
+            str = val/60 + '分后';
+        }
+        return str;
     }
   },
   computed: {

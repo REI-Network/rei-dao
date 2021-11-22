@@ -178,7 +178,7 @@
             ref="stakeform"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }}</div>
+            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
             <v-text-field
                 v-model="form.amount"
                 :label="$t('stake.amount')"
@@ -227,6 +227,7 @@
                 clearable
                 :rules="addressRules"
             ></v-text-field>
+            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
             <v-text-field
                 v-model="stakeForm.amount"
                 :label="$t('stake.amount')"
