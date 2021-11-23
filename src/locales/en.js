@@ -1,6 +1,6 @@
 export default {
   app: {
-    name: 'Staking UI',
+    name: 'REI DAO',
     desc: 'staking to node'
   },
   notify: {

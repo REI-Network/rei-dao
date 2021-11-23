@@ -1,7 +1,7 @@
 export default {
   app: {
-    name: 'Staking UI',
-    desc: '给gxchain2.0节点投票'
+    name: 'REI DAO',
+    desc: '给REI Network节点投票'
   },
   index: {
     menu: '请选择'

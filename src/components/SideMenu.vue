@@ -7,7 +7,7 @@
                 class="mr-4" 
                 max-height="48"
                 max-width="48"
-                src="../assets/images/icon.png"
+                src="../assets/images/rei.svg"
                 ></v-img>
           
         <!-- </v-avatar> -->

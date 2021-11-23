@@ -349,7 +349,7 @@ export default {
                         },
                         "blockExplorerUrls": ["https://testnet2.gxchain.org/"]
                         }]
-                    })
+                    },this.connection.address)
                 } catch (addError) {
                     console.log('res',addError)
                 }

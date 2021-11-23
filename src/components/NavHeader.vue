@@ -7,7 +7,7 @@
             class="mr-4" 
             max-height="25"
             max-width="25"
-            src="../assets/images/icon.png" >
+            src="../assets/images/rei.svg" >
           </v-img>
         <!-- </v-avatar> -->
       </router-link>
