@@ -341,7 +341,7 @@ export default {
                         params:[{
                         "chainId": "0x3045",
                         "chainName": "GXChain2 Testnet",
-                        "rpcUrls": ["http://112.124.66.233:3030"],
+                        "rpcUrls": ["https://testnet2.gxchain.org/rpc/"],
                         "nativeCurrency": {
                             "name": "GXChain2",
                             "symbol": "GXC",
