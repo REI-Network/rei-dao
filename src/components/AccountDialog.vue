@@ -327,32 +327,42 @@ export default {
         });
       }
     },
-    async switchGXChainNet() {
+    async addREI() {
         try {
-            await ethereum.request({
+            await window.ethereum.request({
+                method:'wallet_addEthereumChain',
+                params:[{
+                "chainId": "0x3045",
+                "chainName": "GXChain2 Testnet",
+                "rpcUrls": ["https://testnet2.gxchain.org/rpc/"],
+                "nativeCurrency": {
+                    "name": "GXChain2",
+                    "symbol": "REI",
+                    "decimals": 18
+                },
+                "blockExplorerUrls": ["https://testnet2.gxchain.org/"]
+                }]
+            },this.connection.address)
+        } catch (addError) {
+            console.log('res',addError)
+        }
+    },
+    async switchGXChainNet() {
+        
+        try {
+            this.addREI()
+            let res = await ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: '0x3045' }],
             });
+            console.log('res',res)
+            if(res && res.error){
+                this.addREI()
+            }
         } catch (error) {
+            console.log('error',error)
             if (error.code === 4902) {
-                try {
-                    await window.ethereum.request({
-                        method:'wallet_addEthereumChain',
-                        params:[{
-                        "chainId": "0x3045",
-                        "chainName": "GXChain2 Testnet",
-                        "rpcUrls": ["https://testnet2.gxchain.org/rpc/"],
-                        "nativeCurrency": {
-                            "name": "GXChain2",
-                            "symbol": "GXC",
-                            "decimals": 18
-                        },
-                        "blockExplorerUrls": ["https://testnet2.gxchain.org/"]
-                        }]
-                    },this.connection.address)
-                } catch (addError) {
-                    console.log('res',addError)
-                }
+                this.addREI()
             }
         }
     },
