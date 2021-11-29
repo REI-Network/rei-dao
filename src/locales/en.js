@@ -93,5 +93,8 @@ export default {
     gettitle: 'Unstake',
     retrieve: 'Retrieved',
     not_retrieve: 'Not retrieved'
+  },
+  stakeforgas:{
+    title: '质押手续费'
   }
 };

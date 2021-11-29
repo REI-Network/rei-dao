@@ -43,8 +43,8 @@ export default {
         },
         {
           icon: 'mdi-sack',
-          text: 'unstake.title',
-          link: '/unstake'
+          text: 'stakeforgas.title',
+          link: '/stakeforgas'
         }
       ]
     };

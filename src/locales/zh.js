@@ -46,6 +46,8 @@ export default {
     startclaim: '发起取回奖励{amount}{symbol}到{to}',
     setrate: '修改分红比例为{amount}%',
     unstake: '取回{amount}{symbol}到{to}',
+    deposit: '质押{amount}{symbol}到{to}',
+    withdraw: '提现{amount}{symbol}到{to}'
 
   },
   stake: {
@@ -99,5 +101,8 @@ export default {
     gettitle: '取回',
     retrieve: '已取回',
     not_retrieve: '未取回'
+  },
+  stakeforgas:{
+      title: '质押手续费'
   }
 };

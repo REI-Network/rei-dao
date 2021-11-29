@@ -2,7 +2,6 @@
   <v-container>
     <v-row>
       <v-col cols="12" md="12" sm="12">
-        <v-card class="flex-column mt-2">
             <v-card-actions>
                 <v-card-title>{{$t('unstake.list_title')}}</v-card-title>
             </v-card-actions>   
@@ -60,7 +59,6 @@
             </tbody>
             </template>
         </v-simple-table>
-        </v-card>
       </v-col>
     </v-row>
     

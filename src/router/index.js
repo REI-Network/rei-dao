@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Stake from '../views/Stake.vue';
-import Unstake from '../views/Unstake.vue';
+import StakeForGas from '../views/StakeForGas.vue';
 
 const routes = [
   {
@@ -17,9 +17,9 @@ const routes = [
     // component: () => import('../views/Stake.vue')
   },
   {
-    path: '/unstake',
-    name: 'Unstake',
-    component: Unstake
+    path: '/stakeforgas',
+    name: 'StakeForGas',
+    component: StakeForGas
   }
 ];
 
