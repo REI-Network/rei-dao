@@ -93,6 +93,7 @@
                                     small
                                     color="success"
                                     class="mr-4"
+                                    :disabled="userDeposit.availableTime!=100"
                                     @click="handleWithdraw()"
                                     >
                                     提现
