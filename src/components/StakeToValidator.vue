@@ -16,7 +16,7 @@
                             mdi-help-circle-outline
                             </v-icon>
                         </template>
-                        <span>节点获得投票超过{{minIndexVotingPower | asset(2)}}票，才会被列入未激活列表</span>
+                        <span>{{$t('stake.tips_voting_to_invalidate',{minIndexVotingPower: assetFormat(minIndexVotingPower,2)} )}}</span>
                     </v-tooltip>
                 </v-card-title>
                 <v-spacer></v-spacer>
@@ -829,6 +829,9 @@ export default {
             str = val/60 + '分后';
         }
         return str;
+    },
+    assetFormat(value,precision) {
+        return util.asset(value,precision)
     }
   },
   computed: {

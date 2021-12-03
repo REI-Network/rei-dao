@@ -60,7 +60,7 @@ export default {
     share_balance: '股份余额',
     operation: '操作',
     staking: '投票',
-    claim: '赎回',
+    claim: '开始赎回',
     get_reward: '取回收益',
     staking_info: '投票信息',
     amount: '金额',
@@ -78,7 +78,8 @@ export default {
     not_active_nodelist: '未激活节点',
     max: '全部',
     approve: '授权',
-    wallet_balance: '钱包余额'
+    wallet_balance: '钱包余额',
+    tips_voting_to_invalidate: '节点获得投票超过{minIndexVotingPower}票，才会被列入未激活列表'
   },
   msg: {
     please_input_number: '请输入数字',
@@ -89,8 +90,8 @@ export default {
     please_input_not_zero: '请输入大于0的数字'
   },
   unstake:{
-    title: '赎回',
-    list_title: '赎回列表',
+    title: '待赎回',
+    list_title: '待赎回列表',
     node: '节点',
     create_time: '创建时间',
     unstake_available: '可取回时间',
@@ -103,6 +104,19 @@ export default {
     not_retrieve: '未取回'
   },
   stakeforgas:{
-      title: '质押手续费'
+      title: '质押手续费',
+      list_title: '资源',
+      address_resource: '地址{address}的资源',
+      daily_free_fee: '今日免费资源',
+      left_crude: '剩余CRUDE',
+      usage_crude: '已使用CRUDE',
+      stake_coin: '已质押资产',
+      left_free_fee: '剩余免费资源',
+      vesting_status: '归属状态',
+      withdraw: '提现',
+      stake_more: '质押更多',
+      stake_info: '质押信息',
+      withdraw_info: '提现信息',
+      estimate_withdraw: '预估可提现金额'
   }
 };

@@ -41,6 +41,8 @@ export default {
     startclaim: 'Start claim reward {amount}{symbol} to {to}',
     setrate: 'Set CommissionRate to {amount}%',
     unstake: 'Unstake {amount}{symbol} to {to}',
+    deposit: 'Staking {amount}{symbol} to {to}',
+    withdraw: 'withdraw {amount}{symbol} to {to}'
   },
   stake: {
     node_list: 'Node List',
@@ -51,8 +53,8 @@ export default {
     voting_power: 'Voting Power',
     share_balance: 'Commission Share',
     operation: 'Operation',
-    staking: 'Stake',
-    claim: 'Claim',
+    staking: 'Voting',
+    claim: 'Start Unstake',
     get_reward: 'Get Reward',
     staking_info: 'Staking info',
     amount: 'Amount',
@@ -60,7 +62,7 @@ export default {
     btn_submit: 'Submit',
     btn_cancel: 'Cancel',
     claim_info: 'Claim info',
-    commonnsion_share_balance:'Commonnsion share balance: ',
+    commonnsion_share_balance:'Commission share balance: ',
     estimate_receive: 'Estimate receive ',
     reward_info: 'Reward info',
     reward_balance: 'Reward balance: ',
@@ -70,7 +72,8 @@ export default {
     not_active_nodelist: 'Inactive Validator',
     max: 'Max',
     approve: 'Approve',
-    wallet_balance: 'Balance'
+    wallet_balance: 'Balance',
+    tips_voting_to_invalidate: 'Nodes that have more than {minIndexVotingPower} votes will be included in the inactive list'
   },
   msg: {
     please_input_number: 'Please enter the number',
@@ -81,8 +84,8 @@ export default {
     please_input_not_zero: 'Please enter a number greater than 0'
   },
   unstake:{
-    title: 'Unstake',
-    list_title: 'Unstake list',
+    title: 'Pending Unstake',
+    list_title: 'Pending Unstake list',
     node: 'Node',
     create_time: 'Create time',
     unstake_available: 'Available Time',
@@ -95,6 +98,19 @@ export default {
     not_retrieve: 'Not retrieved'
   },
   stakeforgas:{
-    title: '质押手续费'
+    title: 'Gas Stake',
+    list_title: 'Resources',
+    address_resource: 'Resources of {address}',
+    daily_free_fee: 'Daily Free Fee',
+    left_crude: 'Left CRUDE',
+    usage_crude: 'CRUDE used',
+    stake_coin: 'Total Staked',
+    left_free_fee: 'Left Free Fee',
+    vesting_status: 'Vesting status',
+    withdraw: 'Withdraw',
+    stake_more: 'Stake more',
+    stake_info: 'Stake Info',
+    withdraw_info: 'Withdraw Info',
+    estimate_withdraw: 'Estimated coin withdrawal'
   }
 };

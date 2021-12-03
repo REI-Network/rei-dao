@@ -3,118 +3,144 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card-actions>
-            <v-card-title>资源
+            <v-card-title>{{$t('stakeforgas.list_title')}}
             </v-card-title>
             <v-spacer></v-spacer>
+            <v-btn
+                text
+                outlined
+                color="primary"
+                @click="deposit"
+                >
+                {{$t('stakeforgas.title')}}
+            </v-btn>
         </v-card-actions>   
         <v-divider />
         <v-card
             elevation="2"
         >
-            <v-card-text>
+        <v-card-actions>
+            <v-list-item-content>
+                <v-card-title>{{$t('stakeforgas.address_resource',{address: addressToShort(connection.address)})}}
+                </v-card-title>
+            </v-list-item-content>
+        </v-card-actions>  
+    
+            <v-row no-gutters>
+                <v-col
+                    cols="12"
+                    sm="6"
+                >
                 <v-list class="transparent">
-                    <v-list-item-title>
-                        今日免费资源：{{ userFreeFeeLimit }} {{symbol}}
-                    </v-list-item-title>
+                    <v-list-item>
+                        <v-list-item-title>{{$t('stakeforgas.daily_free_fee')}}：</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">
+                        {{ userFreeFeeLimit }} {{symbol}}
+                        </v-list-item-subtitle>
+                    </v-list-item>
                     
                     <v-list-item>
-                        <v-list-item-title></v-list-item-title>
-                        <v-list-item-subtitle class="text-right">
-                        
-                            <v-progress-linear
-                                :value="usagePercent"
-                                height="20"
-                                readonly
+                        <v-list-item-title>{{$t('stakeforgas.left_crude')}}：<v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            color="primary"
+                            dark
+                            v-bind="attrs"
+                            v-on="on"
                             >
-                                <strong>剩余免费资源{{ usagePercent }}%</strong>
-                            </v-progress-linear>
+                            mdi-help-circle-outline
+                            </v-icon>
+                        </template>
+                        <span>1CRUDE ≈ 1e9 Gwei</span>
+                    </v-tooltip></v-list-item-title>
+                        <v-list-item-subtitle class="text-right">
+                        {{ estimateFee | asset(6)}} 
+                        </v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>{{$t('stakeforgas.usage_crude')}}：</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">
+                        {{ estimateUsage | asset(6)}} 
+                        </v-list-item-subtitle>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>{{$t('stakeforgas.stake_coin')}}：</v-list-item-title>
+                        <v-list-item-subtitle class="text-right">
+                        {{userDeposit.amount | asset(6) }} {{symbol}}
                         </v-list-item-subtitle>
                     </v-list-item>
                     
                 </v-list>
-            </v-card-text>
-        </v-card>
-         <v-divider />
-        <v-card
-            elevation="2"
-        >
-            <v-card-text>
-                <v-list class="transparent">
-                    <v-card-actions>
-                        <v-list-item-content>
-                            <v-list-item-title>质押资源</v-list-item-title>
-                            
-                            <v-list-item-subtitle><strong>剩余CRUDE：{{ estimateFee | asset(6)}} </strong></v-list-item-subtitle>
-                        </v-list-item-content>
-                        
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            text
-                            outlined
-                            color="primary"
-                            @click="deposit"
+                    
+                </v-col>
+                <v-col
+                    cols="12"
+                    sm="6"
+                >
+                    <v-list-item>
+                        <v-list-item-title>
+                            <v-progress-linear
+                                :value="usagePercent"
+                                height="20"
+                                readonly
+                                rounded
                             >
-                            质押手续费
-                        </v-btn>
-                    </v-card-actions>   
-
-                    <v-simple-table>
-                        <template v-slot:default>
-                        <thead>
-                            <tr>
-                            <th class="text-left">
-                                To
-                            </th> 
-                            <th class="text-left">
-                                Amount
-                            </th>
-                            <th class="text-left">
-                                Process
-                            </th>
-                            <th class="text-left">
-                                Operation
-                            </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>{{connection.address | addr }}</td>
-                            <td>{{userDeposit.amount | asset(2) }} {{symbol}} </td>
-                            <td><v-progress-linear
+                                <div class="white--text">{{$t('stakeforgas.left_free_fee')}}{{ usagePercent }}%</div>
+                            </v-progress-linear>
+                        </v-list-item-title>
+                        
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>
+                            <v-progress-linear
+                                :value="estimateUsagePercent"
+                                height="20"
+                                readonly
+                                rounded
+                            >
+                                <div class="white--text">{{$t('stakeforgas.left_crude')}}{{ estimateUsagePercent }}%</div>
+                            </v-progress-linear>
+                        </v-list-item-title>
+                        
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>
+                            <v-progress-linear
                                 :value="userDeposit.availableTime"
                                 height="20"
                                 readonly
+                                rounded
                             >
-                                <strong>{{ userDeposit.availableTime }}%</strong>
-                            </v-progress-linear></td>
-                            <td>
-                                <v-btn
-                                    tile
-                                    small
-                                    color="success"
-                                    class="mr-4"
-                                    :disabled="userDeposit.availableTime!=100"
-                                    @click="handleWithdraw()"
-                                    >
-                                    提现
-                                </v-btn>
-                                <v-btn
-                                    tile
-                                    small
-                                    color="success"
-                                    class="mr-4"
-                                    @click="deposit()"
-                                    >
-                                    质押更多
-                                </v-btn>
-                            </td>
-                            </tr>
-                        </tbody>
-                        </template>
-                    </v-simple-table>
-                    
-                </v-list>
-            </v-card-text>
+                                <div class="white--text">{{$t('stakeforgas.vesting_status')}} {{ userDeposit.availableTime }}%</div>
+                            </v-progress-linear>
+                        </v-list-item-title>
+                        
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-title>
+                            <v-btn
+                                tile
+                                small
+                                color="success"
+                                class="mr-4"
+                                :disabled="userDeposit.availableTime!=100"
+                                @click="handleWithdraw()"
+                                >
+                                {{$t('stakeforgas.withdraw')}}
+                            </v-btn>
+                            <v-btn
+                                tile
+                                small
+                                color="success"
+                                class="mr-4"
+                                @click="deposit()"
+                                >
+                                {{$t('stakeforgas.stake_more')}}
+                            </v-btn>
+                        </v-list-item-title>
+                    </v-list-item>
+                </v-col>
+            </v-row>
         </v-card>
         
       </v-col>
@@ -122,7 +148,7 @@
 
     <v-dialog v-model="depositDialog" width="500">
       <v-card>
-          <v-card-title>质押信息</v-card-title>
+          <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
           <v-divider></v-divider>
         <v-list rounded class="ma-4">
           <v-form 
@@ -170,14 +196,14 @@
     </v-dialog>
     <v-dialog v-model="withdrawDialog" width="500">
       <v-card>
-          <v-card-title>提现信息</v-card-title>
+          <v-card-title>{{$t('stakeforgas.withdraw_info')}}</v-card-title>
           <v-divider></v-divider>
         <v-list rounded class="ma-4">
           <v-form 
             ref="withdrawform"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">预估可提现金额: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
+            <div class="pb-1 text-body-1">{{$t('stakeforgas.estimate_withdraw')}}: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
             <v-text-field
                 v-model="withdrawForm.amount"
                 :label="$t('stake.amount')"
@@ -256,6 +282,8 @@ export default {
         userUsage: '',
         usagePercent: 0,
         userDeposit:{},
+        estimateUsage:0,
+        estimateUsagePercent:0,
 
         currentItem: '',
         currentAddress: {},
@@ -327,10 +355,20 @@ export default {
         this.estimateFee = web3.utils.fromWei(web3.utils.toBN(estimateFee))
 
         let feeUserUsage = await this.feeContract.methods.userUsage(this.connection.address).call()
-        console.log('feeUserUsage',feeUserUsage)
+
+        let estimateUsage = await this.feeContract.methods.estimateUsage(feeUserUsage,Math.ceil(Date.now()/1000)).call()
+
+        console.log('estimateUsage',estimateUsage)
+        this.estimateUsage = web3.utils.fromWei(web3.utils.toBN(estimateUsage))
+
+        this.estimateUsagePercent = util.numberPrecision(estimateFee/(estimateFee*1+estimateUsage*1)*100,2)
 
         let feeUserDeposit = await this.feeContract.methods.userDeposit(this.connection.address,this.connection.address).call()
         console.log('feeUserDeposit',feeUserDeposit)
+
+        let userTotalAmount = await this.feeContract.methods.userTotalAmount(this.connection.address).call()
+        console.log('userTotalAmount',userTotalAmount)
+
 
         let nowTime = Date.now();
         let passTime = nowTime - feeUserDeposit.timestamp*1000
@@ -430,6 +468,9 @@ export default {
     },
     cancelStaking() {
         this.depositDialog = false;
+    },
+    addressToShort(str){
+        return util.addr(str);
     },
     timeToFormat(val) {
         let str = '';
