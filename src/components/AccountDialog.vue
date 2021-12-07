@@ -2,9 +2,9 @@
   <div>
     <div class="ops">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
-      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'gxchain2Test'" rounded @click="switchGXChainNet()">
+      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REINetworkTest'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
-        网络错误
+        {{$t('msg.neterror')}}
       </v-btn>
       <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded @click="connect('metamask')">
         {{ $t('account.unlock') }}
@@ -65,7 +65,7 @@
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://testnet2.gxchain.org/address/${connection.address}`"><v-icon small>mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan-test.rei.network/address/${connection.address}`"><v-icon small>mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -80,7 +80,7 @@
             <div class="txs">
               <div class="d-flex align-baseline py-1" v-for="tx in txs" :key="tx.txid">
                 <div class="d-flex flex-column">
-                  <a class="text-body-2 text-decoration-none" :href="`https://testnet2.gxchain.org/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon>{{ $t(`txs.${tx.type}`, tx.data) }}</a>
+                  <a class="text-body-2 text-decoration-none" :href="`https://scan-test.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon>{{ $t(`txs.${tx.type}`, tx.data) }}</a>
                   <span class="text-caption font-weight-light">({{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }})</span>
                 </div>
                 <v-spacer />
@@ -114,7 +114,7 @@ const NETWORKS = {
   4: 'rinkeby',
   5: 'goerli',
   42: 'kovan',
-  12357: 'gxchain2Test'
+  12357: 'REINetworkTest'
 };
 
 export default {
@@ -133,7 +133,7 @@ export default {
       return this.connection.network == 'mainnet' ? '' : `${this.connection.network}.`;
     },
     getSymbol() {
-      return this.connection.network == 'gxchain2Test' ? 'REI' : `ETH`;
+      return this.connection.network == 'REINetworkTest' ? 'REI' : `ETH`;
     },
   },
   data() {
@@ -333,14 +333,14 @@ export default {
                 method:'wallet_addEthereumChain',
                 params:[{
                 "chainId": "0x3045",
-                "chainName": "GXChain2 Testnet",
-                "rpcUrls": ["https://testnet2.gxchain.org/rpc/"],
+                "chainName": "REI Testnet",
+                "rpcUrls": ["https://rpc-testnet.rei.network"],
                 "nativeCurrency": {
-                    "name": "GXChain2",
+                    "name": "REINetwork",
                     "symbol": "REI",
                     "decimals": 18
                 },
-                "blockExplorerUrls": ["https://testnet2.gxchain.org/"]
+                "blockExplorerUrls": ["https://scan-test.rei.network/"]
                 }]
             },this.connection.address)
         } catch (addError) {

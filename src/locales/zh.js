@@ -79,7 +79,8 @@ export default {
     max: '全部',
     approve: '授权',
     wallet_balance: '钱包余额',
-    tips_voting_to_invalidate: '节点获得投票超过{minIndexVotingPower}票，才会被列入未激活列表'
+    tips_voting_to_invalidate: '节点获得投票超过{minIndexVotingPower}票，才会被列入未激活列表',
+    tips_claim_info: '须知：发起赎回操作{unstakeDelay}后，可以在赎回页面领取'
   },
   msg: {
     please_input_number: '请输入数字',
@@ -87,7 +88,11 @@ export default {
     please_input_amount: '请输入金额',
     please_input_correct_num: '请输入正确的数字',
     please_input_address: '请输入地址',
-    please_input_not_zero: '请输入大于0的数字'
+    please_input_not_zero: '请输入大于0的数字',
+    days: '天',
+    hour: '时',
+    minute: '分',
+    neterror:'网络错误'
   },
   unstake:{
     title: '待赎回',

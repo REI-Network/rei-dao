@@ -45,23 +45,23 @@ export default {
     withdraw: 'withdraw {amount}{symbol} to {to}'
   },
   stake: {
-    node_list: 'Node List',
+    node_list: 'Validator List',
     set_commission_rate: 'Set Commission Rate',
-    stake_to_other_node: 'Stake to Node',
+    stake_to_other_node: 'Voting to Validator',
     index: 'Index',
-    node: 'Node',
+    node: 'Validator',
     voting_power: 'Voting Power',
     share_balance: 'Commission Share',
     operation: 'Operation',
     staking: 'Voting',
     claim: 'Start Unstake',
     get_reward: 'Get Reward',
-    staking_info: 'Staking info',
+    staking_info: 'Voting info',
     amount: 'Amount',
     address: 'Address',
     btn_submit: 'Submit',
     btn_cancel: 'Cancel',
-    claim_info: 'Claim info',
+    claim_info: 'Unstake info',
     commonnsion_share_balance:'Commission share balance: ',
     estimate_receive: 'Estimate receive ',
     reward_info: 'Reward info',
@@ -73,7 +73,9 @@ export default {
     max: 'Max',
     approve: 'Approve',
     wallet_balance: 'Balance',
-    tips_voting_to_invalidate: 'Nodes that have more than {minIndexVotingPower} votes will be included in the inactive list'
+    tips_voting_to_invalidate: 'Nodes that have more than {minIndexVotingPower} votes will be included in the inactive list',
+    tips_claim_info: 'Note: {unstakeDelay} after the redemption operation is initiated, you can receive it on the redemption page'
+
   },
   msg: {
     please_input_number: 'Please enter the number',
@@ -81,7 +83,11 @@ export default {
     please_input_amount: 'Please input amount',
     please_input_correct_num: 'Please enter the correct number',
     please_input_address: 'Please enter the address',
-    please_input_not_zero: 'Please enter a number greater than 0'
+    please_input_not_zero: 'Please enter a number greater than 0',
+    days: ' days',
+    hour: ' hour',
+    minute: 'minute',
+    neterror:'Network Error'
   },
   unstake:{
     title: 'Pending Unstake',

@@ -57,6 +57,9 @@
                         {{$t('stake.voting_power')}}
                         </th>
                         <th class="text-left">
+                        {{$t('stake.commission_rate')}}
+                        </th>
+                        <th class="text-left">
                             {{$t('stake.share_balance')}}
                         </th>
                         <th class="text-left">
@@ -71,6 +74,7 @@
                         >
                         <td>{{ item.address | addr }}</td>
                         <td>{{ item.power | asset(2)  }}</td>
+                        <td>{{ item.commissionRate }}%</td>
                         <td>{{ item.balannceOfShare | asset(2)  }}</td>
                         <td>
                             <v-btn
@@ -286,7 +290,7 @@
                 </template>
             </v-text-field>
             <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
-            <div class="pb-3 text-caption"><strong class="text--secondary">须知：发起赎回操作{{timeToFormat(unstakeDelay)}}，可以在赎回页面领取</strong></div>
+            <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
             
             <div class="text-center">
                 <v-btn
@@ -628,7 +632,7 @@ export default {
                     status: 'PENDING',
                     data: {
                       amount: this.form.amount,
-                      symbol: 'GXC',
+                      symbol: 'REI',
                       to: util.addr(this.currentItem.address)
                     },
                     timestamp: new Date().getTime()
@@ -676,7 +680,7 @@ export default {
                     status: 'PENDING',
                     data: {
                       amount: this.claimForm.amount,
-                      symbol: 'GXC',
+                      symbol: 'REI',
                       to: util.addr(this.connection.address)
                     },
                     timestamp: new Date().getTime()
@@ -718,7 +722,7 @@ export default {
                     status: 'PENDING',
                     data: {
                       amount: this.stakeForm.amount,
-                      symbol: 'GXC',
+                      symbol: 'REI',
                       to: util.addr(this.stakeForm.address)
                     },
                     timestamp: new Date().getTime()
@@ -761,7 +765,7 @@ export default {
                     status: 'PENDING',
                     data: {
                       amount: this.rewardForm.amount,
-                      symbol: 'GXC',
+                      symbol: 'REI',
                       to: util.addr(this.connection.address)
                     },
                     timestamp: new Date().getTime()
@@ -822,11 +826,11 @@ export default {
         let str = '';
         let resdays = Math.floor(val/60/60/24)
         if(resdays > 0){
-            str = resdays + '天后';
+            str = resdays + this.$t('msg.days');
         } else if(Math.floor(val/60/60) > 0){
-            str = Math.floor(val/60/60)+'小时后'
+            str = Math.floor(val/60/60)+ this.$t('msg.hour');
         } else {
-            str = val/60 + '分后';
+            str = val/60 + this.$t('msg.minute'); 
         }
         return str;
     },
