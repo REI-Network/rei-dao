@@ -69,13 +69,13 @@ export default {
     commission_rate: 'Commission rate: ',
     last_update_time: 'Last update time: ',
     active_nodelist: 'Active Validator',
-    not_active_nodelist: 'Inactive Validator',
+    not_active_nodelist: 'My Voted Validator',
     max: 'Max',
     approve: 'Approve',
     wallet_balance: 'Balance',
     tips_voting_to_invalidate: 'Nodes that have more than {minIndexVotingPower} votes will be included in the inactive list',
-    tips_claim_info: 'Note: {unstakeDelay} after the redemption operation is initiated, you can receive it on the redemption page'
-
+    tips_claim_info: 'Note: {unstakeDelay} after the redemption operation is initiated, you can receive it on the redemption page',
+    tips_commission_rate: 'The next time you can set is after {commissionRateInterval}'
   },
   msg: {
     please_input_number: 'Please enter the number',
@@ -87,7 +87,8 @@ export default {
     days: ' days',
     hour: ' hour',
     minute: 'minute',
-    neterror:'Network Error'
+    neterror:'Network Error',
+    loading: 'Loading... Please wait'
   },
   unstake:{
     title: 'Pending Unstake',

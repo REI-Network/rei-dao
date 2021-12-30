@@ -75,12 +75,13 @@ export default {
     commission_rate: '分红比例',
     last_update_time: '上次更新时间',
     active_nodelist: '已激活节点',
-    not_active_nodelist: '未激活节点',
+    not_active_nodelist: '我投票的节点',
     max: '全部',
     approve: '授权',
     wallet_balance: '钱包余额',
     tips_voting_to_invalidate: '节点获得投票超过{minIndexVotingPower}票，才会被列入未激活列表',
-    tips_claim_info: '须知：发起赎回操作{unstakeDelay}后，可以在赎回页面领取'
+    tips_claim_info: '须知：发起赎回操作{unstakeDelay}后，可以在赎回页面领取',
+    tips_commission_rate: '下次可以修改的时间为{commissionRateInterval}之后'
   },
   msg: {
     please_input_number: '请输入数字',
@@ -92,7 +93,8 @@ export default {
     days: '天',
     hour: '时',
     minute: '分',
-    neterror:'网络错误'
+    neterror:'网络错误',
+    loading: '努力加载中'
   },
   unstake:{
     title: '待赎回',
