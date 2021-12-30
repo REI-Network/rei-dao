@@ -5,19 +5,6 @@
         
             <v-card-actions>
                 <v-card-title>{{$t('stake.node_list')}}
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-icon
-                            color="primary"
-                            dark
-                            v-bind="attrs"
-                            v-on="on"
-                            >
-                            mdi-help-circle-outline
-                            </v-icon>
-                        </template>
-                        <span>{{$t('stake.tips_voting_to_invalidate',{minIndexVotingPower: assetFormat(minIndexVotingPower,2)} )}}</span>
-                    </v-tooltip>
                 </v-card-title>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -46,105 +33,86 @@
           <v-divider />
           <v-tabs-items v-model="tab1">
                 <v-tab-item key="11">
-                  <v-simple-table>
-                    <template v-slot:default>
-                    <thead>
-                        <tr>
-                        <th class="text-left">
-                            {{$t('stake.node')}}
-                        </th>
-                        <th class="text-left">
-                        {{$t('stake.voting_power')}}
-                        </th>
-                        <th class="text-left">
-                        {{$t('stake.commission_rate')}}
-                        </th>
-                        <th class="text-left">
-                            {{$t('stake.share_balance')}}
-                        </th>
-                        <th class="text-left">
-                            {{$t('stake.operation')}}
-                        </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                        v-for="(item,index) in nodeList"
-                        :key="index"
-                        >
-                        <td>{{ item.address | addr }}</td>
-                        <td>{{ item.power | asset(2)  }}</td>
-                        <td>{{ item.commissionRate }}%</td>
-                        <td>{{ item.balannceOfShare | asset(2)  }}</td>
-                        <td>
-                            <v-btn
-                            tile
-                            small
-                            color="success"
-                            class="mr-4"
-                            v-if='connection.address'
-                            @click="handleStaking(item)"
-                            >
-                            {{$t('stake.staking')}}
-                            </v-btn>
-                            <v-btn
-                            tile
-                            small
-                            color="success"
-                            class="mr-4"
-                            v-if='connection.address'
-                            @click="handleClaim(item)"
-                            >
-                            {{$t('stake.claim')}}
-                            </v-btn>
-                            <v-btn
-                            v-if="item.address==connection.address"
-                            tile
-                            small
-                            color="success"
-                            class="mr-4"
-                            @click="handleReward(item)"
-                            >
-                            {{$t('stake.get_reward')}}
-                            </v-btn>
-                            <span v-if='!connection.address'>
-                                -
-                            </span>
-                        </td>
-                        </tr>
-                    </tbody>
+                    <v-data-table
+                        :headers="headers"
+                        :items="nodeList"
+                        :items-per-page="21"
+                        class="elevation-1"
+                        hide-default-footer
+                        :loading="stakeListLoading"
+                        :loading-text="$t('msg.loading')"
+                    >
+                    <template v-slot:item.address="{ item }">
+                        
+                            <Address :val="item.address"></Address>
                     </template>
-                  </v-simple-table>
+                    <template v-slot:item.power="{ item }">
+                            {{ item.power | asset(2)  }}
+                    </template>
+                    <template v-slot:item.commissionRate="{ item }">
+                            {{ item.commissionRate }}%
+                    </template>
+                    <template v-slot:item.balannceOfShare="{ item }">
+                            {{ item.balannceOfShare | asset(2)  }}
+                    </template>
+                    <template v-slot:item.actions="{ item }">
+                        <v-btn
+                        tile
+                        small
+                        color="success"
+                        class="mr-4"
+                        v-if='connection.address'
+                        @click="handleStaking(item)"
+                        >
+                        {{$t('stake.staking')}}
+                        </v-btn>
+                        <v-btn
+                        tile
+                        small
+                        color="success"
+                        class="mr-4"
+                        v-if='connection.address'
+                        @click="handleClaim(item)"
+                        >
+                        {{$t('stake.claim')}}
+                        </v-btn>
+                        <v-btn
+                        v-if="item.address==connection.address"
+                        tile
+                        small
+                        color="success"
+                        class="mr-4"
+                        @click="handleReward(item)"
+                        >
+                        {{$t('stake.get_reward')}}
+                        </v-btn>
+                        <span v-if='!connection.address'>
+                            -
+                        </span>
+                    </template>
+                    </v-data-table>
                 </v-tab-item>
                 <v-tab-item key="12">
-                  <v-simple-table>
-                    <template v-slot:default>
-                    <thead>
-                        <tr>
-                        <th class="text-left">
-                            {{$t('stake.node')}}
-                        </th>
-                        <th class="text-left">
-                        {{$t('stake.voting_power')}}
-                        </th>
-                        <th class="text-left">
-                            {{$t('stake.share_balance')}}
-                        </th>
-                        <th class="text-left">
-                            {{$t('stake.operation')}}
-                        </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                        v-for="(item,index) in notActiveList"
-                        :key="index"
-                        >
-                        <td>{{ item.address | addr }}</td>
-                        <td>{{ item.power | asset(2)  }}</td>
-                        <td>{{ item.balannceOfShare | asset(2)  }}</td>
-                        <td>
-                            <v-btn
+                    <v-data-table
+                        :headers="myStakeHeaders"
+                        :items="myStakeList"
+                        :items-per-page="21"
+                        class="elevation-1"
+                        hide-default-footer
+                        :loading="myStakeListLoading"
+                        :loading-text="$t('msg.loading')"
+                    >
+                    <template v-slot:item.address="{ item }">
+                            <Address :val="item.address"></Address>
+                    </template>
+                    <template v-slot:item.power="{ item }">
+                            {{ item.power | asset(2)  }}
+                    </template>
+                    <template v-slot:item.balannceOfShare="{ item }">
+                            {{ item.balannceOfShare | asset(2)  }}
+                    </template>
+                    <template v-slot:item.actions="{ item }">
+                        <v-btn
                             tile
                             small
                             color="success"
@@ -162,11 +130,12 @@
                             >
                             {{$t('stake.claim')}}
                             </v-btn>
-                        </td>
-                        </tr>
-                    </tbody>
+                        <span v-if='!connection.address'>
+                            -
+                        </span>
                     </template>
-                  </v-simple-table>
+                    </v-data-table>
+                  
                 </v-tab-item>
           </v-tabs-items>
         
@@ -181,6 +150,7 @@
             ref="stakeform"
             lazy-validation
           >
+            <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
             <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
             <v-text-field
                 v-model="form.amount"
@@ -329,11 +299,10 @@
             ref="claimRewardForm"
             lazy-validation
           >
-              <div class="pb-1 text-body-1">{{$t('stake.reward_balance')}}: {{rewardBalance | asset(2)}}</div>
+              <div class="pb-1 text-body-1">{{$t('stake.reward_balance')}}: {{rewardBalance | asset(2)}} REI</div>
             <v-text-field
                 v-model="rewardForm.amount"
                 :label="$t('stake.amount')"
-                outlined
                 required
                 :rules="amountRules"
             ><template v-slot:append>
@@ -342,6 +311,7 @@
                     </v-btn>
                 </template>
             </v-text-field>
+            <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
             
             <div class="text-center">
                 <v-btn
@@ -369,12 +339,26 @@
             ref="form"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.commission_rate')}}: {{currentAddress.commissionRate}}%</div>
-             <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</div>
+            <div class="pb-1 text-body-1">{{$t('stake.commission_rate')}}: {{currentAddress.commissionRate}}% </div>
+             <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                        color="primary"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                        >
+                        mdi-help-circle-outline
+                        </v-icon>
+                    </template>
+                    <span>{{$t('stake.tips_commission_rate',{commissionRateInterval: dateFormat((currentAddress.updateTimestamp*1+commissionRateInterval*1)*1000)} )}}</span>
+                </v-tooltip>
+             </div>
             <v-text-field
                 v-model="rateForm.amount"
                 :label="$t('stake.commission_rate')"
-                solo
+
                 :rules="rateRules"
                 clearable
                 suffix="%"
@@ -411,6 +395,8 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import abiCommissionShare from '../abis/abiCommissionShare'
 import abiValidatorRewardPool from '../abis/abiValidatorRewardPool'
+import { getMyStake } from '../service/CommonService'
+import Address from '../components/Address';
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
@@ -418,16 +404,47 @@ import util from '../utils/util'
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
 export default {
+  components:{
+      Address
+  },
   filters,
   data() {
     return {
         isNode: false,
         tab1: null,
+        stakeListLoading: false,
+        myStakeListLoading: false,
         dialog: false,
         claimDialog: false,
         stakeToNodeDialog: false,
         rewardDialog: false,
         setCommissionRateDialog: false,
+        myStakeList: [],
+        headers: [
+            {
+                text: this.$t('stake.node'),
+                align: 'start',
+                sortable: false,
+                value: 'address',
+            },
+            { text: this.$t('stake.voting_power'), value: 'power' },
+            { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
+            { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+            { text: this.$t('stake.operation'), value: 'actions', sortable: false }
+        ],
+        myStakeHeaders: [
+            {
+                text: this.$t('stake.node'),
+                align: 'start',
+                sortable: false,
+                value: 'address',
+            },
+            { 
+                text: this.$t('stake.voting_power'),value: 'power'
+            },
+            { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+            { text: this.$t('stake.operation'), value: 'actions', sortable: false }
+        ],
         form:{
             amount:0
         },
@@ -476,8 +493,8 @@ export default {
     }
   },
   mounted() {
-      this.connect()
-      this.init()
+      this.connect();
+      this.init();
   },
   methods: {
     ...mapActions({
@@ -492,16 +509,14 @@ export default {
     },
     async init() {
         
+        this.stakeListLoading = true;
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         
         this.stakeManagerContract = await contract.methods.stakeManager().call();
         this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
-        console.log(this.commissionRateInterval)
         this.unstakeDelay = await contract.methods.unstakeDelay().call();
-        console.log('unstakeDelay',this.unstakeDelay)
         let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
         this.minIndexVotingPower = web3.utils.fromWei(web3.utils.toBN(minIndexVotingPower))
-        console.log('minIndexVotingPower',this.minIndexVotingPower)
         let validatorRewardPool = await contract.methods.validatorRewardPool().call();
         
         this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool,validatorRewardPool);
@@ -523,7 +538,6 @@ export default {
         let indexedNodeList = await Promise.all(indexedValidatorsArr.map(item => {
                 return stake_contract.methods.indexedValidatorsByIndex(item).call()
             })).then(async (data) => {
-
             let validator_address = data;
             let validator_addressMap = indexedValidatorsArr.map(item => {
                 return stake_contract.methods.getVotingPowerByIndex(item).call()
@@ -571,8 +585,46 @@ export default {
         this.indexedNodeList = indexedNodeList;
         this.nodeList = activeList;
         this.notActiveList = notActiveList;
+        this.stakeListLoading = false;
+        this.getMyStakeList();
     },
-    
+    async getMyStakeList() {
+        this.myStakeListLoading = true;
+        let res = await getMyStake({
+            from: this.connection.address
+        });
+        if(res && res.data){
+            let myStakeList = res.data.validators
+            if(myStakeList.length>0){
+
+                let validatorPowerMap = myStakeList.map(item => {
+                    return this.stakeManageInstance.methods.getVotingPowerByAddress(item).call()
+                })
+                let validatorMap = myStakeList.map(item => {
+                    return this.stakeManageInstance.methods.validators(item).call()
+                })
+
+                let validatorPower = await Promise.all(validatorPowerMap);
+                let validators = await Promise.all(validatorMap);
+
+                let balanceOfShareMap = validators.map(item => {
+                    return this.getBalanceOfShare(item);
+                })
+                let balanceOfShare = await Promise.all(balanceOfShareMap);
+                let arr = []
+                for(let i = 0;i < myStakeList.length;i++){
+                    arr.push({
+                        address: myStakeList[i],
+                        power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
+                        balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+                        commissionShare: balanceOfShare[i].commissionShare,
+                    })
+                }
+                this.myStakeList = arr
+            }
+        }
+        this.myStakeListLoading = false;
+    },
     async getBalanceOfShare(activeValidatorsShare) {
         let commissionShare = new web3.eth.Contract(abiCommissionShare,activeValidatorsShare[1]);
         let balance = 0;
@@ -836,6 +888,9 @@ export default {
     },
     assetFormat(value,precision) {
         return util.asset(value,precision)
+    },
+    dateFormat(val) {   
+       return util.dateFormat(val, 'YYYY-MM-dd hh:mm:ss')
     }
   },
   computed: {
