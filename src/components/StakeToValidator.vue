@@ -507,6 +507,9 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+    getApiUrl(){
+        return this.connection.network == 'REI Network' ? process.env.VUE_APP_SERVER_API : process.env.VUE_APP_TEST_SERVER_API;
+    },
     async init() {
         
         this.stakeListLoading = true;
@@ -524,9 +527,12 @@ export default {
         let stake_contract = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
         this.stakeManageInstance = stake_contract;
         const activeValidatorsLength = await this.stakeManageInstance.methods.activeValidatorsLength().call()
-        const indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call()
-
-
+        let indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call()
+        let indexedFlag = true;
+        if(indexedValidatorsLength == 0){
+            indexedFlag = false;
+            indexedValidatorsLength = activeValidatorsLength;
+        }
         let indexedValidatorsArr = Array.from(new Array(Number(indexedValidatorsLength)), (n,i) => i)
 
         let activeValidatorsArr = Array.from(new Array(Number(activeValidatorsLength)), (n,i) => i)
@@ -534,16 +540,28 @@ export default {
         let activeValidateList = await Promise.all(activeValidatorsArr.map(item => {
                 return stake_contract.methods.activeValidators(item).call()
             }))
-
         let indexedNodeList = await Promise.all(indexedValidatorsArr.map(item => {
-                return stake_contract.methods.indexedValidatorsByIndex(item).call()
+                if(indexedFlag) {
+                    return stake_contract.methods.indexedValidatorsByIndex(item).call()
+                } else {
+                    return stake_contract.methods.activeValidators(item).call()
+                }
             })).then(async (data) => {
             let validator_address = data;
-            let validator_addressMap = indexedValidatorsArr.map(item => {
-                return stake_contract.methods.getVotingPowerByIndex(item).call()
-            })
+            let validator_addressMap;
+            if(indexedFlag){
+                validator_addressMap = indexedValidatorsArr.map(item => {
+                    return stake_contract.methods.getVotingPowerByIndex(item).call() 
+                })
+            } else {
+                validator_addressMap = validator_address.map(item => {
+                    return stake_contract.methods.getVotingPowerByAddress(item.validator).call() 
+                })
+            }
+            
             let validatorMap = validator_address.map(item => {
-                return stake_contract.methods.validators(item).call()
+                let _item = indexedFlag ? item : item.validator;
+                return stake_contract.methods.validators(_item).call()
             })
             let validatorPower = await Promise.all(validator_addressMap);
             let validators = await Promise.all(validatorMap);
@@ -554,7 +572,7 @@ export default {
             let arr = []
             for(let i = 0;i < validator_address.length;i++){
                 arr.push({
-                    address: validator_address[i],
+                    address: indexedFlag?validator_address[i]:validator_address[i].validator,
                     power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
                     balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
                     commissionShare: balanceOfShare[i].commissionShare,
@@ -590,7 +608,8 @@ export default {
     },
     async getMyStakeList() {
         this.myStakeListLoading = true;
-        let res = await getMyStake({
+        let apiUrl = this.getApiUrl();
+        let res = await getMyStake(apiUrl,{
             from: this.connection.address
         });
         if(res && res.data){

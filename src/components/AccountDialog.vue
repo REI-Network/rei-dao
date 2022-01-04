@@ -2,7 +2,7 @@
   <div>
     <div class="ops">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
-      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REINetworkTest'" rounded @click="switchGXChainNet()">
+      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REI Network' && connection.network != 'REI Testnet'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
         {{$t('msg.neterror')}}
       </v-btn>
@@ -114,7 +114,8 @@ const NETWORKS = {
   4: 'rinkeby',
   5: 'goerli',
   42: 'kovan',
-  12357: 'REINetworkTest'
+  12357: 'REI Testnet',
+  47805: 'REI Network'
 };
 
 export default {
@@ -133,7 +134,7 @@ export default {
       return this.connection.network == 'mainnet' ? '' : `${this.connection.network}.`;
     },
     getSymbol() {
-      return this.connection.network == 'REINetworkTest' ? 'REI' : `ETH`;
+      return 'REI'
     },
   },
   data() {
@@ -277,7 +278,6 @@ export default {
     },
     async loadAccount(key) {
       let accounts = await web3.eth.getAccounts();
-      console.log(accounts)
       if (accounts.length > 0) {
         let connection = { ...this.connection, loading: true, address: accounts[0] };
         this.setConnection({
@@ -332,15 +332,15 @@ export default {
             await window.ethereum.request({
                 method:'wallet_addEthereumChain',
                 params:[{
-                "chainId": "0x3045",
-                "chainName": "REI Testnet",
-                "rpcUrls": ["https://rpc-testnet.rei.network"],
+                "chainId": "0xbabd",
+                "chainName": "REI Network",
+                "rpcUrls": ["https://rpc.rei.network"],
                 "nativeCurrency": {
                     "name": "REINetwork",
                     "symbol": "REI",
                     "decimals": 18
                 },
-                "blockExplorerUrls": ["https://scan-test.rei.network/"]
+                "blockExplorerUrls": ["https://scan.rei.network/"]
                 }]
             },this.connection.address)
         } catch (addError) {
@@ -353,7 +353,7 @@ export default {
             this.addREI()
             let res = await ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x3045' }],
+                params: [{ chainId: '0xbabd' }],
             });
             console.log('res',res)
             if(res && res.error){

@@ -116,7 +116,8 @@ export default {
       addTx: 'addTx'
     }),
     async init() {
-        let res = await getUnstake({
+        let apiUrl = this.getApiUrl();
+        let res = await getUnstake(apiUrl,{
             to: this.connection.address
         });
         if(res && res.data){
@@ -124,6 +125,9 @@ export default {
         }
 
         console.log(this.nodeList)
+    },
+    getApiUrl(){
+        return this.connection.network == 'REI Network' ? process.env.VUE_APP_SERVER_API : process.env.VUE_APP_TEST_SERVER_API;
     },
     cancelClaim() {
 
