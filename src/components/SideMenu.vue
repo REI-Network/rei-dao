@@ -19,18 +19,21 @@
     </v-sheet>
     <v-divider></v-divider>
     <v-list>
-      <v-list-item v-for="{ icon, text, link } in links" :key="text" link :to="link">
-        <v-list-item-icon>
-          <v-icon>{{ icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>{{ $t(text) }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+      <template v-for="{ icon, text, link, name } in links">
+        <v-list-item :key="text" link :to="link" v-if="hideItem(name)">
+            <v-list-item-icon>
+            <v-icon>{{ icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+            <v-list-item-title>{{ $t(text) }}</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+      </template>
     </v-list>
   </v-navigation-drawer>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -39,15 +42,31 @@ export default {
         {
           icon: 'mdi-text-box-check-outline',
           text: 'stake.staking',
-          link: '/stake'
+          link: '/stake',
+          name: 'stake'
         },
         {
           icon: 'mdi-sack',
           text: 'stakeforgas.title',
-          link: '/stakeforgas'
+          link: '/stakeforgas',
+          name: 'stakeforgas'
         }
       ]
     };
+  },
+  computed: {
+    ...mapGetters({
+        connection: 'connection',
+        dark: 'dark'
+    })
+  },
+  methods: {
+    hideItem(item) {
+        if(item =='stakeforgas' && this.connection.network == 'REI Network'){
+            return false
+        }
+        return true
+    }
   }
 };
 </script>
