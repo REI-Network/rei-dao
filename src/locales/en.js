@@ -66,7 +66,7 @@ export default {
     estimate_receive: 'Estimate receive ',
     reward_info: 'Reward info',
     reward_balance: 'Reward balance: ',
-    commission_rate: 'Commission rate: ',
+    commission_rate: 'Commission Rate',
     last_update_time: 'Last update time: ',
     active_nodelist: 'Active Validator',
     not_active_nodelist: 'My Voted Validator',
