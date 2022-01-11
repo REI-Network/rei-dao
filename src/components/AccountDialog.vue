@@ -340,8 +340,9 @@ export default {
                     "symbol": "REI",
                     "decimals": 18
                 },
-                "blockExplorerUrls": ["https://scan.rei.network/"]
-                }]
+                "blockExplorerUrls": ["https://scan.rei.network/"],
+                }],
+                
             },this.connection.address)
         } catch (addError) {
             console.log('res',addError)

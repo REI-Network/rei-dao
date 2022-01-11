@@ -55,6 +55,9 @@
                     <template v-slot:item.balannceOfShare="{ item }">
                             {{ item.balannceOfShare | asset(2)  }}
                     </template>
+                    <template v-slot:item.isActive="{ item }">
+                            {{ status[item.isActive] }}
+                    </template>
                     <template v-slot:item.actions="{ item }">
                         <v-btn
                         tile
@@ -111,6 +114,7 @@
                     <template v-slot:item.balannceOfShare="{ item }">
                             {{ item.balannceOfShare | asset(2)  }}
                     </template>
+                    
                     <template v-slot:item.actions="{ item }">
                         <v-btn
                             tile
@@ -430,6 +434,7 @@ export default {
             { text: this.$t('stake.voting_power'), value: 'power' },
             { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
             { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+            { text: this.$t('stake.status'), value: 'isActive' },
             { text: this.$t('stake.operation'), value: 'actions', sortable: false }
         ],
         myStakeHeaders: [
@@ -445,6 +450,10 @@ export default {
             { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
             { text: this.$t('stake.operation'), value: 'actions', sortable: false }
         ],
+        status:{
+            'true': this.$t('stake.isActive'),
+            'false': this.$t('stake.notActive')
+        },
         form:{
             amount:0
         },
@@ -588,9 +597,17 @@ export default {
         for(let i = 0; i < indexedNodeList.length; i++) {
             let validate = find(activeValidateList, item => item[0]==indexedNodeList[i].address)
            if(validate){
-                activeList.push(indexedNodeList[i])
+                let obj = {
+                    isActive: 'true'
+                }
+                let _obj = Object.assign(obj,indexedNodeList[i])
+                activeList.push(_obj)
            } else {
-                notActiveList.push(indexedNodeList[i])
+               let obj = {
+                    isActive: 'false'
+                }
+                let _obj = Object.assign(obj,indexedNodeList[i])
+                notActiveList.push(_obj)
            }
         }
 
@@ -601,7 +618,8 @@ export default {
             this.isNode = false;
         }
         this.indexedNodeList = indexedNodeList;
-        this.nodeList = activeList;
+        this.nodeList = activeList.concat(notActiveList);
+        console.log(this.nodeList)
         this.notActiveList = notActiveList;
         this.stakeListLoading = false;
         this.getMyStakeList();

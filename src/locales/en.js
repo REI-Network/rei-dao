@@ -75,7 +75,10 @@ export default {
     wallet_balance: 'Balance',
     tips_voting_to_invalidate: 'Nodes that have more than {minIndexVotingPower} votes will be included in the inactive list',
     tips_claim_info: 'Note: {unstakeDelay} after the redemption operation is initiated, you can receive it on the redemption page',
-    tips_commission_rate: 'The next time you can set is after {commissionRateInterval}'
+    tips_commission_rate: 'The next time you can set is after {commissionRateInterval}',
+    status: 'Status',
+    isActive: 'Active',
+    notActive: 'Not Active'
   },
   msg: {
     please_input_number: 'Please enter the number',

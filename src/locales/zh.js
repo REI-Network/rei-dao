@@ -81,7 +81,10 @@ export default {
     wallet_balance: '钱包余额',
     tips_voting_to_invalidate: '节点获得投票超过{minIndexVotingPower}票，才会被列入未激活列表',
     tips_claim_info: '须知：发起赎回操作{unstakeDelay}后，可以在赎回页面领取',
-    tips_commission_rate: '下次可以修改的时间为{commissionRateInterval}之后'
+    tips_commission_rate: '下次可以修改的时间为{commissionRateInterval}之后',
+    status: '状态',
+    isActive: '已激活',
+    notActive: '未激活'
   },
   msg: {
     please_input_number: '请输入数字',
