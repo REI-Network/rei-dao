@@ -1,8 +1,8 @@
 <template>
-  <v-app dark>
+  <v-app dark id="app">
     <nav-header />
     <side-menu />
-    <v-main class="grey" :class="dark ? 'darken-3' : 'lighten-3'">
+    <v-main class="grey" :class="dark ? 'stake_background' : 'lighten-3'">
       <router-view />
     </v-main>
     <bottom-nav />
@@ -58,5 +58,8 @@ export default {
 
 .bebas {
   font-family: Bebas-Regular;
+}
+#app {
+    background-color: var(--v-background-base) !important;
 }
 </style>

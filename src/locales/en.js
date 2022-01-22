@@ -78,7 +78,7 @@ export default {
     tips_commission_rate: 'The next time you can set is after {commissionRateInterval}',
     status: 'Status',
     isActive: 'Active',
-    notActive: 'Not Active'
+    notActive: 'Unactive'
   },
   msg: {
     please_input_number: 'Please enter the number',

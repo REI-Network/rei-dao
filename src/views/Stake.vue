@@ -1,24 +1,29 @@
 <template>
-  <v-container>
+  <v-container class="stake_background">
+    <div class="header-title">
+      <h3>Voting</h3>
+      <div class="title-detailed">How To Be A Validator</div>
+    </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
-            <v-tabs v-model="tabNav" centered>
+            <!-- <v-tabs v-model="tabNav" centered>
                 <v-tab key="1">{{$t('stake.staking')}}</v-tab>
                 <v-tab key="2">{{$t('unstake.title')}}</v-tab> 
             </v-tabs>
-            <v-divider />
-            <v-tabs-items v-model="tabNav">
-                <v-tab-item key="1">
+            <v-divider /> -->
+            <!-- <v-tabs-items v-model="tabNav">
+                <v-tab-item key="1"> -->
                   <StakeToValidator></StakeToValidator>
-                </v-tab-item>
-                <v-tab-item key="2">
-                  <UnstakeToValidator></UnstakeToValidator>
-                </v-tab-item>
-          </v-tabs-items>
+                <!-- </v-tab-item>
+                <v-tab-item key="2"> -->
+                  <!-- <UnstakeToValidator></UnstakeToValidator> -->
+                <!-- </v-tab-item>
+          </v-tabs-items> -->
         </v-card>
       </v-col>
     </v-row>
+    <StakeChartsFAQ></StakeChartsFAQ>
   </v-container>
 </template>
 <script>
@@ -35,14 +40,16 @@ import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
 import StakeToValidator from '../components/StakeToValidator';
-import UnstakeToValidator from '../components/UnstakeToValidator';
+// import UnstakeToValidator from '../components/UnstakeToValidator';
+import StakeChartsFAQ from '../components/StakeChartsFAQ';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
 export default {
   components:{
     StakeToValidator,
-    UnstakeToValidator
+    // UnstakeToValidator,
+    StakeChartsFAQ
   },
   filters,
   data() {
@@ -59,3 +66,12 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+.header-title{
+  margin: 1.5rem 0;
+    .title-detailed{
+      font-size: 14px;
+    }
+}
+</style>

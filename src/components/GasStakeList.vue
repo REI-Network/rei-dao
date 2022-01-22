@@ -1,36 +1,38 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="12" sm="12">
-            <v-card-actions>
-                <v-card-title>{{$t('unstake.list_title')}}</v-card-title>
-            </v-card-actions>   
+      <v-col cols="12" md="12" sm="12">  
           <v-divider />
-         <v-simple-table class="list_title">
+         <v-simple-table class="background">
             <template v-slot:default>
             <thead>
                 <tr>
                  <th class="text-left">
-                    {{$t('unstake.node')}}
+                    Address
                 </th> 
                 <th class="text-left">
-                    {{$t('unstake.create_time')}}
+                    Amount
                 </th>
                 <th class="text-left">
-                    {{$t('unstake.unstake_available')}}
+                    Deposit Time
                 </th>
                 <th class="text-left">
-                    {{$t('unstake.shares')}}
+                    Withdraw Countdown
                 </th>
                 <th class="text-left">
-                    {{$t('unstake.get_value')}}
+                    Operation
                 </th>
-                <th class="text-left">
-                    {{$t('unstake.status')}}
-                </th>
-                <th class="text-left">
-                    {{$t('unstake.opertion')}}
-                </th>
+                 <!-- <th class="text-left">
+                    <v-select
+                        class="d-select"
+                        :items="itemsPages"
+                        label="10"
+                        solo
+                        item-color="start_unstake"        
+                        dense
+                        style="border-radius:20px;width:80px"
+                    ></v-select>
+                </th> -->
                 </tr>
             </thead>
             <tbody>
@@ -61,7 +63,6 @@
         </v-simple-table>
       </v-col>
     </v-row>
-    
   </v-container>
 </template>
 <script>
@@ -81,6 +82,7 @@ export default {
   data() {
     return {
         dialog: false,
+        itemsPages:['10','20'],
         form:{
             amount:0
         },

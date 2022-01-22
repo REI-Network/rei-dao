@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent v-if="$vuetify.breakpoint.mdAndUp">
+  <v-navigation-drawer app permanent v-if="$vuetify.breakpoint.mdAndUp" class="background">
     <v-sheet class="d-flex pa-4 align-center">
       <router-link to="/">
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
@@ -7,7 +7,7 @@
                 class="mr-4" 
                 max-height="48"
                 max-width="48"
-                src="../assets/images/rei.svg"
+                src="../assets/images/REI DAO.svg"
                 ></v-img>
           
         <!-- </v-avatar> -->
@@ -41,6 +41,18 @@ export default {
       links: [
         {
           icon: 'mdi-text-box-check-outline',
+          text: 'Dashboards',
+          link: '/dashboards',
+          name: 'dashboards'
+        },
+        {
+          icon: 'mdi-sack',
+          text: 'MyAccount',
+          link: '/myAccount',
+          name: 'myAccount'
+        },
+        {
+          icon: 'mdi-text-box-check-outline',
           text: 'stake.staking',
           link: '/stake',
           name: 'stake'
@@ -50,7 +62,7 @@ export default {
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'stakeforgas'
-        }
+        },
       ]
     };
   },

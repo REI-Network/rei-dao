@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat color="grey" :class="dark ? 'darken-4' : 'lighten-4'">
+  <v-app-bar app flat color="grey" :class="dark ? 'background' : 'background'">
     <span class="d-sm-flex d-md-none flex-sm-column flex-xs-row align-center justify-center">
       <router-link to="/">
         <!-- <v-avatar color="grey" size="25"> -->

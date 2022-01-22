@@ -1,9 +1,8 @@
 <template>
-  <v-container>
+  <v-container class="background">
     <v-row>
-      <v-col cols="12" md="12" sm="12">
-        
-            <v-card-actions>
+      <v-col cols="12" md="12" sm="12">   
+            <!-- <v-card-actions>
                 <v-card-title>{{$t('stake.node_list')}}
                 </v-card-title>
                 <v-spacer></v-spacer>
@@ -25,163 +24,243 @@
                 >
                 {{$t('stake.stake_to_other_node')}}
             </v-btn>
-            </v-card-actions>   
-            <v-tabs v-model="tab1" align-with-title>
-                <v-tab key="11">{{$t('stake.active_nodelist')}}</v-tab>
-                <v-tab key="12">{{$t('stake.not_active_nodelist')}}</v-tab> 
+            </v-card-actions>    -->
+            <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
+                    <v-tab key="11" class="v-tab-left">{{$t('stake.active_nodelist')}}</v-tab>
+                    <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
+                <v-btn
+                    class="v-btn"
+                    text
+                    outlined
+                    color="primary"
+                    v-if="connection.address"
+                    @click="stakeToNode"
+                >
+                {{$t('stake.stake_to_other_node')}}
+                    <v-icon
+                        color="primary"
+                        >
+                        mdi-plus-circle-outline
+                    </v-icon>
+                </v-btn>
             </v-tabs>
           <v-divider />
           <v-tabs-items v-model="tab1">
-                <v-tab-item key="11">
+                <v-tab-item key="11" >
+                    <v-row class="active-select background">
+                        <v-tabs v-model="tab2" 
+                            align-with-title 
+                            hide-slider 
+                            class="my-voted-validator" 
+                            background-color="start_unstake"
+                            height="36">
+                           <v-tab key="111" style="font-size:12px">{{$t('stake.active_nodelist')}}</v-tab>
+                           <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab> 
+                        </v-tabs>
+                    <v-row align="end" justify="end" class="right-outline" sm="4" dense>
+                        <v-col
+                            class="d-flex"
+                            cols="12"
+                            sm="3"
+                        >
+                            <v-select
+                                class="d-select"
+                                :items="items"
+                                label="Active Validator"
+                                solo
+                                background-color="start_unstake"
+                                item-color="vote_button"
+                                dense
+                            ></v-select>
+                        </v-col>
+                        <v-col
+                            class="d-flex"
+                            cols="12"
+                            sm="2"
+                        >
+                            <v-select
+                                class="d-select"
+                                :items="itemsPages"
+                                label="10"
+                                solo
+                                background-color="start_unstake"
+                                item-color="vote_button"
+                                dense
+                            ></v-select>
+                        </v-col>
+                    </v-row>
+                    </v-row>
+                    <v-tabs-items v-model="tab2">
+                    <v-tab-item key="111">
                     <v-data-table
                         :headers="headers"
                         :items="nodeList"
-                        :items-per-page="21"
                         class="elevation-1"
                         hide-default-footer
+                        :items-per-page="itemsPerPage"
                         :loading="stakeListLoading"
                         :loading-text="$t('msg.loading')"
+                        :page.sync="page"
+                        @page-count="pageCount = $event"
                     >
-                    <template v-slot:item.address="{ item }">
-                        
+                        <template v-slot:item.address="{ item }">
                             <Address :val="item.address"></Address>
-                    </template>
-                    <template v-slot:item.power="{ item }">
+                            <span :class=" status[item.isActive]=='Active'?'active':'not-active'">{{ status[item.isActive] }}</span>
+                        </template>
+                        <template v-slot:item.power="{ item }">
                             {{ item.power | asset(2)  }}
-                    </template>
-                    <template v-slot:item.commissionRate="{ item }">
+                        </template>
+                        <template v-slot:item.commissionRate="{ item }">
                             {{ item.commissionRate }}%
-                    </template>
-                    <template v-slot:item.balannceOfShare="{ item }">
+                        </template>
+                        <template v-slot:item.balannceOfShare="{ item }">
                             {{ item.balannceOfShare | asset(2)  }}
-                    </template>
-                    <template v-slot:item.isActive="{ item }">
+                        </template>
+                        <!-- <template v-slot:item.isActive="{ item }">
                             {{ status[item.isActive] }}
-                    </template>
-                    <template v-slot:item.actions="{ item }">
-                        <v-btn
-                        tile
-                        small
-                        color="success"
-                        class="mr-4"
-                        v-if='connection.address'
-                        @click="handleStaking(item)"
-                        >
-                        {{$t('stake.staking')}}
-                        </v-btn>
-                        <v-btn
-                        tile
-                        small
-                        color="success"
-                        class="mr-4"
-                        v-if='connection.address'
-                        @click="handleClaim(item)"
-                        >
-                        {{$t('stake.claim')}}
-                        </v-btn>
-                        <v-btn
-                        v-if="item.address==connection.address"
-                        tile
-                        small
-                        color="success"
-                        class="mr-4"
-                        @click="handleReward(item)"
-                        >
-                        {{$t('stake.get_reward')}}
-                        </v-btn>
-                        <span v-if='!connection.address'>
-                            -
-                        </span>
-                    </template>
-                    </v-data-table>
-                </v-tab-item>
-                <v-tab-item key="12">
-                    <v-data-table
-                        :headers="myStakeHeaders"
-                        :items="myStakeList"
-                        :items-per-page="21"
-                        class="elevation-1"
-                        hide-default-footer
-                        :loading="myStakeListLoading"
-                        :loading-text="$t('msg.loading')"
-                    >
-                    <template v-slot:item.address="{ item }">
-                            <Address :val="item.address"></Address>
-                    </template>
-                    <template v-slot:item.power="{ item }">
-                            {{ item.power | asset(2)  }}
-                    </template>
-                    <template v-slot:item.balannceOfShare="{ item }">
-                            {{ item.balannceOfShare | asset(2)  }}
-                    </template>
-                    
-                    <template v-slot:item.actions="{ item }">
-                        <v-btn
+                        </template> -->
+                        <template v-slot:item.actions="{ item }">
+                            <v-btn
                             tile
                             small
-                            color="success"
+                            color='vote_button'
                             class="mr-4"
+                            v-if='connection.address'
                             @click="handleStaking(item)"
+                            style="border-radius:4px"
                             >
-                            {{$t('stake.staking')}}
+                               {{$t('stake.staking')}}
                             </v-btn>
                             <v-btn
                             tile
                             small
+                            color="start_unstake"
+                            class="mr-4"
+                            v-if='connection.address'
+                            @click="handleClaim(item)"
+                            style="border-radius:4px"
+                            >
+                               {{$t('stake.claim')}}
+                            </v-btn>
+                            <v-btn
+                            v-if="item.address==connection.address"
+                            tile
+                            small
                             color="success"
                             class="mr-4"
-                            @click="handleClaim(item)"
+                            @click="handleReward(item)"
                             >
-                            {{$t('stake.claim')}}
+                               {{$t('stake.get_reward')}}
                             </v-btn>
-                        <span v-if='!connection.address'>
-                            -
-                        </span>
-                    </template>
+                            <span v-if='!connection.address'>
+                                -
+                            </span>
+                        </template>
                     </v-data-table>
-                  
+                </v-tab-item>
+                        <v-tab-item key="122">
+                            <v-data-table
+                                :headers="myStakeHeaders"
+                                :items="myStakeList"
+                                :items-per-page="21"
+                                class="elevation-1"
+                                hide-default-footer
+                                :loading="myStakeListLoading"
+                                :loading-text="$t('msg.loading')"
+                            >
+                            <template v-slot:item.address="{ item }">
+                                <Address :val="item.address"></Address>
+                            </template>
+                            <template v-slot:item.power="{ item }">
+                                {{ item.power | asset(2)  }}
+                            </template>
+                            <template v-slot:item.balannceOfShare="{ item }">
+                                {{ item.balannceOfShare | asset(2)  }}
+                            </template>
+                    
+                            <template v-slot:item.actions="{ item }">
+                                <v-btn
+                                    tile
+                                    small
+                                    color="success"
+                                    class="mr-4"
+                                    @click="handleStaking(item)"
+                                    >
+                                    {{$t('stake.staking')}}
+                                </v-btn>
+                                <v-btn
+                                    tile
+                                    small
+                                    color="success"
+                                    class="mr-4"
+                                    @click="handleClaim(item)"
+                                >
+                                    {{$t('stake.claim')}}
+                                </v-btn>
+                                <span v-if='!connection.address'>
+                                    -
+                                </span>
+                            </template>
+                    </v-data-table> 
+                </v-tab-item>
+            </v-tabs-items>
+                </v-tab-item>
+                <v-tab-item key="12">
+                    <UnstakeToValidator></UnstakeToValidator>
                 </v-tab-item>
           </v-tabs-items>
-        
       </v-col>
     </v-row>
     <v-dialog v-model="dialog" width="500">
-      <v-card>
-          <v-card-title>{{$t('stake.staking_info')}}</v-card-title>
+      <v-card class="start_unstake" style="padding:12px;">
+          <div class="dialog-validator">
+            <v-card-title>{{$t('stake.staking_info')}}</v-card-title>
+            <v-icon @click="cancelStakingToNode" style="margin-right:12px">mdi-close</v-icon> 
+          </div>   
           <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+        <v-list rounded class="ma-4 start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
           >
             <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
-            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-            <v-text-field
-                v-model="form.amount"
-                :label="$t('stake.amount')"
-                required
-                :rules="amountRules"
-            ><template v-slot:append>
-                <v-btn
-                  text
-                  x-small
-                  @click="setAll('form')">
-                  {{ $t('stake.max') }}
-                </v-btn>
-                    
-                </template>
-            </v-text-field>
+            <div class="pb-1 text-body-1" style="text-align:right;">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
+            <v-row justify="space-between" style="margin-top:12px">
+                <div style="margin-top:12px">Amount</div>
+                    <div>
+                        <v-text-field
+                            v-model="form.amount"
+                            :label="$t('stake.amount')"
+                            required
+                            :rules="amountRules"
+                            solo
+                            background-color="input_other"
+                            style="width:380px"
+                        >
+                        <template v-slot:append>
+                            <v-btn
+                                text
+                                x-small
+                                @click="setAll('form')">
+                            {{ $t('stake.max') }}
+                            </v-btn>
+                        </template>
+                        </v-text-field>
+                    </div>
+            </v-row> 
             <div class="text-center">
+                <v-btn @click="cancelStaking"
+                    class="mr-4"
+                    outlined
+                    color="btn_button">
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
                 <v-btn
-                class="mr-4"
-                color="primary"
                 :loading="stakeLoading"
                 @click="submitStaking"
+                color="vote_button"
                 >
                 {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelStaking">
-                {{$t('stake.btn_cancel')}}
                 </v-btn>
             </div>
           </v-form>
@@ -189,106 +268,148 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="stakeToNodeDialog" width="500">
-      <v-card>
-          <v-card-title>{{$t('stake.staking_info')}}</v-card-title>
-          <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+      <v-card class="start_unstake" style="padding:12px">
+            <div class="dialog-validator">
+                <v-card-title>Voting To Other Validator</v-card-title>
+                <v-icon @click="cancelStakingToNode" style="margin-right:12px">mdi-close</v-icon>               
+            </div>
+            <v-divider></v-divider>
+        <v-list rounded class="ma-4 start_unstake">
           <v-form
             ref="stakeToNodeform"
             lazy-validation
           >
-              <v-text-field
-                v-model="stakeForm.address"
-                :label="$t('stake.address')"
-                required
-                clearable
-                :rules="addressRules"
-            ></v-text-field>
-            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-            <v-text-field
-                v-model="stakeForm.amount"
-                :label="$t('stake.amount')"
-                required
-                :rules="amountRules"
-            >
-                <template v-slot:append>
-                    <v-btn
-                        text
-                        x-small
-                        @click="setAll('stakeForm')">
-                        {{ $t('stake.max') }}
-                    </v-btn>
-                </template>
-            </v-text-field>
+            <v-row justify="space-between">
+                <div style="margin-top:12px">Validator</div>
+                    <div>
+                        <v-text-field
+                        v-model="stakeForm.address"
+                        :label="$t('stake.address')"
+                        required
+                        clearable
+                        :rules="addressRules"
+                        outlined
+                        background-color="input_other"
+                        style="width:380px"
+                        height="24"
+                        color="chips"
+                    ></v-text-field>
+                </div>
+            </v-row>        
+            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
+
+            <v-row justify="space-between" style="margin-top:12px">
+                <div style="margin-top:12px">Amount</div>
+                    <div>
+                       <v-text-field
+                            v-model="stakeForm.amount"
+                            :label="$t('stake.amount')"
+                            required
+                            :rules="amountRules"
+                            outlined
+                            background-color="input_other"
+                            style="width:380px"
+                        >
+                            <template v-slot:append>
+                                <v-btn
+                                    text
+                                    x-small
+                                    @click="setAll('stakeForm')">
+                                    {{ $t('stake.max') }}
+                                </v-btn>
+                            </template>
+                        </v-text-field>
+                    </div>
+            </v-row> 
+            
             <div class="text-center">
-                <v-btn
-                class="mr-4"
-                color="primary"
-                :loading="stakeToNodeLoading"
-                @click="submitStakingToNode"
-                >
-                {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelStakingToNode">
+                <v-btn @click="cancelStakingToNode" 
+                        outlined 
+                        color="btn_button"
+                        class="mr-4">
                 {{$t('stake.btn_cancel')}}
                 </v-btn>
+                <v-btn
+                    color="vote_button"
+                    :loading="stakeToNodeLoading"
+                    @click="submitStakingToNode"
+                    >
+                {{$t('stake.btn_submit')}}
+                </v-btn>
+                
             </div>
           </v-form>
         </v-list>
       </v-card>
     </v-dialog>
     <v-dialog v-model="claimDialog" width="500">
-      <v-card>
-          <v-card-title>{{$t('stake.claim_info')}}
-          </v-card-title>
+      <v-card class="start_unstake">
+            <div class="dialog-validator"> 
+                <v-card-title>{{$t('stake.claim_info')}}</v-card-title>
+                <v-icon @click="cancelClaim" style="margin-right:12px">mdi-close</v-icon> 
+            </div>          
           <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+        <v-list rounded class="ma-4 start_unstake">
           <v-form
             ref="claimform"
             lazy-validation
           >
-              <div class="pb-1 text-body-1">{{$t('stake.commonnsion_share_balance')}}: {{currentItem.balannceOfShare | asset(2)}}</div>
-            <v-text-field
-                v-model="claimForm.amount"
-                :label="$t('stake.amount')"
-                v-on:keyup="calculateAmount"
-                required
-                :rules="amountRules"
-            ><template v-slot:append>
-                    <v-btn 
-                    text
-                    x-small
-                    @click="claimAll()">
-                    {{ $t('stake.max') }}
-                    </v-btn>
-                </template>
-            </v-text-field>
-            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
-            <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
+            <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
+            <div class="pb-1 text-body-1 share-rei">{{$t('stake.commonnsion_share_balance')}}{{currentItem.balannceOfShare | asset(2)}}REI</div>
+            <v-row justify="space-between" style="padding:12px;">
+                <div style="margin-top:12px">Amount</div>
+                <div>
+                    <v-text-field
+                        v-model="claimForm.amount"
+                        :label="$t('stake.amount')"
+                        v-on:keyup="calculateAmount"
+                        required
+                        :rules="amountRules"
+                        solo
+                        background-color="input_other"
+                        style="width:380px"
+                        height="24"
+                    >
+                    <template v-slot:append>
+                        <v-btn 
+                            text
+                            x-small
+                            @click="claimAll()">
+                            {{ $t('stake.max') }}
+                        </v-btn>
+                    </template>
+            </v-text-field>   
+                </div>
+            </v-row> 
+            
+            <!-- <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div> -->
+            <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
             
             <div class="text-center">
                 <v-btn
                 class="mr-4"
-                color="primary"
+                color="vote_button"
                 v-if="!approved"
                 :loading="approveLoading"
                 @click="submitApprove"
                 >
                 {{$t('stake.approve')}}
                 </v-btn>
+                <v-btn @click="cancelClaim" 
+                        color="btn_button"
+                        class="mr-4">
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
                 <v-btn
-                class="mr-4"
-                color="primary"
-                :disabled="!approved"
-                :loading="claimLoading"
-                @click="submitClaim"
+                    color="vote_button"
+                    :disabled="!approved"
+                    :loading="claimLoading"
+                    @click="submitClaim"
                 >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
-                <v-btn @click="cancelClaim">
-                {{$t('stake.btn_cancel')}}
-                </v-btn>
             </div>
+             <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
           </v-form>
         </v-list>
       </v-card>
@@ -387,6 +508,24 @@
         </v-list>
       </v-card>
     </v-dialog>
+    <div class="text-center pt-2">
+      <v-pagination
+        v-model="page"
+        :length="pageCount"
+        color="vote_button"
+        background-color="start_unstake"
+        class="v-pagination"
+        total-visible="6"
+      ></v-pagination>
+      <!-- <v-text-field
+        :value="itemsPerPage"
+        label="Items per page"
+        type="number"
+        min="-1"
+        max="15"
+        @input="itemsPerPage = parseInt($event, 10)"
+      ></v-text-field> -->
+    </div>
   </v-container>
 </template>
 <script>
@@ -404,18 +543,24 @@ import Address from '../components/Address';
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
+import UnstakeToValidator from './UnstakeToValidator';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
 export default {
   components:{
-      Address
+      Address,
+      UnstakeToValidator
   },
   filters,
   data() {
     return {
+        page: 1,
+        pageCount: 0,
+        itemsPerPage: 10,
         isNode: false,
         tab1: null,
+        tab2: null,
         stakeListLoading: false,
         myStakeListLoading: false,
         dialog: false,
@@ -424,6 +569,8 @@ export default {
         rewardDialog: false,
         setCommissionRateDialog: false,
         myStakeList: [],
+        items: ['All', 'Active Validator', 'Unactive Validator'],
+        itemsPages:['10','20'],
         headers: [
             {
                 text: this.$t('stake.node'),
@@ -434,7 +581,7 @@ export default {
             { text: this.$t('stake.voting_power'), value: 'power' },
             { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
             { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
-            { text: this.$t('stake.status'), value: 'isActive' },
+            // { text: this.$t('stake.status'), value: 'isActive' },
             { text: this.$t('stake.operation'), value: 'actions', sortable: false }
         ],
         myStakeHeaders: [
@@ -499,7 +646,7 @@ export default {
   watch: {
     '$store.state.finishedTxs': function() {
       this.init()
-    }
+    },
   },
   mounted() {
       this.connect();
@@ -938,3 +1085,91 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+.vote-list{
+    position: relative;
+    .v-tab-left{
+        margin-left: 0 !important;
+    }
+    .v-btn{
+        border:none;
+        position: absolute;
+        right: 0;
+        top: 20;
+    }
+}
+.active-select{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+    .active{
+       width:30px;
+       height: 20px;
+       background-color: #FC9354;
+       border-radius:15px;
+       margin-left: 16px;
+       padding:2px 12px;
+    } 
+    .not-active{
+       width:30px;
+       height: 20px;
+       background-color: #5F82AD;
+       border-radius:10px;
+       margin-left: 16px;
+       padding:2px 12px;
+    }
+   .v-application .text-center{
+        text-align: right !important;
+    }
+    .my-voted-validator{
+        width: 200px;
+        border-radius: 30px;
+        margin: 1.5rem;
+    }
+    .right-outline{
+        margin-top: 16px;
+        margin-right: 10px;
+        .d-select{
+            border-radius: 30px;
+        }   
+    }
+    .theme--dark.v-data-table{
+        background-color:transparent;
+    }
+    .v-pagination{
+        display: inline-flex !important;
+        justify-content: flex-end !important;
+    }
+    .theme--dark.v-tabs-items{
+        background-color:transparent;
+        
+    }
+    .dialog-validator{
+        display: flex;
+        justify-content: space-between;
+        .close-btn{
+            margin-top: 12px;
+            margin-right: 12px;
+        }
+    }
+    .text-caption{
+        margin-top:12px;
+    }
+    .share-rei{
+        text-align:right;
+        margin:12px 0;
+    }
+    @media screen and (max-width: 900px) {
+        .vote-list{
+            position: static !important;
+            display: flex;
+            flex-direction: column;
+         .v-btn{
+            border:none;
+            position: static !important;
+            }
+        }
+    }
+</style>

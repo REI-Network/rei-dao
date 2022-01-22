@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation app class="d-md-none" color="primary">
+  <v-bottom-navigation app class="d-md-none" color="primary" background-color="background">
       <template v-for="link in links">
         <v-btn  @click="go($event, link.link)" :key="link.text" v-if="hideItem(link.name)">
         <span>{{ $t(link.text) }}</span>
@@ -14,6 +14,18 @@ export default {
   data() {
     return {
       links: [
+        {
+          icon: 'mdi-text-box-check-outline',
+          text: 'Dashboards',
+          link: '/dashboards',
+          name: 'dashboards'
+        },
+        {
+          icon: 'mdi-sack',
+          text: 'MyAccount',
+          link: '/myAccount',
+          name: 'myAccount'
+        },
         {
           icon: 'mdi-text-box-check-outline',
           text: 'stake.staking',

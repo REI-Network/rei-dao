@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Dashboards from '../views/Dashboards.vue';
+import MyAccount from '../views/MyAccount.vue';
 import Stake from '../views/Stake.vue';
 import StakeForGas from '../views/StakeForGas.vue';
+
 
 const routes = [
   {
@@ -9,6 +12,16 @@ const routes = [
     name: 'Index',
     //component: Index
     redirect: '/stake'
+  },
+  {
+    path: '/dashboards',
+    name: 'Dashboards',
+    component: Dashboards
+  },
+  {
+    path: '/myAccount',
+    name: 'MyAccount',
+    component: MyAccount
   },
   {
     path: '/stake',
