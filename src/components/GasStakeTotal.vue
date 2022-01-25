@@ -10,7 +10,7 @@
             >
                 <h3>Resources Of 0x69...sb2B</h3>
                 <div class="stake-name">Deposit REI Gets Crude</div>
-                <v-row justify="center">
+                <v-row justify="center" class="row-circular">
                     <div class="circular">
                         <v-progress-circular
                             :rotate="270"
@@ -171,14 +171,20 @@ export default {
     border-radius:20px;
 }
 @media screen and (max-width: 900px) {
+    .total-progress{
+        overflow-x: scroll;
+        width: 100%;
+    }
+    .row-circular{
+        display:flex;
+        flex-direction: row !important;
+        max-width: 100%;
+    }
     .gasStake-total{
         display: flex;
         flex-direction: column;
         justify-content:space-between;
         padding: 0;
-    }
-    .total-progress{
-        width: 100%;
     }
     .middle-btn{
         width: 100%;

@@ -70,8 +70,12 @@
                </div>
                 <v-tabs-items v-model="tab">
                     <v-tab-item key="1">
-                        <div ref="chartPrice"  style="height:400px"></div>
-                        <div class="update-time" style="margin-top:-20px">
+                        <div ref="chartPrice"  style="height:400px"></div> 
+                    </v-tab-item>
+                    <v-tab-item key="2">
+                        <div ref="chartPrice2"  style="height:400px"></div>
+                    </v-tab-item>
+                    <div class="update-time" style="margin-top:-20px">
                         <v-icon
                             color="primary"
                             size="12"
@@ -79,11 +83,7 @@
                                 mdi-clock-time-ten-outline
                             </v-icon>
                                 1h Ago
-                        </div> 
-                    </v-tab-item>
-                    <v-tab-item key="2">
-                        <!-- <div ref="chart2"  style="height:400px"></div> -->
-                    </v-tab-item>
+                        </div>
                 </v-tabs-items>
           </v-card>          
         </div>
@@ -134,7 +134,7 @@ export default {
   data() {
     return {
         radios:1,
-        tab:null,
+        tab:"1",
         folders: [
         {
           subtitle: 'REI Price',
@@ -179,9 +179,17 @@ export default {
       ],
     };
   },
-  watch: {
-  
-  },
+    watch: {
+       tab:{
+           handler(newValue,oldValue){
+               this.tab = newValue;
+               console.log('oldValue',oldValue)
+               setTimeout(() => {
+                    this.myCharts(); 
+                }, 200);
+            }
+        }
+    },
   mounted() {
       setTimeout(() => {
           this.myCharts()
@@ -193,7 +201,8 @@ export default {
   },
   methods: {
     myCharts(){
-        const chartPrice = this.$refs.chartPrice;
+        if(this.tab===0){
+            const chartPrice = this.$refs.chartPrice;
         if(chartPrice){
         const myChart = this.$echarts.init(chartPrice) 
         var option = {
@@ -257,6 +266,73 @@ export default {
             myChart.resize();
         });
     })
+        }else{
+        const chartPrice2 = this.$refs.chartPrice2;
+        if(chartPrice2){
+        const myChart2= this.$echarts.init(chartPrice2) 
+        var option2 = {
+            tooltip:{
+                trigger:'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
+                boundaryGap:false,
+            },
+            yAxis: {
+                type: 'value',
+                splitLine: {
+                    show:false,
+                    },
+            },
+
+            legend: {
+                selectedMode: false,
+                itemWidth: 16,
+                itemHeight: 16,
+                top: 'bottom',
+                textStyle: {
+                    fontSize: 16,
+                    color:'#2C2752'
+                },
+            },
+            series: [
+                {
+                    name:'USD',
+                    data: [656,789,983,834,865,890,766,800,900,986,820, 932, 901, 934, 1290, 1330, 1320,1348,],
+                    type: 'line',
+                    symbol: "none",
+                    itemStyle:{
+                        color:'rgb(80,14,25)'
+                    },
+                    areaStyle: {
+                        //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+                            offset: 0,
+                            color: 'rgba(80,14,25,0.39)'
+                        }, {
+                            offset: .34,
+                            color: 'rgba(56,14,25,0.25)'
+                        },{
+                            offset: 1,
+                            color: 'rgba(38,19,25,0.00)'
+                        }])
+                    }
+                }
+            ],
+        };
+        myChart2.setOption(option2)
+        window.addEventListener("resize", function() {
+          myChart2.resize()
+        })
+    }
+    this.$on('hook:destroyed',()=>{
+         window.removeEventListener("resize", function() {
+            myChart2.resize();
+        });
+    })
+
+        }
     }
   },
   computed: {
@@ -315,6 +391,9 @@ export default {
     font-size: 12px;
     margin-right: 20px;
 }
+.v-tab{
+       text-transform: none !important;
+   }
 
 @media screen and (max-width: 900px) {
     .charts-faq{

@@ -15,13 +15,13 @@ export default {
     return {
       links: [
         {
-          icon: 'mdi-text-box-check-outline',
+          icon: 'mdi-alpha-m-box-outline',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards'
         },
         {
-          icon: 'mdi-sack',
+          icon: 'mdi-calendar-account-outline',
           text: 'MyAccount',
           link: '/myAccount',
           name: 'myAccount'

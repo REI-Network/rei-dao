@@ -10,7 +10,7 @@
             color="background"
           >
           <v-subheader><h3>Charts</h3></v-subheader>
-          <v-subheader>
+          <!-- <v-subheader> -->
             <div class="chart-title">
             <v-radio-group v-model="radios">
               <v-radio
@@ -29,7 +29,7 @@
               10D
             </v-btn>
           </div>
-          </v-subheader>
+          <!-- </v-subheader> -->
           <div id="myCharts" ref="echart" style="height:348px"></div>
           <div class="update-time" style="margin-top:-20px;">
                 <v-icon
@@ -245,14 +245,20 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      .v-radio{
+        margin-left: 20px;
+      }
     .v-btn-total{
       width: 28px;
       height: 24px;
       font-size: 12px;
       border-radius: 15px;
-      position: relative;
-      right: -380px;
+      margin-right:20px;
     }
+  }
+  .v-input--selection-controls{
+    margin-top: 0;
+    padding: 0;
   }
   .card-charts{
     height: 460px;

@@ -28,6 +28,8 @@
             <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
                     <v-tab key="11" class="v-tab-left">{{$t('stake.active_nodelist')}}</v-tab>
                     <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
+            </v-tabs>
+            <div class="btn-div">
                 <v-btn
                     class="v-btn"
                     text
@@ -43,52 +45,44 @@
                         mdi-plus-circle-outline
                     </v-icon>
                 </v-btn>
-            </v-tabs>
+            </div>
+            
           <v-divider />
           <v-tabs-items v-model="tab1">
                 <v-tab-item key="11" >
-                    <v-row class="active-select background">
-                        <v-tabs v-model="tab2" 
-                            align-with-title 
+                    <v-row class="background">
+                        <v-tabs v-model="tab2"    
                             hide-slider 
                             class="my-voted-validator" 
-                            background-color="start_unstake"
+                            background-color="background"
                             height="36">
-                           <v-tab key="111" style="font-size:12px">{{$t('stake.active_nodelist')}}</v-tab>
-                           <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab> 
+                            <v-card outlined class="card-tab">
+                                <v-tab key="111" style="font-size:12px">{{$t('stake.active_nodelist')}}</v-tab>
+                                <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab>
+                            </v-card> 
                         </v-tabs>
-                    <v-row align="end" justify="end" class="right-outline" sm="4" dense>
-                        <v-col
-                            class="d-flex"
-                            cols="12"
-                            sm="3"
-                        >
+                        <v-col class="right-outline">
+                        <v-card outlined  class="select-card">
                             <v-select
                                 class="d-select"
                                 :items="items"
                                 label="Active Validator"
-                                solo
-                                background-color="start_unstake"
+                                outlined
                                 item-color="vote_button"
                                 dense
                             ></v-select>
-                        </v-col>
-                        <v-col
-                            class="d-flex"
-                            cols="12"
-                            sm="2"
-                        >
+                        </v-card>
+                        <v-card outlined class="select-card">
                             <v-select
                                 class="d-select"
                                 :items="itemsPages"
                                 label="10"
-                                solo
-                                background-color="start_unstake"
+                                outlined
                                 item-color="vote_button"
                                 dense
                             ></v-select>
-                        </v-col>
-                    </v-row>
+                         </v-card>
+                       </v-col>
                     </v-row>
                     <v-tabs-items v-model="tab2">
                     <v-tab-item key="111">
@@ -1092,18 +1086,27 @@ export default {
     .v-tab-left{
         margin-left: 0 !important;
     }
-    .v-btn{
-        border:none;
-        position: absolute;
-        right: 0;
-        top: 20;
-    }
 }
-.active-select{
-    display: flex;
+.btn-div{
+    text-align:right;
+    text-transform: none !important;
+}
+.card-tab{
+    display:flex;
     flex-direction: row;
-    justify-content: space-between;
+    border-radius:20px;
+    background-color: transparent;
 }
+.v-btn{
+        border:none;
+        margin-top: -80px;
+        // position: absolute;
+        // right: 0;
+        // top: 20;
+    }
+    .v-tab{
+       text-transform: none !important;
+   }
     .active{
        width:30px;
        height: 20px;
@@ -1124,17 +1127,26 @@ export default {
         text-align: right !important;
     }
     .my-voted-validator{
-        width: 200px;
+        width:120px;
         border-radius: 30px;
         margin: 1.5rem;
     }
     .right-outline{
-        margin-top: 16px;
-        margin-right: 10px;
-        .d-select{
-            border-radius: 30px;
-        }   
+        display: flex;
+        flex-direction: row; 
+        justify-content: flex-end;
+        // padding:0;
     }
+    .select-card{
+        border:none;
+        background-color: transparent;
+        width: 120px; 
+        margin-top:12px;
+    }
+    .d-select{
+            border-radius: 30px;
+            margin-right:20px
+        }
     .theme--dark.v-data-table{
         background-color:transparent;
     }
@@ -1166,10 +1178,22 @@ export default {
             position: static !important;
             display: flex;
             flex-direction: column;
-         .v-btn{
+        }
+        .btn-div{
+            text-align:left !important;
+        }
+        .v-btn{
             border:none;
-            position: static !important;
-            }
+            margin-top: 0 !important;
+        }
+         .right-outline{
+            display: flex;
+            flex-direction: row !important; 
+            justify-content: flex-start !important;
+            margin-top:-28px;
+        }
+        .select-card{
+            height:40px;
         }
     }
 </style>

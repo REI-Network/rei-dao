@@ -61,7 +61,7 @@
             <v-list-item class="item-list">
                 <v-list-item-content style="width:72%">
                   <v-list-item-subtitle>
-                    How To Vote Stake To Get Get R Stake To Get Get 123133321
+                    How To Vote Stake To Get Get R Stake To Get Get
                   </v-list-item-subtitle>  
                 </v-list-item-content>
                 <v-icon

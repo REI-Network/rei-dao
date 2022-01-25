@@ -15,6 +15,7 @@
                     background-color="background"
                     hide-slider 
                     style="width:80%"
+                    align-with-title
                     >
                     <v-radio-group
                         v-model="radios"
@@ -85,20 +86,30 @@ export default {
     return {
        radios: null,
        tab: "1",
+       flag:0,
     };
   },
   watch: {
-  
-  },
+       tab:{
+           handler(newValue){
+               this.tab = newValue;
+            //    console.log('oldValue',oldValue)
+               setTimeout(() => {
+                    this.trendsCharts(); 
+                }, 200);
+            }
+        }
+    },
   mounted() {
-      setTimeout(() => {
-        this.trendsCharts(); 
-        this.trendsCharts2(); 
-      }, 500);
+    //   setTimeout(() => {
+    //     this.trendsCharts(); 
+    //     // this.trendsCharts2(); 
+    //   }, 500);
   },
   methods: {
-    trendsCharts(){   
-        const chart = this.$refs.chart;
+    trendsCharts(){
+        if(this.tab===0){
+            const chart = this.$refs.chart;
         if(chart){
         const myChart = this.$echarts.init(chart)
         var option = {
@@ -207,8 +218,7 @@ export default {
             myChart.resize();
         });
     })
-},
-trendsCharts2(){   
+        }else{
         const chart2 = this.$refs.chart2;
         if(chart2){
         const myChart2 = this.$echarts.init(chart2)
@@ -305,7 +315,108 @@ trendsCharts2(){
             myChart2.resize();
         });
     })
-},      
+        }
+        
+},
+// trendsCharts2(){   
+//     console.log('tab2',this.tab)
+//         const chart2 = this.$refs.chart2;
+//         if(chart2){
+//         const myChart2 = this.$echarts.init(chart2)
+//         var option2 = {
+//             toolbox: {
+//                 feature: {
+//                     dataView: { show: true, readOnly: false },
+//                     magicType: { show: true, type: ['line', 'bar'] },
+//                     restore: { show: true },
+//                     saveAsImage: { show: true }
+//                 }
+//             },
+//             legend: {
+//                 data: [ 'Savings On Gas For User', 'Total Stake'],
+//                 top: 'bottom',
+//                 itemWidth: 16,
+//                 itemHeight: 16,
+//                 textStyle: {
+//                     fontSize: 16,
+//                     color:'#2C2752'
+//                 },
+//             },
+//             xAxis:       
+//                 {
+//                     type: 'category',
+//                     data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
+//                     axisPointer: {
+//                         type: 'shadow'
+//                     },
+//                     axisLine: {
+//                         lineStyle: {
+//                             type: 'solid',
+//                             color: '#2C2752', //坐标线的颜色
+//                             width: '1' //坐标线的宽度
+//                         }
+//                     },
+//                     splitLine: {
+//                         lineStyle: {
+//                         color: 'rgba(104, 180, 221, 0.1)',
+//                         type: 'dashed',
+//                       }
+//                     },
+//                 },
+//             yAxis: {
+//                     type: 'value',
+//                     axisLine: {
+//                     lineStyle: {
+//                         show: true,
+//                         type: 'solid',
+//                         color: '#2C2752', //左边线的颜色
+//                         width: '1' //坐标线的宽度
+//                         },
+//                     },
+//                     splitLine: {
+//                         lineStyle: {
+//                         color: 'rgba(104, 180, 221, 0.1)',
+//                         type: 'dashed',
+//                       }
+//                     },
+//             },
+//             series: [
+//                 {       
+//                     name: 'Savings On Gas For User',
+//                     type: 'bar',
+//                     data: [
+//                         12,24,23,54,32,18,54,33,22,44,33,23,45,26,90
+//                     ],
+//                     barWidth:'12',
+//                     barGap: '40%',
+//                     itemStyle:{
+//                         color:'#28AA91'
+//                     }
+//                 },
+//             {
+//                 name: 'Total Stake',
+//                 type: 'line',
+//                 data: [
+//                         12,24,23,14,32,18,54,53,22,44,33,73,45,26,90
+//                     ],
+//                 barWidth:'6',
+//                 itemStyle:{
+//                     color:'#EC733C'
+//                 }
+//             }
+//         ]
+//     };
+//         myChart2.setOption(option2)
+//         window.addEventListener("resize", function() {
+//           myChart2.resize()
+//         })
+//     }
+//     this.$on('hook:destroyed',()=>{
+//          window.removeEventListener("resize", function() {
+//             myChart2.resize();
+//         });
+//     })
+// },      
   },
   computed: {
    
@@ -320,17 +431,25 @@ trendsCharts2(){
         font-size: 12px;
     }
 }
-.col{
-    // padding:0px !important;
-}
+.theme--dark.v-chip:not(.v-chip--active){
+    background-color:#9F9DB9;
+   }
 .theme--dark.v-tabs-items{
     background-color:transparent;      
 }
-.theme--dark.v-chip:not(.v-chip--active){
-    background-color:transparent;
-   }
 .trends-head{
     display: flex;
     justify-content: space-between;
+}
+.v-tab{
+       text-transform: none !important;
+   }
+@media screen and (max-width: 900px) {
+   .trends-head{
+        display: block !important;
+   }
+   .v-tab{
+       padding: 0 !important;
+   }
 }
 </style>
