@@ -39,10 +39,10 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogAcc" max-width="450" overlay-opacity=".6">
-      <v-card color="grey" :class="dark ? 'darken-3' : 'lighten-3'">
+      <v-card color="start_unstake" >
         <v-card-title>{{ $t('account.title') }}</v-card-title>
         <v-divider></v-divider>
-        <v-sheet class="ma-4 pa-4 grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded v-if="connection.walletName">
+        <v-sheet class="ma-4 pa-4 grey" :class="dark ? 'current_wallet' : 'gradient'" rounded v-if="connection.walletName">
           <div class="d-flex stretch">
             <div class="d-flex text--secondary">
               <span>{{ $t('account.connected_with') }}</span>
@@ -91,6 +91,32 @@
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="staking_record">
+          <v-divider />
+          <div class="record-content">
+            <div>
+              <div class="name-pri">
+                <div>Staking 10,255,489.00 REI To 0xa5...3d28</div>
+                <v-icon small>mdi-open-in-new</v-icon>
+              </div>
+              <div>2021-12-22 16:17:35</div>
+            </div>
+            <v-icon dense color="#65BB67">mdi-check-circle</v-icon>
+          </div>
+        </div>
+        <div class="staking_record">
+          <v-divider />
+          <div class="record-content">
+            <div>
+              <div class="name-pri">
+                <div>Staking 10,255,489.00 REI To 0xa5...3d28</div>
+                <v-icon small>mdi-open-in-new</v-icon>
+              </div>
+              <div>2021-12-22 16:17:35</div>
+            </div>
+            <v-icon dense color="#65BB67">mdi-check-circle</v-icon>
           </div>
         </div>
       </v-card>
@@ -408,4 +434,21 @@ export default {
     text-align: center;
   }
 }
+.gradient {
+  background: linear-gradient(135deg, #6979F8 0%, #4856C0 100%);
+  }
+  .staking_record{
+    padding: 0 20px 12px 20px;
+    font-size: 14px;
+    color:#868E9E;
+    .record-content{
+      display: flex;
+      justify-content: space-between;
+      margin-top:12px;
+    }
+    .name-pri{
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin-top:12px" class="stake_background">
+  <v-container class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
       <v-col cols="12" md="12" sm="12" class="charts-faq"> 
@@ -152,19 +152,19 @@ export default {
             {
                 name: 'Access From',
                 type: 'pie',
-                radius: ['40%', '70%'],
+                radius: ['35%', '60%'],
                 center: ['30%', '50%'],
                 avoidLabelOverlap: false,
                 label: {
                     show: false,
-                    position: 'center'
+                    position: 'center',
                 },
                 emphasis: {
-                    label: {
+                  label: {
                     show: true,
                     fontSize: '40',
                     fontWeight: 'bold'
-                    }
+                  }
                 },
                 labelLine: {
                     show: false
@@ -175,7 +175,7 @@ export default {
                     { value: 580, name: 'Dev Rewards' },
                     { value: 484, name: 'Maketing' },
                     { value: 300, name: 'Node Rewards' }
-                ]
+                ],
             }
           ]
         };

@@ -5,17 +5,17 @@
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
             <v-img
                 class="mr-4" 
-                max-height="48"
-                max-width="48"
+                max-height="60"
+                max-width="180"
                 src="../assets/images/REI DAO.svg"
                 ></v-img>
           
         <!-- </v-avatar> -->
       </router-link>
-      <div class="d-flex flex-column">
+      <!-- <div class="d-flex flex-column">
         <span>{{ $t('app.name') }}</span>
         <small class="text--secondary">{{ version }}</small>
-      </div>
+      </div> -->
     </v-sheet>
     <v-divider></v-divider>
     <v-list>

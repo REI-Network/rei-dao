@@ -14,7 +14,7 @@
                 <v-tabs v-model="tab" 
                     background-color="background"
                     hide-slider 
-                    style="width:80%"
+                    class="trend-tab"
                     align-with-title
                     >
                     <v-radio-group
@@ -40,7 +40,7 @@
                         </v-tab>
                     </v-radio-group>
                 </v-tabs>
-                <v-row align="center">
+                <v-row align="center" style="margin:0;">
                         <v-chip
                             class="ma-2"
                             filter
@@ -317,106 +317,7 @@ export default {
     })
         }
         
-},
-// trendsCharts2(){   
-//     console.log('tab2',this.tab)
-//         const chart2 = this.$refs.chart2;
-//         if(chart2){
-//         const myChart2 = this.$echarts.init(chart2)
-//         var option2 = {
-//             toolbox: {
-//                 feature: {
-//                     dataView: { show: true, readOnly: false },
-//                     magicType: { show: true, type: ['line', 'bar'] },
-//                     restore: { show: true },
-//                     saveAsImage: { show: true }
-//                 }
-//             },
-//             legend: {
-//                 data: [ 'Savings On Gas For User', 'Total Stake'],
-//                 top: 'bottom',
-//                 itemWidth: 16,
-//                 itemHeight: 16,
-//                 textStyle: {
-//                     fontSize: 16,
-//                     color:'#2C2752'
-//                 },
-//             },
-//             xAxis:       
-//                 {
-//                     type: 'category',
-//                     data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
-//                     axisPointer: {
-//                         type: 'shadow'
-//                     },
-//                     axisLine: {
-//                         lineStyle: {
-//                             type: 'solid',
-//                             color: '#2C2752', //坐标线的颜色
-//                             width: '1' //坐标线的宽度
-//                         }
-//                     },
-//                     splitLine: {
-//                         lineStyle: {
-//                         color: 'rgba(104, 180, 221, 0.1)',
-//                         type: 'dashed',
-//                       }
-//                     },
-//                 },
-//             yAxis: {
-//                     type: 'value',
-//                     axisLine: {
-//                     lineStyle: {
-//                         show: true,
-//                         type: 'solid',
-//                         color: '#2C2752', //左边线的颜色
-//                         width: '1' //坐标线的宽度
-//                         },
-//                     },
-//                     splitLine: {
-//                         lineStyle: {
-//                         color: 'rgba(104, 180, 221, 0.1)',
-//                         type: 'dashed',
-//                       }
-//                     },
-//             },
-//             series: [
-//                 {       
-//                     name: 'Savings On Gas For User',
-//                     type: 'bar',
-//                     data: [
-//                         12,24,23,54,32,18,54,33,22,44,33,23,45,26,90
-//                     ],
-//                     barWidth:'12',
-//                     barGap: '40%',
-//                     itemStyle:{
-//                         color:'#28AA91'
-//                     }
-//                 },
-//             {
-//                 name: 'Total Stake',
-//                 type: 'line',
-//                 data: [
-//                         12,24,23,14,32,18,54,53,22,44,33,73,45,26,90
-//                     ],
-//                 barWidth:'6',
-//                 itemStyle:{
-//                     color:'#EC733C'
-//                 }
-//             }
-//         ]
-//     };
-//         myChart2.setOption(option2)
-//         window.addEventListener("resize", function() {
-//           myChart2.resize()
-//         })
-//     }
-//     this.$on('hook:destroyed',()=>{
-//          window.removeEventListener("resize", function() {
-//             myChart2.resize();
-//         });
-//     })
-// },      
+},      
   },
   computed: {
    
@@ -430,6 +331,9 @@ export default {
     label{
         font-size: 12px;
     }
+}
+.trend-tab{
+    width:80%;
 }
 .theme--dark.v-chip:not(.v-chip--active){
     background-color:#9F9DB9;
@@ -445,8 +349,11 @@ export default {
        text-transform: none !important;
    }
 @media screen and (max-width: 900px) {
+    .trend-tab{
+        width:100%;
+    }
    .trends-head{
-        display: block !important;
+        display: inline !important;
    }
    .v-tab{
        padding: 0 !important;

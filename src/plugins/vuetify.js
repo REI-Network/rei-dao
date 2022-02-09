@@ -34,8 +34,9 @@ export default new Vuetify({
         vote_button:'#6979F8',
         // start_unstake:'#E2E4EA',
         chips:"#E2E4EA",
-        input_other:'#F5F5F7',
-        
+        input_other:'#FFF',
+        current_wallet:"#6979F8",
+        // input_other:'#F5F5F7',
       },
       dark: {
         primary: '#FFF',
@@ -47,7 +48,8 @@ export default new Vuetify({
         stake_background:"#100D22",
         list_title:"#252243",
         btn_button:"#9F9DB9",
-        chips:"#504985"
+        chips:"#504985",
+        current_wallet:"#403E59",
       },
     },
     options: {

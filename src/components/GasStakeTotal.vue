@@ -10,12 +10,13 @@
             >
                 <h3>Resources Of 0x69...sb2B</h3>
                 <div class="stake-name">Deposit REI Gets Crude</div>
-                <v-row justify="center" class="row-circular">
-                    <div class="circular">
+                <v-row >
+                    <v-col class="row-circular">
+                        <div class="circular">
                         <v-progress-circular
                             :rotate="270"
-                            :size="125"
-                            :width="25"
+                            :size="128"
+                            :width="22"
                             :value="value"
                             color="#4CC7B6"
                             > 
@@ -27,8 +28,8 @@
                     <div class="circular">
                         <v-progress-circular
                             :rotate="270"
-                            :size="125"
-                            :width="25"
+                            :size="128"
+                            :width="22"
                             :value="45"
                             color="#64B5FF"
                             
@@ -41,8 +42,8 @@
                     <div class="circular">
                         <v-progress-circular
                             :rotate="270"
-                            :size="125"
-                            :width="25"
+                            :size="128"
+                            :width="22"
                             :value="10.78"
                             color="#FF9743"
                             > 
@@ -51,6 +52,7 @@
                         <h4>0.000047</h4>
                         <div class="stake-name">Crude Used</div>
                     </div>
+                    </v-col>
                 </v-row>  
                 <div class="update-time">
                     <v-icon
@@ -111,11 +113,15 @@ export default {
 .v-progress-circular {
   margin: 1rem;
 }
+.row-circular{
+        display:flex;
+        // justify-content: space-around;
+    }
 .circular{
     text-align: center;
     margin-top: 24px;
-    margin-left: 16px;
-    margin-right: 16px;
+    // margin-left: 16px;
+    // margin-right: 16px;
 }
 .stake-name{
     font-size: 12px;
@@ -186,9 +192,14 @@ export default {
         justify-content:space-between;
         padding: 0;
     }
+    .circular{
+        margin-left: 60px !important;
+        margin-right: 50px !important;
+    }
     .middle-btn{
         width: 100%;
         margin-top: 20px;
+        padding:20px 0;
     }
 }
 </style>

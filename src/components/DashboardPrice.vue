@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin-top:12px;">
+  <v-container>
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
       <v-col cols="12" md="12" sm="12" class="charts-faq"> 
@@ -7,17 +7,18 @@
           <v-card
             class="mx-auto"
             tile
-            style="padding-bottom:24px"
+            style="padding-bottom:24px;"
             color="background"
           >
             <v-subheader><h3>Charts</h3></v-subheader>
-            <div class="trends-head">
-                <v-tabs style="width:60%" background-color="background" v-model="tab" hide-slider>
+            <div class="trend-head">
+                <v-tabs class="trend-tab" background-color="background" v-model="tab" hide-slider>
                     <v-radio-group
                         v-model="radios"
                         mandatory
                         row
                         dense
+                        style="margin-top:0;"
                         >
                         <v-tab key="1">
                             <v-radio
@@ -33,11 +34,10 @@
                             value="2"
                             >
                             </v-radio>
-                        </v-tab>
-                        
+                        </v-tab>   
                     </v-radio-group>
                 </v-tabs>
-                <v-row align="center">
+                <v-row style="margin:0;" class="time-chip">
                         <v-chip
                             class="ma-2"
                             filter
@@ -91,7 +91,7 @@
             <v-card
                 class="mx-auto"     
                 tile
-                style="padding-bottom:32px;"
+                style="padding-bottom:32px;height:516px;"
                 color="background"
             >
                 <v-subheader class="price-more"><h3>Price And Market Stats</h3><div>More>></div></v-subheader>
@@ -343,27 +343,32 @@ export default {
 
 <style scoped lang="scss">
 .charts-faq{
-    display: flex;
-    justify-content: space-between;
-    // align-items: center;
-    padding: 0;
-    background-color:transparent;
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+        background-color:transparent;
     .total-charts{
-      width: 60%;
+        width: 60%;
     }
-    .trends-head{
-    display: flex;
-    justify-content: space-between;
+    .trend-head{
+        display: flex;
+        justify-content: space-between;
   }
   .trends-radio{
-    margin-left: 20px;
+        margin-left: 20px;
     label{
         font-size: 12px;
     }  
 }
+.trend-tab{
+    width:52%;
+    }
 .theme--dark.v-chip:not(.v-chip--active){
     background-color:#9F9DB9;
    }
+}
+.v-tab{
+    padding: 0 !important;
 }
 .faq-get{
    .price-more{
@@ -396,16 +401,23 @@ export default {
    }
 
 @media screen and (max-width: 900px) {
+    .trend-tab{
+        width:100%;
+    }
+    .trend-head{
+        display: flex;
+        flex-direction: column;
+   }
     .charts-faq{
-    display: flex;
-    flex-direction: column;
-    padding: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
     .total-charts{
-      width: 100%;
+        width: 100%;
     }
     .faq-get{
-      width: 100% !important;
-      margin-top: 20px;
+        width: 100% !important;
+        margin-top: 20px;
     }
   }
 }

@@ -208,29 +208,31 @@
     <v-dialog v-model="dialog" width="500">
       <v-card class="start_unstake" style="padding:12px;">
           <div class="dialog-validator">
-            <v-card-title>{{$t('stake.staking_info')}}</v-card-title>
-            <v-icon @click="cancelStakingToNode" style="margin-right:12px">mdi-close</v-icon> 
+            <v-card-title class="dialog-title">{{$t('stake.staking_info')}}</v-card-title>
+            <v-btn @click="cancelStaking" depressed class="close-btn">
+                <v-icon style="margin-right:12px">mdi-close</v-icon> 
+            </v-btn> 
           </div>   
-          <v-divider></v-divider>
+          <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
           >
             <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
-            <div class="pb-1 text-body-1" style="text-align:right;">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-            <v-row justify="space-between" style="margin-top:12px">
-                <div style="margin-top:12px">Amount</div>
-                    <div>
-                        <v-text-field
-                            v-model="form.amount"
-                            :label="$t('stake.amount')"
-                            required
-                            :rules="amountRules"
-                            solo
-                            background-color="input_other"
-                            style="width:380px"
-                        >
+            <div class="pb-1 text-body-1 text-bod">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
+            <v-row>
+                <v-col class="from-voting">
+                    <div class="input-title">Amount</div>
+                    <v-text-field
+                        v-model="form.amount"
+                        :label="$t('stake.amount')"
+                        required
+                        :rules="amountRules"
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                    >
                         <template v-slot:append>
                             <v-btn
                                 text
@@ -239,8 +241,8 @@
                             {{ $t('stake.max') }}
                             </v-btn>
                         </template>
-                        </v-text-field>
-                    </div>
+                    </v-text-field>
+                </v-col>
             </v-row> 
             <div class="text-center">
                 <v-btn @click="cancelStaking"
@@ -264,37 +266,37 @@
     <v-dialog v-model="stakeToNodeDialog" width="500">
       <v-card class="start_unstake" style="padding:12px">
             <div class="dialog-validator">
-                <v-card-title>Voting To Other Validator</v-card-title>
-                <v-icon @click="cancelStakingToNode" style="margin-right:12px">mdi-close</v-icon>               
+                <v-card-title class="dialog-title">Voting To Other Validator</v-card-title>
+                <v-btn @click="cancelStakingToNode" depressed class="close-btn">
+                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
+                </v-btn>                     
             </div>
-            <v-divider></v-divider>
+            <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
           <v-form
             ref="stakeToNodeform"
             lazy-validation
           >
-            <v-row justify="space-between">
-                <div style="margin-top:12px">Validator</div>
-                    <div>
+            <v-row>
+                <v-col class="from-voting">
+                    <div class="input-title">Validator</div>
                         <v-text-field
-                        v-model="stakeForm.address"
-                        :label="$t('stake.address')"
-                        required
-                        clearable
-                        :rules="addressRules"
-                        outlined
-                        background-color="input_other"
-                        style="width:380px"
-                        height="24"
-                        color="chips"
-                    ></v-text-field>
-                </div>
+                            v-model="stakeForm.address"
+                            :label="$t('stake.address')"
+                            required
+                            clearable
+                            :rules="addressRules"
+                            outlined
+                            background-color="input_other"
+                            class="text-filed"
+                            color="chips"
+                        ></v-text-field>
+                </v-col>
             </v-row>        
-            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-
+            <div class="text-bod">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
             <v-row justify="space-between" style="margin-top:12px">
-                <div style="margin-top:12px">Amount</div>
-                    <div>
+                <v-col class="from-voting from-amount">
+                    <div class="input-title">Amount</div>
                        <v-text-field
                             v-model="stakeForm.amount"
                             :label="$t('stake.amount')"
@@ -302,7 +304,7 @@
                             :rules="amountRules"
                             outlined
                             background-color="input_other"
-                            style="width:380px"
+                            class="text-filed"
                         >
                             <template v-slot:append>
                                 <v-btn
@@ -313,9 +315,8 @@
                                 </v-btn>
                             </template>
                         </v-text-field>
-                    </div>
+                </v-col>
             </v-row> 
-            
             <div class="text-center">
                 <v-btn @click="cancelStakingToNode" 
                         outlined 
@@ -330,7 +331,6 @@
                     >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
-                
             </div>
           </v-form>
         </v-list>
@@ -339,10 +339,12 @@
     <v-dialog v-model="claimDialog" width="500">
       <v-card class="start_unstake">
             <div class="dialog-validator"> 
-                <v-card-title>{{$t('stake.claim_info')}}</v-card-title>
-                <v-icon @click="cancelClaim" style="margin-right:12px">mdi-close</v-icon> 
+                <v-card-title class="dialog-title">{{$t('stake.claim_info')}}</v-card-title>
+                <v-btn @click="cancelClaim" depressed class="close-btn">
+                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
+                </v-btn>   
             </div>          
-          <v-divider></v-divider>
+          <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
           <v-form
             ref="claimform"
@@ -350,37 +352,37 @@
           >
             <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
             <div class="pb-1 text-body-1 share-rei">{{$t('stake.commonnsion_share_balance')}}{{currentItem.balannceOfShare | asset(2)}}REI</div>
-            <v-row justify="space-between" style="padding:12px;">
-                <div style="margin-top:12px">Amount</div>
-                <div>
+            <v-row>
+                <v-col class="from-voting">
+                <div class="input-title">Amount</div>
                     <v-text-field
                         v-model="claimForm.amount"
                         :label="$t('stake.amount')"
                         v-on:keyup="calculateAmount"
                         required
                         :rules="amountRules"
-                        solo
+                        outlined
                         background-color="input_other"
-                        style="width:380px"
+                        class="text-filed"
                         height="24"
                     >
-                    <template v-slot:append>
-                        <v-btn 
-                            text
-                            x-small
-                            @click="claimAll()">
-                            {{ $t('stake.max') }}
-                        </v-btn>
-                    </template>
-            </v-text-field>   
-                </div>
+                        <template v-slot:append>
+                            <v-btn 
+                                text
+                                x-small
+                                @click="claimAll()">
+                                {{ $t('stake.max') }}
+                            </v-btn>
+                        </template>
+                    </v-text-field>
+                </v-col>  
             </v-row> 
             
             <!-- <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div> -->
             <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
             
             <div class="text-center">
-                <v-btn
+                <!-- <v-btn
                 class="mr-4"
                 color="vote_button"
                 v-if="!approved"
@@ -388,7 +390,7 @@
                 @click="submitApprove"
                 >
                 {{$t('stake.approve')}}
-                </v-btn>
+                </v-btn> -->
                 <v-btn @click="cancelClaim" 
                         color="btn_button"
                         class="mr-4">
@@ -1090,6 +1092,10 @@ export default {
 .btn-div{
     text-align:right;
     text-transform: none !important;
+    .v-btn{
+        border:none;
+        margin-top: -80px;
+    }
 }
 .card-tab{
     display:flex;
@@ -1097,13 +1103,6 @@ export default {
     border-radius:20px;
     background-color: transparent;
 }
-.v-btn{
-        border:none;
-        margin-top: -80px;
-        // position: absolute;
-        // right: 0;
-        // top: 20;
-    }
     .v-tab{
        text-transform: none !important;
    }
@@ -1135,7 +1134,6 @@ export default {
         display: flex;
         flex-direction: row; 
         justify-content: flex-end;
-        // padding:0;
     }
     .select-card{
         border:none;
@@ -1161,10 +1159,29 @@ export default {
     .dialog-validator{
         display: flex;
         justify-content: space-between;
+        .dialog-title{
+            margin-left:12px;
+        }
         .close-btn{
             margin-top: 12px;
-            margin-right: 12px;
+            padding: 0;
+            background-color: transparent;
         }
+    }
+    .from-voting{
+        display: flex;
+        justify-content: space-between;
+        // padding:0;
+        .input-title{
+            margin-top: 12px;
+            width: 80px;
+            text-align: center;
+            height:40px;
+        }
+    }
+    .text-body{
+        text-align:right; 
+        margin-bottom:12px;
     }
     .text-caption{
         margin-top:12px;
@@ -1172,6 +1189,12 @@ export default {
     .share-rei{
         text-align:right;
         margin:12px 0;
+    }
+    .text-filed{
+        width:360px;
+    }
+    .text-bod{
+        text-align: right;
     }
     @media screen and (max-width: 900px) {
         .vote-list{
@@ -1192,8 +1215,31 @@ export default {
             justify-content: flex-start !important;
             margin-top:-28px;
         }
+        .dialog-validator{
+            .v-card__subtitle, .v-card__text, .v-card__title{
+                padding:0;
+            }
+            .v-card__title{
+                font-size: 1rem;
+            }
+
+        }
+        .from-voting{
+            display: flex;
+            flex-direction: column;
+            .input-title{
+                margin-top: 0;
+                height:24px;
+            }
+        }
+        .from-amount{
+            margin-top: -32px;
+        }
         .select-card{
             height:40px;
+        }
+        .text-filed{
+            width:300px !important;
         }
     }
 </style>
