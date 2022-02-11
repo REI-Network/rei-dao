@@ -18,6 +18,7 @@
         <!-- <v-divider /> -->
         <v-card
             elevation="2"
+            class="background"
         >
         <v-data-table
             :headers="headers"
@@ -85,15 +86,15 @@
             </template>
         </v-data-table>
         <div class="text-center pt-2">
-      <v-pagination
-        v-model="page"
-        :length="pageCount"
-        color="vote_button"
-        background-color="start_unstake"
-        class="v-pagination"
-        total-visible="6"
-      ></v-pagination>
-      </div>
+            <v-pagination
+                v-model="page"
+                :length="pageCount"
+                color="vote_button"
+                background-color="start_unstake"
+                class="v-pagination"
+                total-visible="6"
+            ></v-pagination>
+        </div>
         <v-card-actions>
             <v-list-item-content>
                 <v-card-title>{{$t('stakeforgas.address_resource',{address: addressToShort(connection.address)})}}

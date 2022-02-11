@@ -10,34 +10,9 @@
             style="padding-bottom:24px;"
             color="background"
           >
-            <v-subheader><h3>Charts</h3></v-subheader>
-            <div class="trend-head">
-                <v-tabs class="trend-tab" background-color="background" v-model="tab" hide-slider>
-                    <v-radio-group
-                        v-model="radios"
-                        mandatory
-                        row
-                        dense
-                        style="margin-top:0;"
-                        >
-                        <v-tab key="1">
-                            <v-radio
-                                label="Price"
-                                value="1"
-                                class="trends-radio"
-                            >
-                            </v-radio>
-                        </v-tab>
-                        <v-tab key="2">
-                            <v-radio
-                            label="Market Cap"
-                            value="2"
-                            >
-                            </v-radio>
-                        </v-tab>   
-                    </v-radio-group>
-                </v-tabs>
-                <v-row style="margin:0;" class="time-chip">
+            <v-row class="head-chips">
+                 <v-subheader><h3>Charts</h3></v-subheader>
+                <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
                         <v-chip
                             class="ma-2"
                             filter
@@ -64,9 +39,36 @@
                             filter
                             x-small
                             >
-                            30D
+                            All
                         </v-chip>
                     </v-row>
+            </v-row>
+            <div class="trend-head">
+                <v-tabs class="trend-tab" background-color="background" v-model="tab" hide-slider>
+                    <v-radio-group
+                        v-model="radios"
+                        mandatory
+                        row
+                        dense
+                        style="margin-top:0;"
+                        >
+                        <v-tab key="1">
+                            <v-radio
+                                label="Price"
+                                value="1"
+                                class="trends-radio"
+                            >
+                            </v-radio>
+                        </v-tab>
+                        <v-tab key="2">
+                            <v-radio
+                            label="Market Cap"
+                            value="2"
+                            >
+                            </v-radio>
+                        </v-tab>   
+                    </v-radio-group>
+                </v-tabs>
                </div>
                 <v-tabs-items v-model="tab">
                     <v-tab-item key="1">
@@ -388,9 +390,6 @@ export default {
         font-size: 12px;
     }  
 }
-.trend-tab{
-    width:52%;
-    }
 .theme--dark.v-chip:not(.v-chip--active){
     background-color:#9F9DB9;
    }
