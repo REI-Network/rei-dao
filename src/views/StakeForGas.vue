@@ -9,13 +9,13 @@
           <GasStakeTotal></GasStakeTotal>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col>
          <v-card class="background">
            <GasStakeList></GasStakeList>
          </v-card>
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
@@ -31,13 +31,13 @@
 
 import StakeForFreeGas from '../components/StakeForFreeGas';
 import GasStakeTotal from '../components/GasStakeTotal';
-import GasStakeList from '../components/GasStakeList';
+// import GasStakeList from '../components/GasStakeList';
 
 export default {
   components:{
     StakeForFreeGas,
     GasStakeTotal,
-    GasStakeList
+    // GasStakeList
   },
   data() {
     return {

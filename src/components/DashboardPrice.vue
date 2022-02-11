@@ -213,11 +213,25 @@ export default {
                 type: 'category',
                 data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
                 boundaryGap:false,
+                axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#2C2752', //坐标线的颜色
+                            width: '1' //坐标线的宽度
+                        }
+                    },
             },
             yAxis: {
                 type: 'value',
                 splitLine: {
                     show:false,
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#2C2752', //坐标线的颜色
+                            width: '1' //坐标线的宽度
+                        }
                     },
             },
 
@@ -278,11 +292,25 @@ export default {
                 type: 'category',
                 data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
                 boundaryGap:false,
+                axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#2C2752', //坐标线的颜色
+                            width: '1' //坐标线的宽度
+                        }
+                    },
             },
             yAxis: {
                 type: 'value',
                 splitLine: {
                     show:false,
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color: '#2C2752', //坐标线的颜色
+                            width: '1' //坐标线的宽度
+                        }
                     },
             },
 
@@ -402,7 +430,7 @@ export default {
 
 @media screen and (max-width: 900px) {
     .trend-tab{
-        width:100%;
+        width:100% !important;
     }
     .trend-head{
         display: flex;

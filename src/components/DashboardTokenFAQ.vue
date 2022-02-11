@@ -22,7 +22,7 @@
             </v-radio-group>
           </div>
           </v-subheader> -->
-            <div id="myCharts" ref="chart" style="height:348px"></div>
+            <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>
             <div class="update-time" style="margin-top:-20px">
                  <v-icon
                     color="primary"
@@ -138,14 +138,28 @@ export default {
           tooltip: {
             trigger: 'item'
           },
+          query: {
+          maxAspectRatio: 1 // 当长宽比小于1时。
+          },
           legend: {
             orient: 'vertical',
             icon:'circle',
-            right: '25%',
+            right: '15%',
             top: '16%',
             itemGap: 40,
             itemWidth: 12,             // 图例图形宽度
             itemHeight: 12,
+            formatter:function(name){
+              var index = 0;
+              var clientlabels = ['Circulated','Dev Ecology','Dev Rewards','Maketing','Node Rewards'];
+              var clientcounts = ['750,000,000','250,000,000','150,000,000','50,000,000','50,000,000'];
+              clientlabels.forEach(function(value,i){
+                if(value == name){
+                  index = i;
+                }
+              });
+                return name + "  " + clientcounts[index];
+            }
           },
           color:['#F46F6F', '#64B5FF', '#FF9743','#7A7AB3','#4CC7B6'],
           series: [
@@ -262,5 +276,13 @@ export default {
       margin-top: 20px;
     }
   }
+  .card-charts{
+    overflow-x: scroll;
+     max-width: 100%;
+  }
+  // .dispribution{
+  //   max-width: 100%;
+  //   overflow-x: scroll;
+  // }
 }
 </style>

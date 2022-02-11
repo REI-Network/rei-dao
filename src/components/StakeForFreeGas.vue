@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row class="background">
       <v-col cols="12" md="12" sm="12">
-        <v-card-actions>
+        <!-- <v-card-actions>
             <v-card-title>{{$t('stakeforgas.list_title')}}
             </v-card-title>
             <v-spacer></v-spacer>
@@ -14,11 +14,86 @@
                 >
                 {{$t('stakeforgas.title')}}
             </v-btn>
-        </v-card-actions>   
-        <v-divider />
+        </v-card-actions>    -->
+        <!-- <v-divider /> -->
         <v-card
             elevation="2"
         >
+        <v-data-table
+            :headers="headers"
+            :items="nodeList"
+            class="elevation-1 background"
+            hide-default-footer
+            :items-per-page="itemsPerPage"
+            :loading="stakeListLoading"
+            :loading-text="$t('msg.loading')"
+            :page.sync="page"
+            @page-count="pageCount = $event"
+        >
+            <template v-slot:item.address="{ item }">
+            <!-- <Address :val="item.address"></Address> -->
+                {{ item.address | asset(2)  }}
+            </template>
+            <template v-slot:item.amount="{ item }">
+                {{ item.amount | asset(2)  }}
+            </template>
+            <template v-slot:item.deposit="{ item }">
+                {{ item.deposit }}
+            </template>
+            <template v-slot:item.withdraw="{ item }">
+                {{ item.withdraw | asset(2)  }}
+            </template>
+            <!-- <template v-slot:item.isActive="{ item }">
+                {{ status[item.isActive] }}
+            </template> -->
+            <template v-slot:item.operation="{ item }">
+                <v-btn
+                tile
+                small
+                color='vote_button'
+                class="mr-4"
+                v-if='connection.address'
+                @click="handleWithdraw()(item)"
+                style="border-radius:4px"
+                >
+                    Withdraw
+                </v-btn>
+                <v-btn
+                tile
+                small
+                color="start_unstake"
+                class="mr-4"
+                v-if='connection.address'
+                @click="deposit(item)"
+                style="border-radius:4px"
+                >
+                    Stake more
+                </v-btn>
+                <v-btn
+                v-if="item.address==connection.address"
+                tile
+                small
+                color="success"
+                class="mr-4"
+                @click="handleReward(item)"
+                >
+                    {{$t('stake.get_reward')}}
+                </v-btn>
+                <span v-if='!connection.address'>
+                    -
+                </span>
+            </template>
+        </v-data-table>
+        <div class="text-center pt-2">
+      <v-pagination
+        v-model="page"
+        :length="pageCount"
+        color="vote_button"
+        background-color="start_unstake"
+        class="v-pagination"
+        total-visible="6"
+      ></v-pagination>
+      </div>
         <v-card-actions>
             <v-list-item-content>
                 <v-card-title>{{$t('stakeforgas.address_resource',{address: addressToShort(connection.address)})}}
@@ -147,47 +222,73 @@
     </v-row>
 
     <v-dialog v-model="depositDialog" width="500">
-      <v-card>
-          <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
-          <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+      <v-card class="start_unstake">
+          <div class="dialog-validator"> 
+                <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
+                <v-btn @click="cancelStaking" depressed class="close-btn">
+                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
+                </v-btn>   
+            </div> 
+          <!-- <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
+          <v-divider></v-divider> -->
+        <v-list rounded class="ma-4 start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
+            class="start_unstake"
           >
-            <v-text-field
-                v-model="form.address"
-                readonly
-                :label="$t('stake.address')"
-            >
+          <v-row>
+              <v-col class="from-voting">
+                  <div class="input-title">Address</div>
+                        <v-text-field
+                            v-model="form.address"
+                            readonly
+                            :label="$t('stake.address')"
+                            outlined
+                            background-color="input_other"
+                            class="text-filed"
+                            color="chips"
+                        >
+                    </v-text-field>
+              </v-col>
+          </v-row>
+            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
+            <v-row>
+              <v-col class="from-voting">
+                  <div class="input-title">Amount</div>
+                        <v-text-field
+                        v-model="form.amount"
+                        :label="$t('stake.amount')"
+                        required
+                        :rules="amountRules"
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                        height="24"
+                    ><template v-slot:append>
+                        <v-btn
+                        text
+                        x-small
+                        @click="setAll('form')">
+                        {{ $t('stake.max') }}
+                        </v-btn>
+                    </template>
             </v-text-field>
-            <div class="pb-1 text-body-1">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
-            <v-text-field
-                v-model="form.amount"
-                :label="$t('stake.amount')"
-                required
-                :rules="amountRules"
-            ><template v-slot:append>
-                <v-btn
-                  text
-                  x-small
-                  @click="setAll('form')">
-                  {{ $t('stake.max') }}
-                </v-btn>
-                    
-                </template>
-            </v-text-field>
+              </v-col>
+          </v-row>
             <div class="text-center">
+                <v-btn 
+                color="btn_button"
+                @click="cancelStaking"
+                class="mr-4">
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
                 <v-btn
-                class="mr-4"
-                color="primary"
+                color="vote_button"
                 :loading="stakeLoading"
                 @click="submitStaking"
                 >
                 {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelStaking">
-                {{$t('stake.btn_cancel')}}
                 </v-btn>
             </div>
           </v-form>
@@ -195,41 +296,53 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="withdrawDialog" width="500">
-      <v-card>
+      <v-card class="start_unstake dialog-card">
           <v-card-title>{{$t('stakeforgas.withdraw_info')}}</v-card-title>
-          <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+          <!-- <v-divider></v-divider> -->
+        <v-list rounded class="ma-4 start_unstake">
           <v-form 
             ref="withdrawform"
             lazy-validation
+            class="start_unstake"
           >
-            <div class="pb-1 text-body-1">{{$t('stakeforgas.estimate_withdraw')}}: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
-            <v-text-field
-                v-model="withdrawForm.amount"
-                :label="$t('stake.amount')"
-                required
-                :rules="amountRules"
-            ><template v-slot:append>
-                <v-btn
-                  text
-                  x-small
-                  @click="setWithdrawAll()">
-                  {{ $t('stake.max') }}
-                </v-btn>
-                    
-                </template>
-            </v-text-field>
+            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stakeforgas.estimate_withdraw')}}: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
+            <v-row>
+                <v-col lass="from-voting">
+                    <div class="input-title">Amount</div>
+                    <v-text-field
+                        v-model="withdrawForm.amount"
+                        :label="$t('stake.amount')"
+                        required
+                        :rules="amountRules"
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                        height="24"
+                    ><template v-slot:append>
+                        <v-btn
+                         text
+                        x-small
+                        @click="setWithdrawAll()">
+                        {{ $t('stake.max') }}
+                        </v-btn>  
+                    </template>
+                 </v-text-field>
+                </v-col>
+            </v-row>
+            
             <div class="text-center">
-                <v-btn
+                <v-btn 
                 class="mr-4"
-                color="primary"
+                color="btn_button"
+                @click="cancelWithdraw">
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
+                <v-btn
+                color="vote_button"
                 :loading="withdrawLoading"
                 @click="submitWithdraw"
                 >
                 {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelWithdraw">
-                {{$t('stake.btn_cancel')}}
                 </v-btn>
             </div>
           </v-form>
@@ -266,6 +379,98 @@ export default {
         withdrawDialog: false,
         stakeLoading: false,
         withdrawLoading: false,
+        page: 1,
+        pageCount: 0,
+        itemsPerPage: 10,
+        stakeListLoading: false,
+        headers: [
+            {
+                text:'Address',
+                align: 'start',
+                sortable: false,
+                value: 'address',
+            },
+            { text: 'Amount', value: 'amount' },
+            { text: 'Deposit Time', value: 'deposit' },
+            { text: 'Withdraw Countdown', value: 'withdraw' },
+            // { text: this.$t('stake.status'), value: 'isActive' },
+            { text: 'Operation', value: 'operation', sortable: false },
+            // { text: '10', value: 'ten'}
+        ],
+        nodeList: [
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+            {
+                address:'0x77...Fo21',
+                amount:'2,323.00',
+                deposit:'2021/12/20 14:12:11',
+                withdraw:'2Days:12H:25M:25S'
+            },
+        ],
         form:{
             address: '',
             amount: 0
@@ -493,3 +698,59 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+.dialog-validator{
+    display: flex;
+    justify-content: space-between;
+    .dialog-title{
+        margin-left:12px;
+    }
+    .close-btn{
+        margin-top: 12px;
+        padding: 0;
+        background-color: transparent;
+    }
+}
+.from-voting{
+        display: flex;
+        justify-content: space-between;
+        // padding:0;
+        .input-title{
+            margin-top: 12px;
+            width: 80px;
+            text-align: center;
+            height:40px;
+        }
+    }
+.v-sheet.v-card{
+    padding-bottom: 8px;
+}
+    @media screen and (max-width: 900px) {
+        .dialog-validator{
+            .v-card__subtitle, .v-card__text, .v-card__title{
+                padding:0;
+            }
+            .v-card__title{
+                font-size: 1rem;
+            }
+
+        }
+        .from-voting{
+            display: flex;
+            flex-direction: column;
+            .input-title{
+                margin-top: 0;
+                height:24px;
+            }
+        }
+        .from-amount{
+            margin-top: -32px;
+        }
+        .select-card{
+            height:40px;
+        }
+        .text-filed{
+            width:300px !important;
+        }
+    }
+</style>
