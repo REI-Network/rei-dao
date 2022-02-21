@@ -7,7 +7,7 @@
           <v-card
             class="mx-auto"
             tile
-            style="padding-bottom:24px;"
+            style="padding-bottom:24px;margin-top:12px;"
             color="background"
           >
             <v-row class="head-chips">
@@ -93,7 +93,7 @@
             <v-card
                 class="mx-auto"     
                 tile
-                style="padding-bottom:32px;height:516px;"
+                style="padding-bottom:32px;height:506px;"
                 color="background"
             >
                 <v-subheader class="price-more"><h3>Price And Market Stats</h3><div>More>></div></v-subheader>
@@ -428,13 +428,10 @@ export default {
    }
 
 @media screen and (max-width: 900px) {
-    .trend-tab{
-        width:100% !important;
-    }
-    .trend-head{
-        display: flex;
-        flex-direction: column;
-   }
+//     .trend-head{
+//         display: flex;
+//         flex-direction: column;
+//    }
     .charts-faq{
         display: flex;
         flex-direction: column;

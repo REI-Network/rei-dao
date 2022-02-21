@@ -1171,7 +1171,7 @@ export default {
     .from-voting{
         display: flex;
         justify-content: space-between;
-        // padding:0;
+        padding-bottom:0;
         .input-title{
             margin-top: 12px;
             width: 80px;

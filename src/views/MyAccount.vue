@@ -16,7 +16,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <MyAccountProposals></MyAccountProposals>
+        <!-- <MyAccountProposals></MyAccountProposals> -->
       </v-col>
     </v-row>
   </v-container>
@@ -26,13 +26,13 @@
 /* eslint-disable no-unused-vars */
 import MyAccountBalance from '../components/MyAccountBalance';
 import MyAccountCrude from '../components/MyAccountCrude';
-import MyAccountProposals from '../components/MyAccountProposals';
+// import MyAccountProposals from '../components/MyAccountProposals';
 
 export default {
   components:{
     MyAccountBalance,
     MyAccountCrude,
-    MyAccountProposals
+    // MyAccountProposals
   },
   data() {
     return {

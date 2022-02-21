@@ -51,18 +51,19 @@
                         </v-progress-circular>
                         <h4>0.000047</h4>
                         <div class="stake-name">Crude Used</div>
+                        <div class="update-time">
+                            <v-icon
+                                color="primary"
+                                size="12"
+                            >
+                                 mdi-clock-time-ten-outline
+                            </v-icon>
+                            1h Ago
+                        </div>  
                     </div>
                     </v-col>
                 </v-row>  
-                <div class="update-time">
-                    <v-icon
-                        color="primary"
-                        size="12"
-                    >
-                       mdi-clock-time-ten-outline
-                    </v-icon>
-                    1h Ago
-                </div>  
+                
             </v-card>
             <v-card
                 class="middle-btn"
@@ -183,7 +184,7 @@ export default {
     }
     .row-circular{
         display:flex;
-        flex-direction: row !important;
+        flex-direction: row;
         max-width: 100%;
     }
     .gasStake-total{
@@ -193,7 +194,7 @@ export default {
         padding: 0;
     }
     .circular{
-        margin-left: 60px !important;
+        margin-left: 50px !important;
         margin-right: 50px !important;
     }
     .middle-btn{
@@ -201,5 +202,8 @@ export default {
         margin-top: 20px;
         padding:20px 0;
     }
+    .update-time{
+        margin-right: 20px;
+   }
 }
 </style>

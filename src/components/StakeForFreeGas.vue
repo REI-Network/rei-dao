@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row class="background">
-      <v-col cols="12" md="12" sm="12">
+      <v-col >
         <!-- <v-card-actions>
             <v-card-title>{{$t('stakeforgas.list_title')}}
             </v-card-title>
@@ -14,16 +14,15 @@
                 >
                 {{$t('stakeforgas.title')}}
             </v-btn>
-        </v-card-actions>    -->
-        <!-- <v-divider /> -->
-        <v-card
-            elevation="2"
+        </v-card-actions>   
+        <v-divider /> -->
+        <v-card  
             class="background"
         >
         <v-data-table
             :headers="headers"
             :items="nodeList"
-            class="elevation-1 background"
+            class="background"
             hide-default-footer
             :items-per-page="itemsPerPage"
             :loading="stakeListLoading"
@@ -223,7 +222,7 @@
     </v-row>
 
     <v-dialog v-model="depositDialog" width="500">
-      <v-card class="start_unstake">
+      <v-card class="start_unstake" style="padding-bottom:4px">
           <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
                 <v-btn @click="cancelStaking" depressed class="close-btn">
@@ -715,7 +714,7 @@ export default {
 .from-voting{
         display: flex;
         justify-content: space-between;
-        // padding:0;
+        padding-bottom:0;
         .input-title{
             margin-top: 12px;
             width: 80px;
