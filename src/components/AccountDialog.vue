@@ -2,7 +2,7 @@
   <div>
     <div class="ops">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
-      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REI Network' && connection.network != 'REI Testnet'" rounded @click="switchGXChainNet()">
+      <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REI Network' && connection.network != 'REI Testnet' && connection.network != 'REI Devnet'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
         {{$t('msg.neterror')}}
       </v-btn>
@@ -141,7 +141,8 @@ const NETWORKS = {
   5: 'goerli',
   42: 'kovan',
   12357: 'REI Testnet',
-  47805: 'REI Network'
+  47805: 'REI Network',
+  23579: 'REI Devnet'
 };
 
 export default {

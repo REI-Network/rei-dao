@@ -110,6 +110,7 @@
 
 <script>
 /* eslint-disable no-undef */
+import { mapActions, mapGetters } from 'vuex';
 import { client } from '../service/ApolloClient'
 import { gql } from '@apollo/client/core'
 import dayjs from 'dayjs'
@@ -149,6 +150,11 @@ export default {
        myChart4: {}
     };
   },
+  computed: {
+    ...mapGetters({
+      totalStakes: 'totalStakes'
+    })
+  },
   watch: {
        tab:{
            handler(newValue){
@@ -168,6 +174,9 @@ export default {
       }, 500);
   },
   methods: {
+    ...mapActions({
+      setTotalStakes: 'setTotalStakes',
+    }),
     async getdata(){
         let data = [];
         let dataVoting = [];
@@ -180,6 +189,7 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
+        this.setTotalStakes({totalStakes:charData})
         let _data = data.concat(charData.totalStakes).reverse();
         _data.shift();
         
@@ -578,9 +588,6 @@ export default {
             })
         }   
     },      
-  },
-  computed: {
-   
   }
 };
 </script>

@@ -10,3 +10,16 @@ export const getMyStake = (apiurl,params) => http({
     url: `${apiurl}api/MyStakeAddress`,
     params
 });
+
+export const getAssetPrice = (apiurl,params) => http({
+    method: 'GET',
+    url: `${apiurl}market/asset/chart`,
+    params
+});
+
+export const getAssetInfo = (apiurl,params) => http({
+    method: 'GET',
+    url: `${apiurl}market/asset/info`,
+    params
+});
+

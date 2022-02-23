@@ -26,7 +26,8 @@ const state = {
     { key: 0, text: 'settings.light', icon: 'mdi-white-balance-sunny' },
     { key: 1, text: 'settings.dark', icon: 'mdi-weather-night' },
     { key: 2, text: 'settings.auto', icon: 'mdi-autorenew' }
-  ]
+  ],
+  totalStakes: []
 };
 const getters = {
   connection: (state) => state.connection,
@@ -53,7 +54,8 @@ const getters = {
         return false;
       }
     }
-  }
+  },
+  totalStakes: (state) => state.totalStakes
 };
 
 const mutations = {
@@ -105,6 +107,9 @@ const mutations = {
   setFinishedTxs: (state, payload) => {
     state.finishedTxs = payload.finishedTxs;
   },
+  setTotalStakes: (state, payload) => {
+    state.totalStakes = payload.totalStakes;
+  }
 
 };
 
@@ -127,6 +132,9 @@ const actions = {
   },
   setFinishedTxs: ({ commit }, payload) => {
     commit('setFinishedTxs', payload);
+  },
+  setTotalStakes: ({ commit }, payload) => {
+    commit('setTotalStakes', payload);
   },
 };
 

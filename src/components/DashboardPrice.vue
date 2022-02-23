@@ -131,12 +131,17 @@
 </template>
 <script>
 import * as echarts from 'echarts';
+import { mapGetters } from 'vuex';
+import { getAssetPrice, getAssetInfo } from '../service/CommonService'
+import dayjs from 'dayjs'
+
 /* eslint-disable no-undef */
 export default {
   data() {
     return {
         radios:1,
         tab:"1",
+        myChart:null,
         folders: [
         {
           subtitle: 'REI Price',
@@ -181,39 +186,93 @@ export default {
       ],
     };
   },
-    watch: {
-       tab:{
-           handler(newValue,oldValue){
-               this.tab = newValue;
-               console.log('oldValue',oldValue)
-               setTimeout(() => {
-                    this.myCharts(); 
-                }, 200);
-            }
+  watch: {
+    tab:{
+        handler(newValue){
+            this.tab = newValue;
+            setTimeout(() => {
+                this.myCharts(); 
+            }, 200);
         }
     },
+    '$store.state.connection': function() {
+      this.getPriceChart()
+    },
+  },
+  computed: {
+    ...mapGetters({
+      connection: 'connection',
+    })
+  },
   mounted() {
-      setTimeout(() => {
+    setTimeout(() => {
           this.myCharts()
       },500 
     ); 
+    this.getPriceChart()
   },
   destroyed() {
     
   },
   methods: {
+    getApiUrl(){
+        let api = ''
+        if(this.connection.network == 'REI Devnet'){
+            api = process.env.VUE_APP_DEV_SERVER_API;
+        } else if(this.connection.network == 'REI Testnet'){
+             api = process.env.VUE_APP_TEST_SERVER_API
+        } else {
+            api = process.env.VUE_APP_SERVER_API;
+        }
+        return api;
+    },
+    async getPriceChart(){
+        let apiUrl = this.getApiUrl();
+        let chartData = await getAssetPrice(apiUrl);
+        let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
+
+        let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
+        console.log(chartInfoData);
+        this.folders = needObject.map((item)=>{
+            return {
+                subtitle:item,
+                number:chartInfoData[item]
+            }
+        })
+
+
+        this.chartData = chartData.data.data;
+
+        let priceData = this.chartData.prices.map((item)=>{
+            return {
+                    "value": [
+                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
+                        item[1]
+                    ]
+                }
+        })
+        console.log(priceData)
+
+        this.myChart.setOption({
+            series: [
+              {
+                data: priceData
+              }
+            ]
+        });
+    },
     myCharts(){
         if(this.tab===0){
             const chartPrice = this.$refs.chartPrice;
         if(chartPrice){
-        const myChart = this.$echarts.init(chartPrice) 
+        this.myChart = this.$echarts.init(chartPrice) 
         var option = {
             tooltip:{
                 trigger:'axis'
             },
             xAxis: {
-                type: 'category',
-                data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
+                type: 'time',
+                //data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
                 boundaryGap:false,
                 axisLine: {
                         lineStyle: {
@@ -250,7 +309,7 @@ export default {
             series: [
                 {
                     name:'USD',
-                    data: [656,789,983,834,865,890,766,800,900,986,820, 932, 901, 934, 1290, 1330, 1320,1348,],
+                    data: [],
                     type: 'line',
                     symbol: "none",
                     itemStyle:{
@@ -272,14 +331,14 @@ export default {
                 }
             ],
         };
-        myChart.setOption(option)
+        this.myChart.setOption(option)
         window.addEventListener("resize", function() {
-          myChart.resize()
+          this.myChart.resize()
         })
     }
     this.$on('hook:destroyed',()=>{
          window.removeEventListener("resize", function() {
-            myChart.resize();
+            this.myChart.resize();
         });
     })
         }else{
@@ -364,9 +423,6 @@ export default {
 
         }
     }
-  },
-  computed: {
-   
   }
 };
 </script>
