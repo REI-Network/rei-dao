@@ -29,20 +29,21 @@
                     <v-tab key="11" class="v-tab-left">{{$t('stake.active_nodelist')}}</v-tab>
                     <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
             </v-tabs>
+            <!-- <v-divider /> -->
             <div class="btn-div">
                 <v-btn
                     class="v-btn"
                     text
                     outlined
-                    color="primary"
+                    color="validator"
                     v-if="connection.address"
                     @click="stakeToNode"
                 >
                 {{$t('stake.stake_to_other_node')}}
                     <v-icon
-                        color="primary"
+                        color="validator"
                         >
-                        mdi-plus-circle-outline
+                        mdi-plus-box-outline
                     </v-icon>
                 </v-btn>
             </div>
@@ -70,6 +71,7 @@
                                 outlined
                                 item-color="vote_button"
                                 dense
+                                style="margin-left: 18px;"
                             ></v-select>
                         </v-card>
                         <v-card outlined class="select-card">
@@ -170,6 +172,9 @@
                             </template>
                             <template v-slot:item.balannceOfShare="{ item }">
                                 {{ item.balannceOfShare | asset(2)  }}
+                            </template>
+                             <template v-slot:item.apy="{ item }">
+                                {{ item.apy | asset(2)  }}
                             </template>
                     
                             <template v-slot:item.actions="{ item }">
@@ -294,7 +299,7 @@
                 </v-col>
             </v-row>        
             <div class="text-bod">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-            <v-row justify="space-between" style="margin-top:12px">
+            <v-row justify="space-between" style="margin-top:4px">
                 <v-col class="from-voting from-amount">
                     <div class="input-title">Amount</div>
                        <v-text-field
@@ -591,6 +596,7 @@ export default {
                 text: this.$t('stake.voting_power'),value: 'power'
             },
             { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+            { text: 'Apy', value: 'apy' },
             { text: this.$t('stake.operation'), value: 'actions', sortable: false }
         ],
         status:{
@@ -1090,12 +1096,11 @@ export default {
     }
 }
 .btn-div{
-    text-align:right;
-    text-transform: none !important;
-    .v-btn{
-        border:none;
-        margin-top: -80px;
-    }
+    position: absolute;
+    right:0;
+    top:0;
+    margin-top:12px;
+    margin-right: 12px;
 }
 .card-tab{
     display:flex;
@@ -1139,11 +1144,12 @@ export default {
         border:none;
         background-color: transparent;
         width: 120px; 
-        margin-top:12px;
+        // margin-top:12px;
     }
     .d-select{
-            border-radius: 30px;
-            margin-right:20px
+            border-radius: 20px;
+            margin-right:20px;
+            margin-top:12px;
         }
     .theme--dark.v-data-table{
         background-color:transparent;
@@ -1151,6 +1157,9 @@ export default {
     .v-pagination{
         display: inline-flex !important;
         justify-content: flex-end !important;
+    }
+    .v-btn{
+        text-transform: none !important;
     }
     .theme--dark.v-tabs-items{
         background-color:transparent;
@@ -1172,6 +1181,7 @@ export default {
         display: flex;
         justify-content: space-between;
         padding-bottom:0;
+        // padding-top:8;  
         .input-title{
             margin-top: 12px;
             width: 80px;
@@ -1196,24 +1206,41 @@ export default {
     .text-bod{
         text-align: right;
     }
+    // .theme--dark .v-pagination .v-pagination__item{
+    //     background: #595777 !important;
+    // }
     @media screen and (max-width: 900px) {
         .vote-list{
             position: static !important;
             display: flex;
             flex-direction: column;
         }
-        .btn-div{
+        .theme--light .btn-div{
             text-align:left !important;
+            padding: 4px 0;
+            border-top: 1px solid rgb(235,235,235);
+        }
+         .theme--dark .btn-div{
+            text-align:left !important;
+            padding: 4px 0;
+            border-top: 1px solid rgb(50,48,69);
+        }
+        .btn-div{
+            position: static;
         }
         .v-btn{
             border:none;
-            margin-top: 0 !important;
+            // margin-top: 0 !important;
         }
+        // .card-tab{
+        //     border:none;
+        // }
          .right-outline{
             display: flex;
             flex-direction: row !important; 
             justify-content: flex-start !important;
-            margin-top:-28px;
+            margin-top:-16px;
+            padding: 0;
         }
         .dialog-validator{
             .v-card__subtitle, .v-card__text, .v-card__title{
@@ -1236,7 +1263,9 @@ export default {
             margin-top: -32px;
         }
         .select-card{
-            height:40px;
+            width:200px;
+            // height:40px;
+            margin-top:-10px;
         }
         .text-filed{
             width:300px !important;

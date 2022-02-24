@@ -37,6 +37,7 @@ export default new Vuetify({
         input_other:'#FFF',
         current_wallet:"#6979F8",
         // input_other:'#F5F5F7',
+        validator:'#868E9E'
       },
       dark: {
         primary: '#FFF',
@@ -50,6 +51,7 @@ export default new Vuetify({
         btn_button:"#9F9DB9",
         chips:"#504985",
         current_wallet:"#403E59",
+        validator:'#868E9E'
       },
     },
     options: {

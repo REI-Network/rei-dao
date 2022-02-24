@@ -10,13 +10,16 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei">423.00<span class="rei">REI</span></v-subheader>
-                            <v-subheader>
+                            <v-subheader class="total-rei" v-if='connection.address'>423.00<span class="rei">REI</span></v-subheader>
+                             <div v-if='!connection.address' class="not-connection">
+                                 —
+                            </div>
+                            <v-subheader v-if='connection.address'>
                                 <div class="add-price" style="border-right:2px solid;padding-right:12px">
                                     <div>$13,434.00</div>
                                     <div style="color:#65BB67;">+15.16%</div>
                                 </div>
-                                <div class="add-price" style="margin-left:12px">
+                                <div class="time-price" style="margin-left:12px">
                                     <div>24H</div>
                                     <div class="update-time">
                                         <v-icon
@@ -29,6 +32,9 @@
                                     </div>
                                 </div>
                             </v-subheader>
+                             <div v-if='!connection.address' class="not-connection">
+                                -
+                            </div>
                             <v-subheader>
                                 Validator Voting Stake
                                 <v-tooltip right>
@@ -53,9 +59,11 @@
                                 dark
                                 size="22"
                                 class="icon-right"
+                                v-if='connection.address'
                             >
                             mdi-arrow-right-circle
                             </v-icon>
+                            <div v-if='!connection.address'></div>
                     </v-card>
                     <v-card
                         class="ma-4 voting-stake"
@@ -63,8 +71,11 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei" style="margin-top:12px">164.00<span class="rei">REI</span></v-subheader>
-                            <v-subheader>
+                            <v-subheader class="total-rei" style="margin-top:28px" v-if='connection.address'>164.00<span class="rei">REI</span></v-subheader>
+                            <div v-if='!connection.address' class="not-connection">
+                                —
+                            </div>
+                            <v-subheader class="">
                                 Validator Voting Stake
                                 <v-tooltip right>
                                     <template v-slot:activator="{ on, attrs }">
@@ -88,9 +99,11 @@
                                 dark
                                 size="22"
                                 class="icon-right"
+                                v-if='connection.address'
                             >
                             mdi-arrow-right-circle
                             </v-icon>
+                            <div v-if='!connection.address'></div>
                     </v-card>
                 </v-card>
             </v-col>
@@ -98,6 +111,8 @@
    </v-container>
 </template>
 <script>
+
+import { mapGetters, mapActions } from 'vuex';
 /* eslint-disable no-undef */
 export default {
   data() {
@@ -113,12 +128,17 @@ export default {
   destroyed() {
     
   },
-  methods: {
-      
+   computed: {
+   ...mapGetters({
+      connection: 'connection',
+      dark: 'dark'
+    }),
   },
-  computed: {
-   
-  }
+  methods: {
+      ...mapActions({
+      addTx: 'addTx'
+    }),
+  },
 };
 </script>
 
@@ -148,14 +168,21 @@ export default {
     background-color: transparent !important;
       .content-left{
         width:350px;
-        margin:12px 0;
+        // margin:12px 0; 
       }
       .icon-right{
         margin-right:20px;
       }
     }
   .add-price{
-      width: 50%;
+      width: 56%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .time-price{
+      width: 44%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -167,6 +194,10 @@ export default {
     font-size: 12px;
     // margin-right: 20px;
   }
+  .not-connection{
+    margin: 12px 36px;
+    font-weight: 500;
+  }
 }
 @media screen and (max-width: 900px) {
     .accout-item{
@@ -176,8 +207,12 @@ export default {
         flex-direction: column;
     }
     .voting-stake{
-        width: 94% !important;
+        width: 91% !important;
     }
+    .content-left{
+        width:350px;
+        margin:12px 0;
+      }
   }
 }
 </style>

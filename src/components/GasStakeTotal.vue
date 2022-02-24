@@ -20,9 +20,9 @@
                             :value="value"
                             color="#4CC7B6"
                             > 
-                            {{value}}
+                            {{connection.address?value:'-'}}
                         </v-progress-circular>
-                        <h4>0.025</h4>
+                        <h4>{{connection.address?0.025:'-'}}</h4>
                         <div class="stake-name">Daily Free Fee(Crude)</div>
                     </div>
                     <div class="circular">
@@ -32,9 +32,8 @@
                             :width="22"
                             :value="45"
                             color="#64B5FF"
-                            
                             > 
-                            {{value1}}
+                            {{connection.address?value1:'-'}}
                         </v-progress-circular>
                         <h4>2.722</h4>
                         <div class="stake-name">Left Crude</div>
@@ -47,9 +46,9 @@
                             :value="10.78"
                             color="#FF9743"
                             > 
-                            {{value2}}
+                            {{connection.address?value2:'-'}}
                         </v-progress-circular>
-                        <h4>0.000047</h4>
+                        <h4>{{connection.address?0.000047:'-'}}</h4>
                         <div class="stake-name">Crude Used</div>
                         <div class="update-time">
                             <v-icon
@@ -70,7 +69,8 @@
                 tile
                 color="background"
             >
-               <div class="total-rei">11112.200<span class="rei">REI</span></div> 
+               <div class="total-rei" v-if="connection.address">11112.200<span class="rei">REI</span></div> 
+               <div v-if="!connection.address" class="not-connection">-</div>
                <div class="stake-name">Total Staked</div>
                <v-btn
                     tile
@@ -85,6 +85,7 @@
     </v-container>
 </template>
 <script>
+import { mapGetters, mapActions } from 'vuex';
 /* eslint-disable no-undef */
 export default {
   data() {
@@ -102,11 +103,17 @@ export default {
   destroyed() {
     
   },
-  methods: {
+    computed: {
+   ...mapGetters({
+      connection: 'connection',
+      dark: 'dark'
+    }),
   },
-  computed: {
-   
-  }
+  methods: {
+      ...mapActions({
+      addTx: 'addTx'
+    }),
+  },
 };
 </script>
 
@@ -116,7 +123,7 @@ export default {
 }
 .row-circular{
         display:flex;
-        // justify-content: space-around;
+        justify-content: space-around;
     }
 .circular{
     text-align: center;
@@ -177,6 +184,10 @@ export default {
     padding: 12px 20px;
     border-radius:20px;
 }
+.not-connection{
+    margin: 12px 36px;
+    font-weight: 500;
+  }
 @media screen and (max-width: 900px) {
     .total-progress{
         overflow-x: scroll;
@@ -185,6 +196,7 @@ export default {
     .row-circular{
         display:flex;
         flex-direction: row;
+        justify-content: initial;
         max-width: 100%;
     }
     .gasStake-total{

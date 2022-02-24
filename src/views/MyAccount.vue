@@ -14,11 +14,11 @@
         <MyAccountCrude></MyAccountCrude>
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col>
-        <!-- <MyAccountProposals></MyAccountProposals> -->
+        <MyAccountProposals></MyAccountProposals>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 <script>

@@ -8,7 +8,7 @@
         <div class="mb-1">{{ $t('settings.language') }}</div>
         <v-row>
           <v-col cols="6" v-for="item in languages" :key="item.key">
-            <v-btn block :color="language == item.key ? 'vote_button' : undefined" @click="switchLanguage({ language: item.key })">
+            <v-btn block :color="language == item.key ? 'vote_button' : 'input_other'" @click="switchLanguage({ language: item.key })">
               {{ item.text }}
             </v-btn>
           </v-col>
@@ -53,3 +53,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.theme--dark.v-btn.v-btn--has-bg{
+  background: #4C4A68;
+}
+</style>

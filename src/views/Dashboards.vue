@@ -15,7 +15,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col style="margin-bottom:20px">
+      <v-col>
         <DashboardTokenFAQ></DashboardTokenFAQ>
       </v-col>
     </v-row>

@@ -16,9 +16,9 @@
             </v-btn>
         </v-card-actions>   
         <v-divider /> -->
-        <v-card  
+        <!-- <v-card  
             class="background"
-        >
+        > -->
         <v-data-table
             :headers="headers"
             :items="nodeList"
@@ -216,7 +216,7 @@
                     </v-list-item>
                 </v-col>
             </v-row>
-        </v-card>
+        <!-- </v-card> -->
         
       </v-col>
     </v-row>
@@ -738,6 +738,7 @@ export default {
         .from-voting{
             display: flex;
             flex-direction: column;
+            padding-top: 0;
             .input-title{
                 margin-top: 0;
                 height:24px;

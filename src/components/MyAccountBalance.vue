@@ -27,13 +27,16 @@
                  <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
             </v-tooltip>
           </v-subheader>
-          <v-subheader class="total-rei">127,322,423.00<span class="rei">REI</span></v-subheader>
-          <v-subheader style="height:16px">
+          <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+          <div v-if='!connection.address' class="not-connection">
+                —
+          </div>
+          <v-subheader v-if='connection.address' style="height:16px">
             <div class="add-price" style="border-right:2px solid;padding-right:12px">
                <div>$13,434.00</div>
                <div style="color:#65BB67;">+15.16%</div>
             </div>
-            <div class="add-price" style="margin-left:12px">
+            <div class="time-price" style="margin-left:12px">
                <div>24H</div>
                <div class="update-time">
                 <v-icon
@@ -46,6 +49,9 @@
             </div>
             </div>
           </v-subheader>
+          <div v-if='!connection.address' class="not-connection">
+              -
+           </div>
           <div id="myCharts" ref="chart" style="height:280px"></div>
           <!-- <div class="update-time" style="margin-top:-20px;">
                 <v-icon
@@ -72,13 +78,16 @@
             outlined
           >
              <div class="content-left">
-                <v-subheader class="total-rei">127,322,423.00<span class="rei">REI</span></v-subheader>
-                <v-subheader>
+                <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+                <div v-if='!connection.address' class="not-connection">
+                    —
+                </div>
+                <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
                         <div>$13,434.00</div>
                         <div style="color:#65BB67;">+15.16%</div>
                     </div>
-                    <div class="add-price" style="margin-left:12px">
+                    <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
                       <div class="update-time">
                         <v-icon
@@ -91,6 +100,9 @@
                       </div>
                     </div>
               </v-subheader>
+              <div v-if='!connection.address' class="not-connection">
+                    -
+                </div>
               <v-subheader>
                   Validator Voting Stake
                   <v-tooltip right>
@@ -115,9 +127,11 @@
                     dark
                     size="22"
                     class="icon-right"
+                    v-if='connection.address' 
                   >
                   mdi-arrow-right-circle
                 </v-icon>
+                <div v-if='!connection.address' ></div>
             </v-card>
            <v-card
             class="ma-4 voting-stake"
@@ -125,13 +139,16 @@
             outlined
           >
              <div class="content-left">
-                <v-subheader class="total-rei">127,322,423.00<span class="rei">REI</span></v-subheader>
-                <v-subheader>
+                <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+                <div v-if='!connection.address' class="not-connection">
+                    —
+                </div>
+                <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
                         <div>$13,434.00</div>
                         <div style="color:#65BB67;">+15.16%</div>
                     </div>
-                    <div class="add-price" style="margin-left:12px">
+                    <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
                       <div class="update-time">
                         <v-icon
@@ -144,6 +161,9 @@
                       </div>
                     </div>
               </v-subheader>
+              <div v-if='!connection.address' class="not-connection">
+                    -
+                </div>
               <v-subheader>
                   Validator Voting Stake
                   <v-tooltip right>
@@ -168,9 +188,11 @@
                     dark
                     size="22"
                     class="icon-right"
+                    v-if='connection.address'
                   >
                   mdi-arrow-right-circle
                 </v-icon>
+                <div v-if='!connection.address'></div>
             </v-card>
           </div>   
         </v-card>
@@ -182,6 +204,8 @@
 <script>
 /* eslint-disable no-undef */
 import * as echarts from 'echarts';
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   data() {
     return {
@@ -197,7 +221,16 @@ export default {
   destroyed() {
     
   },
+  computed: {
+   ...mapGetters({
+      connection: 'connection',
+      dark: 'dark'
+    }),
+  },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     myCharts(){
       const chart = this.$refs.chart;
       if(chart){
@@ -277,9 +310,6 @@ export default {
     })
     }
   },
-  computed: {
-   
-  }
 };
 </script>
 
@@ -324,7 +354,13 @@ export default {
       }
     }
   .add-price{
-      width: 50%;
+      width: 56%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .time-price{
+        width: 44%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -335,6 +371,10 @@ export default {
     justify-content: flex-end;
     font-size: 12px;
     // margin-right: 20px;
+  }
+  .not-connection{
+    margin: 12px 36px;
+    font-weight: 500;
   }
 }
 @media screen and (max-width: 900px) {
