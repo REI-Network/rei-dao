@@ -110,12 +110,50 @@
 
 <script>
 /* eslint-disable no-undef */
+import { mapActions, mapGetters } from 'vuex';
+import { client } from '../service/ApolloClient'
+import { gql } from '@apollo/client/core'
+import dayjs from 'dayjs'
+import web3 from 'web3';
+import util from '../utils/util'
+
+
+console.log(dayjs().unix())
+
+const totalStakes = gql`
+  query totalStakes{
+   totalStakes(first:25,orderBy:id,orderDirection:desc) {
+        id
+        blockNumber
+        timestamp
+        feeStake
+        voteStake
+    }
+  }
+`
+const ONE_DAY_UNIX = 24 * 60 * 60
+const ONE_HOUR_UNIX = 60 * 60
+
 export default {
   data() {
     return {
        radios: null,
        tab: 0,
+       resTotalData:[],
+       resVotingData:[],
+       resFeeStakeData:[],
+       resFeeUsageData:[],
+       resFeeUsageSumData:[],
+       myChart: {},
+       myChart2: {},
+       myChart3: {},
+       myChart4: {}
     };
+  },
+  computed: {
+    ...mapGetters({
+      totalStakes: 'totalStakes'
+    })
   },
   watch: {
        tab:{
@@ -129,28 +167,147 @@ export default {
         }
     },
   mounted() {
+      this.getdata();
+      this.getGasSaveData();
       setTimeout(() => {
         this.trendsCharts(); 
       }, 500);
   },
   methods: {
+    ...mapActions({
+      setTotalStakes: 'setTotalStakes',
+    }),
+    async getdata(){
+        let data = [];
+        let dataVoting = [];
+        let dataFeeStake = [];
+
+        //let charts = []
+        const {data:charData} = await client.query({
+            query: totalStakes,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        this.setTotalStakes({totalStakes:charData})
+        let _data = data.concat(charData.totalStakes).reverse();
+        _data.shift();
+        
+       this.resTotalData = _data.map((item)=>{
+            return {
+                    "value": [
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
+                    ]
+                }
+        })
+        this.myChart.setOption({
+            series: [
+              {
+                data: this.resTotalData
+              }
+            ]
+        });
+    
+        let _dataVoting = dataVoting.concat(charData.totalStakes).reverse();
+        this.resVotingData = _dataVoting.map(function(item,i){
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_dataVoting[i>0?i-1:0].voteStake)))
+                ]
+                }
+            }).slice(1)
+
+        let _dataFeeStake = dataFeeStake.concat(charData.totalStakes).reverse();
+        this.resFeeStakeData = _dataFeeStake.map(function(item,i){
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.feeStake).sub(web3.utils.toBN(_dataFeeStake[i>0?i-1:0].feeStake)))
+                ]
+                }
+            }).slice(1)
+
+        
+    },
+    async getGasSaveData(){
+        
+        const endTimestamp = dayjs().unix()
+        const startTimestamp = endTimestamp-ONE_DAY_UNIX
+        const gasSaves = gql`
+          query gasSaves {
+            gasSaves(
+                first: 24
+                orderBy: id
+                orderDirection: desc
+                where: { timestamp_gt: ${startTimestamp}, timestamp_lt: ${endTimestamp} }
+              ) {
+                id
+                timestamp
+                feeUsage
+                feeUsageSum
+              }
+            }
+        `
+        const {data:charData} = await client.query({
+            query: gasSaves,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log('charDataGas',charData)
+        if(!charData.gasSaves.length){
+            const gasSavesfirst = gql`
+              query gasSavesfirst {
+                 gasSaves(first: 1, orderBy: id, orderDirection: desc) {
+                    id
+                    timestamp
+                    feeUsage
+                    feeUsageSum
+                }
+              }
+            `
+            const {data:charDataLatest} = await client.query({
+                query: gasSavesfirst,
+                variables: {
+                },
+                fetchPolicy: 'cache-first',
+            })
+            console.log('charDataLatest',charDataLatest)
+            let dataGasSave = charDataLatest.gasSaves;
+            for(let i = 0; i< 24; i++){
+                this.resFeeUsageData.push({
+                     "value": [
+                        dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
+                    ]
+                })
+                this.resFeeUsageSumData.push({
+                     "value": [
+                        dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
+                    ]
+                })
+            }
+            console.log('resFeeUsageData',this.resFeeUsageData)
+            console.log('resFeeUsageSumData',this.resFeeUsageSumData)
+        }
+        
+
+    },
+    assetFormat(value,precision) {
+        return util.asset(value,precision)
+    },
     trendsCharts(){
         // console.log(this.tab)
         if(this.tab === 0){
             const chart = this.$refs.chart;
             if(chart){
-                const myChart = this.$echarts.init(chart)
+                this.myChart = this.$echarts.init(chart)
                 var option = {
                     tooltip:{
                         trigger:'axis'
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: { show: true, readOnly: false },
-                            magicType: { show: true, type: ['line', 'bar'] },
-                            restore: { show: true },
-                            saveAsImage: { show: true }
-                        }
                     },
                     legend: {
                         selectedMode: false,
@@ -164,96 +321,43 @@ export default {
                     },
                     xAxis:       
                         {
-                            type: 'category',
-                            data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
-                            axisPointer: {
-                                type: 'shadow'
-                            },
-                            axisLine: {
-                                lineStyle: {
-                                    type: 'solid',
-                                    color: '#2C2752', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
-                                }
-                            },
-                            splitLine: {
-                                lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
-                                    type: 'dashed',
-                                }
-                            },
+                            type: 'time',
                         },
                     yAxis: 
                         {
                             type: 'value',
-                            axisLine: {
-                            lineStyle: {
-                                show: true,
-                                type: 'solid',
-                                color: '#2C2752', //左边线的颜色
-                                width: '1' //坐标线的宽度
-                                },
-                            },
-                            splitLine: {
-                                lineStyle: {
-                                color: 'rgba(104, 180, 221, 0.1)',
-                                type: 'dashed',
-                                }
-                            },
                         },
             
                     series: [
                         {       
-                            name: 'Gas Stake',
-                            type: 'bar',
+                            name: 'Total Stake',
+                            type: 'line',
                             data: [
-                                12,24,23,54,32,18,54,33,22,44,33,23,45,26,90
                             ],
-                            barWidth:'18',
-                            barGap: '40%',
-                            itemStyle:{
-                                color:'#28AA91'
-                            }
                         },
-                        // {
-                        //     name: 'Voting Stake',
-                        //     type: 'bar',
-                        //     data: [
-                        //         12,64,23,50,32,18,54,33,28,14,33,23,45,66,90
-                        //     ],
-                        //     barWidth:'12',
-                        //     barGap: '40%',
-                        //     itemStyle:{
-                        //         color:'#2F86F6'
-                        //     }
-                        // },
-                        // {
-                        //     name: 'Total Stake',
-                        //     type: 'line',
-                        //     data: [
-                        //         12,24,23,14,32,18,54,53,22,44,33,73,45,26,90
-                        //     ],
-                        //     barWidth:'10',
-                        //     itemStyle:{
-                        //         color:'#EC733C'
-                        //     }
-                        // }
                     ]
                 };
-                myChart.setOption(option)
+                this.myChart.setOption(option)
+                this.myChart.setOption({
+                    series: [
+                        {
+                            data: this.resTotalData
+                        }
+                    ]
+                });
                 window.addEventListener("resize", function() {
-                    myChart.resize()
-                    })
+                    this.myChart.resize()
+                })
             }
             this.$on('hook:destroyed',()=>{
             window.removeEventListener("resize", function() {
-                myChart.resize();
-                });
+                this.myChart.resize();
+            });
             })
         }else if(this.tab === 1){
             const chart2 = this.$refs.chart2;
             if(chart2){
-                const myChart2 = this.$echarts.init(chart2)
+                this.myChart2 = this.$echarts.init(chart2)
                 var option2 = {
                     tooltip:{
                         trigger:'axis'
@@ -277,48 +381,16 @@ export default {
                         },
                     },
                     xAxis:{
-                        type: 'category',
-                        data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
-                        axisPointer: {
-                            type: 'shadow'
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color: '#2C2752', //坐标线的颜色
-                                width: '1' //坐标线的宽度
-                            }
-                        },
-                        splitLine: {
-                            lineStyle: {
-                                color: 'rgba(104, 180, 221, 0.1)',
-                                type: 'dashed',
-                            }
-                        },
+                        type: 'time',
                     },
                     yAxis: {
                         type: 'value',
-                        axisLine: {
-                        lineStyle: {
-                            show: true,
-                            type: 'solid',
-                            color: '#2C2752', //左边线的颜色
-                            width: '1' //坐标线的宽度
-                            },
-                        },
-                        splitLine: {
-                            lineStyle: {
-                            color: 'rgba(104, 180, 221, 0.1)',
-                            type: 'dashed',
-                            }
-                        },
                     },
                     series: [
                         {       
                             name: 'Total Voting Stake',
                             type: 'bar',
                             data: [
-                                12,24,23,54,32,18,54,33,22,44,33,23,45,26,90
                             ],
                             barWidth:'18',
                             barGap: '40%',
@@ -328,20 +400,28 @@ export default {
                         },
                     ]
                 };
-                myChart2.setOption(option2)
+                this.myChart2.setOption(option2)
+                console.log(this.resVotingData)
+                this.myChart2.setOption({
+                    series: [
+                    {
+                        data: this.resVotingData
+                    }
+                    ]
+                });
                 window.addEventListener("resize", function() {
-                    myChart2.resize()
+                    this.myChart2.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
                 window.removeEventListener("resize", function() {
-                    myChart2.resize();
+                    this.myChart2.resize();
                 });
             })
         }else if(this.tab === 2){
             const chart3 = this.$refs.chart3;
             if(chart3){
-                const myChart3 = this.$echarts.init(chart3)
+                this.myChart3 = this.$echarts.init(chart3)
                 var option3 = {
                     tooltip:{
                         trigger:'axis'
@@ -365,48 +445,17 @@ export default {
                         },
                     },
                     xAxis:{
-                        type: 'category',
-                        data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
-                        axisPointer: {
-                            type: 'shadow'
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color: '#2C2752', //坐标线的颜色
-                                width: '1' //坐标线的宽度
-                            }
-                        },
-                        splitLine: {
-                            lineStyle: {
-                                color: 'rgba(104, 180, 221, 0.1)',
-                                type: 'dashed',
-                            }
-                        },
+                        type: 'time',
                     },
                     yAxis: {
                         type: 'value',
-                        axisLine: {
-                        lineStyle: {
-                            show: true,
-                            type: 'solid',
-                            color: '#2C2752', //左边线的颜色
-                            width: '1' //坐标线的宽度
-                            },
-                        },
-                        splitLine: {
-                            lineStyle: {
-                            color: 'rgba(104, 180, 221, 0.1)',
-                            type: 'dashed',
-                            }
-                        },
                     },
                     series: [
                         {
                             name: 'Total Gas Stake',
                             type: 'line',
                             data: [
-                            12,24,23,14,32,18,54,53,22,44,33,73,45,26,90
+                            
                             ],
                             barWidth:'6',
                             itemStyle:{
@@ -415,20 +464,27 @@ export default {
                         }
                     ]
                 };
-                myChart3.setOption(option3)
+                this.myChart3.setOption(option3)
+                this.myChart3.setOption({
+                    series: [
+                    {
+                        data: this.resFeeStakeData
+                    }
+                    ]
+                });
                 window.addEventListener("resize", function() {
-                    myChart3.resize()
+                    this.myChart3.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
                 window.removeEventListener("resize", function() {
-                    myChart3.resize();
+                    this.myChart3.resize();
                 });
             })
         }else{
             const chart4 = this.$refs.chart4;
             if(chart4){
-                const myChart4 = this.$echarts.init(chart4)
+                this.myChart4 = this.$echarts.init(chart4)
                 var option4 = {
                     tooltip:{
                         trigger:'axis'
@@ -452,8 +508,8 @@ export default {
                         },
                     },
                     xAxis:{
-                        type: 'category',
-                        data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
+                        type: 'time',
+                        //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24','Oct/25','Oct/26','Oct/27','Oct/28','Oct/29','Oct/30','Oct/31','Nov/1'],
                         axisPointer: {
                             type: 'shadow'
                         },
@@ -492,9 +548,7 @@ export default {
                         {       
                             name: 'Savings On Gas For User',
                             type: 'bar',
-                            data: [
-                                12,24,23,54,32,18,54,33,22,44,33,23,45,26,90
-                            ],
+                            data: [],
                             barWidth:'18',
                             barGap: '40%',
                             itemStyle:{
@@ -502,11 +556,9 @@ export default {
                             }
                         },
                         {
-                            name: 'Total Stake',
+                            name: 'Total Savings On Gas For User',
                             type: 'line',
-                            data: [
-                            12,24,23,14,32,18,54,53,22,44,33,73,45,26,90
-                            ],
+                            data: [],
                             barWidth:'12',
                             itemStyle:{
                                 color:'#EC733C'
@@ -514,21 +566,28 @@ export default {
                         }
                     ]
                 };
-                myChart4.setOption(option4)
+                this.myChart4.setOption(option4)
+                this.myChart4.setOption({
+                    series: [
+                        {
+                            data: this.resFeeUsageData
+                        },
+                        {
+                            data: this.resFeeUsageSumData
+                        }
+                    ]
+                });
                 window.addEventListener("resize", function() {
-                    myChart4.resize()
+                    this.myChart4.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
                 window.removeEventListener("resize", function() {
-                    myChart4.resize();
+                    this.myChart4.resize();
                 });
             })
         }   
     },      
-  },
-  computed: {
-   
   }
 };
 </script>
