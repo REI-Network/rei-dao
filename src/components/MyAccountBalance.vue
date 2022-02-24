@@ -27,7 +27,7 @@
                  <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
             </v-tooltip>
           </v-subheader>
-          <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+          <v-subheader class="total-rei" v-if='connection.address'>{{ connection.balance | asset(2) }}<span class="rei">REI</span></v-subheader>
           <div v-if='!connection.address' class="not-connection">
                 —
           </div>
@@ -78,7 +78,7 @@
             outlined
           >
              <div class="content-left">
-                <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+                <v-subheader class="total-rei" v-if='connection.address'>{{ myTotalStake | asset(2) }}<span class="rei">REI</span></v-subheader>
                 <div v-if='!connection.address' class="not-connection">
                     —
                 </div>
@@ -139,7 +139,7 @@
             outlined
           >
              <div class="content-left">
-                <v-subheader class="total-rei" v-if='connection.address'>127,322,423.00<span class="rei">REI</span></v-subheader>
+                <v-subheader class="total-rei" v-if='connection.address'>{{ myTotalUnStake | asset(2) }}<span class="rei">REI</span></v-subheader>
                 <div v-if='!connection.address' class="not-connection">
                     —
                 </div>
@@ -203,20 +203,40 @@
 </template>
 <script>
 /* eslint-disable no-undef */
+
+import Web3 from 'web3';
+import abiConfig from '../abis/abiConfig';
+import abiStakeManager from '../abis/abiStakeManager'
+import abiCommissionShare from '../abis/abiCommissionShare'
+import { mapGetters } from 'vuex';
 import * as echarts from 'echarts';
-import { mapGetters, mapActions } from 'vuex';
+import filters from '../filters';
+import { client } from '../service/ApolloClient'
+import { gql } from '@apollo/client/core'
+
+
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
 export default {
+  filters,
   data() {
     return {
         radios:'Total Voting Stake',
+        myTotalStake: 0,
+        myTotalUnStake: 0,
+        stakeManagerContract: null,
+        stakeManageInstance: null
     };
   },
   watch: {
-  
+   '$store.state.connection': function() {
+      this.init()
+    },
   },
   mounted() {
-    this.myCharts()
+    this.connect();
+    this.init();
+    this.myCharts();
   },
   destroyed() {
     
@@ -228,9 +248,105 @@ export default {
     }),
   },
   methods: {
-    ...mapActions({
-      addTx: 'addTx'
-    }),
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    async init(){
+        let contract = new web3.eth.Contract(abiConfig,config_contract);
+        
+        this.stakeManagerContract = await contract.methods.stakeManager().call();
+        this.stakeManageInstance = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
+        this.getMyStakeInfo();
+        this.getMyUnstakeInfo();
+    },
+    async getBalanceOfShare(activeValidatorsShare) {
+        let commissionShare = new web3.eth.Contract(abiCommissionShare,activeValidatorsShare[1]);
+        let balance = 0;
+        let amount = 0;
+        if(this.connection.address){
+            balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+            amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
+        }
+        return {
+            balance,
+            amount,
+            commissionShare
+        };
+    },
+    async getMyStakeInfo() {
+        //if(!this.connection.address) return
+        const myStakesInfo = gql`
+            query stakeInfos {
+            stakeInfos(where:{
+                from:"${this.connection.address}"
+            }){
+                id
+                from
+                timestamp
+                validator
+            }
+        }`
+        const {data:{stakeInfos}} = await client.query({
+            query: myStakesInfo,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        if(stakeInfos.length>0){
+            let myStakeValidatorMap = stakeInfos.map((item)=>{
+                return this.stakeManageInstance.methods.validators(item.validator).call()
+            })
+
+            let validators = await Promise.all(myStakeValidatorMap);
+            let balanceOfShareMap = validators.map(item => {
+                return this.getBalanceOfShare(item);
+            })
+            let balanceOfShare = await Promise.all(balanceOfShareMap);
+            let total = 0;
+            for(let i = 0;i < balanceOfShare.length;i++){
+                total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount))
+            }
+            this.myTotalStake = web3.utils.fromWei(total);
+        }
+    },
+    async getMyUnstakeInfo() {
+        const myUnStakesInfo = gql`
+            query unStakeInfos {
+            unStakeInfos(where:{
+                from:"${this.connection.address}"
+            }){
+                id
+                from
+                to
+                txHash
+                values
+                shares
+                validator
+                timestamp
+                state
+                amount
+            }
+        }`
+        const {data:{unStakeInfos}} = await client.query({
+            query: myUnStakesInfo,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log(unStakeInfos)
+        if(unStakeInfos.length>0){
+            let total = 0;
+            for(let i = 0;i < unStakeInfos.length;i++){
+                total = web3.utils.toBN(total).add(web3.utils.toBN(unStakeInfos[i].values))
+            }
+            this.myTotalUnStake = web3.utils.fromWei(total);
+        }
+
+    },
     myCharts(){
       const chart = this.$refs.chart;
       if(chart){

@@ -205,15 +205,15 @@ const abiCommissionShare = [
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "shares",
+          "name": "amount",
           "type": "uint256"
         }
       ],
-      "name": "estimateStakeAmount",
+      "name": "estimateAmountToShares",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "shares",
           "type": "uint256"
         }
       ],
@@ -224,15 +224,15 @@ const abiCommissionShare = [
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "shares",
           "type": "uint256"
         }
       ],
-      "name": "estimateUnstakeShares",
+      "name": "estimateSharesToAmount",
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "shares",
+          "name": "amount",
           "type": "uint256"
         }
       ],

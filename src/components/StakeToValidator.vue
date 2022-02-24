@@ -387,7 +387,7 @@
             <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
             
             <div class="text-center">
-                <!-- <v-btn
+                <v-btn
                 class="mr-4"
                 color="vote_button"
                 v-if="!approved"
@@ -395,7 +395,7 @@
                 @click="submitApprove"
                 >
                 {{$t('stake.approve')}}
-                </v-btn> -->
+                </v-btn>
                 <v-btn @click="cancelClaim" 
                         color="btn_button"
                         class="mr-4">
