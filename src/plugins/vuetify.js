@@ -51,7 +51,8 @@ export default new Vuetify({
         btn_button:"#9F9DB9",
         chips:"#504985",
         current_wallet:"#403E59",
-        validator:'#868E9E'
+        validator:'#868E9E',
+        right_icon:'#5c5a7a',
       },
     },
     options: {

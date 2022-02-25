@@ -66,14 +66,14 @@
         </div>
         <div class="voting-card">
           <v-card
-            class="mx-auto secend-card"     
+            class="secend-card"     
             tile
             color="background"
           >
           <v-subheader><h3>Voting</h3></v-subheader>
           <div class="chips-tow">
             <v-card
-            class="ma-4 voting-stake"
+            class="voting-stake"
             label
             outlined
           >
@@ -118,7 +118,7 @@
                           mdi-help-circle-outline
                         </v-icon>
                       </template>
-                 <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
+                 <span>If You Cancel The Vote,You Need To Wait 7 Days To Withdraw REI</span>
                 </v-tooltip>
               </v-subheader>
              </div>
@@ -129,12 +129,12 @@
                     class="icon-right"
                     v-if='connection.address' 
                   >
-                  mdi-arrow-right-circle
+                  m mdi-arrow-right-circle-outline
                 </v-icon>
                 <div v-if='!connection.address' ></div>
             </v-card>
            <v-card
-            class="ma-4 voting-stake"
+            class="voting-stake"
             label
             outlined
           >
@@ -165,7 +165,7 @@
                     -
                 </div>
               <v-subheader>
-                  Validator Voting Stake
+                  Pending Unstake
                   <v-tooltip right>
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -179,7 +179,7 @@
                           mdi-help-circle-outline
                         </v-icon>
                       </template>
-                 <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
+                 <span>Stake REIs And Earn More</span>
                 </v-tooltip>
               </v-subheader>
              </div>
@@ -190,7 +190,7 @@
                     class="icon-right"
                     v-if='connection.address'
                   >
-                  mdi-arrow-right-circle
+                   mdi-arrow-right-circle-outline
                 </v-icon>
                 <div v-if='!connection.address'></div>
             </v-card>
@@ -441,7 +441,7 @@ export default {
     width: 49%;
   }
   .secend-card{
-    height: 430px;
+    height: 380px;
   }
   .total-rei{
     font-size: 28px;
@@ -461,6 +461,7 @@ export default {
     display: inline-flex;
     justify-content: space-between !important;
     background-color: transparent !important;
+    margin: 0 16px 16px 16px;
       .content-left{
         width:350px;
         margin:12px 0;

@@ -40,8 +40,9 @@
                   color="primary"
                   dark
                   style="margin-left:20px"
+                  size="22"
                 >
-                  mdi-arrow-right-circle
+                  mdi-arrow-right-circle-outline
                 </v-icon>
             </v-list-item>
           </v-card>
@@ -56,8 +57,9 @@
                   color="primary"
                   dark
                   style="margin-left:20px"
+                  size="22"
                 >
-                  mdi-arrow-right-circle
+                  mdi-arrow-right-circle-outline
                 </v-icon>
             </v-list-item>
           </v-card>
@@ -73,8 +75,9 @@
                   color="primary"
                   dark
                   style="margin-left:20px"
+                  size="22"
                 >
-                  mdi-arrow-right-circle
+                  mdi-arrow-right-circle-outline
                 </v-icon>
             </v-list-item>
           </v-card>
@@ -89,8 +92,9 @@
                   color="primary"
                   dark
                   style="margin-left:20px"
+                  size="22"
                 >
-                  mdi-arrow-right-circle
+                  mdi-arrow-right-circle-outline
                 </v-icon>
             </v-list-item>
           </v-card>

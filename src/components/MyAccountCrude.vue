@@ -3,9 +3,11 @@
   <!-- 为 ECharts 准备一个定义了宽高的 DOM --> 
        <v-row>
             <v-col class="accout-item">
-                <v-card class="balance-card" color="background">
+              <v-card color="background">
+                <v-subheader><h3>Gas stake</h3></v-subheader>
+                <v-card class="balance-card" outlined color="background">
                      <v-card
-                        class="ma-4 voting-stake"
+                        class="voting-stake"
                         label
                         outlined
                     >
@@ -23,7 +25,7 @@
                                     <div>24H</div>
                                     <div class="update-time">
                                         <v-icon
-                                            color="primary"
+                                            color="right_icon"
                                             size="12"
                                         >
                                         mdi-clock-time-ten-outline
@@ -36,11 +38,11 @@
                                 -
                             </div>
                             <v-subheader>
-                                Validator Voting Stake
+                                Total Stake
                                 <v-tooltip right>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
-                                            color="primary"
+                                            color="right_icon"
                                             dark
                                             v-bind="attrs"
                                             v-on="on"
@@ -50,23 +52,23 @@
                                          mdi-help-circle-outline
                                         </v-icon>
                                     </template>
-                                    <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
+                                    <span>Stake REI,Earn Crude As Gas</span>
                                 </v-tooltip>
                             </v-subheader>
                             </div>
                             <v-icon
-                                color="primary"
+                                color="right_icon"
                                 dark
                                 size="22"
                                 class="icon-right"
                                 v-if='connection.address'
                             >
-                            mdi-arrow-right-circle
+                            mdi-arrow-right-circle-outline
                             </v-icon>
                             <div v-if='!connection.address'></div>
                     </v-card>
                     <v-card
-                        class="ma-4 voting-stake"
+                        class="voting-stake"
                         label
                         outlined
                     >
@@ -76,11 +78,11 @@
                                 —
                             </div>
                             <v-subheader class="">
-                                Validator Voting Stake
+                                LEft Crude
                                 <v-tooltip right>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
-                                            color="primary"
+                                            color="right_icon"
                                             dark
                                             v-bind="attrs"
                                             v-on="on"
@@ -90,23 +92,24 @@
                                             mdi-help-circle-outline
                                         </v-icon>
                                     </template>
-                                    <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
+                                    <span>Daily Available Crude Oil Does Not Accumulate And Resets To 0 Every Day</span>
                                 </v-tooltip>
                              </v-subheader>
                             </div>
                             <v-icon
-                                color="primary"
+                                color="right_icon"
                                 dark
                                 size="22"
                                 class="icon-right"
                                 v-if='connection.address'
                             >
-                            mdi-arrow-right-circle
+                            mdi-arrow-right-circle-outline
                             </v-icon>
                             <div v-if='!connection.address'></div>
                     </v-card>
                 </v-card>
-            </v-col>
+             </v-card>
+          </v-col>
        </v-row>  
    </v-container>
 </template>
@@ -147,9 +150,9 @@ export default {
   padding: 0;
   .balance-card{
     width: 100%;
-    // height: 200px;
     display: inline-flex;
     justify-content: space-between;
+    border:none;
   }
   .total-rei{
     font-size: 28px;
@@ -166,6 +169,7 @@ export default {
     display: inline-flex;
     justify-content: space-between !important;
     background-color: transparent !important;
+    margin: 0 16px 16px 16px;
       .content-left{
         width:350px;
         // margin:12px 0; 

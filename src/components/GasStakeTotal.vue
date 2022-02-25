@@ -35,7 +35,7 @@
                             > 
                             {{connection.address?value1:'-'}}
                         </v-progress-circular>
-                        <h4>2.722</h4>
+                        <h4>{{connection.address?2.722:'-'}}</h4>
                         <div class="stake-name">Left Crude</div>
                     </div>
                     <div class="circular">

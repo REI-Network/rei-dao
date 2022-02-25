@@ -57,7 +57,7 @@
                             class="my-voted-validator" 
                             background-color="background"
                             height="36">
-                            <v-card outlined class="card-tab">
+                            <v-card outlined class="card-tab" >
                                 <v-tab key="111" style="font-size:12px">{{$t('stake.active_nodelist')}}</v-tab>
                                 <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab>
                             </v-card> 
@@ -74,9 +74,9 @@
                                 style="margin-left: 18px;"
                             ></v-select>
                         </v-card>
-                        <v-card outlined class="select-card">
+                        <v-card outlined class="select-card select-second">
                             <v-select
-                                class="d-select"
+                                class="d-select number"
                                 :items="itemsPages"
                                 label="10"
                                 outlined
@@ -1089,6 +1089,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.theme--dark .v-pagination .v-pagination__item{
+        background-color: #393560;
+    }
+.theme--dark.v-list{
+    background: #595777 !important;
+}
 .vote-list{
     position: relative;
     .v-tab-left{
@@ -1143,13 +1149,19 @@ export default {
     .select-card{
         border:none;
         background-color: transparent;
-        width: 120px; 
+        width: 130px; 
         // margin-top:12px;
     }
+    .select-second{
+            width: 90px;
+        }
     .d-select{
-            border-radius: 20px;
-            margin-right:20px;
+            margin-left:20px;
             margin-top:12px;
+            width:120px
+        }
+        .number{
+            width: 66px;
         }
     .theme--dark.v-data-table{
         background-color:transparent;
@@ -1206,9 +1218,6 @@ export default {
     .text-bod{
         text-align: right;
     }
-    // .theme--dark .v-pagination .v-pagination__item{
-    //     background: #595777 !important;
-    // }
     @media screen and (max-width: 900px) {
         .vote-list{
             position: static !important;
@@ -1237,8 +1246,8 @@ export default {
         // }
          .right-outline{
             display: flex;
-            flex-direction: row !important; 
-            justify-content: flex-start !important;
+            flex-direction: row ; 
+            justify-content:flex-start !important;
             margin-top:-16px;
             padding: 0;
         }
@@ -1263,9 +1272,14 @@ export default {
             margin-top: -32px;
         }
         .select-card{
-            width:200px;
+            width:180px;
             // height:40px;
             margin-top:-10px;
+            // margin-left:12px;
+        }
+        .d-select{
+            margin-left:0;
+            width: 80%;
         }
         .text-filed{
             width:300px !important;
