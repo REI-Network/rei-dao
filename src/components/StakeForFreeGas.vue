@@ -32,16 +32,16 @@
         >
             <template v-slot:item.address="{ item }">
             <!-- <Address :val="item.address"></Address> -->
-                {{ item.address | asset(2)  }}
+                {{ item.address | addr }}
             </template>
             <template v-slot:item.amount="{ item }">
-                {{ item.amount | asset(2)  }}
+                {{ item.amount | asset(2) }}
             </template>
             <template v-slot:item.deposit="{ item }">
-                {{ item.deposit }}
+                {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
             </template>
             <template v-slot:item.withdraw="{ item }">
-                {{ item.withdraw | asset(2)  }}
+                {{ item.availableTime }}
             </template>
             <!-- <template v-slot:item.isActive="{ item }">
                 {{ status[item.isActive] }}
@@ -53,7 +53,7 @@
                 color='vote_button'
                 class="mr-4"
                 v-if='connection.address'
-                @click="handleWithdraw()(item)"
+                @click="handleWithdraw(item)"
                 style="border-radius:4px"
                 >
                     Withdraw
@@ -141,7 +141,7 @@
                     <v-list-item>
                         <v-list-item-title>{{$t('stakeforgas.stake_coin')}}：</v-list-item-title>
                         <v-list-item-subtitle class="text-right">
-                        {{userDeposit.amount | asset(6) }} {{symbol}}
+                        {{totalAmount | asset(6) }} {{symbol}}
                         </v-list-item-subtitle>
                     </v-list-item>
                     
@@ -365,6 +365,8 @@ import abiValidatorRewardPool from '../abis/abiValidatorRewardPool'
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
+import { postRpcRequest } from '../service/CommonService'
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -374,6 +376,7 @@ export default {
     return {
         symbol:'REI',
         isNode: false,
+        totalAmount:0,
         tab1: null,
         depositDialog: false,
         withdrawDialog: false,
@@ -502,7 +505,10 @@ export default {
   watch: {
     '$store.state.finishedTxs': function() {
       this.init()
-    }
+    },
+    '$store.state.connection': function() {
+      this.init()
+    },
   },
   mounted() {
       this.connect()
@@ -510,7 +516,10 @@ export default {
   },
   methods: {
     ...mapActions({
-      addTx: 'addTx'
+      addTx: 'addTx',
+      setGasStakeTotalAmount: 'setGasStakeTotalAmount',
+      setLeftCrude: 'setLeftCrude',
+      setUsedCrude: 'setUsedCrude'
     }),
     connect() {
         if (window.ethereum) {
@@ -519,60 +528,90 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+
+    getApiUrl(){
+        let api = ''
+        if(this.connection.network == 'REI Devnet'){
+            api = process.env.VUE_APP_DEV_SERVER_API;
+        } else if(this.connection.network == 'REI Testnet'){
+             api = process.env.VUE_APP_TEST_SERVER_API
+        } else {
+            api = process.env.VUE_APP_SERVER_API;
+        }
+        return api;
+    },
+    getRpcUrl(){
+        let api = ''
+        if(this.connection.network == 'REI Devnet'){
+            api = process.env.VUE_APP_DEV_RPC_SERVER;
+        } else if(this.connection.network == 'REI Testnet'){
+             api = process.env.VUE_APP_TEST_SERVER_API
+        } else {
+            api = process.env.VUE_APP_SERVER_API;
+        }
+        return api;
+    },
     async init() {
         
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         
-        let freeFeeContractAddress = await contract.methods.freeFee().call();
+        //let freeFeeContractAddress = await contract.methods.freeFee().call();
         let feeContractAddress = await contract.methods.fee().call();
 
-        let userFreeFeeLimit = await contract.methods.userFreeFeeLimit().call();
-        this.userFreeFeeLimit = web3.utils.fromWei(web3.utils.toBN(userFreeFeeLimit))
+        console.log(feeContractAddress)
 
-        console.log('userFreeFeeLimit',userFreeFeeLimit)
+        // let userFreeFeeLimit = await contract.methods.userFreeFeeLimit().call();
+        // this.userFreeFeeLimit = web3.utils.fromWei(web3.utils.toBN(userFreeFeeLimit))
 
-        this.freeFeeContract = new web3.eth.Contract(abiFreeFee,freeFeeContractAddress);
+        // console.log('userFreeFeeLimit',userFreeFeeLimit)
+
+        //this.freeFeeContract = new web3.eth.Contract(abiFreeFee,freeFeeContractAddress);
         this.feeContract = new web3.eth.Contract(abiFee,feeContractAddress);
 
-        let userUsage = await this.freeFeeContract.methods.userUsage(this.connection.address).call()
-        this.userUsage = userUsage.usage
-        console.log('userUsage',userUsage)
-        let totalUsage = await this.freeFeeContract.methods.totalUsage().call()
-        console.log('totalUsage',totalUsage)
+        this.getTotalStake();
+        this.getLeftCrude();
+        this.getUsedCrude();
+        this.getDepositList();
 
-        let globalTimestamp = await this.freeFeeContract.methods.globalTimestamp().call()
-        console.log('globalTimestamp',globalTimestamp)
+        //let userUsage = await this.freeFeeContract.methods.userUsage(this.connection.address).call()
+        // this.userUsage = userUsage.usage
+        // console.log('userUsage',userUsage)
+        //let totalUsage = await this.freeFeeContract.methods.totalUsage().call()
+        // console.log('totalUsage',totalUsage)
 
-        let estimateTotalLeft = await this.freeFeeContract.methods.estimateTotalLeft(Math.ceil(Date.now()/1000)).call()
-        console.log('estimateTotalLeft',estimateTotalLeft)
+        //let globalTimestamp = await this.freeFeeContract.methods.globalTimestamp().call()
+        // console.log('globalTimestamp',globalTimestamp)
 
-        let estimateFreeFee = await this.freeFeeContract.methods.estimateFreeFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
-        this.estimateFreeFee = web3.utils.fromWei(web3.utils.toBN(estimateFreeFee))
-        console.log('estimateFreeFee',this.estimateFreeFee)
+        //let estimateTotalLeft = await this.freeFeeContract.methods.estimateTotalLeft(Math.ceil(Date.now()/1000)).call()
+        // console.log('estimateTotalLeft',estimateTotalLeft)
 
-        this.usagePercent = util.numberPrecision(estimateFreeFee/userFreeFeeLimit*100,2)
+        //let estimateFreeFee = await this.freeFeeContract.methods.estimateFreeFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
+        //this.estimateFreeFee = web3.utils.fromWei(web3.utils.toBN(estimateFreeFee))
+        //console.log('estimateFreeFee',this.estimateFreeFee)
+
+        //this.usagePercent = util.numberPrecision(estimateFreeFee/userFreeFeeLimit*100,2)
 
 
 
 
-        let estimateFee = await this.feeContract.methods.estimateFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
-        console.log('estimateFee',estimateFee)
-        this.estimateFee = web3.utils.fromWei(web3.utils.toBN(estimateFee))
+        // let estimateFee = await this.feeContract.methods.estimateFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
+        // console.log('estimateFee',estimateFee)
+        // this.estimateFee = web3.utils.fromWei(web3.utils.toBN(estimateFee))
 
-        let feeUserUsage = await this.feeContract.methods.userUsage(this.connection.address).call()
+        // let feeUserUsage = await this.feeContract.methods.userUsage(this.connection.address).call()
 
-        let estimateUsage = await this.feeContract.methods.estimateUsage(feeUserUsage,Math.ceil(Date.now()/1000)).call()
+        // let estimateUsage = await this.feeContract.methods.estimateUsage(feeUserUsage,Math.ceil(Date.now()/1000)).call()
 
-        console.log('estimateUsage',estimateUsage)
-        this.estimateUsage = web3.utils.fromWei(web3.utils.toBN(estimateUsage))
+        // console.log('estimateUsage',estimateUsage)
+        // this.estimateUsage = web3.utils.fromWei(web3.utils.toBN(estimateUsage))
 
-        this.estimateUsagePercent = util.numberPrecision(estimateFee/(estimateFee*1+estimateUsage*1)*100,2)
+        // this.estimateUsagePercent = util.numberPrecision(estimateFee/(estimateFee*1+estimateUsage*1)*100,2)
 
         let feeUserDeposit = await this.feeContract.methods.userDeposit(this.connection.address,this.connection.address).call()
         console.log('feeUserDeposit',feeUserDeposit)
 
-        let userTotalAmount = await this.feeContract.methods.userTotalAmount(this.connection.address).call()
-        console.log('userTotalAmount',userTotalAmount)
+        // let userTotalAmount = await this.feeContract.methods.userTotalAmount(this.connection.address).call()
+        // console.log('userTotalAmount',userTotalAmount)
 
 
         let nowTime = Date.now();
@@ -586,12 +625,101 @@ export default {
             availableTime: util.numberPrecision(availableTime*100,2)
         }
 
-       let estimateWithdrawableTimestamp =  await this.feeContract.methods.estimateWithdrawableTimestamp(this.connection.address,this.connection.address).call()
-        console.log('estimateWithdrawableTimestamp',estimateWithdrawableTimestamp)
+    //    let estimateWithdrawableTimestamp =  await this.feeContract.methods.estimateWithdrawableTimestamp(this.connection.address,this.connection.address).call()
+    //     console.log('estimateWithdrawableTimestamp',estimateWithdrawableTimestamp)
 
     },
-    async handleWithdraw(){
-        let estimateWithdrawableAmount =  await this.feeContract.methods.estimateWithdrawableAmount(this.connection.address,Math.ceil(Date.now()/1000)).call()
+    async getDepositList() {
+        let client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        const deposit = gql`
+         query depositInfos {
+            deposits(where: { to: "${this.connection.address}" }) {
+                id
+                by
+                to
+                timestamp
+                amount
+            }
+        }
+        `
+        const {data:{deposits}} = await client.query({
+            query: deposit,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        this.depositList = deposits;
+        let depositsList = deposits.map(async (item) => {
+            let feeUserDeposit = await this.feeContract.methods.userDeposit(item.by,item.to).call()
+            let nowTime = Date.now();
+            let passTime = this.timeDiff(nowTime, feeUserDeposit.timestamp*1000);
+            console.log('passTime',passTime)
+            return {
+                by:item.by,
+                address:item.to,
+                amount: web3.utils.fromWei(web3.utils.toBN(feeUserDeposit.amount)),
+                timestamp: feeUserDeposit.timestamp,
+                availableTime: passTime
+            }
+        })
+        let res = await Promise.all(depositsList);
+        this.nodeList = res;
+
+        console.log('depositsList',res)
+    },
+    async getTotalStake(){
+         let apiUrl = this.getRpcUrl();
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getTotalAmount',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        this.totalAmount = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.setGasStakeTotalAmount({
+            gasStakeTotalAmount: this.totalAmount
+        })
+    },
+    async getLeftCrude(){
+         let apiUrl = this.getRpcUrl();
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getCrude',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        console.log('leftCrude',res)
+        let leftCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.setLeftCrude({
+            leftCrude: leftCrude
+        })
+    },
+    async getUsedCrude(){
+         let apiUrl = this.getRpcUrl();
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getUsedCrude',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        console.log('usedCrude',res)
+        // let usedCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        // this.setUsedCrude({
+        //     usedCrude: usedCrude
+        // })
+    },
+    async handleWithdraw(item){
+        this.currentItem = item;
+        let estimateWithdrawableAmount =  await this.feeContract.methods.estimateWithdrawableAmount(item.address,Math.ceil(Date.now()/1000)).call()
         console.log('estimateWithdrawableAmount',estimateWithdrawableAmount)
         this.estimateWithdrawableAmount = web3.utils.fromWei(web3.utils.toBN(estimateWithdrawableAmount))
         this.withdrawDialog = true;
@@ -629,15 +757,16 @@ export default {
     cancelWithdraw(){
         this.withdrawDialog = false;
     },
-    deposit(){
-        this.form.address = this.connection.address;
+    deposit(item){
+        this.currentItem = item;
+        this.form.address = item.address;
         this.depositDialog = true;
     },
-    async submitStaking(){
+    async submitStaking(item){
          try{
             if(!this.$refs.stakeform.validate()) return;
             this.stakeLoading = true;
-            const stakeRes = await this.feeContract.methods.deposit(this.connection.address).send({
+            const stakeRes = await this.feeContract.methods.deposit(item.address).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei(this.form.amount))
         })
@@ -677,17 +806,26 @@ export default {
     addressToShort(str){
         return util.addr(str);
     },
-    timeToFormat(val) {
-        let str = '';
-        let resdays = Math.floor(val/60/60/24)
-        if(resdays > 0){
-            str = resdays + '天后';
-        } else if(Math.floor(val/60/60) > 0){
-            str = Math.floor(val/60/60)+'小时后'
-        } else {
-            str = val/60 + '分后';
+    timeDiff (a, b) {
+        let sdate = new Date(a);//结束时间
+        let now = new Date(b);//开始时间
+        let endTime=sdate.getTime();//结束时间
+        let startTime=now.getTime();//开始时间
+        let timeDiff =endTime  - startTime;
+        let hours = parseInt((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = parseInt((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = ((timeDiff % (1000 * 60)) / 1000).toFixed();
+        hours < 10 ? hours='0'+hours : hours; //小时格式化
+        minutes < 10 ? minutes='0'+minutes : minutes; //分钟格式化
+        seconds < 10 ? seconds='0'+seconds : seconds; //秒钟格式化
+    
+        let k=hours+'H'+minutes+'M'+seconds;
+        // return k;
+        if("0" > seconds){
+            return "--"
+        }else{
+            return k;
         }
-        return str;
     }
   },
   computed: {

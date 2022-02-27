@@ -27,7 +27,10 @@ const state = {
     { key: 1, text: 'settings.dark', icon: 'mdi-weather-night' },
     { key: 2, text: 'settings.auto', icon: 'mdi-autorenew' }
   ],
-  totalStakes: []
+  totalStakes: [],
+  gasStakeTotalAmount: 0,
+  leftCrude:0, 
+  usedCrude:0
 };
 const getters = {
   connection: (state) => state.connection,
@@ -55,7 +58,10 @@ const getters = {
       }
     }
   },
-  totalStakes: (state) => state.totalStakes
+  totalStakes: (state) => state.totalStakes,
+  gasStakeTotalAmount: (state) => state.gasStakeTotalAmount,
+  leftCrude: (state) => state.leftCrude,
+  usedCrude: (state) => state.usedCrude,
 };
 
 const mutations = {
@@ -109,6 +115,15 @@ const mutations = {
   },
   setTotalStakes: (state, payload) => {
     state.totalStakes = payload.totalStakes;
+  },
+  setGasStakeTotalAmount: (state, payload) => {
+    state.gasStakeTotalAmount = payload.gasStakeTotalAmount;
+  },
+  setLeftCrude: (state, payload) => {
+    state.leftCrude = payload.leftCrude;
+  },
+  setUsedCrude: (state, payload) => {
+    state.usedCrude = payload.usedCrude;
   }
 
 };
@@ -135,6 +150,15 @@ const actions = {
   },
   setTotalStakes: ({ commit }, payload) => {
     commit('setTotalStakes', payload);
+  },
+  setGasStakeTotalAmount: ({ commit }, payload) => {
+    commit('setGasStakeTotalAmount', payload);
+  },
+  setLeftCrude: ({ commit }, payload) => {
+    commit('setLeftCrude', payload);
+  },
+  setUsedCrude: ({ commit }, payload) => {
+    commit('setUsedCrude', payload);
   },
 };
 

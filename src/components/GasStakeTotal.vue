@@ -8,23 +8,10 @@
                 tile
                 color="background"
             >
-                <h3>Resources Of 0x69...sb2B</h3>
+                <h3>Resources Of {{ connection.address | addr }}</h3>
                 <div class="stake-name">Deposit REI Gets Crude</div>
                 <v-row >
                     <v-col class="row-circular">
-                        <div class="circular">
-                        <v-progress-circular
-                            :rotate="270"
-                            :size="128"
-                            :width="22"
-                            :value="value"
-                            color="#4CC7B6"
-                            > 
-                            {{connection.address?value:'-'}}
-                        </v-progress-circular>
-                        <h4>{{connection.address?0.025:'-'}}</h4>
-                        <div class="stake-name">Daily Free Fee(Crude)</div>
-                    </div>
                     <div class="circular">
                         <v-progress-circular
                             :rotate="270"
@@ -35,7 +22,7 @@
                             > 
                             {{connection.address?value1:'-'}}
                         </v-progress-circular>
-                        <h4>{{connection.address?2.722:'-'}}</h4>
+                        <h4>{{leftCrude}}</h4>
                         <div class="stake-name">Left Crude</div>
                     </div>
                     <div class="circular">
@@ -48,7 +35,7 @@
                             > 
                             {{connection.address?value2:'-'}}
                         </v-progress-circular>
-                        <h4>{{connection.address?0.000047:'-'}}</h4>
+                        <h4>{{usedCrude}}</h4>
                         <div class="stake-name">Crude Used</div>
                         <div class="update-time">
                             <v-icon
@@ -69,7 +56,7 @@
                 tile
                 color="background"
             >
-               <div class="total-rei" v-if="connection.address">11112.200<span class="rei">REI</span></div> 
+               <div class="total-rei" v-if="connection.address">{{gasStakeTotalAmount | asset(2)}}<span class="rei">REI</span></div> 
                <div v-if="!connection.address" class="not-connection">-</div>
                <div class="stake-name">Total Staked</div>
                <v-btn
@@ -86,8 +73,10 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import filters from '../filters';
 /* eslint-disable no-undef */
 export default {
+  filters,
   data() {
     return {
         value:'100%',
@@ -106,6 +95,9 @@ export default {
     computed: {
    ...mapGetters({
       connection: 'connection',
+      gasStakeTotalAmount: 'gasStakeTotalAmount',
+      leftCrude: 'leftCrude',
+      usedCrude: 'usedCrude',
       dark: 'dark'
     }),
   },

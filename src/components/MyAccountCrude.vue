@@ -12,7 +12,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei" v-if='connection.address'>423.00<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei" v-if='connection.address'>{{gasStakeTotalAmount | asset(2) }}<span class="rei">REI</span></v-subheader>
                              <div v-if='!connection.address' class="not-connection">
                                  —
                             </div>
@@ -73,7 +73,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei" style="margin-top:28px" v-if='connection.address'>164.00<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(2) }}<span class="rei">REI</span></v-subheader>
                             <div v-if='!connection.address' class="not-connection">
                                 —
                             </div>
@@ -115,18 +115,26 @@
 </template>
 <script>
 
+import Web3 from 'web3';
 import { mapGetters, mapActions } from 'vuex';
+import filters from '../filters';
+import { postRpcRequest } from '../service/CommonService'
 /* eslint-disable no-undef */
 export default {
+  filters,
   data() {
     return {
         
     };
   },
   watch: {
-  
+  '$store.state.connection': function() {
+      this.init()
+    },
   },
   mounted() {
+      this.connect();
+      this.init();
   },
   destroyed() {
     
@@ -134,13 +142,70 @@ export default {
    computed: {
    ...mapGetters({
       connection: 'connection',
+      gasStakeTotalAmount: 'gasStakeTotalAmount',
+      leftCrude: 'leftCrude',
       dark: 'dark'
     }),
   },
   methods: {
       ...mapActions({
-      addTx: 'addTx'
+      addTx: 'addTx',
+      setGasStakeTotalAmount: 'setGasStakeTotalAmount',
+      setLeftCrude: 'setLeftCrude',
     }),
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    init(){
+        this.getTotalStake();
+        this.getLeftCrude();
+    },
+    getRpcUrl(){
+        let api = ''
+        if(this.connection.network == 'REI Devnet'){
+            api = process.env.VUE_APP_DEV_RPC_SERVER;
+        } else if(this.connection.network == 'REI Testnet'){
+             api = process.env.VUE_APP_TEST_SERVER_API
+        } else {
+            api = process.env.VUE_APP_SERVER_API;
+        }
+        return api;
+    },
+    async getTotalStake(){
+         let apiUrl = this.getRpcUrl();
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getTotalAmount',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        this.totalAmount = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.setGasStakeTotalAmount({
+            gasStakeTotalAmount: this.totalAmount
+        })
+    },
+    async getLeftCrude(){
+         let apiUrl = this.getRpcUrl();
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getCrude',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        console.log('leftCrude',res)
+        let leftCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.setLeftCrude({
+            leftCrude: leftCrude
+        })
+    },
   },
 };
 </script>

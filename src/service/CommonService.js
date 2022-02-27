@@ -23,3 +23,13 @@ export const getAssetInfo = (apiurl,params) => http({
     params
 });
 
+export const postRpcRequest = (apiurl,params) => http({
+    method: 'POST',
+    url: `${apiurl}`,
+    data:{
+        "jsonrpc": "2.0",
+         "id": 1,
+         method:params.method,
+         params:params.params
+    }
+});
