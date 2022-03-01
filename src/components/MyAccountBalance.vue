@@ -202,8 +202,9 @@ import abiCommissionShare from '../abis/abiCommissionShare'
 import { mapGetters } from 'vuex';
 import * as echarts from 'echarts';
 import filters from '../filters';
-import { client } from '../service/ApolloClient'
-import { gql } from '@apollo/client/core'
+import dayjs from 'dayjs';
+import { client } from '../service/ApolloClient';
+import { gql } from '@apollo/client/core';
 
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
@@ -215,7 +216,8 @@ export default {
         myTotalStake: 0,
         myTotalUnStake: 0,
         stakeManagerContract: null,
-        stakeManageInstance: null
+        stakeManageInstance: null,
+        myChart: null
     };
   },
   watch: {
@@ -252,6 +254,45 @@ export default {
         this.stakeManageInstance = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
         this.getMyStakeInfo();
         this.getMyUnstakeInfo();
+        this.getBalanceList();
+    },
+    async getBalanceList() {
+        let balance = await web3.eth.getBalance(this.connection.address);
+        console.log('balance',balance)
+        let blockNumber = await web3.eth.getBlockNumber()
+        let arr = [];
+        let now = Date.now();
+        for(let i = 1; i <= 7; i++){
+            arr.push({
+                timestamp:now-86400000*i,
+                blockNumber: blockNumber-28800*i
+            })
+        }
+        let arrReverse = arr.reverse();
+        let arrMap = arrReverse.map(item=>{
+            return web3.eth.getBalance(this.connection.address, item.blockNumber);
+        })
+        let validators = await Promise.all(arrMap);
+        console.log('validators',validators)
+        let balanceResult = [];
+        for(let i = 0; i < validators.length; i++){
+            balanceResult.push({
+                     "value": [
+                        dayjs(arrReverse[i].timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(validators[i]))
+                    ]
+                })
+        }
+        console.log('balanceResult',balanceResult)
+        this.myChart.setOption({
+            series: [
+              {
+                data: balanceResult
+              }
+            ]
+        })
+        
+
     },
     async getBalanceOfShare(activeValidatorsShare) {
         let commissionShare = new web3.eth.Contract(abiCommissionShare,activeValidatorsShare[1]);
@@ -340,11 +381,11 @@ export default {
     myCharts(){
       const chart = this.$refs.chart;
       if(chart){
-        const myChart = this.$echarts.init(chart);
+        this.myChart = this.$echarts.init(chart);
         var option = {
           xAxis: {
-            type: 'category',
-            data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24'],
+            type: 'time',
+            //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24'],
             //刻度线
             axisTick: {
               show: false
@@ -365,7 +406,7 @@ export default {
           },
           yAxis: {
             type: 'value',
-            data:[0,150,300,450,600],
+            data:[],
           
             axisTick: {
               show: false
@@ -396,8 +437,8 @@ export default {
         //   },
           series: [
             {
-               name:'Total Voting Stake',
-              data: [120, 200, 150, 80, 70, 110, 130],
+              name:'Total Voting Stake',
+              data: [],
               type: 'bar',
               itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -409,14 +450,14 @@ export default {
             }
           ] 
         };
-          myChart.setOption(option)
+          this.myChart.setOption(option)
           window.addEventListener("resize", function() {
-            myChart.resize()
+            this.myChart.resize()
           })
         }
       this.$on('hook:destroyed',()=>{
          window.removeEventListener("resize", function() {
-            myChart.resize();
+            this.myChart.resize();
         });
     })
     }
@@ -499,8 +540,6 @@ export default {
       width: 100%;
       margin-top: 20px;
     }
-    .icon-right{
-      }
   }
 }
 </style>
