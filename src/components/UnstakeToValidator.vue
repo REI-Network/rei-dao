@@ -14,9 +14,6 @@
                     {{$t('unstake.node')}}
                 </th> 
                 <th class="text-left">
-                    {{$t('unstake.create_time')}}
-                </th>
-                <th class="text-left">
                     {{$t('unstake.unstake_available')}}
                 </th>
                 <th class="text-left">
@@ -39,10 +36,9 @@
                 :key="index"
                 >
                 <td>{{ item.validator | addr }}</td>
-                <td>{{ item.createdAt | dateFormat('YYYY-MM-dd hh:mm:ss') }}</td>
                 <td>{{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}</td>
-                <td>{{ formatAsset(item.unstakeShares) | asset(2)  }}</td>
-                <td>{{ formatAsset(item.value) | asset(2)  }}</td>
+                <td>{{ formatAsset(item.shares) | asset(2)  }}</td>
+                <td>{{ formatAsset(item.values) | asset(2)  }}</td>
                 <td>{{ statusMap[item.state]  }}</td>
                 <td>
                     <v-btn
@@ -71,8 +67,9 @@ import { mapActions, mapGetters } from 'vuex';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import filters from '../filters';
-import { getUnstake } from '../service/CommonService'
+//import { getUnstake } from '../service/CommonService'
 import util from '../utils/util'
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -88,8 +85,8 @@ export default {
         currentItem:'',
         stakeManagerContract:'',
         statusMap:{
-            0: this.$t('unstake.not_retrieve'),
-            1: this.$t('unstake.retrieve')
+            false: this.$t('unstake.not_retrieve'),
+            true: this.$t('unstake.retrieve')
         },
         nodeList: [
         ],
@@ -116,13 +113,35 @@ export default {
       addTx: 'addTx'
     }),
     async init() {
-        let apiUrl = this.getApiUrl();
-        let res = await getUnstake(apiUrl,{
-            to: this.connection.address
-        });
-        if(res && res.data){
-            this.nodeList = res.data.result
+        //let apiUrl = this.getApiUrl();
+        let client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        const getUnStakeinfos = gql`
+         query unStakeInfos {
+            unStakeInfos(where: { from: "${this.connection.address}" }) {
+                id
+                from
+                to
+                txHash
+                values
+                shares
+                validator
+                timestamp
+                state
+                amount
+            }
         }
+        `
+        const {data:{unStakeInfos}} = await client.query({
+            query: getUnStakeinfos,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log('unStakeInfos',unStakeInfos)
+        this.nodeList = unStakeInfos
 
         console.log(this.nodeList)
     },

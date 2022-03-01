@@ -545,6 +545,7 @@ import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
 import UnstakeToValidator from './UnstakeToValidator';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -775,39 +776,54 @@ export default {
     },
     async getMyStakeList() {
         this.myStakeListLoading = true;
-        let apiUrl = this.getApiUrl();
-        let res = await getMyStake(apiUrl,{
-            from: this.connection.address
-        });
-        if(res && res.data){
-            let myStakeList = res.data.validators
-            if(myStakeList.length>0){
-
-                let validatorPowerMap = myStakeList.map(item => {
-                    return this.stakeManageInstance.methods.getVotingPowerByAddress(item).call()
-                })
-                let validatorMap = myStakeList.map(item => {
-                    return this.stakeManageInstance.methods.validators(item).call()
-                })
-
-                let validatorPower = await Promise.all(validatorPowerMap);
-                let validators = await Promise.all(validatorMap);
-
-                let balanceOfShareMap = validators.map(item => {
-                    return this.getBalanceOfShare(item);
-                })
-                let balanceOfShare = await Promise.all(balanceOfShareMap);
-                let arr = []
-                for(let i = 0;i < myStakeList.length;i++){
-                    arr.push({
-                        address: myStakeList[i],
-                        power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
-                        balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
-                        commissionShare: balanceOfShare[i].commissionShare,
-                    })
-                }
-                this.myStakeList = arr
+        let client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        const getStakeinfos = gql`
+         query stakeInfos {
+            stakeInfos(where: { from: "${this.connection.address}" }) {
+                id
+                from
+                timestamp
+                validator
             }
+        }
+        `
+        const {data:{stakeInfos}} = await client.query({
+            query: getStakeinfos,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log('deposits',stakeInfos)
+        let myStakeList = stakeInfos;
+        if(myStakeList.length>0){
+
+            let validatorPowerMap = myStakeList.map(item => {
+                return this.stakeManageInstance.methods.getVotingPowerByAddress(item.validator).call()
+            })
+            let validatorMap = myStakeList.map(item => {
+                return this.stakeManageInstance.methods.validators(item.validator).call()
+            })
+
+            let validatorPower = await Promise.all(validatorPowerMap);
+            let validators = await Promise.all(validatorMap);
+
+            let balanceOfShareMap = validators.map(item => {
+                return this.getBalanceOfShare(item);
+            })
+            let balanceOfShare = await Promise.all(balanceOfShareMap);
+            let arr = []
+            for(let i = 0;i < myStakeList.length;i++){
+                arr.push({
+                    address: myStakeList[i].validator,
+                    power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
+                    balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+                    commissionShare: balanceOfShare[i].commissionShare,
+                })
+            }
+            this.myStakeList = arr
         }
         this.myStakeListLoading = false;
     },

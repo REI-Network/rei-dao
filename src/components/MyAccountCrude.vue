@@ -78,7 +78,7 @@
                                 —
                             </div>
                             <v-subheader class="">
-                                LEft Crude
+                                Left Crude
                                 <v-tooltip right>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon

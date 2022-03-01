@@ -52,6 +52,7 @@
                 small
                 color='vote_button'
                 class="mr-4"
+                :disabled="item.availableTimePercent<1"
                 v-if='connection.address'
                 @click="handleWithdraw(item)"
                 style="border-radius:4px"
@@ -242,7 +243,6 @@
                   <div class="input-title">Address</div>
                         <v-text-field
                             v-model="form.address"
-                            readonly
                             :label="$t('stake.address')"
                             outlined
                             background-color="input_other"
@@ -401,78 +401,6 @@ export default {
             // { text: '10', value: 'ten'}
         ],
         nodeList: [
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
-            {
-                address:'0x77...Fo21',
-                amount:'2,323.00',
-                deposit:'2021/12/20 14:12:11',
-                withdraw:'2Days:12H:25M:25S'
-            },
         ],
         form:{
             address: '',
@@ -557,55 +485,12 @@ export default {
         
         //let freeFeeContractAddress = await contract.methods.freeFee().call();
         let feeContractAddress = await contract.methods.fee().call();
-
-        console.log(feeContractAddress)
-
-        // let userFreeFeeLimit = await contract.methods.userFreeFeeLimit().call();
-        // this.userFreeFeeLimit = web3.utils.fromWei(web3.utils.toBN(userFreeFeeLimit))
-
-        // console.log('userFreeFeeLimit',userFreeFeeLimit)
-
-        //this.freeFeeContract = new web3.eth.Contract(abiFreeFee,freeFeeContractAddress);
         this.feeContract = new web3.eth.Contract(abiFee,feeContractAddress);
 
         this.getTotalStake();
         this.getLeftCrude();
         this.getUsedCrude();
         this.getDepositList();
-
-        //let userUsage = await this.freeFeeContract.methods.userUsage(this.connection.address).call()
-        // this.userUsage = userUsage.usage
-        // console.log('userUsage',userUsage)
-        //let totalUsage = await this.freeFeeContract.methods.totalUsage().call()
-        // console.log('totalUsage',totalUsage)
-
-        //let globalTimestamp = await this.freeFeeContract.methods.globalTimestamp().call()
-        // console.log('globalTimestamp',globalTimestamp)
-
-        //let estimateTotalLeft = await this.freeFeeContract.methods.estimateTotalLeft(Math.ceil(Date.now()/1000)).call()
-        // console.log('estimateTotalLeft',estimateTotalLeft)
-
-        //let estimateFreeFee = await this.freeFeeContract.methods.estimateFreeFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
-        //this.estimateFreeFee = web3.utils.fromWei(web3.utils.toBN(estimateFreeFee))
-        //console.log('estimateFreeFee',this.estimateFreeFee)
-
-        //this.usagePercent = util.numberPrecision(estimateFreeFee/userFreeFeeLimit*100,2)
-
-
-
-
-        // let estimateFee = await this.feeContract.methods.estimateFee(this.connection.address, Math.ceil(Date.now()/1000)).call()
-        // console.log('estimateFee',estimateFee)
-        // this.estimateFee = web3.utils.fromWei(web3.utils.toBN(estimateFee))
-
-        // let feeUserUsage = await this.feeContract.methods.userUsage(this.connection.address).call()
-
-        // let estimateUsage = await this.feeContract.methods.estimateUsage(feeUserUsage,Math.ceil(Date.now()/1000)).call()
-
-        // console.log('estimateUsage',estimateUsage)
-        // this.estimateUsage = web3.utils.fromWei(web3.utils.toBN(estimateUsage))
-
-        // this.estimateUsagePercent = util.numberPrecision(estimateFee/(estimateFee*1+estimateUsage*1)*100,2)
 
         let feeUserDeposit = await this.feeContract.methods.userDeposit(this.connection.address,this.connection.address).call()
         console.log('feeUserDeposit',feeUserDeposit)
@@ -655,14 +540,19 @@ export default {
         let depositsList = deposits.map(async (item) => {
             let feeUserDeposit = await this.feeContract.methods.userDeposit(item.by,item.to).call()
             let nowTime = Date.now();
-            let passTime = this.timeDiff(nowTime, feeUserDeposit.timestamp*1000);
-            console.log('passTime',passTime)
+            let availableTime = feeUserDeposit.timestamp*1000+3*24*3600*1000
+            let passTime = this.timeDiff(availableTime,nowTime);
+
+            let passedTime = nowTime - feeUserDeposit.timestamp*1000
+            let passTimepercent = passedTime/(3*24*3600*1000);
+            let availableTimePercent = passTimepercent>1 ? 1 : passTimepercent
             return {
                 by:item.by,
                 address:item.to,
                 amount: web3.utils.fromWei(web3.utils.toBN(feeUserDeposit.amount)),
                 timestamp: feeUserDeposit.timestamp,
-                availableTime: passTime
+                availableTime: passTime,
+                availableTimePercent: availableTimePercent
             }
         })
         let res = await Promise.all(depositsList);
@@ -712,23 +602,21 @@ export default {
          }
         let res = await postRpcRequest(apiUrl,param);
         console.log('usedCrude',res)
-        // let usedCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
-        // this.setUsedCrude({
-        //     usedCrude: usedCrude
-        // })
+        let usedCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.setUsedCrude({
+            usedCrude: usedCrude
+        })
     },
     async handleWithdraw(item){
         this.currentItem = item;
-        let estimateWithdrawableAmount =  await this.feeContract.methods.estimateWithdrawableAmount(item.address,Math.ceil(Date.now()/1000)).call()
-        console.log('estimateWithdrawableAmount',estimateWithdrawableAmount)
-        this.estimateWithdrawableAmount = web3.utils.fromWei(web3.utils.toBN(estimateWithdrawableAmount))
+        this.estimateWithdrawableAmount = item.amount;
         this.withdrawDialog = true;
     },
     async submitWithdraw(){
         try{
             if(!this.$refs.withdrawform.validate()) return;
             this.withdrawLoading = true;
-            const withdrawRes = await this.feeContract.methods.withdraw(this.connection.address,web3.utils.toWei(this.withdrawForm.amount),web3.utils.toWei(this.withdrawForm.amount)).send({
+            const withdrawRes = await this.feeContract.methods.withdraw(this.currentItem.address,web3.utils.toWei(this.withdrawForm.amount)).send({
             from: this.connection.address
         })
             if(withdrawRes.transactionHash){
