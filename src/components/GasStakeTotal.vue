@@ -63,31 +63,122 @@
                     tile
                     color='vote_button'
                     class="stake-btn"
+                    @click="deposit"
                 >
                     Gas stake
                 </v-btn>        
             </v-card>
         </v-col>
-      </v-row>   
+      </v-row>
+     <v-dialog v-model="depositDialog" width="500">
+      <v-card class="start_unstake" style="padding-bottom:4px">
+          <div class="dialog-validator"> 
+                <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
+                <v-btn @click="cancelStaking" depressed class="close-btn">
+                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
+                </v-btn>   
+            </div> 
+          <!-- <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
+          <v-divider></v-divider> -->
+        <v-list rounded class="ma-4 start_unstake">
+          <v-form 
+            ref="stakeform"
+            lazy-validation
+            class="start_unstake"
+          >
+          <v-row>
+              <v-col class="from-voting">
+                  <div class="input-title">Address</div>
+                        <v-text-field
+                            v-model="form.address"
+                            :label="$t('stake.address')"
+                            outlined
+                            background-color="input_other"
+                            class="text-filed"
+                            color="chips"
+                        >
+                    </v-text-field>
+              </v-col>
+          </v-row>
+            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
+            <v-row>
+              <v-col class="from-voting">
+                  <div class="input-title">Amount</div>
+                        <v-text-field
+                        v-model="form.amount"
+                        :label="$t('stake.amount')"
+                        required
+                        :rules="amountRules"
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                        height="24"
+                    ><template v-slot:append>
+                        <v-btn
+                        text
+                        x-small
+                        @click="setAll('form')">
+                        {{ $t('stake.max') }}
+                        </v-btn>
+                    </template>
+            </v-text-field>
+              </v-col>
+          </v-row>
+            <div class="text-center">
+                <v-btn 
+                color="btn_button"
+                @click="cancelStaking"
+                class="mr-4">
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
+                <v-btn
+                color="vote_button"
+                :loading="stakeLoading"
+                @click="submitStaking"
+                >
+                {{$t('stake.btn_submit')}}
+                </v-btn>
+            </div>
+          </v-form>
+        </v-list>
+      </v-card>
+    </v-dialog>   
     </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+import Web3 from 'web3';
+import abiConfig from '../abis/abiConfig';
+import abiFee from '../abis/abiFee'
 import { mapGetters, mapActions } from 'vuex';
 import filters from '../filters';
-/* eslint-disable no-undef */
+
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+
 export default {
   filters,
   data() {
     return {
+        symbol:'REI',
         value:'100%',
         value1:'45%',
         value2:'10.78%',
+        depositDialog: false,
+        form:{
+            address: '',
+            amount: 0
+        },
+        stakeLoading: false,
+        amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v>0) || this.$t('msg.please_input_not_zero')],
+        addressRules: [(v) => !!v || this.$t('msg.please_input_address')]
     };
   },
   watch: {
   
   },
   mounted() {
+      this.connect();
+      this.init();
   },
   destroyed() {
     
@@ -105,6 +196,57 @@ export default {
       ...mapActions({
       addTx: 'addTx'
     }),
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    async init() {
+        let contract = new web3.eth.Contract(abiConfig,config_contract);
+        let feeContractAddress = await contract.methods.fee().call();
+        this.feeContract = new web3.eth.Contract(abiFee,feeContractAddress);
+    },
+    deposit(){
+        this.form.address = this.connection.address;
+        this.depositDialog = true;
+    },
+    async submitStaking(item){
+         try{
+            if(!this.$refs.stakeform.validate()) return;
+            this.stakeLoading = true;
+            const stakeRes = await this.feeContract.methods.deposit(item.address).send({
+            from: this.connection.address,
+            value: web3.utils.numberToHex(web3.utils.toWei(this.form.amount))
+        })
+            if(stakeRes.transactionHash){
+                console.log(stakeRes)
+                this.addTx({
+                  tx: {
+                    txid: stakeRes.transactionHash,
+                    type: 'deposit',
+                    status: 'PENDING',
+                    data: {
+                      amount: this.form.amount,
+                      symbol: this.symbol,
+                      to: util.addr(this.connection.address)
+                    },
+                    timestamp: new Date().getTime()
+                  }
+                });
+                this.depositDialog = false;
+            }
+        } catch (e){
+            this.depositDialog = false;
+            console.log(e)
+            this.$dialog.notify.warning(e.message);
+        }
+        this.stakeLoading = false;
+    },
+    cancelStaking() {
+        this.depositDialog = false;
+    },
   },
 };
 </script>
