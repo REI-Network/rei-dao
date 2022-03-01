@@ -113,9 +113,9 @@
 import { mapActions, mapGetters } from 'vuex';
 import { client } from '../service/ApolloClient'
 import { gql } from '@apollo/client/core'
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 import web3 from 'web3';
-import util from '../utils/util'
+import util from '../utils/util';
 
 
 console.log(dayjs().unix())
