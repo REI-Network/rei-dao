@@ -297,6 +297,8 @@ export default {
 
         currentItem: '',
         currentAddress: {},
+        leftCrude:0,
+        usedCrude:0,
         
         approved: true,
         rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
@@ -363,8 +365,11 @@ export default {
 
         this.getTotalStake();
         this.getLeftCrude();
-        this.getUsedCrude();
+        //this.getUsedCrude();
         this.getDepositList();
+
+        console.log('leftCrude',this.leftCrude);
+        console.log('usedCrude',this.usedCrude);
 
         let feeUserDeposit = await this.feeContract.methods.userDeposit(this.connection.address,this.connection.address).call()
         console.log('feeUserDeposit',feeUserDeposit)
@@ -373,16 +378,16 @@ export default {
         // console.log('userTotalAmount',userTotalAmount)
 
 
-        let nowTime = Date.now();
-        let passTime = nowTime - feeUserDeposit.timestamp*1000
-        console.log('passTime',passTime)
-        let passTimepercent = passTime/(3*24*3600*1000);
-        let availableTime = passTimepercent>1 ? 1 : passTimepercent
-        this.userDeposit = {
-            amount: web3.utils.fromWei(web3.utils.toBN(feeUserDeposit.amount)),
-            timestamp: feeUserDeposit.timestamp,
-            availableTime: util.numberPrecision(availableTime*100,2)
-        }
+        // let nowTime = Date.now();
+        // let passTime = nowTime - feeUserDeposit.timestamp*1000
+        // console.log('passTime',passTime)
+        // let passTimepercent = passTime/(3*24*3600*1000);
+        // let availableTime = passTimepercent>1 ? 1 : passTimepercent
+        // this.userDeposit = {
+        //     amount: web3.utils.fromWei(web3.utils.toBN(feeUserDeposit.amount)),
+        //     timestamp: feeUserDeposit.timestamp,
+        //     availableTime: util.numberPrecision(availableTime*100,2)
+        // }
 
     //    let estimateWithdrawableTimestamp =  await this.feeContract.methods.estimateWithdrawableTimestamp(this.connection.address,this.connection.address).call()
     //     console.log('estimateWithdrawableTimestamp',estimateWithdrawableTimestamp)
@@ -459,27 +464,31 @@ export default {
              params:arr
          }
         let res = await postRpcRequest(apiUrl,param);
-        console.log('leftCrude',res)
         let leftCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        this.leftCrude = leftCrude;
         this.setLeftCrude({
             leftCrude: leftCrude
         })
-    },
-    async getUsedCrude(){
-         let apiUrl = this.getRpcUrl();
-         let arr = [];
-         arr.push(this.connection.address);
-         arr.push('latest')
-         let param = {
+    
+         let arrused = [];
+         arrused.push(this.connection.address);
+         arrused.push('latest')
+         let paramused = {
              method:'rei_getUsedCrude',
-             params:arr
+             params:arrused
          }
-        let res = await postRpcRequest(apiUrl,param);
-        console.log('usedCrude',res)
-        let usedCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        let resused = await postRpcRequest(apiUrl,paramused);
+        let usedCrude = web3.utils.fromWei(web3.utils.toBN(resused.data.result));
+        this.usedCrude = usedCrude;
         this.setUsedCrude({
             usedCrude: usedCrude
         })
+        let total = web3.utils.toBN(res.data.result).add(web3.utils.toBN(resused.data.result));
+        let leftPercent = web3.utils.toBN(res.data.result).div(total);
+        let usedPercennt = web3.utils.toBN(resused.data.result).div(total);
+
+        console.log('leftPercent',leftPercent.toString())
+        console.log('usedPercennt',usedPercennt.toString())
     },
     async handleWithdraw(item){
         this.currentItem = item;
@@ -494,7 +503,6 @@ export default {
             from: this.connection.address
         })
             if(withdrawRes.transactionHash){
-                console.log(withdrawRes)
                 this.addTx({
                   tx: {
                     txid: withdrawRes.transactionHash,

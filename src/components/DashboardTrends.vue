@@ -201,13 +201,6 @@ export default {
                     ]
                 }
         })
-        this.myChart.setOption({
-            series: [
-              {
-                data: this.resTotalData
-              }
-            ]
-        });
     
         let _dataVoting = dataVoting.concat(charData.totalStakes).reverse();
         this.resVotingData = _dataVoting.map(function(item,i){
@@ -290,8 +283,6 @@ export default {
                     ]
                 })
             }
-            console.log('resFeeUsageData',this.resFeeUsageData)
-            console.log('resFeeUsageSumData',this.resFeeUsageSumData)
         }
         
 

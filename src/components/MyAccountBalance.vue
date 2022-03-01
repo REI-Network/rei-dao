@@ -257,8 +257,6 @@ export default {
         this.getBalanceList();
     },
     async getBalanceList() {
-        let balance = await web3.eth.getBalance(this.connection.address);
-        console.log('balance',balance)
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
         let now = Date.now();
@@ -273,7 +271,6 @@ export default {
             return web3.eth.getBalance(this.connection.address, item.blockNumber);
         })
         let validators = await Promise.all(arrMap);
-        console.log('validators',validators)
         let balanceResult = [];
         for(let i = 0; i < validators.length; i++){
             balanceResult.push({
@@ -283,7 +280,6 @@ export default {
                     ]
                 })
         }
-        console.log('balanceResult',balanceResult)
         this.myChart.setOption({
             series: [
               {

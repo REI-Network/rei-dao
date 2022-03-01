@@ -181,7 +181,7 @@ export default {
   destroyed() {
     
   },
-    computed: {
+  computed: {
    ...mapGetters({
       connection: 'connection',
       gasStakeTotalAmount: 'gasStakeTotalAmount',
@@ -189,6 +189,14 @@ export default {
       usedCrude: 'usedCrude',
       dark: 'dark'
     }),
+    // leftCrudePercent:function(){
+    //     console.log('this.usedCrude',this.usedCrude)
+    //     let usedCrude = this.usedCrude==0 ? 0 : web3.utils.toBN(web3.utils.toWei(this.usedCrude));
+    //     let leftCrude = this.leftCrude==0 ? 0: web3.utils.toBN(web3.utils.toWei(this.leftCrude));
+    //     let total = web3.utils.toBN(web3.utils.toWei(this.leftCrude)).add(leftCrude);
+    //     let leftPercent = web3.utils.toBN(web3.utils.toWei(this.leftCrude)).div(total);
+    //     return leftPercent;
+    // }
   },
   methods: {
       ...mapActions({
@@ -205,11 +213,19 @@ export default {
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         let feeContractAddress = await contract.methods.fee().call();
         this.feeContract = new web3.eth.Contract(abiFee,feeContractAddress);
+        //this.calculatePercent();
     },
     deposit(){
         this.form.address = this.connection.address;
         this.depositDialog = true;
     },
+    calculatePercent(){
+
+        let total = web3.utils.toBN(web3.utils.toWei(this.leftCrude)).add(web3.utils.toBN(web3.utils.toWei(this.usedCrude)));
+        let leftPercent =  web3.utils.toBN(web3.utils.toWei(this.leftCrude)).div(total);
+        console.log('leftPercent',leftPercent)
+    },
+    
     async submitStaking(item){
          try{
             if(!this.$refs.stakeform.validate()) return;

@@ -84,7 +84,13 @@
 </template>
 <script>
 /* eslint-disable no-undef */
+import Web3 from 'web3';
 import * as echarts from 'echarts';
+import dayjs from 'dayjs';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+
+// const ONE_DAY_UNIX = 24 * 60 * 60
+// const ONE_HOUR_UNIX = 60 * 60
 export default {
   data() {
     return {
@@ -106,26 +112,106 @@ export default {
             url:''
           }
         ],
+        myChart: null,
+        resTotalData: []
     };
   },
   watch: {
   
   },
   mounted() {
+    this.connect();
+    this.getStakeList();
     this.myCharts()
   },
   destroyed() {
     
   },
   methods: {
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    async getStakeList() {
+        let client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        let blockNumber = await web3.eth.getBlockNumber();
+        let arr = [];
+        let now = Date.now();
+        let day = dayjs().startOf('day');
+        let blockDiff = Math.ceil((now-day+3600000*1)/3000);
+        let startblock = blockNumber-blockDiff;
+        for(let i = 0; i < 7; i++){
+            arr.push(startblock-28800*i)
+        }
+        console.log('hour',dayjs().hour())
+
+        
+
+
+        const totalStakesQl = gql`
+         query totalStakes{
+            totalStakes(first:168,orderBy:id,orderDirection:desc) {
+                    id
+                    blockNumber
+                    timestamp
+                    feeStake
+                    voteStake
+                }
+            }
+        `
+        const {data:{totalStakes}} = await client.query({
+            query: totalStakesQl,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+
+        console.log('totalStakes',totalStakes)
+        let hour = dayjs().hour();
+        
+        let todayStart = dayjs().startOf('day');
+        console.log(dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart))
+        let totalStakeDay = [totalStakes[0]];
+        let startIndex = dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart) ? hour: hour*1+1;
+        
+        let i = startIndex;
+        while(i<totalStakes.length){
+            totalStakeDay.push(totalStakes[i]);
+            i+=24;
+        }
+        let _totalStakeDay = totalStakeDay.reverse();
+        console.log('totalStakeDay',_totalStakeDay)
+
+        this.resTotalData = _totalStakeDay.map((item,i)=>{
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_totalStakeDay[i>0?i-1:0].voteStake)))
+                ]
+            }
+        }).slice(1)
+        this.myChart.setOption({
+            series: [
+                {
+                    data: this.resTotalData
+                }
+            ]
+        })
+    },
     myCharts(){
         const echart = this.$refs.echart;
         if(echart){
-          const myChart = this.$echarts.init(echart);
+          this.myChart = this.$echarts.init(echart);
           var option = {
             xAxis: {
-              type: 'category',
-              data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24', 'Oct/25', 'Oct/26', 'Oct/27', 'Oct/28'],
+              type: 'time',
+              //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24', 'Oct/25', 'Oct/26', 'Oct/27', 'Oct/28'],
               //刻度线
               axisTick: {
                 show: false
@@ -145,7 +231,7 @@ export default {
             },
             yAxis: {
               type: 'value',
-              data:[0,150,300,450,600],
+              data:[],
               axisTick: {
                 show: false
               },
@@ -177,7 +263,7 @@ export default {
             series: [
               {
                 name:'Total Voting Stake',
-                data: [120, 200, 150, 80, 70, 110, 130,80,90,130,120],
+                data: [],
                 type: 'bar',
                 itemStyle: {
                   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -189,14 +275,21 @@ export default {
               }
             ] 
           };
-          myChart.setOption(option)
+          this.myChart.setOption(option)
+          this.myChart.setOption({
+                    series: [
+                        {
+                            data: this.resTotalData
+                        }
+                    ]
+                })
           window.addEventListener("resize", function() {
-            myChart.resize()
+           this.myChart.resize()
           })
         }
         this.$on('hook:destroyed',()=>{
          window.removeEventListener("resize", function() {
-            myChart.resize();
+            this.myChart.resize();
         });
       })
     }
