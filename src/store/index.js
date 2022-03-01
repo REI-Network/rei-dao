@@ -30,7 +30,9 @@ const state = {
   totalStakes: [],
   gasStakeTotalAmount: 0,
   leftCrude:0, 
-  usedCrude:0
+  usedCrude:0,
+  leftCrudePercent:0,
+  usedCrudePercent:0
 };
 const getters = {
   connection: (state) => state.connection,
@@ -62,6 +64,8 @@ const getters = {
   gasStakeTotalAmount: (state) => state.gasStakeTotalAmount,
   leftCrude: (state) => state.leftCrude,
   usedCrude: (state) => state.usedCrude,
+  leftCrudePercent: (state) => state.leftCrudePercent,
+  usedCrudePercent: (state) => state.usedCrudePercent,
 };
 
 const mutations = {
@@ -124,7 +128,13 @@ const mutations = {
   },
   setUsedCrude: (state, payload) => {
     state.usedCrude = payload.usedCrude;
-  }
+  },
+  setLeftCrudePercent: (state, payload) => {
+    state.leftCrudePercent = payload.leftCrudePercent;
+  },
+  setUsedCrudePercent: (state, payload) => {
+    state.usedCrudePercent = payload.usedCrudePercent;
+  },
 
 };
 
@@ -159,6 +169,12 @@ const actions = {
   },
   setUsedCrude: ({ commit }, payload) => {
     commit('setUsedCrude', payload);
+  },
+  setLeftCrudePercent: ({ commit }, payload) => {
+    commit('setLeftCrudePercent', payload);
+  },
+  setUsedCrudePercent: ({ commit }, payload) => {
+    commit('setUsedCrudePercent', payload);
   },
 };
 

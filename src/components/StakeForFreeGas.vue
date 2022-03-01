@@ -323,7 +323,9 @@ export default {
       addTx: 'addTx',
       setGasStakeTotalAmount: 'setGasStakeTotalAmount',
       setLeftCrude: 'setLeftCrude',
-      setUsedCrude: 'setUsedCrude'
+      setUsedCrude: 'setUsedCrude',
+      setLeftCrudePercent: 'setLeftCrudePercent',
+      setUsedCrudePercent: 'setUsedCrudePercent'
     }),
     connect() {
         if (window.ethereum) {
@@ -486,7 +488,12 @@ export default {
         let total = web3.utils.toBN(res.data.result).add(web3.utils.toBN(resused.data.result));
         let leftPercent = web3.utils.toBN(res.data.result).div(total);
         let usedPercennt = web3.utils.toBN(resused.data.result).div(total);
-
+        this.setLeftCrudePercent({
+            leftCrudePercent: leftPercent.toString()
+        })
+        this.setUsedCrudePercent({
+            usedCrudePercent: usedPercennt.toString()
+        })
         console.log('leftPercent',leftPercent.toString())
         console.log('usedPercennt',usedPercennt.toString())
     },
