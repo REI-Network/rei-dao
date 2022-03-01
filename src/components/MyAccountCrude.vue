@@ -25,7 +25,7 @@
                                     <div>24H</div>
                                     <div class="update-time">
                                         <v-icon
-                                            color="right_icon"
+                                            color="primary"
                                             size="12"
                                         >
                                         mdi-clock-time-ten-outline
@@ -39,11 +39,10 @@
                             </div>
                             <v-subheader>
                                 Total Stake
-                                <v-tooltip right>
+                                <v-tooltip right color="start_unstake">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
-                                            color="right_icon"
-                                            dark
+                                            color="primary"
                                             v-bind="attrs"
                                             v-on="on"
                                             dense
@@ -57,10 +56,9 @@
                             </v-subheader>
                             </div>
                             <v-icon
-                                color="right_icon"
-                                dark
                                 size="22"
                                 class="icon-right"
+                                color="primary"
                                 v-if='connection.address'
                             >
                             mdi-arrow-right-circle-outline
@@ -78,14 +76,13 @@
                                 —
                             </div>
                             <v-subheader class="">
-                                LEft Crude
-                                <v-tooltip right>
+                                Left Crude
+                                <v-tooltip right color="start_unstake">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
-                                            color="right_icon"
-                                            dark
                                             v-bind="attrs"
                                             v-on="on"
+                                            color="primary"
                                             dense
                                             style="margin-left:8px"
                                         >
@@ -97,11 +94,9 @@
                              </v-subheader>
                             </div>
                             <v-icon
-                                color="right_icon"
-                                dark
                                 size="22"
-                                class="icon-right"
                                 v-if='connection.address'
+                                color="primary"
                             >
                             mdi-arrow-right-circle-outline
                             </v-icon>

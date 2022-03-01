@@ -310,22 +310,37 @@ export default {
                         trigger:'axis'
                     },
                     legend: {
+                        name:"",
                         selectedMode: false,
                         top: 'bottom',
                         itemWidth: 16,
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#2C2752'
+                            color:'#868e9e'
                         },
                     },
                     xAxis:       
                         {
                             type: 'time',
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#2C2752', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
                         },
                     yAxis: 
                         {
                             type: 'value',
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#2C2752', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
                         },
             
                     series: [
@@ -377,14 +392,28 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#2C2752'
+                            color:'#868e9e'
                         },
                     },
                     xAxis:{
                         type: 'time',
+                        axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#2C2752', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
                     },
                     yAxis: {
                         type: 'value',
+                        axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#2C2752', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
                     },
                     series: [
                         {       
@@ -441,14 +470,28 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#2C2752'
+                            color:'#868e9e'
                         },
                     },
                     xAxis:{
                         type: 'time',
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: '#2C2752', //坐标线的颜色
+                                width: '1' //坐标线的宽度
+                            }
+                        },
                     },
                     yAxis: {
                         type: 'value',
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: '#2C2752', //坐标线的颜色
+                                width: '1' //坐标线的宽度
+                            }
+                        },
                     },
                     series: [
                         {
@@ -504,7 +547,7 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#2C2752'
+                            color:'#868e9e'
                         },
                     },
                     xAxis:{

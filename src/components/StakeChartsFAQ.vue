@@ -197,7 +197,7 @@ export default {
                 top: 'bottom',
                 textStyle: {
                   fontSize: 16,
-                  color:'#2C2752'
+                  color:'#868e9e'
                 },
               },
             series: [

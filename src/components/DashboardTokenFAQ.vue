@@ -143,6 +143,10 @@ export default {
               itemGap: 40,
               itemWidth: 12,             // 图例图形宽度
               itemHeight: 12,
+              textStyle: {
+                    fontSize: 16,
+                    color:'#868e9e'
+                },
               formatter:function(name){
                 var index = 0;
                 var clientlabels = ['Circulated','Dev Ecology','Dev Rewards','Maketing','Node Rewards'];
@@ -190,11 +194,16 @@ export default {
           media:[
             {
               query:{
-                maxWidth:420
+                maxWidth:450
               },
               option:{
                 legend:{
                   right: '2%',
+                  itemWidth: 8,             // 图例图形宽度
+                  itemHeight: 8,
+                  textStyle: { //图例文字的样式
+                    fontSize: 13
+                  },
                 },
                 series:[
                   {

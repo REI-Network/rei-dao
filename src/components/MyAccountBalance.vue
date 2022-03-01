@@ -11,7 +11,7 @@
           >
           <v-subheader>
             <h3>balance</h3>
-            <v-tooltip right>
+            <v-tooltip right color="start_unstake">
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon
                     color="primary"
@@ -105,7 +105,7 @@
                 </div>
               <v-subheader>
                   Validator Voting Stake
-                  <v-tooltip right>
+                  <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
                           color="primary"
@@ -166,7 +166,7 @@
                 </div>
               <v-subheader>
                   Pending Unstake
-                  <v-tooltip right>
+                  <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
                           color="primary"
@@ -390,15 +390,15 @@ export default {
               },
             },
         // legend: {
-        //         selectedMode: false,
-        //         itemWidth: 16,
-        //         itemHeight: 16,
-        //         top: 'bottom',
-        //         textStyle: {
-        //             fontSize: 16,
-        //             color:'#2C2752'
-        //         },
+        //     selectedMode: false,
+        //     itemWidth: 16,
+        //     itemHeight: 16,
+        //     top: 'bottom',
+        //     textStyle: {
+        //        fontSize: 16,
+        //        color:'#2C2752'
         //     },
+        //   },
           series: [
             {
                name:'Total Voting Stake',
@@ -464,7 +464,7 @@ export default {
     margin: 0 16px 16px 16px;
       .content-left{
         width:350px;
-        margin:12px 0;
+        margin:6px 0;
       }
       .icon-right{
         margin-right:20px;

@@ -122,5 +122,26 @@ export default {
     stake_info: 'Stake Info',
     withdraw_info: 'Withdraw Info',
     estimate_withdraw: 'Estimated coin withdrawal'
+  },
+  dashborad:{
+
+  },
+  my_account:{
+
+  },
+  voting:{
+
+  },
+  gas_stake:{
+    account:'Resources Of',
+    deposit:'Deposit REI Gets Crude',
+    left_crude:'Left Crude',
+    crude_uesd:'Crude Used',
+    total_stake:'Total Staked',
+    gas_stake:'Gas stake',
+    withdraw:'Withdraw',
+    stake_more:'Stake more',
+    address:'Address',
+    amount:'Amount'
   }
 };

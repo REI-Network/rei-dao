@@ -17,8 +17,8 @@
       </v-col>
     </v-row> -->
     <v-row>
-      <v-col cols="12" md="12" sm="12">
-        <v-card class="flex-column mt-2">
+      <v-col>
+        <v-card class="flex-column">
             <StakeForFreeGas></StakeForFreeGas>
         </v-card>
       </v-col>

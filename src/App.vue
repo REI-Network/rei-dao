@@ -62,4 +62,10 @@ export default {
 #app {
     background-color: var(--v-background-base) !important;
 }
+.theme--dark.v-pagination .v-pagination__navigation{
+  background-color: #393560;
+}
+.theme--dark.v-pagination .v-pagination__item{
+  background-color: #393560;
+}
 </style>

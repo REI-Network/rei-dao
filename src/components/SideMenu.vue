@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app permanent v-if="$vuetify.breakpoint.mdAndUp" class="background">
-    <v-sheet class="d-flex pa-4 align-center">
+    <v-sheet class="d-flex pa-4 align-center" color="background">
       <router-link to="/">
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
             <v-img
