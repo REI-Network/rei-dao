@@ -224,21 +224,17 @@
 
     <v-dialog v-model="depositDialog" width="500">
       <v-card class="start_unstake" style="padding-bottom:4px">
-          <div class="dialog-validator"> 
+            <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
-                <v-btn @click="cancelStaking" depressed class="close-btn">
-                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
-                </v-btn>   
+                <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>   
             </div> 
-          <!-- <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
-          <v-divider></v-divider> -->
-        <v-list rounded class="ma-4 start_unstake">
+        <v-list rounded class="ma-2 start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
             class="start_unstake"
           >
-          <v-row>
+          <!-- <v-row> -->
               <v-col class="from-voting">
                   <div class="input-title">Address</div>
                         <v-text-field
@@ -251,11 +247,11 @@
                         >
                     </v-text-field>
               </v-col>
-          </v-row>
+          <!-- </v-row> -->
             <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
-            <v-row>
-              <v-col class="from-voting">
-                  <div class="input-title">Amount</div>
+            <!-- <v-row> -->
+              <div class="from-voting">
+                  <div class="input-title">Amount11</div>
                         <v-text-field
                         v-model="form.amount"
                         :label="$t('stake.amount')"
@@ -274,8 +270,8 @@
                         </v-btn>
                     </template>
             </v-text-field>
-              </v-col>
-          </v-row>
+              </div>
+          <!-- </v-row> -->
             <div class="text-center">
                 <v-btn 
                 color="btn_button"
@@ -306,8 +302,8 @@
             class="start_unstake"
           >
             <div class="pb-1 text-body-1" style="text-align:right">{{$t('stakeforgas.estimate_withdraw')}}: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
-            <v-row>
-                <v-col lass="from-voting">
+            <!-- <v-row> -->
+                <v-col class="from-voting">
                     <div class="input-title">Amount</div>
                     <v-text-field
                         v-model="withdrawForm.amount"
@@ -328,7 +324,7 @@
                     </template>
                  </v-text-field>
                 </v-col>
-            </v-row>
+            <!-- </v-row> -->
             
             <div class="text-center">
                 <v-btn 
@@ -732,7 +728,8 @@ export default {
         margin-left:12px;
     }
     .close-btn{
-        margin-top: 12px;
+        margin-top: 20px;
+        margin-right:20px;
         padding: 0;
         background-color: transparent;
     }
@@ -741,8 +738,9 @@ export default {
         display: flex;
         justify-content: space-between;
         padding-bottom:0;
+        padding-top:0;
         .input-title{
-            margin-top: 12px;
+            // margin-top: 12px;
             width: 80px;
             text-align: center;
             height:40px;

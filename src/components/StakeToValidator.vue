@@ -214,9 +214,7 @@
       <v-card class="start_unstake" style="padding:12px;">
           <div class="dialog-validator">
             <v-card-title class="dialog-title">{{$t('stake.staking_info')}}</v-card-title>
-            <v-btn @click="cancelStaking" depressed class="close-btn">
-                <v-icon style="margin-right:12px">mdi-close</v-icon> 
-            </v-btn> 
+                <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>  
           </div>   
           <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
@@ -272,9 +270,7 @@
       <v-card class="start_unstake" style="padding:12px">
             <div class="dialog-validator">
                 <v-card-title class="dialog-title">Voting To Other Validator</v-card-title>
-                <v-btn @click="cancelStakingToNode" depressed class="close-btn">
-                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
-                </v-btn>                     
+                <div @click="cancelStakingToNode" class="close-btn"><v-icon>mdi-close</v-icon> </div>                     
             </div>
             <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
@@ -345,9 +341,7 @@
       <v-card class="start_unstake">
             <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stake.claim_info')}}</v-card-title>
-                <v-btn @click="cancelClaim" depressed class="close-btn">
-                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
-                </v-btn>   
+                <div @click="cancelClaim" class="close-btn"> <v-icon>mdi-close</v-icon></div>  
             </div>          
           <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
@@ -1201,6 +1195,7 @@ export default {
         }
         .close-btn{
             margin-top: 12px;
+            margin-right:16px;
             padding: 0;
             background-color: transparent;
         }

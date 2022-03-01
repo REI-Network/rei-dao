@@ -68,4 +68,8 @@ export default {
 .theme--dark.v-pagination .v-pagination__item{
   background-color: #393560;
 }
+a{
+  text-decoration:none;
+  color:transparent;
+}
 </style>

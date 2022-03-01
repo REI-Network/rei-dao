@@ -44,82 +44,39 @@
         </div>
         <div class="faq-get">
           <v-card
-            class="mx-auto card-charts"     
+            class="card-charts"     
             tile
             color="background"
           >
-          <v-subheader><h3>FAQ</h3></v-subheader>
-          <v-card class="ma-8 list-card" outlined>
-            <v-list-item class="item-list">
-                <v-list-item-content>
-                  <v-list-item-subtitle>
-                    How To Vote Stake To Get Get R Stake To Get Get
-                  </v-list-item-subtitle>  
-                </v-list-item-content>
-                <v-icon
-                  color="primary"
-                  dark
-                  style="margin-left:20px"
-                  size="22"
-                >
-                  mdi-arrow-right-circle-outline
-                </v-icon>
-            </v-list-item>
+            <v-subheader><h3>FAQ</h3></v-subheader>
+            <v-list class="background" style="padding-top:0">
+              <v-list-item-group>
+                <v-list-item 
+                  class="item-list" 
+                  v-for="(item, i) in faqList"
+                  :key="i">
+                  <a :href='item.url'>
+                    <v-card class="ma-4 list-card" outlined>
+                    <v-list-item-content class=“text-truncate”>
+                      <v-list-item-title v-text="item.title"></v-list-item-title>
+                      <v-list-item-subtitle v-text="item.content">   
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-icon
+                        color="primary"
+                        style="margin-left:20px"
+                        size="22"
+                      >
+                         mdi-arrow-right-circle-outline
+                      </v-icon>
+                    </v-list-item-action>
+                  </v-card>
+                 </a>
+                </v-list-item>           
+              </v-list-item-group>    
+            </v-list>
           </v-card>
-          <v-card class="ma-8 list-card" outlined>
-            <v-list-item class="item-list">
-                <v-list-item-content>
-                  <v-list-item-subtitle>
-                    How To Vote Stake To Get Get R Stake To Get Get
-                  </v-list-item-subtitle>  
-                </v-list-item-content>
-                <v-icon
-                  color="primary"
-                  dark
-                  style="margin-left:20px"
-                  size="22"
-                >
-                  mdi-arrow-right-circle-outline
-                </v-icon>
-            </v-list-item>
-          </v-card>
-
-         <v-card class="ma-8 list-card" outlined>
-            <v-list-item class="item-list">
-                <v-list-item-content>
-                  <v-list-item-subtitle>
-                    How To Vote Stake To Get Get R Stake To Get Get
-                  </v-list-item-subtitle>  
-                </v-list-item-content>
-                <v-icon
-                  color="primary"
-                  dark
-                  style="margin-left:20px"
-                  size="22"
-                >
-                  mdi-arrow-right-circle-outline
-                </v-icon>
-            </v-list-item>
-          </v-card>
-
-         <v-card class="ma-8 list-card" outlined>
-            <v-list-item class="item-list">
-                <v-list-item-content>
-                  <v-list-item-subtitle>
-                    How To Vote Stake To Get Get R Stake To Get Get
-                  </v-list-item-subtitle>  
-                </v-list-item-content>
-                <v-icon
-                  color="primary"
-                  dark
-                  style="margin-left:20px"
-                  size="22"
-                >
-                  mdi-arrow-right-circle-outline
-                </v-icon>
-            </v-list-item>
-          </v-card>
-        </v-card>
         </div>
       </v-col>
     </v-row>   
@@ -132,6 +89,23 @@ export default {
   data() {
     return {
         radios:'Total Voting Stake',
+        faqList:[
+          {
+            title:'How to become a node validator?',
+            content:'A validator is a participant in the network who runs validator nodes to run and secure the network.',
+            url:'https://docs.rei.network/guides/become-a-validator'
+          },
+          {
+            title:'How to vote for a node validator?',
+            content:'Once you login you will find this on the Validator of the Staking Dashboard. Here you will see an Unstake button for each of the validators.',
+            url:'https://docs.rei.network/guides/voting-for-a-validator'
+          },
+          {
+            title:'Introduction to the total voting stake chart？',
+            content:'he graph of total voting stake shows nodal voting data for the following time periods: hourly, daily, weekly, monthly.',
+            url:''
+          }
+        ],
     };
   },
   watch: {
@@ -159,7 +133,7 @@ export default {
               axisLine: {
                 lineStyle: {
                   type: 'solid',
-                  color: '#2C2752', //坐标线的颜色
+                  color: '#868e9e', //坐标线的颜色
                   width: '1' //坐标线的宽度
                 }
               },
@@ -178,7 +152,7 @@ export default {
               axisLine: {
                 lineStyle: {
                   type: 'solid',
-                  color: '#2C2752', //左边线的颜色
+                  color: '#868e9e', //左边线的颜色
                   width: '1' //坐标线的宽度
                 },
               },
@@ -268,8 +242,19 @@ export default {
     height: 460px;
   }
   .list-card{
+    padding:0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: transparent !important;
   }
+}
+.v-list-item__subtitle[data-v-271c5252]{
+    overflow: hidden !important;
+    text-overflow:ellipsis !important;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;  
+    -webkit-line-clamp:2;  
 }
 .update-time{
     display: flex;
@@ -288,7 +273,6 @@ export default {
   overflow: visible !important;
   white-space: normal !important;
 }
-
 @media screen and (max-width: 900px) {
     .charts-faq{
     display: flex;

@@ -326,7 +326,7 @@ export default {
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#2C2752', //坐标线的颜色
+                                    color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -337,7 +337,7 @@ export default {
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#2C2752', //坐标线的颜色
+                                    color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -400,7 +400,7 @@ export default {
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#2C2752', //坐标线的颜色
+                                    color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -410,7 +410,7 @@ export default {
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#2C2752', //坐标线的颜色
+                                    color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -478,7 +478,7 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#2C2752', //坐标线的颜色
+                                color: '#868e9e', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
@@ -488,7 +488,7 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#2C2752', //坐标线的颜色
+                                color: '#868e9e', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
@@ -559,7 +559,7 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#2C2752', //坐标线的颜色
+                                color: '#868e9e', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
@@ -576,7 +576,7 @@ export default {
                         lineStyle: {
                             show: true,
                             type: 'solid',
-                            color: '#2C2752', //左边线的颜色
+                            color: '#868e9e', //左边线的颜色
                             width: '1' //坐标线的宽度
                             },
                         },
@@ -642,7 +642,7 @@ export default {
     }
 }
 .head-chips{
-    // display: flex
+    padding-left: 12px;
     .v-application .align-center{
         display: flex;
         justify-content: flex-end;
@@ -666,7 +666,7 @@ export default {
    }
 @media screen and (max-width: 900px) {
    .trends-head{
-        display: inline !important;
+        // display: inline !important;
    }
    .v-tab{
        padding: 0 !important;

@@ -2,7 +2,7 @@
   <v-container class="stake_background">
      <div class="header-title">
       <h3>Gas Stake</h3>
-      <div class="title-detailed">How To Earn Crude</div>
+      <a href="https://docs.rei.network/guides/stake-for-free-gas" class="title-detailed">How To Get Crude By Stake REI?</a>
     </div>
     <v-row>
       <v-col>
@@ -53,6 +53,7 @@ export default {
   margin: 1.5rem 0;
     .title-detailed{
       font-size: 14px;
+      color: #868E9E;
     }
 }
 </style>

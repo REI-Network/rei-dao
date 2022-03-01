@@ -2,7 +2,7 @@
   <v-container class="stake_background">
      <div class="header-title">
       <h3>My Account</h3>
-      <div class="title-detailed">REI.DAO</div>
+      <div class="title-detailed">Get More Information About Your Personal Account,About Balances,Voting,Etc.</div>
     </div>
     <v-row>
       <v-col>
@@ -47,6 +47,7 @@ export default {
   margin: 1.5rem 0;
     .title-detailed{
       font-size: 14px;
+      color: #868E9E;
     }
 }
 </style>

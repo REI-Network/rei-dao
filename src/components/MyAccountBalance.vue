@@ -53,15 +53,6 @@
               -
            </div>
           <div id="myCharts" ref="chart" style="height:280px"></div>
-          <!-- <div class="update-time" style="margin-top:-20px;">
-                <v-icon
-                    color="primary"
-                    size="12"
-                  >
-                    mdi-clock-time-ten-outline
-                </v-icon>
-                    1h Ago
-            </div> -->
           </v-card>          
         </div>
         <div class="voting-card">
@@ -221,7 +212,6 @@ export default {
   filters,
   data() {
     return {
-        radios:'Total Voting Stake',
         myTotalStake: 0,
         myTotalUnStake: 0,
         stakeManagerContract: null,
@@ -361,6 +351,11 @@ export default {
             },
             axisLine: {
               show:false,
+              lineStyle: {
+                  // type: 'solid',
+                  color: '#868e9e', //坐标线的颜色
+                  width: '1' //坐标线的宽度
+                }
             },
             axisLabel: {
               textStyle: {

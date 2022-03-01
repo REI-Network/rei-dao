@@ -96,6 +96,7 @@
                             <v-icon
                                 size="22"
                                 v-if='connection.address'
+                                class="icon-right"
                                 color="primary"
                             >
                             mdi-arrow-right-circle-outline

@@ -2,7 +2,7 @@
   <v-container class="stake_background">
     <div class="header-title">
       <h3>Voting</h3>
-      <div class="title-detailed">How To Be A Validator</div>
+      <div class="title-detailed">How To Become A Node Validator?</div>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -72,6 +72,7 @@ export default {
   margin: 1.5rem 0;
     .title-detailed{
       font-size: 14px;
+      color: #868E9E;
     }
 }
 </style>

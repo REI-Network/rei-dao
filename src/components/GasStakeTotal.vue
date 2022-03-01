@@ -74,9 +74,7 @@
       <v-card class="start_unstake" style="padding-bottom:4px">
           <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
-                <v-btn @click="cancelStaking" depressed class="close-btn">
-                    <v-icon style="margin-right:12px">mdi-close</v-icon> 
-                </v-btn>   
+                <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>  
             </div> 
           <!-- <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
           <v-divider></v-divider> -->
@@ -268,6 +266,16 @@ export default {
 .stake-name{
     font-size: 12px;
 
+}
+.dialog-validator{
+    display: flex;
+    justify-content: space-between;
+    .close-btn{
+        margin-top: 20px;
+        margin-right:20px;
+        padding: 0;
+        background-color: transparent;
+    }
 }
 .total-progress{
    padding:28px;
