@@ -142,48 +142,10 @@ export default {
         radios:1,
         tab:"1",
         myChart:null,
-        folders: [
-        {
-          subtitle: 'REI Price',
-          number:'2.00',
-          coin:'$'
-        },
-        {
-          subtitle: 'Market Cap',
-          number:'150,109,520',
-          coin:'$'
-        },
-        {
-          subtitle: 'Holders',
-          number:'109,502',
-          coin:''
-        },
-        {
-          subtitle: 'Trading Volume',
-          number:'244,406,813',
-          coin:'$'
-        },
-        {
-          subtitle: 'Volume/Market Cap',
-          number:'1.6265',
-          coin:''
-        },
-        {
-          subtitle: '24h Low/24h High',
-          number:'1.86/$2.26',
-          coin:'$'
-        },
-        {
-          subtitle: '7d Low/7d High',
-          number:'1.13/$2.69',
-          coin:'$'
-        },
-        {
-          subtitle: 'Market Cap Rank',
-          number:'#368',
-          coin:'$'
-        },
-      ],
+        myChart2:null,
+        folders: [],
+        marketData: [],
+        priceData: []
     };
   },
   watch: {
@@ -242,17 +204,32 @@ export default {
 
 
         this.chartData = chartData.data.data;
-
-        let priceData = this.chartData.prices.map((item)=>{
-            return {
+        console.log('this.chartData',this.chartData)
+        let priceData = this.chartData.prices.map((item,index)=>{
+            if(index < this.chartData.prices.length){
+                return {
                     "value": [
                         dayjs(item[0]).format('YYYY-MM-DD HH:00'),
                         item[1]
                     ]
                 }
+            }
+            
+        })
+        let marketData = this.chartData.market_caps.map((item,index)=>{
+            if(index < this.chartData.market_caps.length){
+                return {
+                    "value": [
+                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
+                        item[1]
+                    ]
+                }
+            }
+            
         })
         console.log(priceData)
-
+        this.priceData = priceData;
+        this.marketData = marketData
         this.myChart.setOption({
             series: [
               {
@@ -272,7 +249,6 @@ export default {
             },
             xAxis: {
                 type: 'time',
-                //data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
                 boundaryGap:false,
                 axisLine: {
                     lineStyle: {
@@ -332,6 +308,20 @@ export default {
             ],
         };
         this.myChart.setOption(option)
+         this.myChart.setOption({
+            series: [
+              {
+                data: this.priceData
+              }
+            ]
+        });
+        this.myChart.setOption({
+            series: [
+            {
+                data: this.resFeeStakeData
+            }
+            ]
+        });
         window.addEventListener("resize", function() {
           this.myChart.resize()
         })
@@ -344,14 +334,13 @@ export default {
         }else{
         const chartPrice2 = this.$refs.chartPrice2;
         if(chartPrice2){
-        const myChart2= this.$echarts.init(chartPrice2) 
+        this.myChart2= this.$echarts.init(chartPrice2) 
         var option2 = {
             tooltip:{
                 trigger:'axis'
             },
             xAxis: {
-                type: 'category',
-                data: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00','15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00','22:00','23:00','24:00','25:00'],
+                type: 'time',
                 boundaryGap:false,
                 axisLine: {
                         lineStyle: {
@@ -388,7 +377,7 @@ export default {
             series: [
                 {
                     name:'USD',
-                    data: [656,789,983,834,865,890,766,800,900,986,820, 932, 901, 934, 1290, 1330, 1320,1348,],
+                    data: [],
                     type: 'line',
                     symbol: "none",
                     itemStyle:{
@@ -410,14 +399,21 @@ export default {
                 }
             ],
         };
-        myChart2.setOption(option2)
+        this.myChart2.setOption(option2)
+        this.myChart2.setOption({
+            series: [
+              {
+                data: this.marketData
+              }
+            ]
+        });
         window.addEventListener("resize", function() {
-          myChart2.resize()
+          this.myChart2.resize()
         })
     }
     this.$on('hook:destroyed',()=>{
          window.removeEventListener("resize", function() {
-            myChart2.resize();
+           this.myChart2.resize();
         });
     })
 
