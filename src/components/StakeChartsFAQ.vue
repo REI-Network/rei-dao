@@ -9,7 +9,7 @@
             tile
             color="background"
           >
-          <v-subheader><h3>Charts</h3></v-subheader>
+          <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
           <!-- <v-subheader> -->
             <div class="chart-title">
             <v-radio-group v-model="radios">
@@ -48,7 +48,7 @@
             tile
             color="background"
           >
-            <v-subheader><h3>FAQ</h3></v-subheader>
+            <v-subheader class="sub-title"><h3>FAQ</h3></v-subheader>
             <v-list class="background" style="padding-top:0">
               <v-list-item-group>
                 <v-list-item 
@@ -209,6 +209,9 @@ export default {
         if(echart){
           this.myChart = this.$echarts.init(echart);
           var option = {
+            tooltip:{
+              trigger:'axis'
+            },
             xAxis: {
               type: 'time',
               //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24', 'Oct/25', 'Oct/26', 'Oct/27', 'Oct/28'],
@@ -244,10 +247,10 @@ export default {
               },
               splitLine: {
                   show: false,
-                  lineStyle: {
-                    color: 'rgba(104, 180, 221, 0.1)',
-                    type: 'dashed',
-                  }
+                  // lineStyle: {
+                  //   color: 'rgba(104, 180, 221, 0.1)',
+                  //   type: 'dashed',
+                  // }
                 },
               },
               legend: {

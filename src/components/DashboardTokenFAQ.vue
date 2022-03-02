@@ -9,7 +9,7 @@
             tile
             color="background"
           >
-          <v-subheader><h3>Token Distribution</h3></v-subheader>
+          <v-subheader class="sub-title"><h3>Token Distribution</h3></v-subheader>
             <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>
             <div class="update-time" style="margin-top:-20px">
                  <v-icon
@@ -28,7 +28,7 @@
             tile
             color="background"
           >
-          <v-subheader><h3>FAQ</h3></v-subheader>
+          <v-subheader class="sub-title"><h3>FAQ</h3></v-subheader>
           <v-list class="background">
               <v-list-item-group>
                 <v-list-item 
@@ -216,7 +216,6 @@ export default {
 .charts-faq{
     display: flex;
     justify-content: space-between;
-    // align-items: center;
     padding: 0;
     .total-charts{
       width: 60%;
@@ -234,6 +233,9 @@ export default {
   //     right: -380px;
   //   }
   // }
+}
+.theme--light.sub-title{
+    color: #000;
 }
 .faq-get{
   width:38%

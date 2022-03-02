@@ -10,38 +10,18 @@
             style="padding-bottom:24px;margin-top:12px;"
             color="background"
           >
-            <v-row class="head-chips">
-                 <v-subheader><h3>Charts</h3></v-subheader>
-                <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
+            <v-row class="head-chips" justify="space-between">
+                 <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
+                 <v-chip-group active-class="chip_group" v-model="model">
                         <v-chip
-                            class="ma-2"
-                            filter
+                            class="ma-3"    
                             x-small
+                            v-for="tag in tags"
+                            :key="tag" 
                             >
-                            24H
+                            {{tag}}
                         </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            7D
-                        </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            30D
-                        </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            All
-                        </v-chip>
-                    </v-row>
+                    </v-chip-group>
             </v-row>
             <div class="trend-head">
                 <v-tabs class="trend-tab" background-color="background" v-model="tab" hide-slider>
@@ -96,7 +76,7 @@
                 style="padding-bottom:32px;height:506px;"
                 color="background"
             >
-                <v-subheader class="price-more"><h3>Price And Market Stats</h3><div>More>></div></v-subheader>
+                <v-subheader class="price-more sub-title"><h3>Price And Market Stats</h3><div>More>></div></v-subheader>
                 <v-list
                     subheader
                     two-line
@@ -145,7 +125,9 @@ export default {
         myChart2:null,
         folders: [],
         marketData: [],
-        priceData: []
+        priceData: [],
+        tags:['24H','7D','30D','All'],
+        model:0,
     };
   },
   watch: {
@@ -433,12 +415,24 @@ export default {
         width: 60%;
     }
     .head-chips{
-        padding-left:12px;
+        padding:0 12px;
     }
     .trend-head{
         display: flex;
         justify-content: space-between;
   }
+  .v-chip-group .v-chip--active{
+    color: #FFF;
+}
+.charts-faq .theme--dark.v-chip[data-v-194d4ec5]:not(.v-chip--active){
+    background-color:transparent !important;
+}
+.theme--dark.v-chip:not(.v-chip--active){
+    background-color:transparent !important;
+}
+.theme--light.v-chip:not(.v-chip--active){
+    background: transparent;
+}
   .trends-radio{
         margin-left: 20px;
     label{

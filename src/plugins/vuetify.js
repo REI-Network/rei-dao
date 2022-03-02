@@ -37,7 +37,9 @@ export default new Vuetify({
         input_other:'#FFF',
         current_wallet:"#6979F8",
         // input_other:'#F5F5F7',
-        validator:'#868E9E'
+        validator:'#868E9E',
+        btn_button:'#868E9E',
+        chip_group:'#6979F8',
       },
       dark: {
         primary: '#FFF',

@@ -9,7 +9,7 @@
                 color="background"
             >
                 <h3>Resources Of {{ connection.address | addr }}</h3>
-                <div class="stake-name">Deposit REI Gets Crude</div>
+                <div class="deposit">Deposit REI Gets Crude</div>
                 <v-row >
                     <v-col class="row-circular">
                     <div class="circular">
@@ -76,9 +76,7 @@
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
                 <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>  
             </div> 
-          <!-- <v-card-title>{{$t('stakeforgas.stake_info')}}</v-card-title>
-          <v-divider></v-divider> -->
-        <v-list rounded class="ma-4 start_unstake">
+        <v-list rounded class="ma-2 start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
@@ -126,13 +124,16 @@
                 <v-btn 
                 color="btn_button"
                 @click="cancelStaking"
+                outlined
                 class="mr-4">
                 {{$t('stake.btn_cancel')}}
+                
                 </v-btn>
                 <v-btn
                 color="vote_button"
                 :loading="stakeLoading"
                 @click="submitStaking"
+                class="font-btn"
                 >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
@@ -269,6 +270,9 @@ export default {
 .v-progress-circular {
   margin: 1rem;
 }
+.font-btn{
+    color: #FFF;
+}
 .row-circular{
         display:flex;
         justify-content: space-around;
@@ -276,13 +280,28 @@ export default {
 .circular{
     text-align: center;
     margin-top: 24px;
-    // margin-left: 16px;
-    // margin-right: 16px;
+    width:280px;
 }
 .stake-name{
     font-size: 12px;
-
 }
+.deposit{
+    font-size: 12px;
+}
+.from-voting{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom:0;
+    padding-top:0;
+    .input-title{
+        width: 80px;
+        text-align: center;
+        height:40px;
+    }
+ }
+  .text-body-1{
+        margin-bottom: 20px;
+    }
 .dialog-validator{
     display: flex;
     justify-content: space-between;
@@ -291,6 +310,7 @@ export default {
         margin-right:20px;
         padding: 0;
         background-color: transparent;
+        cursor: pointer;
     }
 }
 .total-progress{
@@ -314,6 +334,9 @@ export default {
 .mx-auto{
     // width: 500px;
     margin: 0px !important;
+}
+.v-application .text-center{
+    text-align: right !important;
 }
 .middle-btn{
     width:36% ;
@@ -341,6 +364,7 @@ export default {
     margin:24px 0;
     padding: 12px 20px;
     border-radius:20px;
+    color:#FFF;
 }
 .not-connection{
     margin: 12px 36px;
@@ -356,6 +380,17 @@ export default {
         flex-direction: row;
         justify-content: initial;
         max-width: 100%;
+    }
+    .from-voting{
+            display: flex;
+            flex-direction: column;
+            .input-title{
+                margin-top: 0;
+                height:24px;
+            }
+        }
+    .text-body-1{
+        margin-bottom: 0px;
     }
     .gasStake-total{
         display: flex;

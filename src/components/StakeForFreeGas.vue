@@ -1,24 +1,7 @@
 <template>
   <v-container>
     <v-row class="background">
-      <v-col >
-        <!-- <v-card-actions>
-            <v-card-title>{{$t('stakeforgas.list_title')}}
-            </v-card-title>
-            <v-spacer></v-spacer>
-            <v-btn
-                text
-                outlined
-                color="primary"
-                @click="deposit"
-                >
-                {{$t('stakeforgas.title')}}
-            </v-btn>
-        </v-card-actions>   
-        <v-divider /> -->
-        <!-- <v-card  
-            class="background"
-        > -->
+      <v-col>
         <v-data-table
             :headers="headers"
             :items="nodeList"
@@ -51,11 +34,10 @@
                 tile
                 small
                 color='vote_button'
-                class="mr-4"
+                class="mr-4 withdraw"
                 :disabled="item.availableTimePercent<1"
                 v-if='connection.address'
                 @click="handleWithdraw(item)"
-                style="border-radius:4px"
                 >
                     Withdraw
                 </v-btn>
@@ -63,10 +45,9 @@
                 tile
                 small
                 color="start_unstake"
-                class="mr-4"
+                class="mr-4 withdraw"
                 v-if='connection.address'
                 @click="deposit(item)"
-                style="border-radius:4px"
                 >
                     Stake more
                 </v-btn>
@@ -75,7 +56,7 @@
                 tile
                 small
                 color="success"
-                class="mr-4"
+                class="mr-4 withdraw"
                 @click="handleReward(item)"
                 >
                     {{$t('stake.get_reward')}}
@@ -614,6 +595,10 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.withdraw{
+    border-radius:4px;
+    color:#FFF
+}
 .dialog-validator{
     display: flex;
     justify-content: space-between;
@@ -625,20 +610,23 @@ export default {
         margin-right:20px;
         padding: 0;
         background-color: transparent;
+        cursor: pointer;
     }
 }
+.v-application .text-center{
+    text-align: right !important;
+}
 .from-voting{
-        display: flex;
-        justify-content: space-between;
-        padding-bottom:0;
-        padding-top:0;
-        .input-title{
-            // margin-top: 12px;
-            width: 80px;
-            text-align: center;
-            height:40px;
-        }
+    display: flex;
+    justify-content: space-between;
+    padding-bottom:0;
+    padding-top:0;
+    .input-title{
+        width: 80px;
+        text-align: center;
+        height:40px;
     }
+ }
 .v-sheet.v-card{
     padding-bottom: 8px;
 }

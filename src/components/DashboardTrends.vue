@@ -10,36 +10,18 @@
                 style="padding-bottom:20px"
             >
             <v-row class="head-chips">
-                <v-subheader><h3>Trends</h3></v-subheader>
+                <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
+                    <v-chip-group active-class="chip_group" v-model="model">
                         <v-chip
-                            class="ma-2"
-                            filter
+                            class="ma-3"    
                             x-small
+                            v-for="tag in tags"
+                            :key="tag" 
                             >
-                            24H
+                            {{tag}}
                         </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            7D
-                        </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            W
-                        </v-chip>
-                        <v-chip
-                            class="ma-2"
-                            filter
-                            x-small
-                            >
-                            M
-                        </v-chip>
+                    </v-chip-group>
                     </v-row>
             </v-row>
             <div class="trends-head">
@@ -147,7 +129,9 @@ export default {
        myChart: {},
        myChart2: {},
        myChart3: {},
-       myChart4: {}
+       myChart4: {},
+       tags:['24H','7D','W','M'],
+       model:0,
     };
   },
   computed: {
@@ -638,6 +622,18 @@ export default {
         display: flex;
         justify-content: flex-end;
     }
+}
+.v-chip-group .v-chip--active{
+    color: #FFF;
+}
+.theme--dark.v-chip[data-v-ec4e21ac]:not(.v-chip--active){
+    background: #1D1A36;
+}
+.theme--light.v-chip:not(.v-chip--active){
+    background: transparent;
+}
+.theme--light.sub-title{
+    color: #000;
 }
 .trend-head{
   display: flex;

@@ -4,7 +4,7 @@
        <v-row>
             <v-col class="accout-item">
               <v-card color="background">
-                <v-subheader><h3>Gas stake</h3></v-subheader>
+                <v-subheader class="sub-title"><h3>Gas stake</h3></v-subheader>
                 <v-card class="balance-card" outlined color="background">
                      <v-card
                         class="voting-stake"
@@ -12,7 +12,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei" v-if='connection.address'>{{gasStakeTotalAmount | asset(2) }}<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei sub-title" v-if='connection.address'>{{gasStakeTotalAmount | asset(2) }}<span class="rei">REI</span></v-subheader>
                              <div v-if='!connection.address' class="not-connection">
                                  —
                             </div>
@@ -71,7 +71,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(2) }}<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei sub-title" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(2) }}<span class="rei">REI</span></v-subheader>
                             <div v-if='!connection.address' class="not-connection">
                                 —
                             </div>

@@ -1,11 +1,38 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="12" sm="12">
-            <v-card-actions>
+      <v-col>
+            <!-- <v-card-actions>
                 <v-card-title>{{$t('unstake.list_title')}}</v-card-title>
-            </v-card-actions>   
-          <v-divider />
+            </v-card-actions>    -->
+          <!-- <v-divider /> -->
+          <v-row justify="space-between" align="center" class="warn-tip">
+             <v-subheader class="sub-tip">
+                <v-icon
+                    color="primary"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                    dense
+                    style="margin-left:8px"
+                    size="16"
+                  >
+                    mdi-alert-circle-outline
+              </v-icon> 
+              <div class="warn">7 Days After Initiating A Redemption Operation,You Can Receive It On The Receive It On The Redemption Page</div>
+          </v-subheader>
+          <v-card outlined class="select-card">
+            <v-select
+              class="d-select"
+              :items="itemsPages"
+              label="10"
+              outlined
+              item-color="vote_button"
+              dense
+              height="28"
+              ></v-select>
+          </v-card>
+          </v-row>
          <v-simple-table class="list_title">
             <template v-slot:default>
             <thead>
@@ -77,6 +104,7 @@ export default {
   filters,
   data() {
     return {
+        itemsPages:['10','20'],
         dialog: false,
         form:{
             amount:0
@@ -213,3 +241,46 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.theme--dark.v-list{
+  background: #595777 !important;
+}
+.warn-tip{
+  margin-top: 1px;
+  margin-bottom: 1px;
+  height:50px
+}
+.sub-tip{
+  height:36px;
+  display:flex;
+  align-items: flex-start;
+}
+.warn{
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.select-card{
+  border:none;
+  background-color: transparent;
+  width: 90px; 
+    }
+.d-select{
+  width:80px;
+  border: none;
+}
+@media screen and (max-width: 900px){
+  .warn-tip{
+  margin-bottom:62px;
+}
+  .select-card{
+    width: 90% !important; 
+    margin-top: 28px;
+    margin-left:5%;
+    }
+  .d-select{
+    width:100% !important;
+  }
+}
+</style>

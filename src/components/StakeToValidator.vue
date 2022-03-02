@@ -120,7 +120,7 @@
                             tile
                             small
                             color='vote_button'
-                            class="mr-4"
+                            class="mr-4 font-btn"
                             v-if='connection.address'
                             @click="handleStaking(item)"
                             style="border-radius:4px"
@@ -249,7 +249,7 @@
             </v-row> 
             <div class="text-center">
                 <v-btn @click="cancelStaking"
-                    class="mr-4"
+                    class="mr-4 cancel-btn"
                     outlined
                     color="btn_button">
                 {{$t('stake.btn_cancel')}}
@@ -258,6 +258,7 @@
                 :loading="stakeLoading"
                 @click="submitStaking"
                 color="vote_button"
+                class="font-btn"
                 >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
@@ -329,6 +330,7 @@
                     color="vote_button"
                     :loading="stakeToNodeLoading"
                     @click="submitStakingToNode"
+                    class="font-btn"
                     >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
@@ -382,7 +384,7 @@
             
             <div class="text-center">
                 <v-btn
-                class="mr-4"
+                class="mr-4 font-btn"
                 color="vote_button"
                 v-if="!approved"
                 :loading="approveLoading"
@@ -392,7 +394,8 @@
                 </v-btn>
                 <v-btn @click="cancelClaim" 
                         color="btn_button"
-                        class="mr-4">
+                        outlined
+                        class="mr-4 cancel-btn">
                 {{$t('stake.btn_cancel')}}
                 </v-btn>
                 <v-btn
@@ -1118,6 +1121,12 @@ export default {
     margin-top:12px;
     margin-right: 12px;
 }
+.font-btn{
+    color: #FFF;
+}
+.cancel-btn{
+    color:'#868e9e'
+}
 .card-tab{
     display:flex;
     flex-direction: row;
@@ -1164,6 +1173,7 @@ export default {
     }
     .select-second{
             width: 90px;
+            margin-right:12px;
         }
     .d-select{
             margin-left:20px;
@@ -1171,7 +1181,7 @@ export default {
             width:120px
         }
         .number{
-            width: 66px;
+            width: 80px;
         }
     .theme--dark.v-data-table{
         background-color:transparent;
@@ -1198,6 +1208,7 @@ export default {
             margin-right:16px;
             padding: 0;
             background-color: transparent;
+            cursor: pointer;
         }
     }
     .from-voting{
@@ -1250,11 +1261,7 @@ export default {
         }
         .v-btn{
             border:none;
-            // margin-top: 0 !important;
         }
-        // .card-tab{
-        //     border:none;
-        // }
          .right-outline{
             display: flex;
             flex-direction: row ; 

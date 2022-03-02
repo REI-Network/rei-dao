@@ -72,4 +72,10 @@ a{
   text-decoration:none;
   color:transparent;
 }
+.theme--light.sub-title{
+  color: #000;
+}
+.theme--dark.sub-title{
+  color: #FFF;
+}
 </style>
