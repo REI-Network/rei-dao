@@ -486,16 +486,14 @@ export default {
             usedCrude: usedCrude
         })
         let total = web3.utils.toBN(res.data.result).add(web3.utils.toBN(resused.data.result));
-        let leftPercent = web3.utils.toBN(res.data.result).div(total);
-        let usedPercennt = web3.utils.toBN(resused.data.result).div(total);
+        let leftPercent = web3.utils.toBN(res.data.result).div(total).mul(web3.utils.toBN(100)).toNumber();
+        let usedPercennt = web3.utils.toBN(resused.data.result).div(total).mul(web3.utils.toBN(100)).toNumber();
         this.setLeftCrudePercent({
-            leftCrudePercent: leftPercent.toString()
+            leftCrudePercent: Number(leftPercent).toFixed(2)
         })
         this.setUsedCrudePercent({
-            usedCrudePercent: usedPercennt.toString()
+            usedCrudePercent: Number(usedPercennt).toFixed(2)
         })
-        console.log('leftPercent',leftPercent.toString())
-        console.log('usedPercennt',usedPercennt.toString())
     },
     async handleWithdraw(item){
         this.currentItem = item;
