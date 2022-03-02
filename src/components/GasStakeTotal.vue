@@ -17,12 +17,12 @@
                             :rotate="270"
                             :size="128"
                             :width="22"
-                            :value="45"
+                            :value="leftCrudePercent"
                             color="#64B5FF"
                             > 
-                            {{connection.address?value1:'-'}}
+                            {{connection.address?leftCrudePercent:'-'}}
                         </v-progress-circular>
-                        <h4>{{leftCrude}}</h4>
+                        <h4>{{leftCrude | asset(8) }}</h4>
                         <div class="stake-name">Left Crude</div>
                     </div>
                     <div class="circular">
@@ -30,12 +30,12 @@
                             :rotate="270"
                             :size="128"
                             :width="22"
-                            :value="10.78"
+                            :value="usedCrudePercent"
                             color="#FF9743"
                             > 
-                            {{connection.address?value2:'-'}}
+                            {{connection.address?usedCrudePercent:'-'}}
                         </v-progress-circular>
-                        <h4>{{usedCrude}}</h4>
+                        <h4>{{usedCrude  | asset(8) }}</h4>
                         <div class="stake-name">Crude Used</div>
                         <div class="update-time">
                             <v-icon
@@ -188,6 +188,8 @@ export default {
       gasStakeTotalAmount: 'gasStakeTotalAmount',
       leftCrude: 'leftCrude',
       usedCrude: 'usedCrude',
+      leftCrudePercent:'leftCrudePercent',
+      usedCrudePercent: 'usedCrudePercent',
       dark: 'dark'
     }),
     // leftCrudePercent:function(){
