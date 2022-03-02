@@ -186,7 +186,6 @@ export default {
 
 
         this.chartData = chartData.data.data;
-        console.log('this.chartData',this.chartData)
         let priceData = this.chartData.prices.map((item,index)=>{
             if(index < this.chartData.prices.length){
                 return {
@@ -209,7 +208,6 @@ export default {
             }
             
         })
-        console.log(priceData)
         this.priceData = priceData;
         this.marketData = marketData
         this.myChart.setOption({

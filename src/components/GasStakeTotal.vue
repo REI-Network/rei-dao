@@ -20,7 +20,7 @@
                             :value="leftCrudePercent"
                             color="#64B5FF"
                             > 
-                            {{connection.address?leftCrudePercent:'-'}}
+                            {{connection.address?leftCrudePercent:'-'}}%
                         </v-progress-circular>
                         <h4>{{leftCrude | asset(8) }}</h4>
                         <div class="stake-name">Left Crude</div>
@@ -33,7 +33,7 @@
                             :value="usedCrudePercent"
                             color="#FF9743"
                             > 
-                            {{connection.address?usedCrudePercent:'-'}}
+                            {{connection.address?usedCrudePercent:'-'}}%
                         </v-progress-circular>
                         <h4>{{usedCrude  | asset(8) }}</h4>
                         <div class="stake-name">Crude Used</div>
