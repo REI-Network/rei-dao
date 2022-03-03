@@ -12,7 +12,7 @@
           >
             <v-row class="head-chips" justify="space-between">
                  <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
-                 <v-chip-group active-class="chip_group" v-model="model">
+                 <v-chip-group active-class="chip_group" v-model="model" mandatory>
                         <v-chip
                             class="ma-3"    
                             x-small
@@ -87,7 +87,7 @@
                         :key="folder.index"
                     >
                         <v-list-item-content>
-                            <v-list-item-subtitle>{{folder.subtitle}}</v-list-item-subtitle>
+                            <v-list-item-subtitle>{{folder.sub}}</v-list-item-subtitle>
                         </v-list-item-content>
                         <v-list-item-action class="list-price" >
                             <v-list-item-subtitle>{{folder.coin}}{{folder.number}}</v-list-item-subtitle>
@@ -174,16 +174,52 @@ export default {
         let apiUrl = this.getApiUrl();
         let chartData = await getAssetPrice(apiUrl);
         let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
+        // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
+        //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
+        let needObject=[
+            {
+                subtitle:'current_price',
+                sub:this.$t('dashborad.current_price')
+            },
+            {
+                subtitle:'market_cap',
+                sub:this.$t('dashborad.market_cap')
+            },
+            {
+                subtitle:'total_volume',
+                sub:this.$t('dashborad.total_volume')
+            },
 
-        let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
+            {
+                subtitle:'total_supply',
+                sub:this.$t('dashborad.total_supply')
+            },
+            {
+                subtitle:'high_24h',
+                sub:this.$t('dashborad.high')
+            },
+            {
+                subtitle:'low_24h',
+                sub:this.$t('dashborad.low')
+            },
+            {
+                subtitle:'price_change_percentage_24h',
+                sub:this.$t('dashborad.price_change')
+            },
+
+            {
+                subtitle:'circulating_supply',
+                sub:this.$t('dashborad.circulating_supply')
+            },
+        ]
         console.log(chartInfoData);
         this.folders = needObject.map((item)=>{
             return {
-                subtitle:item,
-                number:chartInfoData[item]
+                subtitle:item.subtitle,
+                number:chartInfoData[item.subtitle],
+                sub:item.sub,
             }
         })
-
 
         this.chartData = chartData.data.data;
         let priceData = this.chartData.prices.map((item,index)=>{
@@ -217,6 +253,7 @@ export default {
               }
             ]
         });
+        console.log('folders',this.folders)
     },
     myCharts(){
         if(this.tab===0){
@@ -225,7 +262,15 @@ export default {
         this.myChart = this.$echarts.init(chartPrice) 
         var option = {
             tooltip:{
-                trigger:'axis'
+                trigger:'axis',
+                formatter(params) {
+                var relVal = params[0].name;
+                for (var i = 0, l = params.length; i < l; i++) {
+                  var yValue = Number(params[i].value[1]).toFixed(5)
+                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                }
+                return relVal;
+              },
             },
             xAxis: {
                 type: 'time',
@@ -317,7 +362,15 @@ export default {
         this.myChart2= this.$echarts.init(chartPrice2) 
         var option2 = {
             tooltip:{
-                trigger:'axis'
+                trigger:'axis',
+                formatter(params) {
+                var relVal = params[0].name;
+                for (var i = 0, l = params.length; i < l; i++) {
+                  var yValue = Number(params[i].value[1]).toFixed(5)
+                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                }
+                return relVal;
+              },
             },
             xAxis: {
                 type: 'time',

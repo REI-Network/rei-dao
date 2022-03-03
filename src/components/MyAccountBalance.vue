@@ -205,6 +205,7 @@ import filters from '../filters';
 import dayjs from 'dayjs';
 import { client } from '../service/ApolloClient';
 import { gql } from '@apollo/client/core';
+import util from '../utils/util';
 
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
@@ -262,7 +263,7 @@ export default {
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
         let now = Date.now();
-        for(let i = 1; i <= 7; i++){
+        for(let i = 0; i <= 7; i++){
             arr.push({
                 timestamp:now-86400000*i,
                 blockNumber: blockNumber-28800*i
@@ -282,6 +283,8 @@ export default {
                     ]
                 })
         }
+        console.log('balanceResult',balanceResult)
+
         this.myChart.setOption({
             series: [
               {
@@ -376,11 +379,25 @@ export default {
         }
 
     },
+    assetFormat(value,precision) {
+        return util.asset(value,precision)
+    },
     myCharts(){
       const chart = this.$refs.chart;
       if(chart){
         this.myChart = this.$echarts.init(chart);
         var option = {
+          tooltip:{
+            trigger:'axis',
+              formatter(params) {
+                var relVal = params[0].name;
+                for (var i = 0, l = params.length; i < l; i++) {
+                  var yValue = Number(params[i].value[1]).toFixed(5)
+                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                }
+                return relVal;
+              },
+          },
           xAxis: {
             type: 'time',
             //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24'],
@@ -400,12 +417,13 @@ export default {
               textStyle: {
                 fontSize: 12,
               }
-            },         
+            }, 
+            splitLine:{show: false}  
+                  
           },
           yAxis: {
             type: 'value',
             data:[],
-          
             axisTick: {
               show: false
               },
@@ -414,13 +432,17 @@ export default {
               },
             axisLabel:{
               show:false,
+              // formatter(params) {
+              //   var relVal = params[0].name;
+              //   for (var i = 0, l = params.length; i < l; i++) {
+              //     var yValue = Number(params[i].value).toFixed(5)
+              //       relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+              //   }
+              //   return relVal;
+              // },
               },
             splitLine: {
-                show: false,
-                lineStyle: {
-                  color: 'rgba(104, 180, 221, 0.1)',
-                  type: 'dashed',
-                }
+              show: false,
               },
             },
         // legend: {

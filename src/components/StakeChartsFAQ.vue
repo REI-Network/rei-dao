@@ -210,7 +210,15 @@ export default {
           this.myChart = this.$echarts.init(echart);
           var option = {
             tooltip:{
-              trigger:'axis'
+              trigger:'axis',
+              formatter(params) {
+                var relVal = params[0].name;
+                  for (var i = 0, l = params.length; i < l; i++) {
+                    var yValue = Number(params[i].value[1]).toFixed(5)
+                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                  }
+                  return relVal;
+            },
             },
             xAxis: {
               type: 'time',
@@ -230,7 +238,8 @@ export default {
                 textStyle: {
                 fontSize: 12,
                 }
-              },         
+              },   
+              splitLine:{show: false}
             },
             yAxis: {
               type: 'value',

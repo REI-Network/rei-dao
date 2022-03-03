@@ -12,7 +12,7 @@
             <v-row class="head-chips">
                 <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
-                    <v-chip-group active-class="chip_group" v-model="model">
+                    <v-chip-group active-class="chip_group" v-model="model" mandatory>
                         <v-chip
                             class="ma-3"    
                             x-small
@@ -343,7 +343,15 @@ export default {
                 this.myChart = this.$echarts.init(chart)
                 var option = {
                     tooltip:{
-                        trigger:'axis'
+                        trigger:'axis',
+                        formatter(params) {
+                            var relVal = params[0].name;
+                            for (var i = 0, l = params.length; i < l; i++) {
+                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                            }
+                            return relVal;
+                        },
                     },
                     legend: {
                         name:"",
@@ -411,7 +419,15 @@ export default {
                 this.myChart2 = this.$echarts.init(chart2)
                 var option2 = {
                     tooltip:{
-                        trigger:'axis'
+                        trigger:'axis',
+                        formatter(params) {
+                            var relVal = params[0].name;
+                            for (var i = 0, l = params.length; i < l; i++) {
+                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                            }
+                            return relVal;
+                        },
                     },
                     toolbox: {
                         feature: {
@@ -488,7 +504,15 @@ export default {
                 this.myChart3 = this.$echarts.init(chart3)
                 var option3 = {
                     tooltip:{
-                        trigger:'axis'
+                        trigger:'axis',
+                        formatter(params) {
+                            var relVal = params[0].name;
+                            for (var i = 0, l = params.length; i < l; i++) {
+                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                            }
+                            return relVal;
+                        },
                     },
                     toolbox: {
                         feature: {
@@ -565,7 +589,15 @@ export default {
                 this.myChart4 = this.$echarts.init(chart4)
                 var option4 = {
                     tooltip:{
-                        trigger:'axis'
+                        trigger:'axis',
+                        formatter(params) {
+                            var relVal = params[0].name;
+                            for (var i = 0, l = params.length; i < l; i++) {
+                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                            }
+                            return relVal;
+                        },
                     },
                     toolbox: {
                         feature: {
