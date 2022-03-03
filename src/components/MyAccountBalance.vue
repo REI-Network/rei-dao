@@ -34,7 +34,7 @@
           <v-subheader v-if='connection.address' style="height:16px">
             <div class="add-price" style="border-right:2px solid;padding-right:12px">
                <div>$13,434.00</div>
-               <div style="color:#65BB67;">+15.16%</div>
+               <div class="gain">+15.16%</div>
             </div>
             <div class="time-price" style="margin-left:12px">
                <div>24H</div>
@@ -76,7 +76,7 @@
                 <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
                         <div>$13,434.00</div>
-                        <div style="color:#65BB67;">+15.16%</div>
+                        <div class="gain">+15.16%</div>
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
@@ -137,7 +137,7 @@
                 <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
                         <div>$13,434.00</div>
-                        <div style="color:#65BB67;">+15.16%</div>
+                        <div class="gain">+15.16%</div>
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
@@ -483,6 +483,12 @@ export default {
        font-weight: normal;
        margin-left: 8px;
     }
+  }
+  .gain{
+    color: #65BB67;
+  }
+  .drop{
+    color: red;
   }
   .chips-tow{
     display: flex;

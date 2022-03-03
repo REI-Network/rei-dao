@@ -110,7 +110,7 @@
             <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
             <!-- <v-row> -->
               <div class="from-voting">
-                  <div class="input-title">Amount11</div>
+                  <div class="input-title">Amount</div>
                         <v-text-field
                         v-model="form.amount"
                         :label="$t('stake.amount')"
@@ -135,13 +135,15 @@
                 <v-btn 
                 color="btn_button"
                 @click="cancelStaking"
-                class="mr-4">
+                class="mr-4"
+                outlined>
                 {{$t('stake.btn_cancel')}}
                 </v-btn>
                 <v-btn
                 color="vote_button"
                 :loading="stakeLoading"
                 @click="submitStaking"
+                class="font-btn"
                 >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
@@ -189,13 +191,16 @@
                 <v-btn 
                 class="mr-4"
                 color="btn_button"
-                @click="cancelWithdraw">
+                @click="cancelWithdraw"
+                outlined
+                >
                 {{$t('stake.btn_cancel')}}
                 </v-btn>
                 <v-btn
                 color="vote_button"
                 :loading="withdrawLoading"
                 @click="submitWithdraw"
+                class="font-btn"
                 >
                 {{$t('stake.btn_submit')}}
                 </v-btn>
@@ -596,7 +601,7 @@ export default {
 <style scoped lang="scss">
 .withdraw{
     border-radius:4px;
-    color:#FFF
+    // color:#FFF
 }
 .dialog-validator{
     display: flex;
@@ -628,6 +633,9 @@ export default {
  }
 .v-sheet.v-card{
     padding-bottom: 8px;
+}
+.font-btn{
+    color: #FFF;
 }
     @media screen and (max-width: 900px) {
         .dialog-validator{
