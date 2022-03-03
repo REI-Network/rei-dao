@@ -18,8 +18,8 @@
                             </div>
                             <v-subheader v-if='connection.address'>
                                 <div class="add-price" style="border-right:2px solid;padding-right:12px">
-                                    <div>$13,434.00</div>
-                                    <div class="gain">+15.16%</div>
+                                    <div>${{assetToCurrency(gasStakeTotalAmount, assetInfo.current_price) | asset(2)}}</div>
+                                    <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
                                 </div>
                                 <div class="time-price" style="margin-left:12px">
                                     <div>24H</div>
@@ -140,6 +140,7 @@ export default {
       connection: 'connection',
       gasStakeTotalAmount: 'gasStakeTotalAmount',
       leftCrude: 'leftCrude',
+      assetInfo: 'assetInfo',
       dark: 'dark'
     }),
   },
@@ -202,6 +203,18 @@ export default {
             leftCrude: leftCrude
         })
     },
+    assetChange(item){
+        if(item>0){
+            return 'gain'
+        } else if(item<0){
+            return 'drop'
+        } else {
+            return ''
+        }
+    },
+    assetToCurrency(item,price){
+        return item*price
+    }
   },
 };
 </script>

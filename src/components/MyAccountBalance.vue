@@ -10,7 +10,7 @@
             color="background"
           >
           <v-subheader class="sub-title">
-            <h3>balance</h3>
+            <h3>Balance</h3>
             <v-tooltip right color="start_unstake">
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon
@@ -33,8 +33,8 @@
           </div>
           <v-subheader v-if='connection.address' style="height:16px">
             <div class="add-price" style="border-right:2px solid;padding-right:12px">
-               <div>$13,434.00</div>
-               <div class="gain">+15.16%</div>
+               <div>${{assetToCurrency(connection.balance,assetInfo.current_price) | asset(2)}}</div>
+               <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
             </div>
             <div class="time-price" style="margin-left:12px">
                <div>24H</div>
@@ -75,8 +75,8 @@
                 </div>
                 <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
-                        <div>$13,434.00</div>
-                        <div class="gain">+15.16%</div>
+                        <div>${{assetToCurrency(myTotalStake,assetInfo.current_price)| asset(2)}}</div>
+                        <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
@@ -120,7 +120,7 @@
                     class="icon-right"
                     v-if='connection.address' 
                   >
-                  m mdi-arrow-right-circle-outline
+                  mdi-arrow-right-circle-outline
                 </v-icon>
                 <div v-if='!connection.address' ></div>
             </v-card>
@@ -136,8 +136,8 @@
                 </div>
                 <v-subheader v-if='connection.address'>
                     <div class="add-price" style="border-right:2px solid;padding-right:12px">
-                        <div>$13,434.00</div>
-                        <div class="gain">+15.16%</div>
+                        <div>${{assetToCurrency(myTotalUnStake,assetInfo.current_price)| asset(2)}}</div>
+                        <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
@@ -236,6 +236,7 @@ export default {
   computed: {
    ...mapGetters({
       connection: 'connection',
+      assetInfo: 'assetInfo',
       dark: 'dark'
     }),
   },
@@ -247,6 +248,7 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+    
     async init(){
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         
@@ -456,6 +458,18 @@ export default {
             this.myChart.resize();
         });
     })
+    },
+    assetChange(item){
+        if(item>0){
+            return 'gain'
+        } else if(item<0){
+            return 'drop'
+        } else {
+            return ''
+        }
+    },
+    assetToCurrency(item,price){
+        return item*price
     }
   },
 };

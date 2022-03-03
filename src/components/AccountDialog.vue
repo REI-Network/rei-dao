@@ -192,7 +192,8 @@ export default {
     ...mapActions({
       setTxs: 'setTxs',
       setConnection: 'setConnection',
-      setFinishedTxs: 'setFinishedTxs'
+      setFinishedTxs: 'setFinishedTxs',
+      setAssetInfo: 'setAssetInfo'
     }),
     tryLastConnection() {
       let lastConect = localStorage.getItem(LAST_CONNECTION);
@@ -319,6 +320,9 @@ export default {
         let apiUrl = this.getApiUrl();
         let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
         console.log('chartInfoData',chartInfoData);
+        this.setAssetInfo({
+            assetInfo: chartInfoData
+        })
     },
     async loadAccount(key) {
       let accounts = await web3.eth.getAccounts();
