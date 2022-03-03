@@ -100,8 +100,6 @@ import web3 from 'web3';
 import util from '../utils/util';
 
 
-console.log(dayjs().unix())
-
 const totalStakes = gql`
   query totalStakes{
    totalStakes(first:25,orderBy:id,orderDirection:desc) {
@@ -130,7 +128,7 @@ export default {
        myChart2: {},
        myChart3: {},
        myChart4: {},
-       tags:['24H','7D','W','M'],
+       tags:['24H','7D'],
        model:0,
     };
   },
@@ -209,7 +207,8 @@ export default {
         
     },
     async getGasSaveData(){
-        
+        this.resFeeUsageData = [];
+        this.resFeeUsageSumData = [];
         const endTimestamp = dayjs().unix()
         const startTimestamp = endTimestamp-ONE_DAY_UNIX
         const gasSaves = gql`
@@ -233,7 +232,6 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log('charDataGas',charData)
         if(!charData.gasSaves.length){
             const gasSavesfirst = gql`
               query gasSavesfirst {
@@ -251,7 +249,6 @@ export default {
                 },
                 fetchPolicy: 'cache-first',
             })
-            console.log('charDataLatest',charDataLatest)
             let dataGasSave = charDataLatest.gasSaves;
             for(let i = 0; i< 24; i++){
                 this.resFeeUsageData.push({
@@ -264,6 +261,70 @@ export default {
                      "value": [
                         dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
                         web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
+                    ]
+                })
+            }
+        } else {
+            
+            let totalSaved = [], oneDayBefore = dayjs().subtract(1, 'day').startOf('hour');
+            let _totalSaved = totalSaved.concat(charData.gasSaves).reverse();
+            let firstData = dayjs.unix(_totalSaved[0].timestamp).startOf('hour');
+            let beforeDayFirstData = '';
+            if(!dayjs(oneDayBefore).isSame(dayjs(firstData))){
+                
+                const gasSavesBeforefirst = gql`
+                    query gasSavesBeforefirst {
+                        gasSaves(first: 1
+                            orderBy: id
+                            orderDirection: desc
+                            where: { timestamp_lt: ${oneDayBefore.unix()} }) {
+                            id
+                            timestamp
+                            feeUsage
+                            feeUsageSum
+                        }
+                    }
+                `
+                const {data:charDataBeforeFirst} = await client.query({
+                    query: gasSavesBeforefirst,
+                    variables: {
+                    },
+                    fetchPolicy: 'cache-first',
+                })
+                 beforeDayFirstData = charDataBeforeFirst.gasSaves[0];
+            }
+           
+            let _totalSavedMap = {}
+            for(let i = 0; i < _totalSaved.length; i++){
+                let index = dayjs.unix(_totalSaved[i].timestamp).format('YYYY-MM-DD HH:00');
+                _totalSavedMap[index] = _totalSaved[i];
+            }
+            
+            for(let i = 1; i < 25; i++){
+                let totalGasSave = '';
+                let dayMill = dayjs(oneDayBefore).add(i, 'hour').startOf('hour');
+                let dayIndex = dayMill.format('YYYY-MM-DD HH:00');
+                if(_totalSavedMap[dayIndex]){
+                    beforeDayFirstData = _totalSavedMap[dayIndex];
+                    totalGasSave = _totalSavedMap[dayIndex];
+                } else {
+                    totalGasSave = {
+                        feeUsage: 0,
+                        feeUsageSum:beforeDayFirstData.feeUsageSum,
+                        id: dayMill.unix(),
+                        timestamp:dayMill.unix()
+                    }
+                }
+                this.resFeeUsageData.push({
+                     "value": [
+                        dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsage))
+                    ]
+                })
+                this.resFeeUsageSumData.push({
+                     "value": [
+                        dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsageSum))
                     ]
                 })
             }
@@ -405,7 +466,6 @@ export default {
                     ]
                 };
                 this.myChart2.setOption(option2)
-                console.log(this.resVotingData)
                 this.myChart2.setOption({
                     series: [
                     {

@@ -466,14 +466,15 @@ export default {
         this.setUsedCrude({
             usedCrude: usedCrude
         })
-        let total = web3.utils.toBN(res.data.result).add(web3.utils.toBN(resused.data.result));
-        let leftPercent = web3.utils.toBN(res.data.result).div(total).mul(web3.utils.toBN(100)).toNumber();
-        let usedPercennt = web3.utils.toBN(resused.data.result).div(total).mul(web3.utils.toBN(100)).toNumber();
+        let leftPercent =  util.numberPrecision(leftCrude/(leftCrude*1+usedCrude*1)*100,2)
+        let usedPercennt = util.numberPrecision(usedCrude/(leftCrude*1+usedCrude*1)*100,2)
+        console.log('leftPercent',leftPercent);
+        console.log('usedPercennt',usedPercennt)
         this.setLeftCrudePercent({
-            leftCrudePercent: Number(leftPercent).toFixed(2)
+            leftCrudePercent: leftPercent
         })
         this.setUsedCrudePercent({
-            usedCrudePercent: Number(usedPercennt).toFixed(2)
+            usedCrudePercent: usedPercennt
         })
     },
     async handleWithdraw(item){
