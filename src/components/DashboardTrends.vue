@@ -12,7 +12,7 @@
             <v-row class="head-chips">
                 <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
-                    <v-chip-group active-class="chip_group" v-model="model" mandatory>
+                    <v-chip-group active-class="chip_group" v-model="intervalModel" mandatory>
                         <v-chip
                             class="ma-3"    
                             x-small
@@ -93,8 +93,7 @@
 <script>
 /* eslint-disable no-undef */
 import { mapActions, mapGetters } from 'vuex';
-import { client } from '../service/ApolloClient'
-import { gql } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 import dayjs from 'dayjs';
 import web3 from 'web3';
 import util from '../utils/util';
@@ -102,7 +101,7 @@ import util from '../utils/util';
 
 const totalStakes = gql`
   query totalStakes{
-   totalStakes(first:25,orderBy:id,orderDirection:desc) {
+   totalStakes(first:192,orderBy:id,orderDirection:desc) {
         id
         blockNumber
         timestamp
@@ -114,6 +113,8 @@ const totalStakes = gql`
 const ONE_DAY_UNIX = 24 * 60 * 60
 const ONE_HOUR_UNIX = 60 * 60
 
+let client = null;
+
 export default {
   data() {
     return {
@@ -124,12 +125,17 @@ export default {
        resFeeStakeData:[],
        resFeeUsageData:[],
        resFeeUsageSumData:[],
+       resTotalDataSeven:[],
+       resVotingDataSeven:[],
+       resFeeStakeDataSeven:[],
+       resFeeUsageDataSeven:[],
+       resFeeUsageSumDataSeven:[],
        myChart: {},
        myChart2: {},
        myChart3: {},
        myChart4: {},
        tags:['24H','7D'],
-       model:0,
+       intervalModel:0,
     };
   },
   computed: {
@@ -146,11 +152,18 @@ export default {
                     this.trendsCharts(); 
                 }, 200);
             }
+        },
+        intervalModel:{
+            handler(val){
+                console.log(val)
+                this.changeInterval(val);
+            }
         }
     },
   mounted() {
       this.getdata();
       this.getGasSaveData();
+      this.getGasSaveDataSeven();
       setTimeout(() => {
         this.trendsCharts(); 
       }, 500);
@@ -160,6 +173,12 @@ export default {
       setTotalStakes: 'setTotalStakes',
     }),
     async getdata(){
+        client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        let data7d = [];
+        let data24h = [];
         let data = [];
         let dataVoting = [];
         let dataFeeStake = [];
@@ -172,19 +191,65 @@ export default {
             fetchPolicy: 'cache-first',
         })
         this.setTotalStakes({totalStakes:charData})
-        let _data = data.concat(charData.totalStakes).reverse();
+        data24h = data24h.concat(charData.totalStakes).splice(0,25);
+        data7d = data7d.concat(charData.totalStakes).splice(0);
+
+        let _totalDataMap = {}
+        for(let i = 0; i < data7d.length; i++){
+            let index = dayjs.unix(data7d[i].timestamp).format('YYYY-MM-DD HH:00');
+            _totalDataMap[index] = data7d[i];
+        }
+
+        let eightDayBefore = dayjs().subtract(8, 'day').endOf('day');
+        let totalDataSeven = [];
+        for(let i = 0; i < 8; i++){
+            let dayMill = dayjs(eightDayBefore).add(i, 'day').endOf('day');
+            let dayIndex = dayMill.format('YYYY-MM-DD HH:00');
+            
+            if(_totalDataMap[dayIndex]){
+                totalDataSeven.push(_totalDataMap[dayIndex]);
+            } else {
+                totalDataSeven.push(data7d[data7d.length-1]);
+            }
+        }
+        console.log('totalDataSeven',totalDataSeven);
+
+        let _data = data.concat(data24h).reverse();
         _data.shift();
         
-       this.resTotalData = _data.map((item)=>{
+        this.resTotalData = _data.map((item)=>{
             return {
-                    "value": [
-                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
-                        web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
-                    ]
-                }
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
+                ]
+            }
         })
+
+        let dataSeven = [];
+        let dataVotingSeven = [];
+        let dataFeeStakeSeven = [];
+        let _dataSeven = dataSeven.concat(totalDataSeven);
+        _dataSeven.shift();
+        
+        this.resTotalDataSeven = _dataSeven.map((item)=>{
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
+                ]
+            }
+        })
+
+        this.myChart.setOption({
+            series: [
+                {
+                    data: this.resTotalData
+                }
+            ]
+        });
     
-        let _dataVoting = dataVoting.concat(charData.totalStakes).reverse();
+        let _dataVoting = dataVoting.concat(data24h).reverse();
         this.resVotingData = _dataVoting.map(function(item,i){
             return {
                 "value": [
@@ -194,7 +259,18 @@ export default {
                 }
             }).slice(1)
 
-        let _dataFeeStake = dataFeeStake.concat(charData.totalStakes).reverse();
+        let _dataVotingSeven = dataVotingSeven.concat(totalDataSeven);
+        this.resVotingDataSeven = _dataVotingSeven.map(function(item,i){
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_dataVotingSeven[i>0?i-1:0].voteStake)))
+                ]
+                }
+            }).slice(1)
+
+
+        let _dataFeeStake = dataFeeStake.concat(data24h).reverse();
         this.resFeeStakeData = _dataFeeStake.map(function(item,i){
             return {
                 "value": [
@@ -203,7 +279,16 @@ export default {
                 ]
                 }
             }).slice(1)
-
+        
+        let _dataFeeStakeSeven = dataFeeStakeSeven.concat(totalDataSeven);
+        this.resFeeStakeDataSeven = _dataFeeStakeSeven.map(function(item,i){
+            return {
+                "value": [
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    web3.utils.fromWei(web3.utils.toBN(item.feeStake).sub(web3.utils.toBN(_dataFeeStakeSeven[i>0?i-1:0].feeStake)))
+                ]
+                }
+            }).slice(1)
         
     },
     async getGasSaveData(){
@@ -329,8 +414,197 @@ export default {
                 })
             }
         }
+    },
+    async getGasSaveDataSeven(){
+        this.resFeeUsageData = [];
+        this.resFeeUsageSumData = [];
+        const endTimestamp = dayjs().unix();
+        const startTimestamp = endTimestamp-ONE_DAY_UNIX*7;
+        const gasSaves = gql`
+          query gasSaves {
+            gasSaves(
+                first: 168
+                orderBy: id
+                orderDirection: desc
+                where: { timestamp_gt: ${startTimestamp}, timestamp_lt: ${endTimestamp} }
+              ) {
+                id
+                timestamp
+                feeUsage
+                feeUsageSum
+              }
+            }
+        `
+        const {data:charData} = await client.query({
+            query: gasSaves,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        if(!charData.gasSaves.length){
+            const gasSavesfirst = gql`
+              query gasSavesfirst {
+                 gasSaves(first: 1, orderBy: id, orderDirection: desc) {
+                    id
+                    timestamp
+                    feeUsage
+                    feeUsageSum
+                }
+              }
+            `
+            const {data:charDataLatest} = await client.query({
+                query: gasSavesfirst,
+                variables: {
+                },
+                fetchPolicy: 'cache-first',
+            })
+            let dataGasSave = charDataLatest.gasSaves;
+            for(let i = 0; i< 7; i++){
+                let dayTime = '';
+                if(i<6){
+                    dayTime = dayjs.unix(startTimestamp).add(i, 'day').endOf('day').format('YYYY-MM-DD HH:00');
+                 } else {
+                    dayTime = dayjs.unix(endTimestamp).startOf('hour').format('YYYY-MM-DD HH:00');
+                 }
+                this.resFeeUsageDataSeven.push({
+                    "value": [
+                        dayTime,
+                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
+                    ]
+                })
+                this.resFeeUsageSumDataSeven.push({
+                     "value": [
+                        dayTime,
+                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
+                    ]
+                })
+            }
+        } else {
+            let totalSaved = [], sevenDayBefore = dayjs().subtract(7, 'day').startOf('hour');
+            let _totalSaved = totalSaved.concat(charData.gasSaves).reverse();
+            let firstData = dayjs.unix(_totalSaved[0].timestamp).startOf('hour');
+            let beforeDayFirstData = '';
+            if(!dayjs(sevenDayBefore).isSame(dayjs(firstData))){
+                
+                const gasSavesBeforefirst = gql`
+                    query gasSavesBeforefirst {
+                        gasSaves(first: 1
+                            orderBy: id
+                            orderDirection: desc
+                            where: { timestamp_lt: ${sevenDayBefore.unix()} }) {
+                            id
+                            timestamp
+                            feeUsage
+                            feeUsageSum
+                        }
+                    }
+                `
+                const {data:charDataBeforeFirst} = await client.query({
+                    query: gasSavesBeforefirst,
+                    variables: {
+                    },
+                    fetchPolicy: 'cache-first',
+                })
+                 beforeDayFirstData = charDataBeforeFirst.gasSaves[0];
+            }
+           
+            let _totalSavedMap = {}
+            for(let i = 0; i < _totalSaved.length; i++){
+                let index = dayjs.unix(_totalSaved[i].timestamp).format('YYYY-MM-DD');
+                _totalSavedMap[index] = _totalSaved[i];
+            }
+            
+            for(let i = 0; i < 7; i++){
+                let totalGasSave = '';
+                let dayMill = dayjs(sevenDayBefore).add(i, 'day').endOf('day');
+                let dayIndex = dayMill.format('YYYY-MM-DD');
+                if(_totalSavedMap[dayIndex]){
+                    beforeDayFirstData = _totalSavedMap[dayIndex];
+                    totalGasSave = _totalSavedMap[dayIndex];
+                } else {
+                    totalGasSave = {
+                        feeUsage: 0,
+                        feeUsageSum:beforeDayFirstData.feeUsageSum,
+                        id: dayMill.unix(),
+                        timestamp:dayMill.unix()
+                    }
+                }
+                this.resFeeUsageDataSeven.push({
+                     "value": [
+                        dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD'),
+                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsage))
+                    ]
+                })
+                this.resFeeUsageSumDataSeven.push({
+                     "value": [
+                        dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD'),
+                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsageSum))
+                    ]
+                })
+            }
+        }
         
 
+    },
+    changeInterval(val){
+        let dataTotal = null;
+        let dataVoting = null;
+        let dataGasStake = null;
+        let dataGasSaved = null;
+        let dataGasSavedSum = null;
+        if(!val){
+            dataTotal = this.resTotalData;
+            dataVoting = this.resVotingData;
+            dataGasStake = this.resFeeStakeData;
+            dataGasSaved = this.resFeeUsageData;
+            dataGasSavedSum = this.resFeeUsageSumData;
+        } else {
+            dataTotal = this.resTotalDataSeven;
+            dataVoting = this.resVotingDataSeven;
+            dataGasStake = this.resFeeStakeDataSeven;
+            dataGasSaved = this.resFeeUsageDataSeven;
+            dataGasSavedSum = this.resFeeUsageSumDataSeven;
+        }
+        if(this.tab === 0){
+            this.myChart.setOption({
+                series: [
+                    {
+                        data: dataTotal
+                    }
+                ]
+            });
+        }
+        if(this.tab === 1){
+            this.myChart2.setOption({
+                series: [
+                    {
+                        data: dataVoting
+                    }
+                ]
+            });
+        }
+        if(this.tab === 2){
+            this.myChart3.setOption({
+                series: [
+                    {
+                        data: dataGasStake
+                    }
+                ]
+            });
+        }
+        if(this.tab === 3){
+            this.myChart4.setOption({
+                series: [
+                    {
+                        data: dataGasSaved
+                    },
+                    {
+                        data: dataGasSavedSum
+                    }
+                ]
+            });
+        }
+        
     },
     assetFormat(value,precision) {
         return util.asset(value,precision)
