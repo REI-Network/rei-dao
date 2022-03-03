@@ -32,7 +32,8 @@ const state = {
   leftCrude:0, 
   usedCrude:0,
   leftCrudePercent:0,
-  usedCrudePercent:0
+  usedCrudePercent:0,
+  assetInfo:''
 };
 const getters = {
   connection: (state) => state.connection,
@@ -66,6 +67,7 @@ const getters = {
   usedCrude: (state) => state.usedCrude,
   leftCrudePercent: (state) => state.leftCrudePercent,
   usedCrudePercent: (state) => state.usedCrudePercent,
+  assetInfo: (state) => state.assetInfo,
 };
 
 const mutations = {
@@ -135,6 +137,9 @@ const mutations = {
   setUsedCrudePercent: (state, payload) => {
     state.usedCrudePercent = payload.usedCrudePercent;
   },
+  setAssetInfo: (state, payload) => {
+    state.assetInfo = payload.assetInfo;
+  },
 
 };
 
@@ -175,6 +180,9 @@ const actions = {
   },
   setUsedCrudePercent: ({ commit }, payload) => {
     commit('setUsedCrudePercent', payload);
+  },
+  setAssetInfo: ({ commit }, payload) => {
+    commit('setAssetInfo', payload);
   },
 };
 

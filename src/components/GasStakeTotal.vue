@@ -151,6 +151,8 @@ import abiConfig from '../abis/abiConfig';
 import abiFee from '../abis/abiFee'
 import { mapGetters, mapActions } from 'vuex';
 import filters from '../filters';
+import util from '../utils/util'
+
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -229,11 +231,11 @@ export default {
         console.log('leftPercent',leftPercent)
     },
     
-    async submitStaking(item){
+    async submitStaking(){
          try{
             if(!this.$refs.stakeform.validate()) return;
             this.stakeLoading = true;
-            const stakeRes = await this.feeContract.methods.deposit(item.address).send({
+            const stakeRes = await this.feeContract.methods.deposit(this.connection.address).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei(this.form.amount))
         })

@@ -128,7 +128,7 @@ export default {
        myChart2: {},
        myChart3: {},
        myChart4: {},
-       tags:['24H','7D','W','M'],
+       tags:['24H','7D'],
        model:0,
     };
   },

@@ -129,6 +129,7 @@
 import Web3 from 'web3';
 import { mapGetters, mapActions } from 'vuex';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { getAssetInfo } from '../service/CommonService'
 import filters from '../filters';
 import Jazzicon from 'vue-jazzicon';
 import * as txStatusTask from '../tasks/txStatusTask';
@@ -303,6 +304,22 @@ export default {
         return false;
       }
     },
+    getApiUrl(){
+        let api = ''
+        if(this.connection.network == 'REI Devnet'){
+            api = process.env.VUE_APP_DEV_SERVER_API;
+        } else if(this.connection.network == 'REI Testnet'){
+             api = process.env.VUE_APP_TEST_SERVER_API
+        } else {
+            api = process.env.VUE_APP_SERVER_API;
+        }
+        return api;
+    },
+    async loadAsset(){
+        let apiUrl = this.getApiUrl();
+        let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
+        console.log('chartInfoData',chartInfoData);
+    },
     async loadAccount(key) {
       let accounts = await web3.eth.getAccounts();
       if (accounts.length > 0) {
@@ -324,6 +341,7 @@ export default {
         this.setConnection({
           connection
         });
+        this.loadAsset();
         txStatusTask.start((tx, success) => {
           if (success) {
             this.$dialog.notify.success(this.$t(`txs.${tx.type}`, tx.data), {
