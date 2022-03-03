@@ -82,3 +82,13 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+.v-list .v-list-item--active{
+  color: white;
+  background:#6979f8 ;
+}
+
+.theme--dark.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled){
+  color: #868e9e;
+}
+</style>

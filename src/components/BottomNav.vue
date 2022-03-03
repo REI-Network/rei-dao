@@ -64,3 +64,13 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+.v-item-group.v-bottom-navigation .v-btn.v-btn--active{
+  color: white;
+  background:#6979f8;
+}
+.theme--dark.v-bottom-navigation .v-btn:not(.v-btn--active){
+   color: #868e9e;
+}
+</style>
