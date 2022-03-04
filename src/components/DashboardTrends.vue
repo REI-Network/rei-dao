@@ -594,7 +594,7 @@ export default {
                             var relVal = params[0].name;
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5)
-                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue+'<br/>';
                             }
                             return relVal;
                         },
@@ -707,6 +707,9 @@ export default {
     label{
         font-size: 12px;
     }
+}
+.toolDiv{
+    width:200px;
 }
 .head-chips{
     padding-left: 12px;

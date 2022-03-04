@@ -282,6 +282,7 @@ export default {
                         width: '1' //坐标线的宽度
                     }
                 },
+                splitLine:{show: false}
             },
             yAxis: {
                 type: 'value',
@@ -382,6 +383,7 @@ export default {
                             width: '1' //坐标线的宽度
                         }
                     },
+                    splitLine:{show: false}
             },
             yAxis: {
                 type: 'value',

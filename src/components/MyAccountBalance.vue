@@ -432,32 +432,14 @@ export default {
               },
             axisLabel:{
               show:false,
-              // formatter(params) {
-              //   var relVal = params[0].name;
-              //   for (var i = 0, l = params.length; i < l; i++) {
-              //     var yValue = Number(params[i].value).toFixed(5)
-              //       relVal +=params[i].marker + params[i].seriesName +':'+yValue;
-              //   }
-              //   return relVal;
-              // },
               },
             splitLine: {
               show: false,
               },
             },
-        // legend: {
-        //     selectedMode: false,
-        //     itemWidth: 16,
-        //     itemHeight: 16,
-        //     top: 'bottom',
-        //     textStyle: {
-        //        fontSize: 16,
-        //        color:'#2C2752'
-        //     },
-        //   },
           series: [
             {
-              name:'Total Voting Stake',
+              name:'Balance',
               data: [],
               type: 'bar',
               itemStyle: {

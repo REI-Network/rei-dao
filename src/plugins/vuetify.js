@@ -27,7 +27,7 @@ export default new Vuetify({
     themes: {
       light: {
         primary: colors.blue,
-        secondary: colors.grey.darken1,
+        secondary: '#FFF',
         accent: colors.shades.black,
         error: colors.red.accent3,
         background: "#FFF" ,
@@ -40,6 +40,7 @@ export default new Vuetify({
         validator:'#868E9E',
         btn_button:'#868E9E',
         chip_group:'#6979F8',
+        header_account:'#D3D3D3',
       },
       dark: {
         primary: '#FFF',
@@ -55,6 +56,7 @@ export default new Vuetify({
         current_wallet:"#403E59",
         validator:'#868E9E',
         right_icon:'#5c5a7a',
+        header_account:'#6979F8',
       },
     },
     options: {

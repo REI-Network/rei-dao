@@ -130,7 +130,7 @@ export default {
     gas_stake:'Total Gas Stake',
     amount_user:'Amount Of Gas Saved For Users',
     price:'Price',
-    price_market:'rice And Market Stats',
+    price_market:'Price And Market Stats',
     more:'More',
     current_price:'Current Price',
     market_cap:'Market Cap',

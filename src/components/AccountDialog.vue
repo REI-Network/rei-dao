@@ -9,7 +9,7 @@
       <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded @click="connect('metamask')">
         {{ $t('account.unlock') }}
       </v-btn>
-      <div class="account-balance grey" :class="dark ? 'darken-2' : 'lighten-2'" v-if="connection.address">
+      <div class="account-balance header_account" v-if="connection.address">
         <span class="amount">
           <v-progress-circular indeterminate size="18" :width="2" v-if="connection.loading"></v-progress-circular>
           <span v-else class="bebas">{{ connection.balance | asset(2) }} {{getSymbol}}</span>
@@ -44,7 +44,7 @@
         <v-divider></v-divider>
         <v-sheet class="ma-4 pa-4 grey" :class="dark ? 'current_wallet' : 'gradient'" rounded v-if="connection.walletName">
           <div class="d-flex stretch">
-            <div class="d-flex text--secondary">
+            <div class="d-flex text--#FFF">
               <span>{{ $t('account.connected_with') }}</span>
               <v-img class="mx-2" :src="items.find((item) => item.key == connection.walletName).img" width="20" height="20" />
               <span>{{ connection.walletName }}</span>
@@ -60,12 +60,12 @@
           <v-row class="account-op" no-gutters>
             <v-col>
               <v-btn color="secondary" :text="!dark" depressed small @click="copyAddr">
-                <v-icon small>{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
+                <v-icon color="#FFF" small>{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 {{ addrCopying ? $t('account.copied') : $t('account.copy_address') }}
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan-test.rei.network/address/${connection.address}`"><v-icon small>mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan-test.rei.network/address/${connection.address}`"><v-icon small color="#FFF">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -437,9 +437,16 @@ export default {
   border-radius: 20px;
   display: flex;
   align-items: center;
+  .theme--dark.v-btn.v-btn--has-bg[data-v-07306f55]{
+  background-color: #4856C0  !important;
+}
   .amount {
     padding-right: 0.5rem;
   }
+}
+.theme--dark.v-btn.v-btn--has-bg{
+  background-color: transparent !important
+  ;
 }
 .network {
   background-color: rgba(243, 132, 30, 0.05);
@@ -459,6 +466,7 @@ export default {
 }
 .gradient {
   background: linear-gradient(135deg, #6979F8 0%, #4856C0 100%);
+  color: #FFF;
   }
   .staking_record{
     padding: 0 20px 12px 20px;
