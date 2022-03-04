@@ -263,7 +263,7 @@ export default {
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
         let now = Date.now();
-        for(let i = 0; i <= 7; i++){
+        for(let i = 0; i < 7; i++){
             arr.push({
                 timestamp:now-86400000*i,
                 blockNumber: blockNumber-28800*i
@@ -284,7 +284,6 @@ export default {
                 })
         }
         console.log('balanceResult',balanceResult)
-
         this.myChart.setOption({
             series: [
               {
