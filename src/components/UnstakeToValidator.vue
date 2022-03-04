@@ -11,8 +11,6 @@
                 <v-icon
                     color="primary"
                     dark
-                    v-bind="attrs"
-                    v-on="on"
                     dense
                     style="margin-left:8px"
                     size="16"

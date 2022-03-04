@@ -610,7 +610,6 @@ export default {
         return util.asset(value,precision)
     },
     trendsCharts(){
-        // console.log(this.tab)
         if(this.tab === 0){
             const chart = this.$refs.chart;
             if(chart){
@@ -671,13 +670,6 @@ export default {
                     ]
                 };
                 this.myChart.setOption(option)
-                this.myChart.setOption({
-                    series: [
-                        {
-                            data: this.resTotalData
-                        }
-                    ]
-                });
                 window.addEventListener("resize", function() {
                     this.myChart.resize()
                 })
@@ -702,14 +694,6 @@ export default {
                             }
                             return relVal;
                         },
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: { show: true, readOnly: false },
-                            magicType: { show: true, type: ['line', 'bar'] },
-                            restore: { show: true },
-                            saveAsImage: { show: true }
-                        }
                     },
                     legend: {
                         selectedMode: false,
@@ -756,13 +740,6 @@ export default {
                     ]
                 };
                 this.myChart2.setOption(option2)
-                this.myChart2.setOption({
-                    series: [
-                    {
-                        data: this.resVotingData
-                    }
-                    ]
-                });
                 window.addEventListener("resize", function() {
                     this.myChart2.resize()
                 })
@@ -787,14 +764,6 @@ export default {
                             }
                             return relVal;
                         },
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: { show: true, readOnly: false },
-                            magicType: { show: true, type: ['line', 'bar'] },
-                            restore: { show: true },
-                            saveAsImage: { show: true }
-                        }
                     },
                     legend: {
                         selectedMode: false,
@@ -841,13 +810,6 @@ export default {
                     ]
                 };
                 this.myChart3.setOption(option3)
-                this.myChart3.setOption({
-                    series: [
-                    {
-                        data: this.resFeeStakeData
-                    }
-                    ]
-                });
                 window.addEventListener("resize", function() {
                     this.myChart3.resize()
                 })
@@ -872,14 +834,6 @@ export default {
                             }
                             return relVal;
                         },
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: { show: true, readOnly: false },
-                            magicType: { show: true, type: ['line', 'bar'] },
-                            restore: { show: true },
-                            saveAsImage: { show: true }
-                        }
                     },
                     legend: {
                         data: [ 'Savings On Gas For User', 'Total Stake'],
@@ -951,16 +905,6 @@ export default {
                     ]
                 };
                 this.myChart4.setOption(option4)
-                this.myChart4.setOption({
-                    series: [
-                        {
-                            data: this.resFeeUsageData
-                        },
-                        {
-                            data: this.resFeeUsageSumData
-                        }
-                    ]
-                });
                 window.addEventListener("resize", function() {
                     this.myChart4.resize()
                 })
@@ -970,7 +914,8 @@ export default {
                     this.myChart4.resize();
                 });
             })
-        }   
+        }
+        this.changeInterval(this.intervalModel);
     },      
   }
 };

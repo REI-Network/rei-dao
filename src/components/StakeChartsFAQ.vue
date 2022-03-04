@@ -26,7 +26,7 @@
               color="radio_day"
               class="v-btn-total"
             >
-              10D
+              7D
             </v-btn>
           </div>
           <!-- </v-subheader> -->
