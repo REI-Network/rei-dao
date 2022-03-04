@@ -172,11 +172,9 @@ export default {
             fetchPolicy: 'cache-first',
         })
 
-        console.log('totalStakes',totalStakes)
         let hour = dayjs().hour();
         
         let todayStart = dayjs().startOf('day');
-        console.log(dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart))
         let totalStakeDay = [totalStakes[0]];
         let startIndex = dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart) ? hour: hour*1+1;
         
@@ -186,7 +184,6 @@ export default {
             i+=24;
         }
         let _totalStakeDay = totalStakeDay.reverse();
-        console.log('totalStakeDay',_totalStakeDay)
 
         this.resTotalData = _totalStakeDay.map((item,i)=>{
             return {

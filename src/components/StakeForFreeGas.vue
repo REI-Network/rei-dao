@@ -337,9 +337,9 @@ export default {
         if(this.connection.network == 'REI Devnet'){
             api = process.env.VUE_APP_DEV_RPC_SERVER;
         } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_SERVER_API
+             api = process.env.VUE_APP_TEST_RPC_SERVER
         } else {
-            api = process.env.VUE_APP_SERVER_API;
+            api = process.env.VUE_APP_MAIN_RPC_SERVER;
         }
         return api;
     },
@@ -356,11 +356,7 @@ export default {
         //this.getUsedCrude();
         this.getDepositList();
 
-        console.log('leftCrude',this.leftCrude);
-        console.log('usedCrude',this.usedCrude);
 
-        let feeUserDeposit = await this.feeContract.methods.userDeposit(this.connection.address,this.connection.address).call()
-        console.log('feeUserDeposit',feeUserDeposit)
 
         // let userTotalAmount = await this.feeContract.methods.userTotalAmount(this.connection.address).call()
         // console.log('userTotalAmount',userTotalAmount)
@@ -425,7 +421,6 @@ export default {
         let res = await Promise.all(depositsList);
         this.nodeList = res;
 
-        console.log('depositsList',res)
     },
     async getTotalStake(){
          let apiUrl = this.getRpcUrl();
@@ -473,8 +468,6 @@ export default {
         })
         let leftPercent =  util.numberPrecision(leftCrude/(leftCrude*1+usedCrude*1)*100,2)
         let usedPercennt = util.numberPrecision(usedCrude/(leftCrude*1+usedCrude*1)*100,2)
-        console.log('leftPercent',leftPercent);
-        console.log('usedPercennt',usedPercennt)
         this.setLeftCrudePercent({
             leftCrudePercent: leftPercent
         })
@@ -569,11 +562,12 @@ export default {
         return util.addr(str);
     },
     timeDiff (a, b) {
+        if(a<b) return '0H0M'
         let sdate = new Date(a);//结束时间
         let now = new Date(b);//开始时间
-        let endTime=sdate.getTime();//结束时间
-        let startTime=now.getTime();//开始时间
-        let timeDiff =endTime  - startTime;
+        let endTime = sdate.getTime();//结束时间
+        let startTime = now.getTime();//开始时间
+        let timeDiff = endTime - startTime;
         let hours = parseInt((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         let minutes = parseInt((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = ((timeDiff % (1000 * 60)) / 1000).toFixed();

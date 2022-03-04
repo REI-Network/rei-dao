@@ -126,7 +126,7 @@ export default {
         folders: [],
         marketData: [],
         priceData: [],
-        tags:['24H','7D','30D','All'],
+        tags:['24H'],
         model:0,
     };
   },

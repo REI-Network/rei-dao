@@ -166,9 +166,9 @@ export default {
         if(this.connection.network == 'REI Devnet'){
             api = process.env.VUE_APP_DEV_RPC_SERVER;
         } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_SERVER_API
+             api = process.env.VUE_APP_TEST_RPC_SERVER
         } else {
-            api = process.env.VUE_APP_SERVER_API;
+            api = process.env.VUE_APP_MAIN_RPC_SERVER;
         }
         return api;
     },

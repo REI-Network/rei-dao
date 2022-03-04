@@ -77,46 +77,19 @@
               <v-spacer />
               <a class="text-caption " @click="setTxs({ txs: [] })">({{ $t('account.clear_all') }})</a>
             </div>
-            <div class="txs">
-              <div class="d-flex align-baseline py-1" v-for="tx in txs" :key="tx.txid">
-                <div class="d-flex flex-column">
-                  <a class="text-body-2 text-decoration-none" :href="`https://scan-test.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon>{{ $t(`txs.${tx.type}`, tx.data) }}</a>
-                  <span class="text-caption font-weight-light">({{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }})</span>
+            <div class="staking_record" v-for="tx in txs" :key="tx.txid">
+                <v-divider />
+                <div class="record-content">
+                    <div>
+                    <div class="name-pri">
+                        <div>{{ $t(`txs.${tx.type}`, tx.data) }}</div>
+                        <a class="text-body-2 text-decoration-none" :href="`https://scan-test.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+                    </div>
+                    <div>{{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }}</div>
+                    </div>
+                    <v-icon dense color="#65BB67">mdi-check-circle</v-icon>
                 </div>
-                <v-spacer />
-                <span class="tx-status">
-                  <v-icon small v-if="tx.status == 'FINISHED'" color="success">mdi-checkbox-marked-circle-outline</v-icon>
-                  <v-icon small v-if="tx.status == 'FAILED'" color="red">mdi-alert-outline</v-icon>
-                  <v-progress-circular indeterminate color="primary" size="16" width="2" v-if="tx.status == 'PENDING'"></v-progress-circular>
-                </span>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="staking_record">
-          <v-divider />
-          <div class="record-content">
-            <div>
-              <div class="name-pri">
-                <div>Staking 10,255,489.00 REI To 0xa5...3d28</div>
-                <v-icon small>mdi-open-in-new</v-icon>
-              </div>
-              <div>2021-12-22 16:17:35</div>
-            </div>
-            <v-icon dense color="#65BB67">mdi-check-circle</v-icon>
-          </div>
-        </div>
-        <div class="staking_record">
-          <v-divider />
-          <div class="record-content">
-            <div>
-              <div class="name-pri">
-                <div>Staking 10,255,489.00 REI To 0xa5...3d28</div>
-                <v-icon small>mdi-open-in-new</v-icon>
-              </div>
-              <div>2021-12-22 16:17:35</div>
-            </div>
-            <v-icon dense color="#65BB67">mdi-check-circle</v-icon>
           </div>
         </div>
       </v-card>
