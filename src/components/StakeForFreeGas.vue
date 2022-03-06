@@ -1,85 +1,133 @@
 <template>
   <v-container>
-    <v-row class="background">
-      <v-col>
-        <v-data-table
-            :headers="headers"
-            :items="nodeList"
-            class="background"
-            hide-default-footer
-            :items-per-page="itemsPerPage"
-            :loading="stakeListLoading"
-            :loading-text="$t('msg.loading')"
-            :page.sync="page"
-            @page-count="pageCount = $event"
-        >
-            <template v-slot:item.address="{ item }">
-            <!-- <Address :val="item.address"></Address> -->
-                {{ item.address | addr }}
-            </template>
-            <template v-slot:item.amount="{ item }">
-                {{ item.amount | asset(2) }}
-            </template>
-            <template v-slot:item.deposit="{ item }">
-                {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
-            </template>
-            <template v-slot:item.withdraw="{ item }">
-                {{ item.availableTime }}
-            </template>
-            <!-- <template v-slot:item.isActive="{ item }">
-                {{ status[item.isActive] }}
-            </template> -->
-            <template v-slot:item.operation="{ item }">
-                <v-btn
-                tile
-                small
-                color='vote_button'
-                class="mr-4 withdraw"
-                :disabled="item.availableTimePercent<1"
-                v-if='connection.address'
-                @click="handleWithdraw(item)"
-                >
-                    Withdraw
-                </v-btn>
-                <v-btn
-                tile
-                small
-                color="start_unstake"
-                class="mr-4 withdraw"
-                v-if='connection.address'
-                @click="deposit(item)"
-                >
-                    Stake more
-                </v-btn>
-                <v-btn
-                v-if="item.address==connection.address"
-                tile
-                small
-                color="success"
-                class="mr-4 withdraw"
-                @click="handleReward(item)"
-                >
-                    {{$t('stake.get_reward')}}
-                </v-btn>
-                <span v-if='!connection.address'>
-                    -
-                </span>
-            </template>
-        </v-data-table>
-        <div class="text-center pt-2">
-            <v-pagination
-                v-model="page"
-                :length="pageCount"
-                color="vote_button"
-                background-color="start_unstake"
-                class="v-pagination"
-                total-visible="6"
-            ></v-pagination>
-        </div>
-       
-        
-      </v-col>
-    </v-row>
+    <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
+        <v-tab key="1" class="v-tab-left">My Gas Stake</v-tab>
+        <v-tab key="2">Staking to Me by Others</v-tab> 
+    </v-tabs>
+    <v-tabs-items v-model="tab1">
+        <v-tab-item key="1" >
+            <v-row class="background">
+                <v-col>
+                    <v-data-table
+                        :headers="headers"
+                        :items="nodeList"
+                        class="background"
+                        hide-default-footer
+                        :items-per-page="itemsPerPage"
+                        :loading="stakeListLoading"
+                        :loading-text="$t('msg.loading')"
+                        :page.sync="page"
+                        @page-count="pageCount = $event"
+                    >
+                        <template v-slot:item.address="{ item }">
+                        <!-- <Address :val="item.address"></Address> -->
+                            {{ item.address | addr }}
+                        </template>
+                        <template v-slot:item.amount="{ item }">
+                            {{ item.amount | asset(2) }}
+                        </template>
+                        <template v-slot:item.deposit="{ item }">
+                            {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
+                        </template>
+                        <template v-slot:item.withdraw="{ item }">
+                            {{ item.availableTime }}
+                        </template>
+                        <!-- <template v-slot:item.isActive="{ item }">
+                            {{ status[item.isActive] }}
+                        </template> -->
+                        <template v-slot:item.operation="{ item }">
+                            <v-btn
+                            tile
+                            small
+                            color='vote_button'
+                            class="mr-4 withdraw"
+                            :disabled="item.availableTimePercent<1"
+                            v-if='connection.address'
+                            @click="handleWithdraw(item)"
+                            >
+                                Withdraw
+                            </v-btn>
+                            <v-btn
+                            tile
+                            small
+                            color="start_unstake"
+                            class="mr-4 withdraw"
+                            v-if='connection.address'
+                            @click="deposit(item)"
+                            >
+                                Stake more
+                            </v-btn>
+                            <v-btn
+                            v-if="item.address==connection.address"
+                            tile
+                            small
+                            color="success"
+                            class="mr-4 withdraw"
+                            @click="handleReward(item)"
+                            >
+                                {{$t('stake.get_reward')}}
+                            </v-btn>
+                            <span v-if='!connection.address'>
+                                -
+                            </span>
+                        </template>
+                    </v-data-table>
+                    <div class="text-center pt-2">
+                        <v-pagination
+                            v-model="page"
+                            :length="pageCount"
+                            color="vote_button"
+                            background-color="start_unstake"
+                            class="v-pagination"
+                            total-visible="6"
+                        ></v-pagination>
+                    </div>
+                </v-col>
+            </v-row>
+        </v-tab-item>
+        <v-tab-item key="2" >
+            <v-row class="background">
+                <v-col>
+                    <v-data-table
+                        :headers="headersOther"
+                        :items="nodeListOther"
+                        class="background"
+                        hide-default-footer
+                        :items-per-page="itemsPerPage"
+                        :loading="stakeListLoading"
+                        :loading-text="$t('msg.loading')"
+                        :page.sync="page"
+                        @page-count="pageCount = $event"
+                    >
+                        <template v-slot:item.by="{ item }">
+                        <!-- <Address :val="item.address"></Address> -->
+                            {{ item.by | addr }}
+                        </template>
+                        <template v-slot:item.to="{ item }">
+                        <!-- <Address :val="item.address"></Address> -->
+                            {{ item.to | addr }}
+                        </template>
+                        <template v-slot:item.amount="{ item }">
+                            {{ formatAsset(item.amount) | asset(2) }}
+                        </template>
+                        <template v-slot:item.deposit="{ item }">
+                            {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
+                        </template>
+                    </v-data-table>
+                    <div class="text-center pt-2">
+                        <v-pagination
+                            v-model="page"
+                            :length="pageCount"
+                            color="vote_button"
+                            background-color="start_unstake"
+                            class="v-pagination"
+                            total-visible="6"
+                        ></v-pagination>
+                    </div>
+                </v-col>
+            </v-row>
+        </v-tab-item>
+    </v-tabs-items>
 
     <v-dialog v-model="depositDialog" width="500">
       <v-card class="start_unstake" style="padding-bottom:4px">
@@ -237,7 +285,7 @@ export default {
         symbol:'REI',
         isNode: false,
         totalAmount:0,
-        tab1: null,
+        tab1: '1',
         depositDialog: false,
         withdrawDialog: false,
         stakeLoading: false,
@@ -260,8 +308,26 @@ export default {
             { text: 'Operation', value: 'operation', sortable: false },
             // { text: '10', value: 'ten'}
         ],
+        headersOther: [
+            {
+                text:'From',
+                align: 'start',
+                sortable: false,
+                value: 'by',
+            },
+            {
+                text:'To',
+                align: 'start',
+                sortable: false,
+                value: 'to',
+            },
+            { text: 'Amount', value: 'amount' },
+            { text: 'Deposit Time', value: 'deposit' }
+        ],
         nodeList: [
         ],
+        nodeListOther: [],
+
         form:{
             address: '',
             amount: 0
@@ -355,6 +421,7 @@ export default {
         this.getLeftCrude();
         //this.getUsedCrude();
         this.getDepositList();
+        this.getMystakeByOther();
 
 
 
@@ -384,7 +451,7 @@ export default {
         })
         const deposit = gql`
          query depositInfos {
-            deposits(where: { to: "${this.connection.address}" }) {
+            deposits(where: { by: "${this.connection.address}" }) {
                 id
                 by
                 to
@@ -420,7 +487,36 @@ export default {
         })
         let res = await Promise.all(depositsList);
         this.nodeList = res;
+        console.log('res',res)
 
+        
+
+    },
+    async getMystakeByOther(){
+        let client = new ApolloClient({
+            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            cache: new InMemoryCache(),
+        })
+        const depositByOther = gql`
+         query depositInfos {
+            deposits(where: { to: "${this.connection.address}",by_not: "${this.connection.address}" }) {
+                id
+                by
+                to
+                timestamp
+                amount
+            }
+        }
+        `
+        const {data:{deposits:depositsByOtherData}} = await client.query({
+            query: depositByOther,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log('depositsByOtherData',depositsByOtherData)
+
+        this.nodeListOther = depositsByOtherData;
     },
     async getTotalStake(){
          let apiUrl = this.getRpcUrl();
@@ -447,7 +543,7 @@ export default {
              params:arr
          }
         let res = await postRpcRequest(apiUrl,param);
-        let leftCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
+        let leftCrude = !res.data.result ? 0 : web3.utils.fromWei(web3.utils.toBN(res.data.result));
         this.leftCrude = leftCrude;
         this.setLeftCrude({
             leftCrude: leftCrude
@@ -517,11 +613,11 @@ export default {
         this.form.address = item.address;
         this.depositDialog = true;
     },
-    async submitStaking(item){
+    async submitStaking(){
          try{
             if(!this.$refs.stakeform.validate()) return;
             this.stakeLoading = true;
-            const stakeRes = await this.feeContract.methods.deposit(item.address).send({
+            const stakeRes = await this.feeContract.methods.deposit(this.currentItem.address).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei(this.form.amount))
         })
@@ -535,7 +631,7 @@ export default {
                     data: {
                       amount: this.form.amount,
                       symbol: this.symbol,
-                      to: util.addr(this.connection.address)
+                      to: util.addr(this.currentItem.address)
                     },
                     timestamp: new Date().getTime()
                   }
@@ -560,6 +656,9 @@ export default {
     },
     addressToShort(str){
         return util.addr(str);
+    },
+    formatAsset(val) {
+        return web3.utils.fromWei(web3.utils.toBN(val))
     },
     timeDiff (a, b) {
         if(a<b) return '0H0M'

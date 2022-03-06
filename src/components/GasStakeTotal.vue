@@ -235,7 +235,7 @@ export default {
          try{
             if(!this.$refs.stakeform.validate()) return;
             this.stakeLoading = true;
-            const stakeRes = await this.feeContract.methods.deposit(this.connection.address).send({
+            const stakeRes = await this.feeContract.methods.deposit(this.form.address).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei(this.form.amount))
         })
@@ -249,7 +249,7 @@ export default {
                     data: {
                       amount: this.form.amount,
                       symbol: this.symbol,
-                      to: util.addr(this.connection.address)
+                      to: util.addr(this.form.address)
                     },
                     timestamp: new Date().getTime()
                   }
