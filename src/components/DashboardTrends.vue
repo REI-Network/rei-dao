@@ -1,14 +1,14 @@
 <template>
   <v-container class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->   
-  <v-row>
-        <v-col cols="12" md="12" sm="12" style="padding:0px">
-            <v-card
-                class="mx-auto"
-                tile
-                color="background"
-                style="padding-bottom:20px"
-            >
+    <v-row>
+      <v-col cols="12" md="12" sm="12" style="padding-left:0px;padding-right:0px">
+        <v-card
+            class="mx-auto"
+            tile
+            color="background"
+            style="padding-bottom:20px"
+        >
             <v-row class="head-chips">
                 <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
@@ -68,24 +68,24 @@
                         </v-tab>
                     </v-radio-group>
                 </v-tabs>
-                </div>
-                <v-tabs-items v-model="tab">
-                    <v-tab-item key="1">
-                        <div ref="chart"  style="height:400px"></div>
-                    </v-tab-item>
-                    <v-tab-item key="2">
-                        <div ref="chart2"  style="height:400px"></div>
-                    </v-tab-item>
-                    <v-tab-item key="3">
-                        <div ref="chart3"  style="height:400px"></div>
-                    </v-tab-item>
-                    <v-tab-item key="4">
-                        <div ref="chart4"  style="height:400px"></div>
-                    </v-tab-item>
-                </v-tabs-items>
-                <!-- <div ref="chart2"  style="height:400px"></div> -->
-            </v-card>
-        </v-col>
+            </div>
+            <v-tabs-items v-model="tab">
+                <v-tab-item key="1">
+                    <div ref="chart"  style="height:400px"></div>
+                </v-tab-item>
+                <v-tab-item key="2">
+                    <div ref="chart2"  style="height:400px"></div>
+                </v-tab-item>
+                <v-tab-item key="3">
+                    <div ref="chart3"  style="height:400px"></div>
+                </v-tab-item>
+                <v-tab-item key="4">
+                    <div ref="chart4"  style="height:400px"></div>
+                </v-tab-item>
+            </v-tabs-items>
+            <!-- <div ref="chart2"  style="height:400px"></div> -->
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
