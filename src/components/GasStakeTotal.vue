@@ -374,6 +374,9 @@ export default {
     margin: 12px 36px;
     font-weight: 500;
   }
+  .v-btn.v-btn--has-bg{
+      background-color: #6979F8;
+  }
 @media screen and (max-width: 900px) {
     .total-progress{
         overflow-x: scroll;

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat color="grey" :class="dark ? 'background' : 'background'">
+  <v-app-bar app flat :class="dark ? 'background' : 'background'">
     <span class="d-sm-flex d-md-none flex-sm-column flex-xs-row align-center justify-center">
       <router-link to="/">
         <!-- <v-avatar color="grey" size="25"> -->
@@ -43,3 +43,11 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+.theme--dark.v-app-bar.v-toolbar.v-sheet{
+  background: #1D1A36;
+}
+.theme--light.v-app-bar.v-toolbar.v-sheet{
+  background: #FFFFFF;
+}
+</style>

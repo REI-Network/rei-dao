@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="background">
     <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-        <v-tab key="1" class="v-tab-left">My Gas Stake</v-tab>
+        <v-tab key="1">My Gas Stake</v-tab>
         <v-tab key="2">Staking to Me by Others</v-tab> 
     </v-tabs>
     <v-tabs-items v-model="tab1">
@@ -11,7 +11,7 @@
                     <v-data-table
                         :headers="headers"
                         :items="nodeList"
-                        class="background"
+                        class="background elevation-1"
                         hide-default-footer
                         :items-per-page="itemsPerPage"
                         :loading="stakeListLoading"
@@ -51,7 +51,7 @@
                             tile
                             small
                             color="start_unstake"
-                            class="mr-4 withdraw"
+                            class="mr-4 unstake_btn"
                             v-if='connection.address'
                             @click="deposit(item)"
                             >
@@ -410,7 +410,7 @@ export default {
         return api;
     },
     async init() {
-        
+        this.stakeListLoading = true;
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         
         //let freeFeeContractAddress = await contract.methods.freeFee().call();
@@ -442,7 +442,7 @@ export default {
 
     //    let estimateWithdrawableTimestamp =  await this.feeContract.methods.estimateWithdrawableTimestamp(this.connection.address,this.connection.address).call()
     //     console.log('estimateWithdrawableTimestamp',estimateWithdrawableTimestamp)
-
+    this.stakeListLoading = false;
     },
     async getDepositList() {
         let client = new ApolloClient({
@@ -692,9 +692,13 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.v-tab{
+    text-transform: none !important;
+    margin-left: 0 !important;
+   }
 .withdraw{
     border-radius:4px;
-    // color:#FFF
+    color:#FFF
 }
 .dialog-validator{
     display: flex;
@@ -727,8 +731,15 @@ export default {
 .v-sheet.v-card{
     padding-bottom: 8px;
 }
-.font-btn{
+.font-btn.v-btn.v-btn--has-bg{
     color: #FFF;
+    background: #6979f8;
+}
+.unstake_btn.theme--dark.v-btn.v-btn--has-bg{
+    background: #595777;
+}
+.theme--dark.v-application .text-center[data-v-b6724c44][data-v-b6724c44]{
+    background: #1D1A36;
 }
     @media screen and (max-width: 900px) {
         .dialog-validator{

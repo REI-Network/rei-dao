@@ -8,7 +8,7 @@
         <div class="mb-1">{{ $t('settings.language') }}</div>
         <v-row>
           <v-col cols="6" v-for="item in languages" :key="item.key">
-            <v-btn block :color="language == item.key ? 'vote_button white--text' : 'input_other'" @click="switchLanguage({ language: item.key })">
+            <v-btn block :color="language == item.key ? 'change_btn' : 'input_other'" @click="switchLanguage({ language: item.key })">
               {{ item.text }}
             </v-btn>
           </v-col>
@@ -19,7 +19,7 @@
         <div class="mb-1">{{ $t('settings.darkMode') }}</div>
         <v-row>
           <v-col cols="4" v-for="mode in modes" :key="mode.key">
-            <v-btn block small :class="{ 'vote_button white--text': darkMode == mode.key }" @click="switchDarkMode({ darkMode: mode.key })">
+            <v-btn block small :class="{ 'change_btn': darkMode == mode.key }" @click="switchDarkMode({ darkMode: mode.key })">
               {{ $t(mode.text) }}
               <v-icon small>{{ mode.icon }}</v-icon>
             </v-btn>
@@ -59,5 +59,10 @@ export default {
 }
 .v-btn:not(.v-btn--round).v-size--default--active{
   color: #FFF;
+  background-color: #6979F8 !important;
+}
+.change_btn{
+  color: #FFF;
+  background-color: #6979F8 !important;
 }
 </style>

@@ -2,7 +2,7 @@
   <v-app dark id="app">
     <nav-header />
     <side-menu />
-    <v-main class="grey" :class="dark ? 'stake_background' : 'lighten-3'">
+    <v-main :class="dark ? 'night' : 'daytime'">
       <router-view />
     </v-main>
     <bottom-nav />
@@ -55,7 +55,12 @@ export default {
   font-weight: 400;
   font-style: normal;
 }
-
+.daytime{
+  background-color: #EAEAEA;
+}
+.night{
+  background-color: #100D22;
+}
 .bebas {
   font-family: Bebas-Regular;
 }
@@ -68,6 +73,12 @@ export default {
 .theme--dark.v-pagination .v-pagination__item{
   background-color: #393560;
 }
+.theme--dark.v-pagination .v-pagination__item--active{
+  background-color: #6979F8;
+}
+.theme--light.v-pagination .v-pagination__item--active{
+  background-color: #6979F8;
+}
 a{
   text-decoration:none;
   color:transparent;
@@ -77,5 +88,23 @@ a{
 }
 .theme--dark.sub-title{
   color: #FFF;
+}
+.theme--dark.v-card{
+  background: #1D1a36;
+}
+.theme--dark.v-sheet{
+  background: #1D1a36;
+}
+.theme--dark.v-navigation-drawer{
+  background: #1D1a36;
+}
+.theme--dark.v-data-table{
+  background: #1D1a36;
+}
+.theme--dark.v-tabs > .v-tabs-bar{
+  background: #1D1a36;
+}
+.theme--dark.v-list{
+  background-color: transparent;
 }
 </style>

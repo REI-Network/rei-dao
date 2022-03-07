@@ -965,6 +965,9 @@ export default {
 .v-tab{
        text-transform: none !important;
    }
+   .theme--dark.v-tabs > .v-tabs-bar{
+       background: #1D1A36;
+   }
 @media screen and (max-width: 900px) {
    .trends-head{
         // display: inline !important;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="ops">
+    <div class="ops background">
       <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
       <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REI Network' && connection.network != 'REI Testnet' && connection.network != 'REI Devnet'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
@@ -42,7 +42,7 @@
       <v-card color="start_unstake" >
         <v-card-title>{{ $t('account.title') }}</v-card-title>
         <v-divider></v-divider>
-        <v-sheet class="ma-4 pa-4 grey" :class="dark ? 'current_wallet' : 'gradient'" rounded v-if="connection.walletName">
+        <v-sheet class="ma-4 pa-4" :class="dark ? 'current_wallet' : 'gradient'" rounded v-if="connection.walletName">
           <div class="d-flex stretch">
             <div class="d-flex text--#FFF">
               <span>{{ $t('account.connected_with') }}</span>
@@ -397,6 +397,9 @@ export default {
   display: flex;
   white-space: nowrap;
 }
+.theme--dark.v-sheet{
+  background: #403E59 !important;
+}
 .green-dot {
   width: 4px;
   height: 4px;
@@ -413,6 +416,10 @@ export default {
   .theme--dark.v-btn.v-btn--has-bg[data-v-07306f55]{
   background-color: #4856C0  !important;
 }
+.theme--dark.account-balance{
+  background: #6979F8;
+}
+
   .amount {
     padding-right: 0.5rem;
   }

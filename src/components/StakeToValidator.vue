@@ -131,7 +131,7 @@
                             tile
                             small
                             color="start_unstake"
-                            class="mr-4"
+                            class="mr-4 unstake_btn"
                             v-if='connection.address'
                             @click="handleClaim(item)"
                             style="border-radius:4px"
@@ -210,7 +210,7 @@
           </v-tabs-items>
       </v-col>
     </v-row>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="500" class="dialog-card">
       <v-card class="start_unstake" style="padding:12px;">
           <div class="dialog-validator">
             <v-card-title class="dialog-title">{{$t('stake.staking_info')}}</v-card-title>
@@ -267,7 +267,7 @@
         </v-list>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="stakeToNodeDialog" width="500">
+    <v-dialog v-model="stakeToNodeDialog" width="500" class="dialog-card">
       <v-card class="start_unstake" style="padding:12px">
             <div class="dialog-validator">
                 <v-card-title class="dialog-title">Voting To Other Validator</v-card-title>
@@ -339,7 +339,7 @@
         </v-list>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="claimDialog" width="500">
+    <v-dialog v-model="claimDialog" width="500" class="dialog-card">
       <v-card class="start_unstake">
             <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stake.claim_info')}}</v-card-title>
@@ -413,7 +413,7 @@
       </v-card>
     </v-dialog>
     <!-- reward -->
-    <v-dialog v-model="rewardDialog" width="500">
+    <v-dialog v-model="rewardDialog" width="500" class="dialog-card">
       <v-card>
           <v-card-title>{{$t('stake.reward_info')}}</v-card-title>
           <v-divider></v-divider>
@@ -454,7 +454,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="setCommissionRateDialog" width="500">
-      <v-card>
+      <v-card class="dialog-card">
           <v-card-title>{{$t('stake.set_commission_rate')}}</v-card-title>
           <v-divider></v-divider>
         <v-list rounded class="ma-4">
@@ -1105,9 +1105,14 @@ export default {
 .theme--dark .v-pagination .v-pagination__item{
         background-color: #393560;
     }
-.theme--dark.v-list{
-    background: #595777 !important;
-}
+// .theme--dark.v-list{
+//     background:#595777 !important;
+// }
+// .dialog-card{
+//         .theme--dark.v-sheet{
+//             background: #595777 !important;
+//         }
+//     }
 .vote-list{
     position: relative;
     .v-tab-left{
@@ -1121,8 +1126,12 @@ export default {
     margin-top:12px;
     margin-right: 12px;
 }
-.font-btn{
+.font-btn.v-btn.v-btn--has-bg{
     color: #FFF;
+    background: #6979f8;
+}
+.unstake_btn.theme--dark.v-btn.v-btn--has-bg{
+    background: #595777;
 }
 .cancel-btn{
     color:'#868e9e'
@@ -1163,13 +1172,12 @@ export default {
     .right-outline{
         display: flex;
         flex-direction: row; 
-        justify-content: flex-end;
+        justify-content: flex-end
     }
     .select-card{
         border:none;
         background-color: transparent;
-        width: 130px; 
-        // margin-top:12px;
+        width: 130px;
     }
     .select-second{
             width: 90px;

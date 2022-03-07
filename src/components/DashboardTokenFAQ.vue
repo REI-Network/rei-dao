@@ -141,7 +141,7 @@ export default {
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
             series: [
               {
-                name: 'Access From',
+                name: '',
                 type: 'pie',
                 radius: ['35%', '60%'],
                 center: ['30%', '50%'],
