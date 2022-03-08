@@ -87,6 +87,7 @@
 import Web3 from 'web3';
 import * as echarts from 'echarts';
 import dayjs from 'dayjs';
+import { mapGetters } from 'vuex';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 // const ONE_DAY_UNIX = 24 * 60 * 60
@@ -136,8 +137,10 @@ export default {
         }
     },
     async getStakeList() {
+
+        let url = this.apiUrl.graph;
         let client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         let blockNumber = await web3.eth.getBlockNumber();
@@ -304,8 +307,11 @@ export default {
     }
   },
   computed: {
-   
-  }
+   ...mapGetters({
+      apiUrl: 'apiUrl',
+      dark: 'dark'
+    }),
+  },
 };
 </script>
 

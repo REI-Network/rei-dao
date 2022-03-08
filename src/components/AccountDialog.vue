@@ -129,6 +129,7 @@ export default {
       txs: 'txs',
       pendingTxs: 'pendingTxs',
       connection: 'connection',
+      apiUrl: 'apiUrl',
       dark: 'dark'
     }),
     networkPrefix() {
@@ -166,7 +167,8 @@ export default {
       setTxs: 'setTxs',
       setConnection: 'setConnection',
       setFinishedTxs: 'setFinishedTxs',
-      setAssetInfo: 'setAssetInfo'
+      setAssetInfo: 'setAssetInfo',
+      setApiUrl: 'setApiUrl'
     }),
     tryLastConnection() {
       let lastConect = localStorage.getItem(LAST_CONNECTION);
@@ -279,19 +281,31 @@ export default {
       }
     },
     getApiUrl(){
-        let api = ''
+        let rpcApi = '',graphqlApi = '', chartApi='';
         if(this.connection.network == 'REI Devnet'){
-            api = process.env.VUE_APP_DEV_SERVER_API;
+            chartApi = process.env.VUE_APP_DEV_SERVER_API;
+            graphqlApi = process.env.VUE_APP_DEV_GRAPHQL_SERVER;
+            rpcApi = process.env.VUE_APP_DEV_RPC_SERVER;
         } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_SERVER_API
+            chartApi = process.env.VUE_APP_TEST_SERVER_API;
+            graphqlApi = process.env.VUE_APP_TEST_GRAPHQL_SERVER;
+            rpcApi = process.env.VUE_APP_TEST_RPC_SERVER;
         } else {
-            api = process.env.VUE_APP_SERVER_API;
+            chartApi = process.env.VUE_APP_SERVER_API;
+            graphqlApi = process.env.VUE_APP_MAIN_GRAPHQL_SERVER;
+            rpcApi = process.env.VUE_APP_MAIN_RPC_SERVER;
         }
-        return api;
+        this.setApiUrl({
+            apiUrl: {
+                rpc: rpcApi, 
+                graph: graphqlApi,
+                chart: chartApi
+            }
+        })
     },
     async loadAsset(){
-        let apiUrl = this.getApiUrl();
-        let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
+        this.getApiUrl();
+        let { data: { data:chartInfoData}} = await getAssetInfo(this.apiUrl.chart);
         console.log('chartInfoData',chartInfoData);
         this.setAssetInfo({
             assetInfo: chartInfoData

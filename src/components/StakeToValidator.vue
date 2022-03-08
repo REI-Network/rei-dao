@@ -545,6 +545,7 @@ import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+let client = null;
 
 export default {
   components:{
@@ -773,8 +774,9 @@ export default {
     },
     async getMyStakeList() {
         this.myStakeListLoading = true;
-        let client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         const getStakeinfos = gql`
@@ -1095,7 +1097,8 @@ export default {
   computed: {
     ...mapGetters({
       dark: 'dark',
-      connection: 'connection'
+      connection: 'connection',
+      apiUrl: 'apiUrl'
     })
   }
 };

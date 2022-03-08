@@ -277,6 +277,7 @@ import { postRpcRequest } from '../service/CommonService'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+let client = null;
 
 export default {
   filters,
@@ -445,8 +446,9 @@ export default {
     this.stakeListLoading = false;
     },
     async getDepositList() {
-        let client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         const deposit = gql`
@@ -493,8 +495,9 @@ export default {
 
     },
     async getMystakeByOther(){
-        let client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         const depositByOther = gql`
@@ -686,7 +689,8 @@ export default {
   computed: {
     ...mapGetters({
       dark: 'dark',
-      connection: 'connection'
+      connection: 'connection',
+      apiUrl:'apiUrl'
     })
   }
 };

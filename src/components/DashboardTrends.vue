@@ -140,7 +140,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      totalStakes: 'totalStakes'
+      totalStakes: 'totalStakes',
+      apiUrl: 'apiUrl'
     })
   },
   watch: {
@@ -173,8 +174,9 @@ export default {
       setTotalStakes: 'setTotalStakes',
     }),
     async getdata(){
+        let url = this.apiUrl.graph;
         client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         let data7d = [];

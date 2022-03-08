@@ -11,7 +11,7 @@ const routes = [
     path: '/',
     name: 'Index',
     //component: Index
-    redirect: '/stake'
+    redirect: '/dashboards'
   },
   {
     path: '/dashboards',

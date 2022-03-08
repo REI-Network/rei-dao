@@ -203,12 +203,12 @@ import { mapGetters } from 'vuex';
 import * as echarts from 'echarts';
 import filters from '../filters';
 import dayjs from 'dayjs';
-import { client } from '../service/ApolloClient';
-import { gql } from '@apollo/client/core';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 import util from '../utils/util';
 
 
-const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+let client = null;
 
 export default {
   filters,
@@ -238,6 +238,7 @@ export default {
    ...mapGetters({
       connection: 'connection',
       assetInfo: 'assetInfo',
+      apiUrl: 'apiUrl',
       dark: 'dark'
     }),
   },
@@ -309,7 +310,11 @@ export default {
         };
     },
     async getMyStakeInfo() {
-        //if(!this.connection.address) return
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
+            cache: new InMemoryCache(),
+        })
         const myStakesInfo = gql`
             query stakeInfos {
             stakeInfos(where:{

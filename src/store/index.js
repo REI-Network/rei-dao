@@ -33,7 +33,12 @@ const state = {
   usedCrude:0,
   leftCrudePercent:0,
   usedCrudePercent:0,
-  assetInfo:''
+  assetInfo:'',
+  apiUrl: {
+    rpc:'https//rpc.rei.network', 
+    graph:'https://api-graphql-main.rei.network/',
+    chart: ''
+  }
 };
 const getters = {
   connection: (state) => state.connection,
@@ -68,6 +73,7 @@ const getters = {
   leftCrudePercent: (state) => state.leftCrudePercent,
   usedCrudePercent: (state) => state.usedCrudePercent,
   assetInfo: (state) => state.assetInfo,
+  apiUrl: (state) => state.apiUrl,
 };
 
 const mutations = {
@@ -140,6 +146,9 @@ const mutations = {
   setAssetInfo: (state, payload) => {
     state.assetInfo = payload.assetInfo;
   },
+  setApiUrl: (state, payload) => {
+    state.apiUrl = payload.apiUrl;
+  },
 
 };
 
@@ -183,6 +192,9 @@ const actions = {
   },
   setAssetInfo: ({ commit }, payload) => {
     commit('setAssetInfo', payload);
+  },
+  setApiUrl: ({ commit }, payload) => {
+    commit('setApiUrl', payload);
   },
 };
 

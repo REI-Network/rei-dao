@@ -97,6 +97,7 @@ import util from '../utils/util'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+let client = null;
 
 export default {
   filters,
@@ -140,8 +141,9 @@ export default {
     }),
     async init() {
         //let apiUrl = this.getApiUrl();
-        let client = new ApolloClient({
-            uri: 'https://api-dao-devnet.rei.network/chainmonitor',
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
             cache: new InMemoryCache(),
         })
         const getUnStakeinfos = gql`
@@ -234,7 +236,8 @@ export default {
   computed: {
     ...mapGetters({
       dark: 'dark',
-      connection: 'connection'
+      connection: 'connection',
+      apiUrl: 'apiUrl'
     })
   }
 };
