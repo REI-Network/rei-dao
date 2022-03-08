@@ -17,9 +17,8 @@ const state = {
   txs: [],
   finishedTxs: [],
   darkMode: Number(localStorage.getItem('darkMode') || '2'),
-  language: localStorage.getItem('language') || (navigator.language ? navigator.language.split('-')[0] : 'en'),
+  language: 'en',
   languages: [
-    { key: 'zh', text: '中文' },
     { key: 'en', text: 'EN' }
   ],
   modes: [
