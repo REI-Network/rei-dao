@@ -120,7 +120,7 @@ export default {
   data() {
     return {
         radios:1,
-        tab:"1",
+        tab:0,
         myChart:null,
         myChart2:null,
         folders: [],
@@ -149,11 +149,12 @@ export default {
     })
   },
   mounted() {
+    this.getPriceChart();
     setTimeout(() => {
           this.myCharts()
       },500 
     ); 
-    this.getPriceChart()
+    
   },
   destroyed() {
     
@@ -212,7 +213,6 @@ export default {
                 sub:this.$t('dashborad.circulating_supply')
             },
         ]
-        console.log(chartInfoData);
         this.folders = needObject.map((item)=>{
             return {
                 subtitle:item.subtitle,
@@ -253,205 +253,200 @@ export default {
               }
             ]
         });
-        console.log('folders',this.folders)
+        // console.log('folders',this.folders)
     },
     myCharts(){
         if(this.tab===0){
             const chartPrice = this.$refs.chartPrice;
-        if(chartPrice){
-        this.myChart = this.$echarts.init(chartPrice) 
-        var option = {
-            tooltip:{
-                trigger:'axis',
-                formatter(params) {
-                var relVal = params[0].name;
-                for (var i = 0, l = params.length; i < l; i++) {
-                  var yValue = Number(params[i].value[1]).toFixed(5)
-                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
-                }
-                return relVal;
-              },
-            },
-            xAxis: {
-                type: 'time',
-                boundaryGap:false,
-                axisLine: {
-                    lineStyle: {
-                        type: 'solid',
-                        color: '#868e9e', //坐标线的颜色
-                        width: '1' //坐标线的宽度
-                    }
-                },
-                splitLine:{show: false}
-            },
-            yAxis: {
-                type: 'value',
-                splitLine: {
-                    show:false,
+            if(chartPrice){
+                this.myChart = this.$echarts.init(chartPrice);
+                var option = {
+                    tooltip:{
+                        trigger:'axis',
+                        formatter(params) {
+                            var relVal = params[0].name;
+                            for (var i = 0, l = params.length; i < l; i++) {
+                                var yValue = Number(params[i].value[1]).toFixed(5);
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                            }
+                            return relVal;
+                        },
                     },
-                    axisLine: {
-                        lineStyle: {
-                            type: 'solid',
-                            color: '#868e9e', //坐标线的颜色
-                            width: '1' //坐标线的宽度
-                        }
+                    xAxis: {
+                        type: 'time',
+                        boundaryGap:false,
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: '#868e9e', //坐标线的颜色
+                                width: '1' //坐标线的宽度
+                            }
+                        },
+                        splitLine:{show: false}
                     },
-            },
+                    yAxis: {
+                        type: 'value',
+                        splitLine: {
+                            show:false,
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: '#868e9e', //坐标线的颜色
+                                width: '1' //坐标线的宽度
+                            }
+                        },
+                    },
 
-            legend: {
-                selectedMode: false,
-                itemWidth: 16,
-                itemHeight: 16,
-                top: 'bottom',
-                textStyle: {
-                    fontSize: 16,
-                    color:'#868e9e'
-                },
-            },
-            series: [
-                {
-                    name:'USD',
-                    data: [],
-                    type: 'line',
-                    symbol: "none",
-                    itemStyle:{
-                        color:'#2F86F6'
+                    legend: {
+                        selectedMode: false,
+                        itemWidth: 16,
+                        itemHeight: 16,
+                        top: 'bottom',
+                        textStyle: {
+                            fontSize: 16,
+                            color:'#868e9e'
+                        },
                     },
-                    areaStyle: {
-                        //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-                            offset: 0,
-                            color: 'rgba(80,141,255,0.39)'
-                        }, {
-                            offset: .34,
-                            color: 'rgba(56,155,255,0.25)'
-                        },{
-                            offset: 1,
-                            color: 'rgba(38,197,254,0.00)'
-                        }])
-                    }
+                    series: [
+                        {
+                            name:'USD',
+                            data: [],
+                            type: 'line',
+                            symbol: "none",
+                            itemStyle:{
+                                color:'#2F86F6'
+                            },
+                            areaStyle: {
+                                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+                                    offset: 0,
+                                    color: 'rgba(80,141,255,0.39)'
+                                }, {
+                                    offset: .34,
+                                    color: 'rgba(56,155,255,0.25)'
+                                },{
+                                    offset: 1,
+                                    color: 'rgba(38,197,254,0.00)'
+                                }])
+                            }
+                        }
+                    ],
                 }
-            ],
-        };
-        this.myChart.setOption(option)
-         this.myChart.setOption({
-            series: [
-              {
-                data: this.priceData
-              }
-            ]
-        });
-        this.myChart.setOption({
-            series: [
-            {
-                data: this.resFeeStakeData
+            
+                
+                this.myChart.setOption(option);
+                this.myChart.setOption({
+                    series: [
+                        {
+                            data: this.priceData
+                        }]
+                });
+                window.addEventListener("resize", function() {
+                    this.myChart.resize()
+                })
             }
-            ]
-        });
-        window.addEventListener("resize", function() {
-          this.myChart.resize()
-        })
-    }
-    this.$on('hook:destroyed',()=>{
-         window.removeEventListener("resize", function() {
-            this.myChart.resize();
-        });
-    })
-        }else{
-        const chartPrice2 = this.$refs.chartPrice2;
-        if(chartPrice2){
-        this.myChart2= this.$echarts.init(chartPrice2) 
-        var option2 = {
-            tooltip:{
-                trigger:'axis',
-                formatter(params) {
-                var relVal = params[0].name;
-                for (var i = 0, l = params.length; i < l; i++) {
-                  var yValue = Number(params[i].value[1]).toFixed(5)
-                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
-                }
-                return relVal;
-              },
-            },
-            xAxis: {
-                type: 'time',
-                boundaryGap:false,
-                axisLine: {
-                        lineStyle: {
-                            type: 'solid',
-                            color: '#868e9e', //坐标线的颜色
-                            width: '1' //坐标线的宽度
+            this.$on('hook:destroyed',()=>{
+                window.removeEventListener("resize", function() {
+                    this.myChart.resize();
+                });
+            })
+            
+        } else {
+            const chartPrice2 = this.$refs.chartPrice2;
+            if(chartPrice2){
+                this.myChart2= this.$echarts.init(chartPrice2) 
+                var option2 = {
+                    tooltip:{
+                        trigger:'axis',
+                        formatter(params) {
+                        var relVal = params[0].name;
+                        for (var i = 0, l = params.length; i < l; i++) {
+                        var yValue = Number(params[i].value[1]).toFixed(5)
+                            relVal +=params[i].marker + params[i].seriesName +':'+yValue;
                         }
-                    },
-                    splitLine:{show: false}
-            },
-            yAxis: {
-                type: 'value',
-                splitLine: {
-                    show:false,
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            type: 'solid',
-                            color: '#868e9e', //坐标线的颜色
-                            width: '1' //坐标线的宽度
-                        }
-                    },
-            },
-
-            legend: {
-                selectedMode: false,
-                itemWidth: 16,
-                itemHeight: 16,
-                top: 'bottom',
-                textStyle: {
-                    fontSize: 16,
-                    color:'#868e9e'
-                },
-            },
-            series: [
-                {
-                    name:'USD',
-                    data: [],
-                    type: 'line',
-                    symbol: "none",
-                    itemStyle:{
-                        color:'rgb(80,14,25)'
-                    },
-                    areaStyle: {
-                        //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-                            offset: 0,
-                            color: 'rgba(80,14,25,0.39)'
-                        }, {
-                            offset: .34,
-                            color: 'rgba(56,14,25,0.25)'
-                        },{
-                            offset: 1,
-                            color: 'rgba(38,19,25,0.00)'
-                        }])
+                        return relVal;
                     }
-                }
-            ],
-        };
-        this.myChart2.setOption(option2)
-        this.myChart2.setOption({
-            series: [
-              {
-                data: this.marketData
-              }
-            ]
-        });
-        window.addEventListener("resize", function() {
-          this.myChart2.resize()
-        })
-    }
-    this.$on('hook:destroyed',()=>{
-         window.removeEventListener("resize", function() {
-           this.myChart2.resize();
-        });
-    })
+                    },
+                    xAxis: {
+                        type: 'time',
+                        boundaryGap:false,
+                        axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#868e9e', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
+                            splitLine:{show: false}
+                    },
+                    yAxis: {
+                        type: 'value',
+                        splitLine: {
+                            show:false,
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    type: 'solid',
+                                    color: '#868e9e', //坐标线的颜色
+                                    width: '1' //坐标线的宽度
+                                }
+                            },
+                    },
 
+                    legend: {
+                        selectedMode: false,
+                        itemWidth: 16,
+                        itemHeight: 16,
+                        top: 'bottom',
+                        textStyle: {
+                            fontSize: 16,
+                            color:'#868e9e'
+                        },
+                    },
+                    series: [
+                        {
+                            name:'USD',
+                            data: [],
+                            type: 'line',
+                            symbol: "none",
+                            itemStyle:{
+                                color:'rgb(80,14,25)'
+                            },
+                            areaStyle: {
+                                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+                                    offset: 0,
+                                    color: 'rgba(80,14,25,0.39)'
+                                }, {
+                                    offset: .34,
+                                    color: 'rgba(56,14,25,0.25)'
+                                },{
+                                    offset: 1,
+                                    color: 'rgba(38,19,25,0.00)'
+                                }])
+                            }
+                        }
+                    ],
+                }
+                
+                this.myChart2.setOption(option2)
+                this.myChart2.setOption({
+                    series: [
+                    {
+                        data: this.marketData
+                    }
+                    ]
+                });
+                window.addEventListener("resize", function() {
+                this.myChart2.resize()
+                })
+            }
+            this.$on('hook:destroyed',()=>{
+                window.removeEventListener("resize", function() {
+                this.myChart2.resize();
+                });
+            })
         }
     }
   }

@@ -156,10 +156,14 @@ export default {
         },
         intervalModel:{
             handler(val){
-                console.log(val)
                 this.changeInterval(val);
             }
-        }
+        },
+        '$store.state.connection': function() {
+            this.getdata();
+            this.getGasSaveData();
+            this.getGasSaveDataSeven();
+        },
     },
   mounted() {
       this.getdata();
@@ -250,7 +254,7 @@ export default {
                 }
             ]
         });
-    
+        console.log('this.resTotalData',this.resTotalData)
         let _dataVoting = dataVoting.concat(data24h).reverse();
         this.resVotingData = _dataVoting.map(function(item,i){
             return {
