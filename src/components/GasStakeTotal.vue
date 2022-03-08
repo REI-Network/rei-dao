@@ -218,19 +218,11 @@ export default {
         let contract = new web3.eth.Contract(abiConfig,config_contract);
         let feeContractAddress = await contract.methods.fee().call();
         this.feeContract = new web3.eth.Contract(abiFee,feeContractAddress);
-        //this.calculatePercent();
     },
     deposit(){
         this.form.address = this.connection.address;
         this.depositDialog = true;
     },
-    calculatePercent(){
-
-        let total = web3.utils.toBN(web3.utils.toWei(this.leftCrude)).add(web3.utils.toBN(web3.utils.toWei(this.usedCrude)));
-        let leftPercent =  web3.utils.toBN(web3.utils.toWei(this.leftCrude)).div(total);
-        console.log('leftPercent',leftPercent)
-    },
-    
     async submitStaking(){
          try{
             if(!this.$refs.stakeform.validate()) return;

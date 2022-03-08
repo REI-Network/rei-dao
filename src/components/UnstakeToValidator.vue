@@ -140,7 +140,6 @@ export default {
       addTx: 'addTx'
     }),
     async init() {
-        //let apiUrl = this.getApiUrl();
         let url = this.apiUrl.graph;
         client = new ApolloClient({
             uri: `${url}chainmonitor`,
@@ -168,13 +167,8 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log('unStakeInfos',unStakeInfos)
         this.nodeList = unStakeInfos
 
-        console.log(this.nodeList)
-    },
-    getApiUrl(){
-        return this.connection.network == 'REI Network' ? process.env.VUE_APP_SERVER_API : process.env.VUE_APP_TEST_SERVER_API;
     },
     cancelClaim() {
 

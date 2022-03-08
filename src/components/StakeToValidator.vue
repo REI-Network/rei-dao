@@ -664,9 +664,6 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-    getApiUrl(){
-        return this.connection.network == 'REI Network' ? process.env.VUE_APP_SERVER_API : process.env.VUE_APP_TEST_SERVER_API;
-    },
     async init() {
         
         this.stakeListLoading = true;
@@ -767,7 +764,6 @@ export default {
         }
         this.indexedNodeList = indexedNodeList;
         this.nodeList = activeList.concat(notActiveList);
-        console.log(this.nodeList)
         this.notActiveList = notActiveList;
         this.stakeListLoading = false;
         this.getMyStakeList();
@@ -795,7 +791,6 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log('deposits',stakeInfos)
         let myStakeList = stakeInfos;
         if(myStakeList.length>0){
 
@@ -952,7 +947,6 @@ export default {
         if(util.isNumber(this.claimForm.amount)&&this.claimForm.amount>0) {
             const amount = await this.stakeManageInstance.methods.estimateSharesToAmount(this.currentItem.address, web3.utils.toWei(this.claimForm.amount)).call()
             this.receiveBalance = web3.utils.fromWei(web3.utils.toBN(amount))
-            console.log(amount)
         }
     },
     stakeToNode() {
@@ -1009,7 +1003,6 @@ export default {
             const rewardRes = await this.stakeManageInstance.methods.startClaim(this.connection.address, web3.utils.toWei(this.rewardForm.amount)).send({ 
                 from: this.connection.address
             })
-            console.log('rewardRes',rewardRes)
             if(rewardRes.transactionHash){
                 this.addTx({
                   tx: {
@@ -1050,7 +1043,6 @@ export default {
             const setRateRes = await this.stakeManageInstance.methods.setCommissionRate(Number(this.rateForm.amount)).send({ 
                 from: this.connection.address
             })
-            console.log('setRateRes',setRateRes)
             if(setRateRes.transactionHash){
                 this.addTx({
                   tx: {

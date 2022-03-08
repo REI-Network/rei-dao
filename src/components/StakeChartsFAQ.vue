@@ -152,10 +152,6 @@ export default {
         for(let i = 0; i < 7; i++){
             arr.push(startblock-28800*i)
         }
-        console.log('hour',dayjs().hour())
-
-        
-
 
         const totalStakesQl = gql`
          query totalStakes{

@@ -37,7 +37,7 @@ const state = {
   apiUrl: {
     rpc:'https//rpc.rei.network', 
     graph:'https://api-graphql-main.rei.network/',
-    chart: ''
+    chart: 'https://api-market-main.rei.network/'
   }
 };
 const getters = {

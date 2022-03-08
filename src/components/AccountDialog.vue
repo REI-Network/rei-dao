@@ -306,7 +306,6 @@ export default {
     async loadAsset(){
         this.getApiUrl();
         let { data: { data:chartInfoData}} = await getAssetInfo(this.apiUrl.chart);
-        console.log('chartInfoData',chartInfoData);
         this.setAssetInfo({
             assetInfo: chartInfoData
         })

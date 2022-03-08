@@ -141,6 +141,7 @@ export default {
       gasStakeTotalAmount: 'gasStakeTotalAmount',
       leftCrude: 'leftCrude',
       assetInfo: 'assetInfo',
+      apiUrl: 'apiUrl',
       dark: 'dark'
     }),
   },
@@ -161,19 +162,8 @@ export default {
         this.getTotalStake();
         this.getLeftCrude();
     },
-    getRpcUrl(){
-        let api = ''
-        if(this.connection.network == 'REI Devnet'){
-            api = process.env.VUE_APP_DEV_RPC_SERVER;
-        } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_RPC_SERVER
-        } else {
-            api = process.env.VUE_APP_MAIN_RPC_SERVER;
-        }
-        return api;
-    },
     async getTotalStake(){
-         let apiUrl = this.getRpcUrl();
+         let apiUrl = this.apiUrl.rpc;
          let arr = [];
          arr.push(this.connection.address);
          arr.push('latest')
@@ -188,7 +178,7 @@ export default {
         })
     },
     async getLeftCrude(){
-         let apiUrl = this.getRpcUrl();
+         let apiUrl = this.apiUrl.rpc;
          let arr = [];
          arr.push(this.connection.address);
          arr.push('latest')
@@ -197,7 +187,6 @@ export default {
              params:arr
          }
         let res = await postRpcRequest(apiUrl,param);
-        console.log('leftCrude',res)
         let leftCrude = web3.utils.fromWei(web3.utils.toBN(res.data.result));
         this.setLeftCrude({
             leftCrude: leftCrude

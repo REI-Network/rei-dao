@@ -76,7 +76,7 @@
                 style="padding-bottom:32px;height:506px;"
                 color="background"
             >
-                <v-subheader class="price-more sub-title"><h3>Price And Market Stats</h3><div>More>></div></v-subheader>
+                <v-subheader class="price-more sub-title"><h3>Price And Market Stats</h3></v-subheader>
                 <v-list
                     subheader
                     two-line
@@ -112,7 +112,7 @@
 <script>
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
-import { getAssetPrice, getAssetInfo } from '../service/CommonService'
+import { getAssetPrice } from '../service/CommonService'
 import dayjs from 'dayjs'
 
 /* eslint-disable no-undef */
@@ -146,6 +146,8 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
+      apiUrl: 'apiUrl',
+      assetInfo: 'assetInfo'
     })
   },
   mounted() {
@@ -160,35 +162,27 @@ export default {
     
   },
   methods: {
-    getApiUrl(){
-        let api = ''
-        if(this.connection.network == 'REI Devnet'){
-            api = process.env.VUE_APP_DEV_SERVER_API;
-        } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_SERVER_API
-        } else {
-            api = process.env.VUE_APP_SERVER_API;
-        }
-        return api;
-    },
     async getPriceChart(){
-        let apiUrl = this.getApiUrl();
+        let apiUrl = this.apiUrl.chart;
         let chartData = await getAssetPrice(apiUrl);
-        let { data: { data:chartInfoData}} = await getAssetInfo(apiUrl);
+        let chartInfoData = this.assetInfo;
         // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
         //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
         let needObject=[
             {
                 subtitle:'current_price',
-                sub:this.$t('dashborad.current_price')
+                sub:this.$t('dashborad.current_price'),
+                currency:'$'
             },
             {
                 subtitle:'market_cap',
-                sub:this.$t('dashborad.market_cap')
+                sub:this.$t('dashborad.market_cap'),
+                currency:'$'
             },
             {
                 subtitle:'total_volume',
-                sub:this.$t('dashborad.total_volume')
+                sub:this.$t('dashborad.total_volume'),
+                currency:'$'
             },
 
             {
@@ -197,11 +191,13 @@ export default {
             },
             {
                 subtitle:'high_24h',
-                sub:this.$t('dashborad.high')
+                sub:this.$t('dashborad.high'),
+                currency:'$'
             },
             {
                 subtitle:'low_24h',
-                sub:this.$t('dashborad.low')
+                sub:this.$t('dashborad.low'),
+                currency:'$'
             },
             {
                 subtitle:'price_change_percentage_24h',
@@ -218,6 +214,7 @@ export default {
                 subtitle:item.subtitle,
                 number:chartInfoData[item.subtitle],
                 sub:item.sub,
+                coin: item.currency
             }
         })
 

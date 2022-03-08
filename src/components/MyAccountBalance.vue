@@ -284,7 +284,6 @@ export default {
                     ]
                 })
         }
-        console.log('balanceResult',balanceResult)
         this.myChart.setOption({
             series: [
               {
@@ -373,7 +372,6 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log(unStakeInfos)
         if(unStakeInfos.length>0){
             let total = 0;
             for(let i = 0;i < unStakeInfos.length;i++){

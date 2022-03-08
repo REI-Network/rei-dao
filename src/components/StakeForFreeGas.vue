@@ -387,29 +387,6 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-
-    getApiUrl(){
-        let api = ''
-        if(this.connection.network == 'REI Devnet'){
-            api = process.env.VUE_APP_DEV_SERVER_API;
-        } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_SERVER_API
-        } else {
-            api = process.env.VUE_APP_SERVER_API;
-        }
-        return api;
-    },
-    getRpcUrl(){
-        let api = ''
-        if(this.connection.network == 'REI Devnet'){
-            api = process.env.VUE_APP_DEV_RPC_SERVER;
-        } else if(this.connection.network == 'REI Testnet'){
-             api = process.env.VUE_APP_TEST_RPC_SERVER
-        } else {
-            api = process.env.VUE_APP_MAIN_RPC_SERVER;
-        }
-        return api;
-    },
     async init() {
         this.stakeListLoading = true;
         let contract = new web3.eth.Contract(abiConfig,config_contract);
@@ -423,27 +400,7 @@ export default {
         //this.getUsedCrude();
         this.getDepositList();
         this.getMystakeByOther();
-
-
-
-        // let userTotalAmount = await this.feeContract.methods.userTotalAmount(this.connection.address).call()
-        // console.log('userTotalAmount',userTotalAmount)
-
-
-        // let nowTime = Date.now();
-        // let passTime = nowTime - feeUserDeposit.timestamp*1000
-        // console.log('passTime',passTime)
-        // let passTimepercent = passTime/(3*24*3600*1000);
-        // let availableTime = passTimepercent>1 ? 1 : passTimepercent
-        // this.userDeposit = {
-        //     amount: web3.utils.fromWei(web3.utils.toBN(feeUserDeposit.amount)),
-        //     timestamp: feeUserDeposit.timestamp,
-        //     availableTime: util.numberPrecision(availableTime*100,2)
-        // }
-
-    //    let estimateWithdrawableTimestamp =  await this.feeContract.methods.estimateWithdrawableTimestamp(this.connection.address,this.connection.address).call()
-    //     console.log('estimateWithdrawableTimestamp',estimateWithdrawableTimestamp)
-    this.stakeListLoading = false;
+        this.stakeListLoading = false;
     },
     async getDepositList() {
         let url = this.apiUrl.graph;
@@ -489,10 +446,6 @@ export default {
         })
         let res = await Promise.all(depositsList);
         this.nodeList = res;
-        console.log('res',res)
-
-        
-
     },
     async getMystakeByOther(){
         let url = this.apiUrl.graph;
@@ -517,12 +470,11 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log('depositsByOtherData',depositsByOtherData)
 
         this.nodeListOther = depositsByOtherData;
     },
     async getTotalStake(){
-         let apiUrl = this.getRpcUrl();
+         let apiUrl = this.apiUrl.rpc;
          let arr = [];
          arr.push(this.connection.address);
          arr.push('latest')
@@ -537,7 +489,7 @@ export default {
         })
     },
     async getLeftCrude(){
-         let apiUrl = this.getRpcUrl();
+         let apiUrl = this.apiUrl.rpc;
          let arr = [];
          arr.push(this.connection.address);
          arr.push('latest')

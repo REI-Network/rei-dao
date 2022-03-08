@@ -148,7 +148,6 @@ export default {
        tab:{
            handler(newValue){
                this.tab = newValue;
-            //    console.log('oldValue',oldValue)
                setTimeout(() => {
                     this.trendsCharts(); 
                 }, 200);
@@ -218,7 +217,6 @@ export default {
                 totalDataSeven.push(data7d[data7d.length-1]);
             }
         }
-        console.log('totalDataSeven',totalDataSeven);
 
         let _data = data.concat(data24h).reverse();
         _data.shift();
@@ -254,7 +252,6 @@ export default {
                 }
             ]
         });
-        console.log('this.resTotalData',this.resTotalData)
         let _dataVoting = dataVoting.concat(data24h).reverse();
         this.resVotingData = _dataVoting.map(function(item,i){
             return {

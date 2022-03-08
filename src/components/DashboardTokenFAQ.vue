@@ -161,11 +161,10 @@ export default {
                     show: false
                 },
                 data: [
-                    { value: 75, name: 'Circulated' },
-                    { value: 15, name: 'REIecosystem' },
-                    // { value: 580, name: 'Dev Rewards' },
-                    { value: 5, name: 'Maketing' },
-                    { value: 5, name: 'Node Rewards' }
+                    { value: '75', name: 'Circulated' },
+                    { value: '15', name: 'REIecosystem' },
+                    { value: '5', name: 'Maketing' },
+                    { value: '5', name: 'Node Rewards' }
                 ],
               }
             ]
