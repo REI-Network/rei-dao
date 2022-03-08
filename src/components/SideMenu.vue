@@ -19,8 +19,8 @@
     </v-sheet>
     <v-divider></v-divider>
     <v-list>
-      <template v-for="{ icon, text, link, name } in links">
-        <v-list-item :key="text" link :to="link" v-if="hideItem(name)">
+      <template v-for="{ icon, text, link, show } in links">
+        <v-list-item :key="text" link :to="link" v-if="show">
             <v-list-item-icon>
             <v-icon>{{ icon }}</v-icon>
             </v-list-item-icon>
@@ -37,32 +37,37 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      showItem:false,
       version: process.env.VUE_APP_VERSION,
       links: [
         {
           icon: 'mdi-alpha-m-box-outline',
           text: 'Dashboards',
           link: '/dashboards',
-          name: 'dashboards'
+          name: 'dashboards',
+          show: true,
         },
         {
           icon: 'mdi-calendar-account-outline',
           text: 'MyAccount',
           link: '/myAccount',
-          name: 'myAccount'
+          name: 'myAccount',
+          show: true,
         },
         {
           icon: 'mdi-text-box-check-outline',
           text: 'stake.staking',
           link: '/stake',
-          name: 'stake'
+          name: 'stake',
+          show: true,
         },
         {
           icon: 'mdi-sack',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
-          name: 'stakeforgas'
-        },
+          name: 'stakeforgas',
+          show: false,
+        }
       ]
     };
   },
@@ -72,13 +77,16 @@ export default {
         dark: 'dark'
     })
   },
-  methods: {
-    hideItem(item) {
-        if(item =='stakeforgas' && this.connection.network == 'REI Network'){
-            return false
+  watch: {
+    '$store.state.connection': function() {
+        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+            let item = this.links[3]
+            item.show = true;
+            this.$set(this.links, 3, item)
         }
-        return true
     }
+  },
+  methods: {
   }
 };
 </script>

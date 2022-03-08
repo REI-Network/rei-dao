@@ -1,7 +1,7 @@
 <template>
   <v-bottom-navigation app class="d-md-none" color="primary" background-color="background">
       <template v-for="link in links">
-        <v-btn  @click="go($event, link.link)" :key="link.text" v-if="hideItem(link.name)">
+        <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show">
         <span>{{ $t(link.text) }}</span>
         <v-icon>{{ link.icon }}</v-icon>
         </v-btn>
@@ -18,25 +18,29 @@ export default {
           icon: 'mdi-alpha-m-box-outline',
           text: 'Dashboards',
           link: '/dashboards',
-          name: 'dashboards'
+          name: 'dashboards',
+          show: true
         },
         {
           icon: 'mdi-calendar-account-outline',
           text: 'MyAccount',
           link: '/myAccount',
-          name: 'myAccount'
+          name: 'myAccount',
+          show: true
         },
         {
           icon: 'mdi-text-box-check-outline',
           text: 'stake.staking',
           link: '/stake',
-          name: 'stake'
+          name: 'stake',
+          show: true
         },
         {
           icon: 'mdi-sack',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
-          name: 'stakeforgas'
+          name: 'stakeforgas',
+          show: false
         }
       ]
     };
@@ -46,6 +50,15 @@ export default {
         connection: 'connection',
         dark: 'dark'
     })
+  },
+  watch: {
+    '$store.state.connection': function() {
+        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+            let item = this.links[3]
+            item.show = true;
+            this.$set(this.links, 3, item)
+        }
+    }
   },
   methods: {
     go(e, link) {
