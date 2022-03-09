@@ -1,7 +1,7 @@
 <template>
-  <v-container class="stake_background">
+  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
-      <h3>Gas Stake</h3>
+      <h1>Gas Stake</h1>
       <a href="https://docs.rei.network/guides/stake-for-free-gas" class="title-detailed">How To Get Crude By Stake REI?</a>
     </div>
     <v-row>

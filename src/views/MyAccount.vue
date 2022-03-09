@@ -1,7 +1,7 @@
 <template>
-  <v-container class="stake_background">
+  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
-      <h3>My Account</h3>
+      <h1>My Account</h1>
       <div class="title-detailed">Get More Information About Your Personal Account,About Balances,Voting,Etc.</div>
     </div>
     <v-row>

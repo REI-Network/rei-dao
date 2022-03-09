@@ -312,7 +312,7 @@ export default {
 .total-progress{
    padding:28px;
    margin:0;
-   width:62%;
+   width:60.5%;
 }
 .update-time{
     display: flex;

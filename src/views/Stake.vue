@@ -1,7 +1,7 @@
 <template>
-  <v-container class="stake_background">
+  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
     <div class="header-title">
-      <h3>Voting</h3>
+      <h1>Voting</h1>
       <div class="title-detailed">How To Become A Node Validator?</div>
     </div>
     <v-row>

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="background">
+  <v-container style="margin-top:16px;margin-bottom:28px;" class="background">
     <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
         <v-tab key="1">My Gas Stake</v-tab>
         <v-tab key="2">Staking to Me by Others</v-tab> 

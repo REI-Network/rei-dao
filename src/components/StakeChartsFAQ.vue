@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin-top:28px" class="stake_background">
+  <v-container style="margin-top:40px;margin-bottom:28px;" class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
       <v-col cols="12" md="12" sm="12" class="charts-faq"> 
@@ -56,7 +56,7 @@
                   v-for="(item, i) in faqList"
                   :key="i">
                   <a :href='item.url'>
-                    <v-card class="ma-4 list-card" outlined>
+                    <v-card class="ma-4 list-card" outlined color="faq_border">
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title"></v-list-item-title>
                       <v-list-item-subtitle v-text="item.content">   
@@ -64,7 +64,7 @@
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-icon
-                        color="primary"
+                        color="right_icon"
                         style="margin-left:20px"
                         size="22"
                       >
@@ -318,7 +318,7 @@ export default {
     // align-items: center;
     padding: 0;
     .total-charts{
-      width: 60%;
+      width: 58.5%;
     }
     .faq-get{
       width:38%;

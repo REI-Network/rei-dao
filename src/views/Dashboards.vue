@@ -1,7 +1,7 @@
 <template>
-  <v-container class="stake_background">
+  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
-      <h3>Dashboard</h3>
+      <h1>Dashboard</h1>
       <div class="title-detailed">Get More Information About The Rei Network</div>
     </div>
     <v-row>
@@ -44,7 +44,7 @@ export default {
 
 <style scoped lang="scss">
 .header-title{
-  margin: 1.5rem 0;
+  margin: 2rem 0;
     .title-detailed{
       font-size: 14px;
       color: #868E9E;

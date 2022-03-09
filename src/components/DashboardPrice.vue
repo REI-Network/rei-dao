@@ -2,13 +2,13 @@
   <v-container>
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
-      <v-col cols="12" md="12" sm="12" class="charts-faq"> 
+      <v-col class="charts-faq"> 
         <div class="total-charts">
           <v-card
             class="mx-auto"
-            tile
-            style="padding-bottom:24px;margin-top:12px;"
+            tile 
             color="background"
+            style="margin-top:12px;height:480px"
           >
             <v-row class="head-chips" justify="space-between">
                  <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
@@ -52,12 +52,12 @@
                </div>
                 <v-tabs-items v-model="tab">
                     <v-tab-item key="1">
-                        <div ref="chartPrice"  style="height:400px"></div> 
+                        <div ref="chartPrice"  style="height:376px"></div> 
                     </v-tab-item>
                     <v-tab-item key="2">
-                        <div ref="chartPrice2"  style="height:400px"></div>
+                        <div ref="chartPrice2"  style="height:376px"></div>
                     </v-tab-item>
-                    <div class="update-time" style="margin-top:-20px">
+                    <!-- <div class="update-time" style="margin-top:-20px">
                         <v-icon
                             color="primary"
                             size="12"
@@ -65,7 +65,7 @@
                                 mdi-clock-time-ten-outline
                             </v-icon>
                                 1h Ago
-                        </div>
+                        </div> -->
                 </v-tabs-items>
           </v-card>          
         </div>
@@ -73,8 +73,8 @@
             <v-card
                 class="mx-auto"     
                 tile
-                style="padding-bottom:32px;height:506px;"
                 color="background"
+                style="height:480px"
             >
                 <v-subheader class="price-more sub-title"><h3>Price And Market Stats</h3></v-subheader>
                 <v-list
@@ -94,7 +94,7 @@
                         </v-list-item-action>
                     </v-list-item>
                </v-list>
-               <div class="update-time">
+               <!-- <div class="update-time">
                     <v-icon
                         color="primary"
                         size="12"
@@ -102,7 +102,7 @@
                        mdi-clock-time-ten-outline
                     </v-icon>
                     1h Ago
-                </div> 
+                </div>  -->
             </v-card>
         </div>
       </v-col>
@@ -456,11 +456,14 @@ export default {
         justify-content: space-between;
         padding: 0;
         background-color:transparent;
+        height: 480px;
+        padding-top:16px;
     .total-charts{
-        width: 60%;
+        width: 58.5%;
     }
     .head-chips{
         padding:0 12px;
+        padding-bottom: 8px;
     }
     .trend-head{
         display: flex;

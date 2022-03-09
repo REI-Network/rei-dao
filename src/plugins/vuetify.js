@@ -40,7 +40,9 @@ export default new Vuetify({
         validator:'#868E9E',
         btn_button:'#868E9E',
         chip_group:'#6979F8',
+        right_icon:'#868E9E',
         header_account:'#D3D3D3',
+        faq_border:"#E2E4EA"
       },
       dark: {
         primary: '#FFF',
@@ -57,6 +59,7 @@ export default new Vuetify({
         validator:'#868E9E',
         right_icon:'#5c5a7a',
         header_account:'#6979F8',
+        faq_border:"#504985"
       },
     },
     options: {

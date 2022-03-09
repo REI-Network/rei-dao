@@ -5,8 +5,8 @@
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
             <v-img
                 class="mr-4" 
-                max-height="60"
-                max-width="180"
+                max-height="54"
+                max-width="164"
                 src="../assets/images/REI DAO.svg"
                 ></v-img>
           

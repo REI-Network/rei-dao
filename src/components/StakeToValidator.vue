@@ -26,7 +26,7 @@
             </v-btn>
             </v-card-actions>    -->
             <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-                    <v-tab key="11" class="v-tab-left">{{$t('stake.active_nodelist')}}</v-tab>
+                    <v-tab key="11" class="v-tab-left">Validator List</v-tab>
                     <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
             </v-tabs>
             <!-- <v-divider /> -->
@@ -72,6 +72,7 @@
                                 item-color="vote_button"
                                 dense
                                 style="margin-left: 18px;"
+                                height="28"
                             ></v-select>
                         </v-card>
                         <v-card outlined class="select-card select-second">
@@ -211,13 +212,13 @@
       </v-col>
     </v-row>
     <v-dialog v-model="dialog" width="500" class="dialog-card">
-      <v-card class="start_unstake" style="padding:12px;">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'">
           <div class="dialog-validator">
             <v-card-title class="dialog-title">{{$t('stake.staking_info')}}</v-card-title>
                 <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>  
           </div>   
           <!-- <v-divider></v-divider> -->
-        <v-list rounded class="ma-4 start_unstake">
+        <v-list rounded class="ma-dialog start_unstake">
           <v-form 
             ref="stakeform"
             lazy-validation
@@ -268,13 +269,13 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="stakeToNodeDialog" width="500" class="dialog-card">
-      <v-card class="start_unstake" style="padding:12px">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'" style="padding:12px">
             <div class="dialog-validator">
                 <v-card-title class="dialog-title">Voting To Other Validator</v-card-title>
                 <div @click="cancelStakingToNode" class="close-btn"><v-icon>mdi-close</v-icon> </div>                     
             </div>
             <!-- <v-divider></v-divider> -->
-        <v-list rounded class="ma-4 start_unstake">
+        <v-list rounded class="ma-dialog start_unstake">
           <v-form
             ref="stakeToNodeform"
             lazy-validation
@@ -340,13 +341,13 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="claimDialog" width="500" class="dialog-card">
-      <v-card class="start_unstake">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'">
             <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stake.claim_info')}}</v-card-title>
                 <div @click="cancelClaim" class="close-btn"> <v-icon>mdi-close</v-icon></div>  
             </div>          
           <!-- <v-divider></v-divider> -->
-        <v-list rounded class="ma-4 start_unstake">
+        <v-list rounded class="ma-dialog start_unstake">
           <v-form
             ref="claimform"
             lazy-validation
@@ -417,7 +418,7 @@
       <v-card>
           <v-card-title>{{$t('stake.reward_info')}}</v-card-title>
           <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+        <v-list rounded class="ma-dialog">
           <v-form
             ref="claimRewardForm"
             lazy-validation
@@ -457,7 +458,7 @@
       <v-card class="dialog-card">
           <v-card-title>{{$t('stake.set_commission_rate')}}</v-card-title>
           <v-divider></v-divider>
-        <v-list rounded class="ma-4">
+        <v-list rounded class="ma-dialog">
           <v-form
             ref="form"
             lazy-validation
@@ -1097,17 +1098,24 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.ma-dialog{
+    padding:16px;
+}
 .theme--dark .v-pagination .v-pagination__item{
         background-color: #393560;
     }
-// .theme--dark.v-list{
-//     background:#595777 !important;
-// }
-// .dialog-card{
-//         .theme--dark.v-sheet{
-//             background: #595777 !important;
-//         }
-//     }
+.v-btn.v-btn--outlined.v-btn--text{
+    border:none;
+}
+.dialog-night{
+    background-color:#595777 ;
+}
+.dialog-daytime{
+    background-color: #FFF;
+}
+.theme--dark.v-list{
+  background-color: #595777;
+}
 .vote-list{
     position: relative;
     .v-tab-left{
@@ -1120,6 +1128,7 @@ export default {
     top:0;
     margin-top:12px;
     margin-right: 12px;
+    color:#FFF;
 }
 .font-btn.v-btn.v-btn--has-bg{
     color: #FFF;
@@ -1167,7 +1176,11 @@ export default {
     .right-outline{
         display: flex;
         flex-direction: row; 
-        justify-content: flex-end
+        justify-content: flex-end;
+    }
+
+    .theme--dark.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset{
+      height: 42px !important;
     }
     .select-card{
         border:none;

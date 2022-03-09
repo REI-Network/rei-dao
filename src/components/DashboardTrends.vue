@@ -1,8 +1,8 @@
 <template>
-  <v-container class="stake_background">
+  <v-container class="stake_background" >
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->   
     <v-row>
-      <v-col cols="12" md="12" sm="12" style="padding-left:0px;padding-right:0px">
+      <v-col style="padding:0;">
         <v-card
             class="mx-auto"
             tile
@@ -10,7 +10,7 @@
             style="padding-bottom:20px"
         >
             <v-row class="head-chips">
-                <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
+                <v-subheader class="sub-title"><h2>Trends</h2></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
                     <v-chip-group active-class="chip_group" v-model="intervalModel" mandatory>
                         <v-chip
@@ -650,6 +650,11 @@ export default {
                                     width: '1' //坐标线的宽度
                                 }
                             },
+                            splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
+                                }
+                            },
                         },
                     yAxis: 
                         {
@@ -659,6 +664,11 @@ export default {
                                     type: 'solid',
                                     color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
                                 }
                             },
                         },
@@ -672,7 +682,18 @@ export default {
                         },
                     ]
                 };
-                this.myChart.setOption(option)
+                // this.myChart.showLoading({
+                //     text: 'loading...',
+                //     color: 'rgba(104, 180, 221, 0.1)',
+                //     textColor: '#000',
+                //     maskColor: 'rgba(255, 255, 255, 0.2)',
+                //     zlevel: 0,
+                // });
+                // setTimeout(()=>{
+                    // this.myChart.hideLoading();
+                    this.myChart.setOption(option);
+                // },2000)
+                // this.myChart.setOption(option)
                 window.addEventListener("resize", function() {
                     this.myChart.resize()
                 })
@@ -717,6 +738,11 @@ export default {
                                     width: '1' //坐标线的宽度
                                 }
                             },
+                            splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
+                                }
+                            },
                     },
                     yAxis: {
                         type: 'value',
@@ -725,6 +751,11 @@ export default {
                                     type: 'solid',
                                     color: '#868e9e', //坐标线的颜色
                                     width: '1' //坐标线的宽度
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
                                 }
                             },
                     },
@@ -787,6 +818,11 @@ export default {
                                 width: '1' //坐标线的宽度
                             }
                         },
+                        splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
+                                }
+                            },
                     },
                     yAxis: {
                         type: 'value',
@@ -797,6 +833,11 @@ export default {
                                 width: '1' //坐标线的宽度
                             }
                         },
+                        splitLine: {
+                                lineStyle: {
+                                    color: 'rgba(104, 180, 221, 0.1)',
+                                }
+                            },
                     },
                     series: [
                         {
@@ -864,7 +905,6 @@ export default {
                         splitLine: {
                             lineStyle: {
                                 color: 'rgba(104, 180, 221, 0.1)',
-                                type: 'dashed',
                             }
                         },
                     },
@@ -880,8 +920,7 @@ export default {
                         },
                         splitLine: {
                             lineStyle: {
-                            color: 'rgba(104, 180, 221, 0.1)',
-                            type: 'dashed',
+                            color: 'rgba(104, 180, 221, 0.1)'
                             }
                         },
                     },
@@ -935,6 +974,7 @@ export default {
 }
 .head-chips{
     padding-left: 12px;
+    padding-bottom: 8px;
     .v-application .align-center{
         display: flex;
         justify-content: flex-end;

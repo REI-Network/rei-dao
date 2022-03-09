@@ -210,7 +210,9 @@ export default {
 
 <style scoped lang="scss">
 .accout-item{
-  padding: 0;
+  padding:0;
+  margin-top:12px;
+  margin-bottom:28px;
   .balance-card{
     width: 100%;
     display: inline-flex;
@@ -233,7 +235,7 @@ export default {
     color: red;
   }
   .voting-stake{
-    width: 48%;
+    width: 47%;
     height:150px;
     display: inline-flex;
     justify-content: space-between !important;

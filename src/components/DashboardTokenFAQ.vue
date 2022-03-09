@@ -2,7 +2,7 @@
   <v-container class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
-      <v-col cols="12" md="12" sm="12" class="charts-faq"> 
+      <v-col class="charts-faq"> 
         <div class="total-charts">
           <v-card
             class="mx-auto card-charts"
@@ -135,7 +135,7 @@ export default {
                     index = i;
                   }
                 });
-                return name + "  " + clientcounts[index];
+                return name + " " + clientcounts[index];
               }
             },
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
@@ -152,7 +152,7 @@ export default {
                 },
                 emphasis: {
                   label: {
-                    show: true,
+                    // show: true,
                     fontSize: '24',
                     fontWeight: 'bold'
                   }
@@ -163,7 +163,7 @@ export default {
                 data: [
                     { value: '75', name: 'Circulated' },
                     { value: '15', name: 'REIecosystem' },
-                    { value: '5', name: 'Maketing' },
+                    { value: '5', name: 'Marketing' },
                     { value: '5', name: 'Node Rewards' }
                 ],
               }
@@ -215,9 +215,10 @@ export default {
 .charts-faq{
     display: flex;
     justify-content: space-between;
-    padding: 0;
+    padding:28px 0;
+    
     .total-charts{
-      width: 60%;
+      width: 58.5%;
     }
   //   .chart-title{
   //     display: flex;

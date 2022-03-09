@@ -91,6 +91,7 @@ a{
 }
 .theme--dark.v-card{
   background: #1D1a36;
+  border-radius: 4px;
 }
 .theme--dark.v-sheet{
   background: #1D1a36;
@@ -106,5 +107,21 @@ a{
 }
 .theme--dark.v-list{
   background-color: transparent;
+}
+/* .v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot, .v-text-field.v-text-field--enclosed .v-text-field__details{
+  border-radius: 20px;
+} */
+/* .v-text-field--outlined.v-input--is-focused fieldset, .v-text-field--outlined.v-input--has-state fieldset{
+  border-radius: 20px;
+} */
+.v-text-field--outlined.v-input--dense .v-label{
+    font-size: 13px !important;
+    }
+.theme--light.v-sheet.v-card:not(.v-sheet--outlined){
+  box-shadow:-10px 10px 10px lightgrey;
+}
+.v-pagination.v-pagination{
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

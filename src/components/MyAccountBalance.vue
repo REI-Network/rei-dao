@@ -487,10 +487,10 @@ export default {
   justify-content: space-between;
   padding: 0;
   .balance-card{
-    width: 49%;
+    width: 48.5%;
   }
   .voting-card{
-    width: 49%;
+    width: 48%;
   }
   .secend-card{
     height: 380px;
