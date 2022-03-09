@@ -140,7 +140,12 @@ export default {
         }
     },
     '$store.state.connection': function() {
-      this.getPriceChart()
+        if(this.connection&&this.connection.network){
+            this.getPriceChart()
+        }
+    },
+    '$store.state.assetInfo': function() {
+        this.getAssetInfo();
     },
   },
   computed: {
@@ -151,37 +156,33 @@ export default {
     })
   },
   mounted() {
+    this.myCharts()
+    this.getAssetInfo();
     this.getPriceChart();
-    setTimeout(() => {
-          this.myCharts()
-      },500 
-    ); 
-    
   },
   destroyed() {
     
   },
   methods: {
-    async getPriceChart(){
-        let apiUrl = this.apiUrl.chart;
-        let chartData = await getAssetPrice(apiUrl);
+    async getAssetInfo(){
         let chartInfoData = this.assetInfo;
-        // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
-        //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
         let needObject=[
             {
                 subtitle:'current_price',
                 sub:this.$t('dashborad.current_price'),
+                number:0,
                 currency:'$'
             },
             {
                 subtitle:'market_cap',
                 sub:this.$t('dashborad.market_cap'),
+                number:0,
                 currency:'$'
             },
             {
                 subtitle:'total_volume',
                 sub:this.$t('dashborad.total_volume'),
+                number:0,
                 currency:'$'
             },
 
@@ -192,11 +193,13 @@ export default {
             {
                 subtitle:'high_24h',
                 sub:this.$t('dashborad.high'),
+                number:0,
                 currency:'$'
             },
             {
                 subtitle:'low_24h',
                 sub:this.$t('dashborad.low'),
+                number:0,
                 currency:'$'
             },
             {
@@ -217,6 +220,15 @@ export default {
                 coin: item.currency
             }
         })
+    },
+    async getPriceChart(){
+        this.myChart.showLoading();
+        let apiUrl = this.apiUrl.chart;
+        let chartData = await getAssetPrice(apiUrl);
+        
+        // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
+        //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
+       
 
         this.chartData = chartData.data.data;
         let priceData = this.chartData.prices.map((item,index)=>{
@@ -242,7 +254,8 @@ export default {
             
         })
         this.priceData = priceData;
-        this.marketData = marketData
+        this.marketData = marketData;
+         this.myChart.hideLoading();
         this.myChart.setOption({
             series: [
               {

@@ -9,7 +9,7 @@
           <MyAccountBalance></MyAccountBalance>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="showItem">
       <v-col>
         <MyAccountCrude></MyAccountCrude>
       </v-col>
@@ -22,10 +22,9 @@
   </v-container>
 </template>
 <script>
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 import MyAccountBalance from '../components/MyAccountBalance';
 import MyAccountCrude from '../components/MyAccountCrude';
+import { mapGetters } from 'vuex';
 // import MyAccountProposals from '../components/MyAccountProposals';
 
 export default {
@@ -38,7 +37,18 @@ export default {
     return {
   
     };
-  }
+  },
+  computed: {
+    ...mapGetters({
+      connection: 'connection',
+    }),
+    showItem:function(){
+        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+           return true;
+        }
+        return false
+    }
+  },
 };
 </script>
 

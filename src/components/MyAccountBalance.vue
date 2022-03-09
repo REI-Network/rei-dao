@@ -228,8 +228,8 @@ export default {
   },
   mounted() {
     this.connect();
-    this.init();
     this.myCharts();
+    this.init();
   },
   destroyed() {
     
@@ -261,6 +261,7 @@ export default {
         this.getBalanceList();
     },
     async getBalanceList() {
+        this.myChart.showLoading();
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
         let now = Date.now();
@@ -284,6 +285,7 @@ export default {
                     ]
                 })
         }
+        this.myChart.hideLoading();
         this.myChart.setOption({
             series: [
               {

@@ -67,12 +67,6 @@ export default {
       } else {
         e.preventDefault();
       }
-    },
-    hideItem(item) {
-        if(item =='stakeforgas' && this.connection.network == 'REI Network'){
-            return false
-        }
-        return true
     }
   }
 };

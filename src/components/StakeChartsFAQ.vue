@@ -164,6 +164,7 @@ export default {
                 }
             }
         `
+        this.myChart.showLoading();
         const {data:{totalStakes}} = await client.query({
             query: totalStakesQl,
             variables: {
@@ -174,31 +175,53 @@ export default {
         let hour = dayjs().hour();
         
         let todayStart = dayjs().startOf('day');
-        let totalStakeDay = [totalStakes[0]];
-        let startIndex = dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart) ? hour: hour*1+1;
-        
-        let i = startIndex;
-        while(i<totalStakes.length){
-            totalStakeDay.push(totalStakes[i]);
-            i+=24;
-        }
-        let _totalStakeDay = totalStakeDay.reverse();
 
-        this.resTotalData = _totalStakeDay.map((item,i)=>{
-            return {
-                "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
-                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_totalStakeDay[i>0?i-1:0].voteStake)))
-                ]
+        if(totalStakes.length>0){
+            let totalStakeDay = [totalStakes[0]];
+            let startIndex = dayjs.unix(totalStakes[hour].timestamp).isBefore(todayStart) ? hour: hour*1+1;
+            
+            let i = startIndex;
+            while(i<totalStakes.length){
+                totalStakeDay.push(totalStakes[i]);
+                i+=24;
             }
-        }).slice(1)
-        this.myChart.setOption({
-            series: [
-                {
-                    data: this.resTotalData
+            let _totalStakeDay = totalStakeDay.reverse();
+
+            this.resTotalData = _totalStakeDay.map((item,i)=>{
+                return {
+                    "value": [
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_totalStakeDay[i>0?i-1:0].voteStake)))
+                    ]
                 }
-            ]
-        })
+            }).slice(1)
+        }
+         this.myChart.hideLoading();
+        if(this.resTotalData.length>0){
+            this.myChart.setOption({
+                title:{
+                    text:''
+                },
+                series: [
+                    {
+                        data: this.resTotalData
+                    }
+                ]
+            })
+        } else {
+            this.myChart.setOption({
+                title: {
+                    show: true,
+                    textStyle:{
+                        color:'#bcbcbc'
+                    },
+                    text: 'No Data',
+                    left: 'center',
+                    top: 'center'
+                }
+            });
+        }
+        
     },
     myCharts(){
         const echart = this.$refs.echart;

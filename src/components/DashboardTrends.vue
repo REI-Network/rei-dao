@@ -52,14 +52,14 @@
                                 >
                             </v-radio>
                         </v-tab>
-                        <v-tab key="3">
+                        <v-tab key="3" v-if="showMenu">
                             <v-radio
                                 label="Total Gas Stake"
                                 value="3"
                                 >
                             </v-radio>
                         </v-tab>
-                        <v-tab key="4">
+                        <v-tab key="4" v-if="showMenu">
                             <v-radio
                                 label="Amount Of Gas Saved For Users"
                                 value="4"
@@ -141,8 +141,15 @@ export default {
   computed: {
     ...mapGetters({
       totalStakes: 'totalStakes',
+      connection: 'connection',
       apiUrl: 'apiUrl'
-    })
+    }),
+    showMenu:function(){
+        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+           return true;
+        }
+        return false
+    }
   },
   watch: {
        tab:{
@@ -159,18 +166,24 @@ export default {
             }
         },
         '$store.state.connection': function() {
-            this.getdata();
-            this.getGasSaveData();
-            this.getGasSaveDataSeven();
+            if(this.connection && this.connection.network){
+                this.getdata();
+                if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+                    this.getGasSaveData();
+                    this.getGasSaveDataSeven();
+                }
+            }
         },
     },
   mounted() {
-      this.getdata();
-      this.getGasSaveData();
-      this.getGasSaveDataSeven();
       setTimeout(() => {
-        this.trendsCharts(); 
-      }, 500);
+            this.trendsCharts(); 
+            this.getdata();
+            if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
+                this.getGasSaveData();
+                this.getGasSaveDataSeven();
+            }
+        }, 200);
   },
   methods: {
     ...mapActions({
@@ -189,6 +202,7 @@ export default {
         let dataFeeStake = [];
 
         //let charts = []
+        this.myChart.showLoading();
         const {data:charData} = await client.query({
             query: totalStakes,
             variables: {
@@ -207,28 +221,37 @@ export default {
 
         let eightDayBefore = dayjs().subtract(8, 'day').endOf('day');
         let totalDataSeven = [];
-        for(let i = 0; i < 8; i++){
-            let dayMill = dayjs(eightDayBefore).add(i, 'day').endOf('day');
-            let dayIndex = dayMill.format('YYYY-MM-DD HH:00');
-            
-            if(_totalDataMap[dayIndex]){
-                totalDataSeven.push(_totalDataMap[dayIndex]);
-            } else {
-                totalDataSeven.push(data7d[data7d.length-1]);
+        if(data7d.length>0){
+            for(let i = 0; i < 8; i++){
+                let dayMill = dayjs(eightDayBefore).add(i, 'day').endOf('day');
+                let dayIndex = dayMill.format('YYYY-MM-DD HH:00');
+                
+                if(_totalDataMap[dayIndex]){
+                    totalDataSeven.push(_totalDataMap[dayIndex]);
+                } else {
+                    totalDataSeven.push(data7d[data7d.length-1]);
+                }
             }
         }
 
         let _data = data.concat(data24h).reverse();
         _data.shift();
-        
-        this.resTotalData = _data.map((item)=>{
-            return {
-                "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
-                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
-                ]
-            }
-        })
+        if(_data.length>0){
+            this.resTotalData = _data.map((item)=>{
+                let total = 0;
+                if(item.feeStake){
+                    total = web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
+                } else {
+                    total = web3.utils.fromWei(web3.utils.toBN(item.voteStake));
+                }
+                return {
+                    "value": [
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        total
+                    ]
+                }
+            })
+        }
 
         let dataSeven = [];
         let dataVotingSeven = [];
@@ -236,32 +259,60 @@ export default {
         let _dataSeven = dataSeven.concat(totalDataSeven);
         _dataSeven.shift();
         
-        this.resTotalDataSeven = _dataSeven.map((item)=>{
-            return {
-                "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
-                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
-                ]
-            }
-        })
-
-        this.myChart.setOption({
-            series: [
-                {
-                    data: this.resTotalData
+        if(_dataSeven.length>0){
+            this.resTotalDataSeven = _dataSeven.map((item)=>{
+                let total = 0;
+                if(item.feeStake){
+                    total = web3.utils.fromWei(web3.utils.toBN(item.voteStake).add(web3.utils.toBN(item.feeStake)))
+                } else {
+                    total = web3.utils.fromWei(web3.utils.toBN(item.voteStake));
                 }
-            ]
-        });
+                return {
+                    "value": [
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        total
+                    ]
+                }
+            })
+        }
+        
+        this.myChart.hideLoading();
+        if(this.resTotalData.length>0){
+            this.myChart.setOption({
+                title:{
+                    text:''
+                },
+                series: [
+                    {
+                        data: this.resTotalData
+                    }
+                ]
+            });
+        } else {
+            this.myChart.setOption({
+                title: {
+                    show: true,
+                    textStyle:{
+                        color:'#bcbcbc'
+                    },
+                    text: 'No Data',
+                    left: 'center',
+                    top: 'center'
+                }
+            });
+        }
+        
         let _dataVoting = dataVoting.concat(data24h).reverse();
-        this.resVotingData = _dataVoting.map(function(item,i){
-            return {
-                "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
-                    web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_dataVoting[i>0?i-1:0].voteStake)))
-                ]
-                }
-            }).slice(1)
-
+        if(_dataVoting.length>0){
+            this.resVotingData = _dataVoting.map(function(item,i){
+                return {
+                    "value": [
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_dataVoting[i>0?i-1:0].voteStake)))
+                    ]
+                    }
+                }).slice(1)
+        }
         let _dataVotingSeven = dataVotingSeven.concat(totalDataSeven);
         this.resVotingDataSeven = _dataVotingSeven.map(function(item,i){
             return {
@@ -338,19 +389,21 @@ export default {
                 fetchPolicy: 'cache-first',
             })
             let dataGasSave = charDataLatest.gasSaves;
-            for(let i = 0; i< 24; i++){
-                this.resFeeUsageData.push({
-                     "value": [
-                        dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
-                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
-                    ]
-                })
-                this.resFeeUsageSumData.push({
-                     "value": [
-                        dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
-                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
-                    ]
-                })
+            if(dataGasSave.length>0){
+                for(let i = 0; i< 24; i++){
+                    this.resFeeUsageData.push({
+                        "value": [
+                            dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
+                            web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
+                        ]
+                    })
+                    this.resFeeUsageSumData.push({
+                        "value": [
+                            dayjs.unix(startTimestamp*1+ONE_HOUR_UNIX*(i+1)).format('YYYY-MM-DD HH:00'),
+                            web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
+                        ]
+                    })
+                }
             }
         } else {
             
@@ -462,25 +515,27 @@ export default {
                 fetchPolicy: 'cache-first',
             })
             let dataGasSave = charDataLatest.gasSaves;
-            for(let i = 0; i< 7; i++){
-                let dayTime = '';
-                if(i<6){
-                    dayTime = dayjs.unix(startTimestamp).add(i, 'day').endOf('day').format('YYYY-MM-DD HH:00');
-                 } else {
-                    dayTime = dayjs.unix(endTimestamp).startOf('hour').format('YYYY-MM-DD HH:00');
-                 }
-                this.resFeeUsageDataSeven.push({
-                    "value": [
-                        dayTime,
-                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
-                    ]
-                })
-                this.resFeeUsageSumDataSeven.push({
-                     "value": [
-                        dayTime,
-                        web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
-                    ]
-                })
+            if(dataGasSave.length>0){
+                for(let i = 0; i< 7; i++){
+                    let dayTime = '';
+                    if(i<6){
+                        dayTime = dayjs.unix(startTimestamp).add(i, 'day').endOf('day').format('YYYY-MM-DD HH:00');
+                    } else {
+                        dayTime = dayjs.unix(endTimestamp).startOf('hour').format('YYYY-MM-DD HH:00');
+                    }
+                    this.resFeeUsageDataSeven.push({
+                        "value": [
+                            dayTime,
+                            web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsage))
+                        ]
+                    })
+                    this.resFeeUsageSumDataSeven.push({
+                        "value": [
+                            dayTime,
+                            web3.utils.fromWei(web3.utils.toBN(dataGasSave[0].feeUsageSum))
+                        ]
+                    })
+                }
             }
         } else {
             let totalSaved = [], sevenDayBefore = dayjs().subtract(7, 'day').startOf('hour');
@@ -568,35 +623,56 @@ export default {
             dataGasSaved = this.resFeeUsageDataSeven;
             dataGasSavedSum = this.resFeeUsageSumDataSeven;
         }
+        let title = {
+                show: true,
+                textStyle:{
+                    color:'#bcbcbc'
+                },
+                text: 'No Data',
+                left: 'center',
+                top: 'center'
+            }
         if(this.tab === 0){
-            this.myChart.setOption({
+            let option1 = {
                 series: [
                     {
                         data: dataTotal
                     }
                 ]
-            });
+            };
+            if(dataTotal.length==0){
+                option1.title = title;
+            }
+            this.myChart.setOption(option1);
         }
         if(this.tab === 1){
-            this.myChart2.setOption({
+            let option2 = {
                 series: [
                     {
                         data: dataVoting
                     }
                 ]
-            });
+            };
+            if(dataVoting.length==0){
+                option2.title = title;
+            }
+            this.myChart2.setOption(option2);
         }
         if(this.tab === 2){
-            this.myChart3.setOption({
+            let option3 = {
                 series: [
                     {
                         data: dataGasStake
                     }
                 ]
-            });
+            };
+            if(dataGasStake.length==0){
+                option3.title = title;
+            }
+            this.myChart3.setOption(option3);
         }
         if(this.tab === 3){
-            this.myChart4.setOption({
+            let option4 = {
                 series: [
                     {
                         data: dataGasSaved
@@ -605,7 +681,11 @@ export default {
                         data: dataGasSavedSum
                     }
                 ]
-            });
+            };
+            if(dataGasSaved.length==0 && dataGasSavedSum.length==0){
+                option4.title = title;
+            }
+            this.myChart4.setOption(option4);
         }
         
     },

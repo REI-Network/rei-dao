@@ -537,7 +537,6 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import abiCommissionShare from '../abis/abiCommissionShare'
 import abiValidatorRewardPool from '../abis/abiValidatorRewardPool'
-import { getMyStake } from '../service/CommonService'
 import Address from '../components/Address';
 import filters from '../filters';
 import find from 'lodash/find';
