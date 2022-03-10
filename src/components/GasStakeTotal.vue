@@ -213,6 +213,9 @@ export default {
         this.form.address = this.connection.address;
         this.depositDialog = true;
     },
+    setAll(obj) {
+        this[obj].amount = this.connection.balance;
+    },
     async submitStaking(){
          try{
             if(!this.$refs.stakeform.validate()) return;

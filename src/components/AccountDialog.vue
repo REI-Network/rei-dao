@@ -161,6 +161,7 @@ export default {
   },
   mounted() {
     this.tryLastConnection();
+    this.loadAsset();
   },
   methods: {
     ...mapActions({
@@ -304,7 +305,6 @@ export default {
         })
     },
     async loadAsset(){
-        this.getApiUrl();
         let { data: { data:chartInfoData}} = await getAssetInfo(this.apiUrl.chart);
         this.setAssetInfo({
             assetInfo: chartInfoData
@@ -331,6 +331,7 @@ export default {
         this.setConnection({
           connection
         });
+        this.getApiUrl();
         this.loadAsset();
         txStatusTask.start((tx, success) => {
           if (success) {

@@ -590,7 +590,7 @@ export default {
         itemsPerPage: 10,
         pageMyVoted:1,
         pageMyVotedCount:0,
-        itemsMyVotedPerPage: 21,
+        itemsMyVotedPerPage: 10,
         listFilter:'',
         isNode: false,
         tab1: null,
@@ -604,7 +604,7 @@ export default {
         setCommissionRateDialog: false,
         myStakeList: [],
         items: [{ state: 'All', val: '' },{ state: 'Active Validator', val: '1' },{ state: 'Unactive Validator', val: '2' }],
-        itemsPages:[10,20],
+        itemsPages:[10, 20, 50],
         headers: [
             {
                 text: this.$t('stake.node'),

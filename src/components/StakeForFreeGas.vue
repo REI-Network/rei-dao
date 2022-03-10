@@ -617,12 +617,13 @@ export default {
         return web3.utils.fromWei(web3.utils.toBN(val))
     },
     timeDiff (a, b) {
-        if(a<b) return '0H0M'
-        let sdate = new Date(a);//结束时间
+        if(a<b) return '0H:0M'
+        let endDate = new Date(a);//结束时间
         let now = new Date(b);//开始时间
-        let endTime = sdate.getTime();//结束时间
+        let endTime = endDate.getTime();//结束时间
         let startTime = now.getTime();//开始时间
         let timeDiff = endTime - startTime;
+        let days = parseInt(timeDiff/ (1000 * 60 * 60 * 24));
         let hours = parseInt((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         let minutes = parseInt((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = ((timeDiff % (1000 * 60)) / 1000).toFixed();
@@ -630,7 +631,7 @@ export default {
         minutes < 10 ? minutes='0'+minutes : minutes; //分钟格式化
         seconds < 10 ? seconds='0'+seconds : seconds; //秒钟格式化
     
-        let k=hours+'H'+minutes+'M'+seconds;
+        let k = days+'D: '+hours+'H: '+minutes+'M';
         // return k;
         if("0" > seconds){
             return "--"

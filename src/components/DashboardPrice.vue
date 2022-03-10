@@ -216,7 +216,7 @@ export default {
         this.folders = needObject.map((item)=>{
             return {
                 subtitle:item.subtitle,
-                number:util.numFormat(chartInfoData[item.subtitle]),
+                number:util.numFormat(chartInfoData[item.subtitle]||0),
                 sub:item.sub,
                 coin: item.currency
             }
