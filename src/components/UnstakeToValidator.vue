@@ -23,63 +23,63 @@
             <v-select
               class="d-select"
               :items="itemsPages"
-              label="10"
+              label=""
               outlined
               item-color="vote_button"
               dense
               height="28"
+              v-model="itemsPerPage"
               ></v-select>
           </v-card>
           </v-row>
-         <v-simple-table class="list_title">
-            <template v-slot:default>
-            <thead>
-                <tr>
-                 <th class="text-left">
-                    {{$t('unstake.node')}}
-                </th> 
-                <th class="text-left">
-                    {{$t('unstake.unstake_available')}}
-                </th>
-                <th class="text-left">
-                    {{$t('unstake.shares')}}
-                </th>
-                <th class="text-left">
-                    {{$t('unstake.get_value')}}
-                </th>
-                <th class="text-left">
-                    {{$t('unstake.status')}}
-                </th>
-                <th class="text-left">
-                    {{$t('unstake.opertion')}}
-                </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                v-for="(item,index) in nodeList"
-                :key="index"
-                >
-                <td>{{ item.validator | addr }}</td>
-                <td>{{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}</td>
-                <td>{{ formatAsset(item.shares) | asset(2)  }}</td>
-                <td>{{ formatAsset(item.values) | asset(2)  }}</td>
-                <td>{{ statusMap[item.state]  }}</td>
-                <td>
+          <v-data-table
+                :headers="headers"
+                :items="nodeList"
+                class="elevation-1"
+                hide-default-footer
+                :items-per-page="itemsPerPage"
+                :loading="unStakeListLoading"
+                :loading-text="$t('msg.loading')"
+                :page.sync="page"
+                @page-count="pageCount = $event"
+            >
+                <template v-slot:item.validator="{ item }">
+                    <Address :val="item.validator"></Address>
+                </template>
+                <template v-slot:item.timestamp="{ item }">
+                    {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')  }}
+                </template>
+                <template v-slot:item.shares="{ item }">
+                    {{ formatAsset(item.shares) | asset(2)  }}
+                </template>
+                <template v-slot:item.values="{ item }">
+                    {{ formatAsset(item.values) | asset(2)   }}
+                </template>
+                <template v-slot:item.state="{ item }">
+                    {{ statusMap[item.state]  }}
+                </template>
+                <template v-slot:item.actions="{ item }">
                     <v-btn
-                    tile
-                    small
-                    color="success"
-                    :disabled="claimStatus(item)"
-                    @click="unstake(item)"
+                        tile
+                        small
+                        color="success"
+                        :disabled="claimStatus(item)"
+                        @click="unstake(item)"
                     >
                     {{ $t('unstake.gettitle')}}
                     </v-btn>
-                </td>
-                </tr>
-            </tbody>
-            </template>
-        </v-simple-table>
+                </template>
+            </v-data-table>
+            <div class="text-center pt-2">
+                <v-pagination
+                    v-model="page"
+                    :length="pageCount"
+                    color="vote_button"
+                    background-color="start_unstake"
+                    class="v-pagination"
+                    total-visible="6"
+                ></v-pagination>
+            </div>
       </v-col>
     </v-row>
     
@@ -92,6 +92,7 @@ import { mapActions, mapGetters } from 'vuex';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import filters from '../filters';
+import Address from '../components/Address';
 //import { getUnstake } from '../service/CommonService'
 import util from '../utils/util'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
@@ -101,9 +102,16 @@ let client = null;
 
 export default {
   filters,
+  components:{
+      Address
+  },
   data() {
     return {
-        itemsPages:['10','20'],
+        page: 1,
+        pageCount: 0,
+        itemsPerPage: 10,
+        unStakeListLoading: false,
+        itemsPages:[10, 20],
         dialog: false,
         form:{
             amount:0
@@ -115,6 +123,21 @@ export default {
             false: this.$t('unstake.not_retrieve'),
             true: this.$t('unstake.retrieve')
         },
+        headers: [
+            {
+                text: this.$t('unstake.node'),
+                align: 'start',
+                sortable: false,
+                value: 'validator',
+            },
+            { 
+                text: this.$t('unstake.unstake_available'),value: 'timestamp'
+            },
+            { text: this.$t('unstake.shares'), value: 'shares' },
+            { text: this.$t('unstake.get_value'), value: 'values' },
+            { text: this.$t('unstake.status'), value: 'state' },
+            { text: this.$t('unstake.opertion'), value: 'actions', sortable: false }
+        ],
         nodeList: [
         ],
         receiveBalance: 0,
@@ -140,6 +163,7 @@ export default {
       addTx: 'addTx'
     }),
     async init() {
+        this.unStakeListLoading = true;
         let url = this.apiUrl.graph;
         client = new ApolloClient({
             uri: `${url}chainmonitor`,
@@ -168,6 +192,7 @@ export default {
             fetchPolicy: 'cache-first',
         })
         this.nodeList = unStakeInfos
+        this.unStakeListLoading = false;
 
     },
     cancelClaim() {
@@ -212,7 +237,7 @@ export default {
     },
     claimStatus(item) {
         let now = Date.now();
-        return item.timestamp*1000 >= now || item.state==1
+        return item.timestamp*1000 >= now || item.state==false
     },
     timeToFormat(val) {
         let str = '';

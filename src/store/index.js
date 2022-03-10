@@ -34,7 +34,7 @@ const state = {
   usedCrudePercent:0,
   assetInfo:'',
   apiUrl: {
-    rpc:'https//rpc.rei.network', 
+    rpc:'https://rpc.rei.network', 
     graph:'https://api-graphql-main.rei.network/',
     chart: 'https://api-market-main.rei.network/'
   }

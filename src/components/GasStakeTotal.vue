@@ -36,16 +36,7 @@
                             {{connection.address?usedCrudePercent:'-'}}%
                         </v-progress-circular>
                         <h4>{{usedCrude  | asset(8) }}</h4>
-                        <div class="stake-name">Crude Used</div>
-                        <!-- <div class="update-time">
-                            <v-icon
-                                color="primary"
-                                size="12"
-                            >
-                                 mdi-clock-time-ten-outline
-                            </v-icon>
-                            1h Ago
-                        </div>   -->
+                        <div class="stake-name">Crude Used</div>                      
                     </div>
                     </v-col>
                 </v-row>   

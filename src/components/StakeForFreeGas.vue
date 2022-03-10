@@ -512,13 +512,14 @@ export default {
              params:arrused
          }
         let resused = await postRpcRequest(apiUrl,paramused);
-        let usedCrude = web3.utils.fromWei(web3.utils.toBN(resused.data.result));
+        let usedCrude = !resused.data.result? 0 : web3.utils.fromWei(web3.utils.toBN(resused.data.result));
         this.usedCrude = usedCrude;
         this.setUsedCrude({
             usedCrude: usedCrude
         })
-        let leftPercent =  util.numberPrecision(leftCrude/(leftCrude*1+usedCrude*1)*100,2)
-        let usedPercennt = util.numberPrecision(usedCrude/(leftCrude*1+usedCrude*1)*100,2)
+        let totalCrude = leftCrude*1+usedCrude*1;
+        let leftPercent =  !totalCrude ? 0 : util.numberPrecision(leftCrude/(leftCrude*1+usedCrude*1)*100,2)
+        let usedPercennt = !totalCrude ? 0 : util.numberPrecision(usedCrude/(leftCrude*1+usedCrude*1)*100,2)
         this.setLeftCrudePercent({
             leftCrudePercent: leftPercent
         })

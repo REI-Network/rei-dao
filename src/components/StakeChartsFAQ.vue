@@ -133,7 +133,11 @@ export default {
     };
   },
   watch: {
-  
+    '$store.state.connection': function() {
+        if(this.connection&&this.connection.network){
+            this.getStakeList()
+        }
+    },
   },
   mounted() {
     this.connect();
@@ -167,7 +171,6 @@ export default {
         for(let i = 0; i < 7; i++){
             arr.push(startblock-28800*i)
         }
-
         const totalStakesQl = gql`
          query totalStakes{
             totalStakes(first:168,orderBy:id,orderDirection:desc) {
@@ -343,6 +346,7 @@ export default {
   computed: {
    ...mapGetters({
       apiUrl: 'apiUrl',
+      connection:'connection',
       dark: 'dark'
     }),
   },
