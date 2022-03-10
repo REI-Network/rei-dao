@@ -6,7 +6,7 @@
         <div class="total-charts">
           <v-card
             class="mx-auto"
-            tile 
+            rounded="4"
             color="background"
             style="margin-top:12px;height:480px"
           >
@@ -72,7 +72,7 @@
         <div class="faq-get" style="width:38%">
             <v-card
                 class="mx-auto"     
-                tile
+                rounded="4"
                 color="background"
                 style="height:480px"
             >
@@ -90,7 +90,7 @@
                             <v-list-item-subtitle>{{folder.sub}}</v-list-item-subtitle>
                         </v-list-item-content>
                         <v-list-item-action class="list-price" >
-                            <v-list-item-subtitle>{{folder.coin}}{{folder.number}}</v-list-item-subtitle>
+                            <v-list-item-subtitle>{{folder.coin}}<span class="folder-number">{{folder.number}}</span></v-list-item-subtitle>
                         </v-list-item-action>
                     </v-list-item>
                </v-list>
@@ -114,6 +114,7 @@ import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { getAssetPrice } from '../service/CommonService'
 import dayjs from 'dayjs'
+import util from '../utils/util'
 
 /* eslint-disable no-undef */
 export default {
@@ -215,7 +216,7 @@ export default {
         this.folders = needObject.map((item)=>{
             return {
                 subtitle:item.subtitle,
-                number:chartInfoData[item.subtitle],
+                number:util.numFormat(chartInfoData[item.subtitle]),
                 sub:item.sub,
                 coin: item.currency
             }
@@ -522,6 +523,14 @@ export default {
 .list-price{
     display: flex;
     flex-direction: row;
+    .theme--light.folder-number{
+        color:#000;
+        font-weight: 500;
+    }
+    .theme--dark.folder-number{
+        color:#FFF;
+        font-weight: 500;
+    }
 }
 .v-list--two-line .v-list-item, .v-list-item--two-line{
     min-height: 51px;

@@ -2,7 +2,7 @@
   <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
       <h1>Dashboard</h1>
-      <div class="title-detailed">Get More Information About The Rei Network</div>
+      <div class="title-detailed">Get more information about the rei network</div>
     </div>
     <v-row>
       <v-col>
@@ -48,6 +48,10 @@ export default {
     .title-detailed{
       font-size: 14px;
       color: #868E9E;
+    }
+     .title-detailed:hover{
+      color: #6979F8;
+      text-decoration:underline;
     }
 }
 </style>

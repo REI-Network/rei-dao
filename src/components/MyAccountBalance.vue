@@ -6,7 +6,7 @@
         <div class="balance-card">
           <v-card
             class="mx-auto secend-card"
-            tile
+            rounded="4"
             color="background"
           >
           <v-subheader class="sub-title">
@@ -14,7 +14,7 @@
             <v-tooltip right color="start_unstake">
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon
-                    color="primary"
+                    color="right_icon"
                     dark
                     v-bind="attrs"
                     v-on="on"
@@ -40,7 +40,7 @@
                <div>24H</div>
                <div class="update-time">
                 <v-icon
-                    color="primary"
+                    color="right_icon"
                     size="12"
                   >
                     mdi-clock-time-ten-outline
@@ -58,7 +58,7 @@
         <div class="voting-card">
           <v-card
             class="secend-card"     
-            tile
+            rounded="4"
             color="background"
           >
           <v-subheader class="sub-title"><h3>Voting</h3></v-subheader>
@@ -82,7 +82,7 @@
                       <div>24H</div>
                       <div class="update-time">
                         <v-icon
-                            color="primary"
+                            color="right_icon"
                             size="12"
                         >
                           mdi-clock-time-ten-outline
@@ -99,7 +99,7 @@
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
-                          color="primary"
+                          color="right_icon"
                           dark
                           v-bind="attrs"
                           v-on="on"
@@ -113,8 +113,9 @@
                 </v-tooltip>
               </v-subheader>
              </div>
+             <a href="https://rei-dao-new.4everland.app/#/stake">
                  <v-icon
-                    color="primary"
+                    color="right_icon"
                     dark
                     size="22"
                     class="icon-right"
@@ -122,12 +123,14 @@
                   >
                   mdi-arrow-right-circle-outline
                 </v-icon>
+                </a>
                 <div v-if='!connection.address' ></div>
             </v-card>
            <v-card
             class="voting-stake"
             label
             outlined
+            color="faq_border"
           >
              <div class="content-left">
                 <v-subheader class="total-rei sub-title" v-if='connection.address'>{{ myTotalUnStake | asset(2) }}<span class="rei">REI</span></v-subheader>
@@ -143,7 +146,7 @@
                       <div>24H</div>
                       <div class="update-time">
                         <v-icon
-                            color="primary"
+                            color="right_icon"
                             size="12"
                         >
                           mdi-clock-time-ten-outline
@@ -160,7 +163,7 @@
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
-                          color="primary"
+                          color="right_icon"
                           dark
                           v-bind="attrs"
                           v-on="on"
@@ -174,8 +177,9 @@
                 </v-tooltip>
               </v-subheader>
              </div>
+             <a href="https://rei-dao-new.4everland.app/#/stake">
                  <v-icon
-                    color="primary"
+                    color="right_icon"
                     dark
                     size="22"
                     class="icon-right"
@@ -183,6 +187,7 @@
                   >
                    mdi-arrow-right-circle-outline
                 </v-icon>
+                </a>
                 <div v-if='!connection.address'></div>
             </v-card>
           </div>   
@@ -528,6 +533,7 @@ export default {
       }
       .icon-right{
         margin-right:20px;
+        margin-top:64px;
       }
     }
   .add-price{

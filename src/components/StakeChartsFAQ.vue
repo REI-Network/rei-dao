@@ -6,11 +6,26 @@
         <div class="total-charts">
           <v-card
             class="mx-auto card-charts"
-            tile
+            rounded="4"
             color="background"
+            style="margin-top:12px;"
           >
-          <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
-          <!-- <v-subheader> -->
+          <v-row class="head-chips">
+                <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
+                <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
+                    <v-chip-group active-class="chip_group" v-model="intervalModel" mandatory>
+                        <v-chip
+                            class="ma-3"    
+                            x-small
+                            v-for="tag in tags"
+                            :key="tag" 
+                            >
+                            {{tag}}
+                        </v-chip>
+                    </v-chip-group>
+                    </v-row>
+            </v-row>
+          <!-- <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
             <div class="chart-title">
             <v-radio-group v-model="radios">
               <v-radio
@@ -28,10 +43,9 @@
             >
               7D
             </v-btn>
-          </div>
-          <!-- </v-subheader> -->
+          </div> -->
           <div id="myCharts" ref="echart" style="height:348px"></div>
-          <div class="update-time" style="margin-top:-20px;">
+          <!-- <div class="update-time" style="margin-top:-20px;">
                 <v-icon
                     color="primary"
                     size="12"
@@ -39,13 +53,13 @@
                     mdi-clock-time-ten-outline
                 </v-icon>
                     1h Ago
-            </div>
+            </div> -->
           </v-card>          
         </div>
         <div class="faq-get">
           <v-card
             class="card-charts"     
-            tile
+            rounded="4"
             color="background"
           >
             <v-subheader class="sub-title"><h3>FAQ</h3></v-subheader>
@@ -96,6 +110,7 @@ export default {
   data() {
     return {
         radios:'Total Voting Stake',
+        tags:['7D'],
         faqList:[
           {
             title:'How to become a node validator?',
@@ -340,6 +355,14 @@ export default {
     justify-content: space-between;
     // align-items: center;
     padding: 0;
+    .head-chips{
+    padding-left: 12px;
+    padding-bottom: 8px;
+    .v-application .align-center{
+        display: flex;
+        justify-content: flex-end;
+    }
+}
     .total-charts{
       width: 58.5%;
     }
@@ -365,8 +388,11 @@ export default {
     margin-top: 0;
     padding: 0;
   }
+  .v-chip-group .v-chip--active{
+    color:#FFF;
+  }
   .card-charts{
-    height: 460px;
+    height: 420px;
   }
   .list-card{
     padding:0 12px;

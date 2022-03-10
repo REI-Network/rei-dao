@@ -2,7 +2,7 @@
   <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
       <h1>My Account</h1>
-      <div class="title-detailed">Get More Information About Your Personal Account,About Balances,Voting,Etc.</div>
+      <a href="https://rei-dao-new.4everland.app/#/??" class="title-detailed">Get more information about your personal account, about balances, voting , etc.</a>
     </div>
     <v-row>
       <v-col>
@@ -58,6 +58,10 @@ export default {
     .title-detailed{
       font-size: 14px;
       color: #868E9E;
+    }
+     .title-detailed:hover{
+      color: #6979F8;
+      text-decoration:underline;
     }
 }
 </style>

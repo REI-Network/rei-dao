@@ -34,7 +34,7 @@ export default new Vuetify({
         vote_button:'#6979F8',
         // start_unstake:'#E2E4EA',
         chips:"#E2E4EA",
-        input_other:'#FFF',
+        input_other:'#F5F5F7',
         current_wallet:"#6979F8",
         // input_other:'#F5F5F7',
         validator:'#868E9E',

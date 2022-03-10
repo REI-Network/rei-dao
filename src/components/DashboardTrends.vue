@@ -5,12 +5,12 @@
       <v-col style="padding:0;">
         <v-card
             class="mx-auto"
-            tile
             color="background"
             style="padding-bottom:20px"
+            rounded="4"
         >
             <v-row class="head-chips">
-                <v-subheader class="sub-title"><h2>Trends</h2></v-subheader>
+                <v-subheader class="sub-title"><h3>Trends</h3></v-subheader>
                 <v-row align="center" style="margin-right:20px;justify-content: flex-end;">
                     <v-chip-group active-class="chip_group" v-model="intervalModel" mandatory>
                         <v-chip
@@ -762,18 +762,7 @@ export default {
                         },
                     ]
                 };
-                // this.myChart.showLoading({
-                //     text: 'loading...',
-                //     color: 'rgba(104, 180, 221, 0.1)',
-                //     textColor: '#000',
-                //     maskColor: 'rgba(255, 255, 255, 0.2)',
-                //     zlevel: 0,
-                // });
-                // setTimeout(()=>{
-                    // this.myChart.hideLoading();
                     this.myChart.setOption(option);
-                // },2000)
-                // this.myChart.setOption(option)
                 window.addEventListener("resize", function() {
                     this.myChart.resize()
                 })

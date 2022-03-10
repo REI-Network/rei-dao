@@ -5,7 +5,7 @@
         <v-col cols="12" md="12" sm="12" class="gasStake-total"> 
             <v-card
                 class="mx-auto total-progress"
-                tile
+                rounded="4"
                 color="background"
             >
                 <h3>Resources Of {{ connection.address | addr }}</h3>
@@ -37,7 +37,7 @@
                         </v-progress-circular>
                         <h4>{{usedCrude  | asset(8) }}</h4>
                         <div class="stake-name">Crude Used</div>
-                        <div class="update-time">
+                        <!-- <div class="update-time">
                             <v-icon
                                 color="primary"
                                 size="12"
@@ -45,7 +45,7 @@
                                  mdi-clock-time-ten-outline
                             </v-icon>
                             1h Ago
-                        </div>  
+                        </div>   -->
                     </div>
                     </v-col>
                 </v-row>  
@@ -53,7 +53,7 @@
             </v-card>
             <v-card
                 class="middle-btn"
-                tile
+                rounded="4"
                 color="background"
             >
                <div class="total-rei" v-if="connection.address">{{gasStakeTotalAmount | asset(2)}}<span class="rei">REI</span></div> 

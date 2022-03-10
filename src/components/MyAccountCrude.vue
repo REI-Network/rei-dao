@@ -25,7 +25,7 @@
                                     <div>24H</div>
                                     <div class="update-time">
                                         <v-icon
-                                            color="primary"
+                                            color="right_icon"
                                             size="12"
                                         >
                                         mdi-clock-time-ten-outline
@@ -42,7 +42,7 @@
                                 <v-tooltip right color="start_unstake">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
-                                            color="primary"
+                                            color="right_icon"
                                             v-bind="attrs"
                                             v-on="on"
                                             dense
@@ -55,14 +55,16 @@
                                 </v-tooltip>
                             </v-subheader>
                             </div>
+                            <a href="https://rei-dao-new.4everland.app/#/??">
                             <v-icon
                                 size="22"
                                 class="icon-right"
-                                color="primary"
+                                color="right_icon"
                                 v-if='connection.address'
                             >
                             mdi-arrow-right-circle-outline
                             </v-icon>
+                            </a>
                             <div v-if='!connection.address'></div>
                     </v-card>
                     <v-card
@@ -82,7 +84,7 @@
                                         <v-icon
                                             v-bind="attrs"
                                             v-on="on"
-                                            color="primary"
+                                            color="right_icon"
                                             dense
                                             style="margin-left:8px"
                                         >
@@ -93,15 +95,17 @@
                                 </v-tooltip>
                              </v-subheader>
                             </div>
+                          <a href="https://rei-dao-new.4everland.app/#/??">
                             <v-icon
                                 size="22"
                                 v-if='connection.address'
                                 class="icon-right"
-                                color="primary"
+                                color="right_icon"
                             >
                             mdi-arrow-right-circle-outline
                             </v-icon>
-                            <div v-if='!connection.address'></div>
+                          </a>
+                        <div v-if='!connection.address'></div>
                     </v-card>
                 </v-card>
              </v-card>
@@ -247,6 +251,7 @@ export default {
       }
       .icon-right{
         margin-right:20px;
+        margin-top: 64px;
       }
     }
   .add-price{

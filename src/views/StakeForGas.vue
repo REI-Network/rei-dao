@@ -2,7 +2,7 @@
   <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
      <div class="header-title">
       <h1>Gas Stake</h1>
-      <a href="https://docs.rei.network/guides/stake-for-free-gas" class="title-detailed">How To Get Crude By Stake REI?</a>
+      <a href="https://docs.rei.network/guides/stake-for-free-gas" class="title-detailed">How to get crude by stake REI?</a>
     </div>
     <v-row>
       <v-col>
@@ -46,5 +46,13 @@ export default {
       font-size: 14px;
       color: #868E9E;
     }
+    .title-detailed:hover{
+      color: #6979F8;
+      text-decoration:underline;
+    }
+    // .title-detailed:active{
+    //   color: #6979F8;
+    //   text-decoration:underline;
+    // }
 }
 </style>

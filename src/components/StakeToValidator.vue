@@ -1245,6 +1245,9 @@ export default {
     .text-caption{
         margin-top:12px;
     }
+    // .theme--light.v-application .text--secondary{
+    //     color:'rgb(250,151,105)'
+    // }
     .share-rei{
         text-align:right;
         margin:12px 0;

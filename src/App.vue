@@ -56,7 +56,7 @@ export default {
   font-style: normal;
 }
 .daytime{
-  background-color: #EAEAEA;
+  background-color: #f3f4fa;
 }
 .night{
   background-color: #100D22;
@@ -95,6 +95,7 @@ a{
 }
 .theme--dark.v-sheet{
   background: #1D1a36;
+  border-color: #504985;
 }
 .theme--dark.v-navigation-drawer{
   background: #1D1a36;
@@ -118,7 +119,7 @@ a{
     font-size: 13px !important;
     }
 .theme--light.v-sheet.v-card:not(.v-sheet--outlined){
-  box-shadow:-10px 10px 10px lightgrey;
+  box-shadow:rgb(0 0 0 / 10%) 0px 0px 20px;
 }
 .v-pagination.v-pagination{
   display: flex;

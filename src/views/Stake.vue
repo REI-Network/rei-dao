@@ -2,7 +2,7 @@
   <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
     <div class="header-title">
       <h1>Voting</h1>
-      <div class="title-detailed">How To Become A Node Validator?</div>
+      <a href="https://docs.rei.network/guides/become-a-validator" class="title-detailed">How to become a node validator?</a>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -73,6 +73,10 @@ export default {
     .title-detailed{
       font-size: 14px;
       color: #868E9E;
+    }
+     .title-detailed:hover{
+      color: #6979F8;
+      text-decoration:underline;
     }
 }
 </style>

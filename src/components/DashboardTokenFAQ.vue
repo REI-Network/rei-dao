@@ -6,12 +6,12 @@
         <div class="total-charts">
           <v-card
             class="mx-auto card-charts"
-            tile
+            rounded="4"
             color="background"
           >
           <v-subheader class="sub-title"><h3>Token Distribution</h3></v-subheader>
             <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>
-            <div class="update-time" style="margin-top:-20px">
+            <!-- <div class="update-time" style="margin-top:-20px">
                  <v-icon
                     color="primary"
                     size="12"
@@ -19,13 +19,13 @@
                     mdi-clock-time-ten-outline
                 </v-icon>
                     1h Ago
-            </div>
+            </div> -->
           </v-card>          
         </div>
         <div class="faq-get">
           <v-card
             class="card-charts"     
-            tile
+            rounded="4"
             color="background"
           >
           <v-subheader class="sub-title"><h3>FAQ</h3></v-subheader>
@@ -43,7 +43,7 @@
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-icon
-                        color="primary"
+                        color="right_icon"
                         style="margin-left:20px"
                         size="22"
                       >
@@ -108,7 +108,8 @@ export default {
         var option = {
           baseOption:{
             tooltip: {
-              trigger: 'item'
+              trigger: 'item',
+              formatter: "{a} {b} :{d}%"
             },
             query: {
             maxAspectRatio: 1 // 当长宽比小于1时。
@@ -135,10 +136,32 @@ export default {
                     index = i;
                   }
                 });
-                return name + " " + clientcounts[index];
+                return name + "        " + clientcounts[index];
               }
             },
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
+            title:{
+                text:"1BN",
+                left:"26%",
+                top:"40%",
+                textStyle:{
+                    color:"#868e9e",
+                    fontSize:24,
+                    fontWeight:700,
+                    align:"center"
+                }
+            },
+            graphic:{
+                type:"text",
+                left:"23%",
+                top:"50%",
+                style:{
+                    text:"Total Supply",
+                    textAlign:"center",
+                    fill:"#868e9e",
+                    fontSize:16,
+                }
+            },
             series: [
               {
                 name: '',
