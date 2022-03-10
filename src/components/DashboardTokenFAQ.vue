@@ -35,7 +35,7 @@
                   class="item-list" 
                   v-for="(item, i) in faqList"
                   :key="i">
-                  <a :href='item.url'>
+                  <a :href='item.url' target="_blank">
                     <v-card class="ma-2 list-card" outlined>
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title" class="list-subtitle"></v-list-item-title>
@@ -136,7 +136,7 @@ export default {
                     index = i;
                   }
                 });
-                return name + "        " + clientcounts[index];
+                return name + " " + clientcounts[index];
               }
             },
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
@@ -198,8 +198,27 @@ export default {
                 maxWidth:450
               },
               option:{
+                 title:{
+                text:"1BN",
+                left:"18%",
+                top:"44%",
+                textStyle:{
+                    fontSize:16,
+                }
+            },
+            graphic:{
+                type:"text",
+                left:"12%",
+                top:"50%",
+                style:{
+                  text:"Total Supply",
+                  fill:"#868e9e",
+                  textAlign:"center",
+                  fontSize:12,
+                }
+            },
                 legend:{
-                  right: '2%',
+                  right: '1%',
                   itemWidth: 8,             // 图例图形宽度
                   itemHeight: 8,
                   textStyle: { //图例文字的样式
@@ -300,6 +319,7 @@ export default {
     .faq-get{
       width: 100% !important;
       margin-top: 20px;
+      margin-bottom: 12px;
     }
   }
   .list-subtitle{

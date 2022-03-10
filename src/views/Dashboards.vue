@@ -1,5 +1,5 @@
 <template>
-  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
+  <v-container class="dashboard stake_background">
      <div class="header-title">
       <h1>Dashboard</h1>
       <div class="title-detailed">Get more information about the rei network</div>
@@ -53,5 +53,15 @@ export default {
       color: #6979F8;
       text-decoration:underline;
     }
+}
+.dashboard{
+  padding-left:40px;
+  padding-right:40px;
+}
+@media screen and (max-width: 900px) {
+  .dashboard{
+    padding-left:20px;
+    padding-right:20px;
+  }
 }
 </style>

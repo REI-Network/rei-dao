@@ -55,7 +55,7 @@
                                 </v-tooltip>
                             </v-subheader>
                             </div>
-                            <a href="https://rei-dao-new.4everland.app/#/??">
+                            <a href="https://rei-dao-new.4everland.app/#/??" target="_blank">
                             <v-icon
                                 size="22"
                                 class="icon-right"
@@ -95,7 +95,7 @@
                                 </v-tooltip>
                              </v-subheader>
                             </div>
-                          <a href="https://rei-dao-new.4everland.app/#/??">
+                          <a href="https://rei-dao-new.4everland.app/#/??" target="_blank">
                             <v-icon
                                 size="22"
                                 v-if='connection.address'
@@ -282,6 +282,8 @@ export default {
 @media screen and (max-width: 900px) {
     .accout-item{
     flex-direction: column;
+    margin-bottom:8px;
+    margin-top: 0;
     .balance-card{
         display: flex;
         flex-direction: column;

@@ -1,8 +1,8 @@
 <template>
-  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
+  <v-container class="stake stake_background">
     <div class="header-title">
       <h1>Voting</h1>
-      <a href="https://docs.rei.network/guides/become-a-validator" class="title-detailed">How to become a node validator?</a>
+      <a href="https://docs.rei.network/guides/become-a-validator" target="_blank" class="title-detailed">How to become a node validator?</a>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -78,5 +78,15 @@ export default {
       color: #6979F8;
       text-decoration:underline;
     }
+}
+.stake{
+  padding-left:40px;
+  padding-right:40px;
+}
+@media screen and (max-width: 900px) {
+  .stake{
+    padding-left:20px;
+    padding-right:20px;
+  }
 }
 </style>

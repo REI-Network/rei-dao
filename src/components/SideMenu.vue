@@ -3,13 +3,18 @@
     <v-sheet class="d-flex pa-4 align-center" color="background">
       <router-link to="/">
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
-            <v-img
+            <v-img v-if="dark"
+                class="mr-4" 
+                max-height="54"
+                max-width="164"
+                src="../assets/images/REI DAOwhite.svg"
+                ></v-img>
+                <v-img v-else
                 class="mr-4" 
                 max-height="54"
                 max-width="164"
                 src="../assets/images/REI DAO.svg"
                 ></v-img>
-          
         <!-- </v-avatar> -->
       </router-link>
       <!-- <div class="d-flex flex-column">

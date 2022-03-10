@@ -1,5 +1,5 @@
 <template>
-  <v-container style="margin-top:16px;margin-bottom:28px;" class="background">
+  <v-container class="gas-list background">
     <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
         <v-tab key="1">My Gas Stake</v-tab>
         <v-tab key="2">Staking to Me by Others</v-tab> 
@@ -648,6 +648,10 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.gas-list{
+    margin-top:16px;
+    margin-bottom:28px;
+}
 .v-tab{
     text-transform: none !important;
     margin-left: 0 !important;
@@ -698,6 +702,10 @@ export default {
     background: #1D1A36;
 }
     @media screen and (max-width: 900px) {
+        .gas-list{
+            margin-top:-4px;
+            margin-bottom:8px;
+        }
         .dialog-validator{
             .v-card__subtitle, .v-card__text, .v-card__title{
                 padding:0;

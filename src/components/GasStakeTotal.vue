@@ -48,8 +48,7 @@
                         </div>   -->
                     </div>
                     </v-col>
-                </v-row>  
-                
+                </v-row>   
             </v-card>
             <v-card
                 class="middle-btn"

@@ -48,17 +48,17 @@
                 </v-btn>
             </div>
             
-          <v-divider />
+          <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
                 <v-tab-item key="11" >
-                    <v-row class="background">
+                    <v-row class="background" style="margin-top:0px;">
                         <v-tabs v-model="tab2"    
                             hide-slider 
                             class="my-voted-validator" 
                             background-color="background"
-                            height="36">
+                            height="40">
                             <v-card outlined class="card-tab" >
-                                <v-tab key="111" style="font-size:12px">{{$t('stake.active_nodelist')}}</v-tab>
+                                <v-tab key="111" style="font-size:12px">Validator</v-tab>
                                 <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab>
                             </v-card> 
                         </v-tabs>
@@ -1142,7 +1142,6 @@ export default {
 .card-tab{
     display:flex;
     flex-direction: row;
-    border-radius:20px;
     background-color: transparent;
 }
     .v-tab{
@@ -1155,6 +1154,7 @@ export default {
        border-radius:15px;
        margin-left: 16px;
        padding:2px 12px;
+       color:#FFF;
     } 
     .not-active{
        width:30px;

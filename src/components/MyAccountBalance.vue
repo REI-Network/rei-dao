@@ -113,7 +113,7 @@
                 </v-tooltip>
               </v-subheader>
              </div>
-             <a href="https://rei-dao-new.4everland.app/#/stake">
+             <a href="https://rei-dao-new.4everland.app/#/stake" target="_blank">
                  <v-icon
                     color="right_icon"
                     dark
@@ -177,7 +177,7 @@
                 </v-tooltip>
               </v-subheader>
              </div>
-             <a href="https://rei-dao-new.4everland.app/#/stake">
+             <a href="https://rei-dao-new.4everland.app/#/stake" target="_blank">
                  <v-icon
                     color="right_icon"
                     dark

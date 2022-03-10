@@ -109,12 +109,23 @@ a{
 .theme--dark.v-list{
   background-color: transparent;
 }
-/* .v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot, .v-text-field.v-text-field--enclosed .v-text-field__details{
-  border-radius: 20px;
-} */
-/* .v-text-field--outlined.v-input--is-focused fieldset, .v-text-field--outlined.v-input--has-state fieldset{
-  border-radius: 20px;
-} */
+.theme--dark.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset{
+  border-color: #504985;
+}
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset{
+  border-color: #D3D6DB;
+}
+.theme--dark.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
+  border: none;
+  background-color:#252243;
+}
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
+  border: none;
+  background-color:#E2E4EA;
+}
+.theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:not(.v-data-table__mobile-row), .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:not(.v-data-table__mobile-row){
+  border-color: #504985;
+}
 .v-text-field--outlined.v-input--dense .v-label{
     font-size: 13px !important;
     }
@@ -124,5 +135,8 @@ a{
 .v-pagination.v-pagination{
   display: flex;
   justify-content: flex-end;
+}
+.v-tabs:not(.v-tabs--vertical):not(.v-tabs--right) > .v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__prev{
+  display:none ;
 }
 </style>

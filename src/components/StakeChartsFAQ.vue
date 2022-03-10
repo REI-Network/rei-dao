@@ -1,8 +1,8 @@
 <template>
-  <v-container style="margin-top:40px;margin-bottom:28px;" class="stake_background">
+  <v-container class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
-      <v-col cols="12" md="12" sm="12" class="charts-faq"> 
+      <v-col class="charts-faq"> 
         <div class="total-charts">
           <v-card
             class="mx-auto card-charts"
@@ -69,7 +69,7 @@
                   class="item-list" 
                   v-for="(item, i) in faqList"
                   :key="i">
-                  <a :href='item.url'>
+                  <a :href='item.url' target="_blank">
                     <v-card class="ma-4 list-card" outlined color="faq_border">
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -353,7 +353,8 @@ export default {
 .charts-faq{
     display: flex;
     justify-content: space-between;
-    // align-items: center;
+    margin-top:40px;
+    margin-bottom:28px;
     padding: 0;
     .head-chips{
     padding-left: 12px;
@@ -431,6 +432,8 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 0;
+    margin-top: 20px;
+    margin-bottom: 40px;
     .total-charts{
       width: 100%;
     }

@@ -1,8 +1,8 @@
 <template>
-  <v-container style="padding-left:40px;padding-right:40px;" class="stake_background">
+  <v-container class="myAccount stake_background">
      <div class="header-title">
       <h1>My Account</h1>
-      <a href="https://rei-dao-new.4everland.app/#/??" class="title-detailed">Get more information about your personal account, about balances, voting , etc.</a>
+      <a href="https://rei-dao-new.4everland.app/#/??" target="_blank" class="title-detailed">Get more information about your personal account, about balances, voting , etc.</a>
     </div>
     <v-row>
       <v-col>
@@ -63,5 +63,15 @@ export default {
       color: #6979F8;
       text-decoration:underline;
     }
+}
+.myAccount{
+  padding-left:40px;
+  padding-right:40px;
+}
+@media screen and (max-width: 900px) {
+  .myAccount{
+    padding-left:20px;
+    padding-right:20px;
+  }
 }
 </style>

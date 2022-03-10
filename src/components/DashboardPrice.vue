@@ -90,7 +90,7 @@
                             <v-list-item-subtitle>{{folder.sub}}</v-list-item-subtitle>
                         </v-list-item-content>
                         <v-list-item-action class="list-price" >
-                            <v-list-item-subtitle>{{folder.coin}}<span class="folder-number">{{folder.number}}</span></v-list-item-subtitle>
+                            <v-list-item-subtitle>{{folder.coin}}<strong class="folder-number ">{{folder.number}}</strong></v-list-item-subtitle>
                         </v-list-item-action>
                     </v-list-item>
                </v-list>
@@ -525,11 +525,7 @@ export default {
     flex-direction: row;
     .theme--light.folder-number{
         color:#000;
-        font-weight: 500;
-    }
-    .theme--dark.folder-number{
-        color:#FFF;
-        font-weight: 500;
+
     }
 }
 .v-list--two-line .v-list-item, .v-list-item--two-line{
@@ -555,6 +551,7 @@ export default {
         display: flex;
         flex-direction: column;
         padding: 0;
+        height: auto;
     .total-charts{
         width: 100%;
     }
