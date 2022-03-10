@@ -139,4 +139,13 @@ a{
 .v-tabs:not(.v-tabs--vertical):not(.v-tabs--right) > .v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__prev{
   display:none ;
 }
+.theme--dark.v-icon{
+  color:#5c5a7a;
+}
+.theme--light.v-icon{
+  color:#868E9E;
+}
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
+  margin-right:12px;
+}
 </style>

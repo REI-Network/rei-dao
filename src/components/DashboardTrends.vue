@@ -717,38 +717,50 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     xAxis:       
                         {
                             type: 'time',
+                            axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
                             splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                         },
                     yAxis: 
                         {
                             type: 'value',
+                            axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
                             splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                         },
@@ -795,36 +807,48 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     xAxis:{
                         type: 'time',
+                         axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
                             splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                     },
                     yAxis: {
                         type: 'value',
+                         axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
                             splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                     },
@@ -875,36 +899,48 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     xAxis:{
                         type: 'time',
+                        axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#868e9e', //坐标线的颜色
+                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
                         splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                     },
                     yAxis: {
                         type: 'value',
+                        axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#868e9e', //坐标线的颜色
+                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
                         splitLine: {
                                 lineStyle: {
-                                    color: 'rgba(104, 180, 221, 0.1)',
+                                    color: 'rgba(134,142,158, 0.1)',
                                 }
                             },
                     },
@@ -955,7 +991,7 @@ export default {
                         itemHeight: 16,
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     xAxis:{
@@ -964,32 +1000,44 @@ export default {
                         axisPointer: {
                             type: 'shadow'
                         },
+                         axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#868e9e', //坐标线的颜色
+                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
                         splitLine: {
                             lineStyle: {
-                                color: 'rgba(104, 180, 221, 0.1)',
+                                color: 'rgba(134,142,158, 0.1)',
                             }
                         },
                     },
                     yAxis: {
                         type: 'value',
+                         axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
-                        lineStyle: {
-                            show: true,
-                            type: 'solid',
-                            color: '#868e9e', //左边线的颜色
-                            width: '1' //坐标线的宽度
+                            lineStyle: {
+                                show: true,
+                                type: 'solid',
+                                color: 'rgba(134,142,158, 0.1)', //左边线的颜色
+                                width: '1' //坐标线的宽度
                             },
                         },
                         splitLine: {
                             lineStyle: {
-                            color: 'rgba(104, 180, 221, 0.1)'
+                            color: 'rgba(134,142,158, 0.1)'
                             }
                         },
                     },

@@ -3,7 +3,7 @@
       <template v-for="link in links">
         <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show">
         <span>{{ $t(link.text) }}</span>
-        <v-icon>{{ link.icon }}</v-icon>
+        <span class="iconfont" v-html="link.icon"></span>
         </v-btn>
      </template>
   </v-bottom-navigation>
@@ -15,28 +15,28 @@ export default {
     return {
       links: [
         {
-          icon: 'mdi-alpha-m-box-outline',
+          icon: '&#xe604;',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards',
           show: true
         },
         {
-          icon: 'mdi-calendar-account-outline',
+          icon: '&#xe603;',
           text: 'MyAccount',
           link: '/myAccount',
           name: 'myAccount',
           show: true
         },
         {
-          icon: 'mdi-text-box-check-outline',
+          icon: '&#xe601;',
           text: 'stake.staking',
           link: '/stake',
           name: 'stake',
           show: true
         },
         {
-          icon: 'mdi-sack',
+          icon: '&#xe605;',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'stakeforgas',
@@ -79,5 +79,8 @@ export default {
 }
 .theme--dark.v-bottom-navigation .v-btn:not(.v-btn--active){
    color: #868e9e;
+}
+.theme--dark.v-bottom-navigation{
+  background-color: #1D1a36;
 }
 </style>

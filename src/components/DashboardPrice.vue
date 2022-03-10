@@ -286,10 +286,16 @@ export default {
                     xAxis: {
                         type: 'time',
                         boundaryGap:false,
+                        axisLabel: {//x轴文字的配置
+                            show: true,
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#868e9e', //坐标线的颜色
+                                color: 'rgba(134,142,158,.1)', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
@@ -300,10 +306,16 @@ export default {
                         splitLine: {
                             show:false,
                         },
+                        axisLabel: {//x轴文字的配置
+                            show: true,
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: '#868e9e', //坐标线的颜色
+                                color: 'rgba(134,142,158,.1)', //坐标线的颜色
                                 width: '1' //坐标线的宽度
                             }
                         },
@@ -316,7 +328,7 @@ export default {
                         top: 'bottom',
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     series: [
@@ -382,10 +394,16 @@ export default {
                     xAxis: {
                         type: 'time',
                         boundaryGap:false,
+                        axisLabel: {//x轴文字的配置
+                            show: true,
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -396,10 +414,16 @@ export default {
                         splitLine: {
                             show:false,
                             },
+                            axisLabel: {//x轴文字的配置
+                                show: true,
+                                textStyle: {
+                                    color: "rgba(134,142,158,.6)",
+                                }
+                            },
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: '#868e9e', //坐标线的颜色
+                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                                     width: '1' //坐标线的宽度
                                 }
                             },
@@ -412,7 +436,7 @@ export default {
                         top: 'bottom',
                         textStyle: {
                             fontSize: 16,
-                            color:'#868e9e'
+                            color:'rgba(134,142,158,.6)'
                         },
                     },
                     series: [
@@ -422,19 +446,19 @@ export default {
                             type: 'line',
                             symbol: "none",
                             itemStyle:{
-                                color:'rgb(80,14,25)'
+                                color:'rgb(253,131,53)'
                             },
                             areaStyle: {
                                 //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
                                     offset: 0,
-                                    color: 'rgba(80,14,25,0.39)'
+                                    color: 'rgba(203,131,53,0.39)'
                                 }, {
                                     offset: .34,
-                                    color: 'rgba(56,14,25,0.25)'
+                                    color: 'rgba(160,131,53,0.25)'
                                 },{
                                     offset: 1,
-                                    color: 'rgba(38,19,25,0.00)'
+                                    color: 'rgba(120,131,53,0.00)'
                                 }])
                             }
                         }

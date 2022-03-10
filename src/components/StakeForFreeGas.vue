@@ -72,7 +72,7 @@
                             </span>
                         </template>
                     </v-data-table>
-                    <div class="text-center pt-2">
+                    <div class="text-pagination pt-2">
                         <v-pagination
                             v-model="page"
                             :length="pageCount"
@@ -114,7 +114,7 @@
                             {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                         </template>
                     </v-data-table>
-                    <div class="text-center pt-2">
+                    <div class="text-pagination pt-2">
                         <v-pagination
                             v-model="page"
                             :length="pageCount"
@@ -130,7 +130,7 @@
     </v-tabs-items>
 
     <v-dialog v-model="depositDialog" width="500">
-      <v-card class="start_unstake" style="padding-bottom:4px">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'" style="padding-bottom:4px">
             <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
                 <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>   
@@ -201,7 +201,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="withdrawDialog" width="500">
-      <v-card class="start_unstake dialog-card">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'">
           <v-card-title>{{$t('stakeforgas.withdraw_info')}}</v-card-title>
           <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-4 start_unstake">
@@ -662,6 +662,12 @@ export default {
     border-radius:4px;
     color:#FFF
 }
+.dialog-night{
+    background-color:#595777;
+}
+.dialog-daytime{
+    background-color: #FFF;
+}
 .dialog-validator{
     display: flex;
     justify-content: space-between;
@@ -700,8 +706,11 @@ export default {
 .unstake_btn.theme--dark.v-btn.v-btn--has-bg{
     background: #595777;
 }
+.theme--dark.v-application .text-pagination[data-v-b6724c44][data-v-b6724c44]{
+    background-color:#1d1a36;
+}
 .theme--dark.v-application .text-center[data-v-b6724c44][data-v-b6724c44]{
-    background: #1D1A36;
+    background-color:transparent;
 }
     @media screen and (max-width: 900px) {
         .gas-list{

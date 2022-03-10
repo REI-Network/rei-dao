@@ -35,7 +35,7 @@
                   class="item-list" 
                   v-for="(item, i) in faqList"
                   :key="i">
-                  <a :href='item.url' target="_blank">
+                  <a :href='item.url' target="_blank" style="width: 100% !important;"> 
                     <v-card class="ma-2 list-card" outlined>
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title" class="list-subtitle"></v-list-item-title>
@@ -136,30 +136,30 @@ export default {
                     index = i;
                   }
                 });
-                return name + " " + clientcounts[index];
+                return name + "  " + clientcounts[index];
               }
             },
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
             title:{
                 text:"1BN",
-                left:"26%",
-                top:"40%",
+                left:"27%",
+                top:"41%",
                 textStyle:{
                     color:"#868e9e",
-                    fontSize:24,
+                    fontSize:18,
                     fontWeight:700,
                     align:"center"
                 }
             },
             graphic:{
                 type:"text",
-                left:"23%",
-                top:"50%",
+                left:"24%",
+                top:"52%",
                 style:{
                     text:"Total Supply",
                     textAlign:"center",
                     fill:"#868e9e",
-                    fontSize:16,
+                    fontSize:14,
                 }
             },
             series: [
@@ -198,18 +198,18 @@ export default {
                 maxWidth:450
               },
               option:{
-                 title:{
-                text:"1BN",
-                left:"18%",
-                top:"44%",
-                textStyle:{
+                title:{
+                  text:"1BN",
+                  left:"18%",
+                  top:"43%",
+                  textStyle:{
                     fontSize:16,
-                }
+                  }
             },
             graphic:{
                 type:"text",
-                left:"12%",
-                top:"50%",
+                left:"14%",
+                top:"51%",
                 style:{
                   text:"Total Supply",
                   fill:"#868e9e",

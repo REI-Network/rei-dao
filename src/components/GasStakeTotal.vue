@@ -61,7 +61,7 @@
         </v-col>
       </v-row>
      <v-dialog v-model="depositDialog" width="500">
-      <v-card class="start_unstake" style="padding-bottom:4px">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'" style="padding-bottom:4px">
           <div class="dialog-validator"> 
                 <v-card-title class="dialog-title">{{$t('stakeforgas.stake_info')}}</v-card-title>
                 <div @click="cancelStaking" class="close-btn"><v-icon>mdi-close</v-icon></div>  
@@ -291,6 +291,12 @@ export default {
   .text-body-1{
         margin-bottom: 20px;
     }
+.dialog-night{
+    background-color:#595777 ;
+}
+.dialog-daytime{
+    background-color: #FFF;
+}
 .dialog-validator{
     display: flex;
     justify-content: space-between;

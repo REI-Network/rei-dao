@@ -1,0 +1,44 @@
+{
+  "id": "3237452",
+  "name": "rei-dao",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "28172347",
+      "name": "Fill 3",
+      "font_class": "a-Fill3",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "28172348",
+      "name": "Proposals",
+      "font_class": "Proposals",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "28172349",
+      "name": "my Account",
+      "font_class": "a-myAccount",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "28172350",
+      "name": "Voting",
+      "font_class": "Voting",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "28172351",
+      "name": "Gas Stake",
+      "font_class": "a-GasStake",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    }
+  ]
+}

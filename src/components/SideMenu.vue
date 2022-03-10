@@ -27,7 +27,8 @@
       <template v-for="{ icon, text, link, show } in links">
         <v-list-item :key="text" link :to="link" v-if="show">
             <v-list-item-icon>
-            <v-icon>{{ icon }}</v-icon>
+            <!-- <v-icon class="iconfont">{{ icon }}</v-icon> -->
+            <span class="iconfont" v-html="icon"></span>
             </v-list-item-icon>
             <v-list-item-content>
             <v-list-item-title>{{ $t(text) }}</v-list-item-title>
@@ -46,28 +47,28 @@ export default {
       version: process.env.VUE_APP_VERSION,
       links: [
         {
-          icon: 'mdi-alpha-m-box-outline',
+          icon: '&#xe604;',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards',
           show: true,
         },
         {
-          icon: 'mdi-calendar-account-outline',
+          icon: '&#xe603;',
           text: 'MyAccount',
           link: '/myAccount',
           name: 'myAccount',
           show: true,
         },
         {
-          icon: 'mdi-text-box-check-outline',
+          icon: '&#xe601;',
           text: 'stake.staking',
           link: '/stake',
           name: 'stake',
           show: true,
         },
         {
-          icon: 'mdi-sack',
+          icon: '&#xe605;',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'stakeforgas',

@@ -6,6 +6,7 @@ import router from './router';
 import store from './store';
 import i18n from './i18n';
 import echarts from 'echarts'
+import '../src/assets/iconfont/iconfont.css'
 
 Vue.prototype.$echarts =echarts;
 // 日期格式化

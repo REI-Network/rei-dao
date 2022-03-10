@@ -23,7 +23,7 @@
                                 </div>
                                 <div class="time-price" style="margin-left:12px">
                                     <div>24H</div>
-                                    <div class="update-time">
+                                    <!-- <div class="update-time">
                                         <v-icon
                                             color="right_icon"
                                             size="12"
@@ -31,7 +31,7 @@
                                         mdi-clock-time-ten-outline
                                     </v-icon>
                                         1h Ago
-                                    </div>
+                                    </div> -->
                                 </div>
                             </v-subheader>
                              <div v-if='!connection.address' class="not-connection">
@@ -55,7 +55,7 @@
                                 </v-tooltip>
                             </v-subheader>
                             </div>
-                            <a href="https://rei-dao-new.4everland.app/#/??" target="_blank">
+                            <a @click="routeLink()">
                             <v-icon
                                 size="22"
                                 class="icon-right"
@@ -95,7 +95,7 @@
                                 </v-tooltip>
                              </v-subheader>
                             </div>
-                          <a href="https://rei-dao-new.4everland.app/#/??" target="_blank">
+                          <a @click="routeLink()">
                             <v-icon
                                 size="22"
                                 v-if='connection.address'
@@ -150,6 +150,9 @@ export default {
     }),
   },
   methods: {
+    routeLink(){
+      this.$router.push('/dashboards')
+    },
       ...mapActions({
       addTx: 'addTx',
       setGasStakeTotalAmount: 'setGasStakeTotalAmount',

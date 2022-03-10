@@ -456,7 +456,7 @@
                 {{$t('stake.btn_submit')}}
                 </v-btn>
             </div>
-             <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
+             <div :class="dark?'pb-3 text-day':'pb-3 text-caption'"><strong>{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
           </v-form>
         </v-list>
       </v-card>
@@ -483,7 +483,7 @@
                     </v-btn>
                 </template>
             </v-text-field>
-            <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
+            <div :class="dark?'pb-3 text-day':'pb-3 text-caption'"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
             
             <div class="text-center">
                 <v-btn
@@ -1289,10 +1289,21 @@ export default {
     }
     .text-caption{
         margin-top:12px;
+        padding:12px;
+        background-color:#FFF5DB;
+        border: 1px #F8E769 solid;
+        color:#868E9E;
+        border-radius: 4px;
     }
-    // .theme--light.v-application .text--secondary{
-    //     color:'rgb(250,151,105)'
-    // }
+    .text-day{
+        margin-top:12px;
+        padding:12px;
+        background-color:transparent;
+        border: 1px #FFA4A4 solid;
+        color:#C2C1D6;
+        border-radius: 4px;
+        font-size:12px;
+    }
     .share-rei{
         text-align:right;
         margin:12px 0;

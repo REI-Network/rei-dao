@@ -38,7 +38,7 @@
             </div>
             <div class="time-price" style="margin-left:12px">
                <div>24H</div>
-               <div class="update-time">
+               <!-- <div class="update-time">
                 <v-icon
                     color="right_icon"
                     size="12"
@@ -46,7 +46,7 @@
                     mdi-clock-time-ten-outline
                 </v-icon>
                     1h Ago
-            </div>
+            </div> -->
             </div>
           </v-subheader>
           <div v-if='!connection.address' class="not-connection">
@@ -80,7 +80,7 @@
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
-                      <div class="update-time">
+                      <!-- <div class="update-time">
                         <v-icon
                             color="right_icon"
                             size="12"
@@ -88,7 +88,7 @@
                           mdi-clock-time-ten-outline
                       </v-icon>
                     1h Ago
-                      </div>
+                      </div> -->
                     </div>
               </v-subheader>
               <div v-if='!connection.address' class="not-connection">
@@ -113,7 +113,7 @@
                 </v-tooltip>
               </v-subheader>
              </div>
-             <a href="https://rei-dao-new.4everland.app/#/stake" target="_blank">
+             <a @click="routeLink()">
                  <v-icon
                     color="right_icon"
                     dark
@@ -144,7 +144,7 @@
                     </div>
                     <div class="time-price" style="margin-left:12px">
                       <div>24H</div>
-                      <div class="update-time">
+                      <!-- <div class="update-time">
                         <v-icon
                             color="right_icon"
                             size="12"
@@ -152,7 +152,7 @@
                           mdi-clock-time-ten-outline
                       </v-icon>
                     1h Ago
-                      </div>
+                      </div> -->
                     </div>
               </v-subheader>
               <div v-if='!connection.address' class="not-connection">
@@ -177,7 +177,7 @@
                 </v-tooltip>
               </v-subheader>
              </div>
-             <a href="https://rei-dao-new.4everland.app/#/stake" target="_blank">
+             <a @click="routeLink()">
                  <v-icon
                     color="right_icon"
                     dark
@@ -248,6 +248,9 @@ export default {
     }),
   },
   methods: {
+    routeLink(){
+      this.$router.push('/stake')
+    },
     connect() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
@@ -418,7 +421,7 @@ export default {
               show:false,
               lineStyle: {
                   // type: 'solid',
-                  color: '#868e9e', //坐标线的颜色
+                  color: 'rgba(134,142,158,.6)', //坐标线的颜色
                   width: '1' //坐标线的宽度
                 }
             },

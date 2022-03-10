@@ -25,25 +25,6 @@
                     </v-chip-group>
                     </v-row>
             </v-row>
-          <!-- <v-subheader class="sub-title"><h3>Charts</h3></v-subheader>
-            <div class="chart-title">
-            <v-radio-group v-model="radios">
-              <v-radio
-                label="Total Voting Stake"
-                value="Total Voting Stake"
-                class="v-radio"
-                color="radio_day"
-              ></v-radio>
-            </v-radio-group>
-            <v-btn
-              text
-              outlined
-              color="radio_day"
-              class="v-btn-total"
-            >
-              7D
-            </v-btn>
-          </div> -->
           <div id="myCharts" ref="echart" style="height:348px"></div>
           <!-- <div class="update-time" style="margin-top:-20px;">
                 <v-icon
@@ -69,8 +50,8 @@
                   class="item-list" 
                   v-for="(item, i) in faqList"
                   :key="i">
-                  <a :href='item.url' target="_blank">
-                    <v-card class="ma-4 list-card" outlined color="faq_border">
+                  <a :href='item.url' target="_blank" style="width: 100% !important;">
+                    <v-card class="ma-3 list-card" outlined color="faq_border">
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title"></v-list-item-title>
                       <v-list-item-subtitle v-text="item.content">   
@@ -262,42 +243,45 @@ export default {
               type: 'time',
               //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24', 'Oct/25', 'Oct/26', 'Oct/27', 'Oct/28'],
               //刻度线
+              axisLabel: {//x轴文字的配置
+                  show: true,
+                  textStyle: {
+                    color: "rgba(134,142,158,.6)",
+                  }
+                },
               axisTick: {
                 show: false
               },
               axisLine: {
                 lineStyle: {
                   type: 'solid',
-                  color: '#868e9e', //坐标线的颜色
+                  color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
                   width: '1' //坐标线的宽度
                 }
-              },
-              axisLabel: {
-                textStyle: {
-                fontSize: 12,
-                }
-              },   
+              }, 
               splitLine:{show: false}
             },
             yAxis: {
               type: 'value',
               data:[],
+              axisLabel: {//x轴文字的配置
+                  show: true,
+                  textStyle: {
+                    color: "rgba(134,142,158,.6)",
+                  }
+                },
               axisTick: {
                 show: false
               },
               axisLine: {
                 lineStyle: {
                   type: 'solid',
-                  color: '#868e9e', //左边线的颜色
+                  color: 'rgba(134,142,158, 0.1)', //左边线的颜色
                   width: '1' //坐标线的宽度
                 },
               },
               splitLine: {
                   show: false,
-                  // lineStyle: {
-                  //   color: 'rgba(104, 180, 221, 0.1)',
-                  //   type: 'dashed',
-                  // }
                 },
               },
               legend: {
@@ -307,7 +291,7 @@ export default {
                 top: 'bottom',
                 textStyle: {
                   fontSize: 16,
-                  color:'#868e9e'
+                  color:'rgba(134,142,158,.6)'
                 },
               },
             series: [
