@@ -216,17 +216,15 @@ export default {
                     type: 'unstake',
                     status: 'PENDING',
                     data: {
-                      amount: this.formatAsset(item.value),
-                      symbol: 'GXC',
+                      amount: this.formatAsset(item.values),
+                      symbol: 'REI',
                       to: util.addr(this.connection.address)
                     },
                     timestamp: new Date().getTime()
                   }
                 });
-                this.rewardDialog = false;
             }   
         } catch (e){
-            this.rewardDialog = false;
             console.log(e)
             this.$dialog.notify.warning(e.message);
         }
@@ -237,7 +235,7 @@ export default {
     },
     claimStatus(item) {
         let now = Date.now();
-        return item.timestamp*1000 >= now || item.state==false
+        return item.timestamp*1000 >= now || item.state==true
     },
     timeToFormat(val) {
         let str = '';

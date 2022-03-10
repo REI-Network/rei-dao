@@ -129,7 +129,8 @@ export default {
           }
         ],
         myChart: null,
-        resTotalData: []
+        resTotalData: [],
+        intervalModel: ''
     };
   },
   watch: {

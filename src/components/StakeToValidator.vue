@@ -32,6 +32,15 @@
             <!-- <v-divider /> -->
             <div class="btn-div">
                 <v-btn
+                    text
+                    outlined
+                    color="primary"
+                    v-if="isNode"
+                    @click="setRate"
+                    >
+                    {{$t('stake.set_commission_rate')}}
+                </v-btn>
+                <v-btn
                     class="v-btn"
                     text
                     outlined
