@@ -65,7 +65,7 @@
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan-test.rei.network/address/${connection.address}`"><v-icon small color="#FFF">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan.rei.network/address/${connection.address}`"><v-icon small color="#FFF">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -83,7 +83,7 @@
                     <div>
                     <div class="name-pri">
                         <div>{{ $t(`txs.${tx.type}`, tx.data) }}</div>
-                        <a class="text-body-2 text-decoration-none" :href="`https://scan-test.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+                        <a class="text-body-2 text-decoration-none" :href="`https://scan.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
                     </div>
                     <div>{{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }}</div>
                     </div>

@@ -231,19 +231,17 @@ export default {
             tooltip:{
               trigger:'axis',
               formatter(params) {
-                var relVal = params[0].name;
+                var relVal = params[0].value[0]+'<br>';
                   for (var i = 0, l = params.length; i < l; i++) {
                     var yValue = Number(params[i].value[1]).toFixed(5)
-                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                    relVal += params[i].seriesName +':'+yValue;
                   }
                   return relVal;
             },
             },
             xAxis: {
               type: 'time',
-              //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24', 'Oct/25', 'Oct/26', 'Oct/27', 'Oct/28'],
-              //刻度线
-              axisLabel: {//x轴文字的配置
+              axisLabel: {
                   show: true,
                   textStyle: {
                     color: "rgba(134,142,158,.6)",

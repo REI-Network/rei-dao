@@ -24,7 +24,7 @@
                     mdi-help-circle-outline
                   </v-icon>
                 </template>
-                 <span>Freely Usable REI,Excluding Stakes IN Vote,Gas Stake</span>
+                 <span>Freely Usable REI,Excluding Stakes In Vote,Gas Stake</span>
             </v-tooltip>
           </v-subheader>
           <v-subheader class="total-rei sub-title" v-if='connection.address'>{{ connection.balance | asset(2) }}<span class="rei">REI</span></v-subheader>
