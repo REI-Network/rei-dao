@@ -91,7 +91,7 @@
                                             mdi-help-circle-outline
                                         </v-icon>
                                     </template>
-                                    <span>Daily Available Crude Oil Does Not Accumulate And Resets To 0 Every Day</span>
+                                    <span>Remaining available gas, 1CRUDE ≈ 1e9 Gwei</span>
                                 </v-tooltip>
                              </v-subheader>
                         </div>
