@@ -858,7 +858,7 @@ export default {
                             type: 'bar',
                             data: [
                             ],
-                            barWidth:'18',
+                            barMaxWidth:'18',
                             barGap: '40%',
                             itemStyle:{
                                 color:'#2F86F6'
@@ -947,11 +947,11 @@ export default {
                     series: [
                         {
                             name: 'Total Gas Stake',
-                            type: 'line',
+                            type: 'bar',
                             data: [
                             
                             ],
-                            barWidth:'6',
+                            barMaxWidth:'18',
                             itemStyle:{
                                 color:'#EC733C'
                             }
