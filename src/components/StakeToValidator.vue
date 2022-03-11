@@ -65,7 +65,7 @@
                             hide-slider 
                             class="my-voted-validator" 
                             background-color="background"
-                            height="40">
+                            height="42">
                             <v-card outlined class="card-tab" >
                                 <v-tab key="111" style="font-size:12px">Validator</v-tab>
                                 <v-tab key="122" style="font-size:12px">{{$t('stake.not_active_nodelist')}}</v-tab>
@@ -1215,7 +1215,7 @@ export default {
     .my-voted-validator{
         width:120px;
         border-radius: 30px;
-        margin: 1.5rem;
+        margin:1.5rem;
     }
     .right-outline{
         display: flex;
@@ -1336,11 +1336,15 @@ export default {
         .v-btn{
             border:none;
         }
+        .my-voted-validator{
+            width:auto;
+            margin:16px 16px;
+        }
          .right-outline{
             display: flex;
             flex-direction: row ; 
             justify-content:flex-start !important;
-            margin-top:-16px;
+            // margin-top:-16px;
             padding: 0;
         }
         .dialog-validator{
@@ -1364,10 +1368,11 @@ export default {
             margin-top: -32px;
         }
         .select-card{
-            width:180px;
-            // height:40px;
+            width:100%;
             margin-top:-10px;
-            // margin-left:12px;
+        }
+        .select-second{
+            margin-right:0;
         }
         .d-select{
             margin-left:0;
