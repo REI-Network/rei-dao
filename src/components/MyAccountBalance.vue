@@ -32,12 +32,12 @@
                 —
           </div>
           <v-subheader v-if='connection.address' style="height:16px">
-            <div class="add-price" style="border-right:2px solid;padding-right:12px">
+            <div class="add-price">
                <div>${{assetToCurrency(connection.balance,assetInfo.current_price) | asset(2)}}</div>
-               <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
+               <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
             </div>
             <div class="time-price" style="margin-left:12px">
-               <div>24H</div>
+               <!-- <div>24H</div> -->
                <!-- <div class="update-time">
                 <v-icon
                     color="right_icon"
@@ -74,12 +74,12 @@
                     —
                 </div>
                 <v-subheader v-if='connection.address'>
-                    <div class="add-price" style="border-right:2px solid;padding-right:12px">
+                    <div class="add-price" >
                         <div>${{assetToCurrency(myTotalStake,assetInfo.current_price)| asset(2)}}</div>
-                        <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
+                        <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
                     </div>
                     <div class="time-price" style="margin-left:12px">
-                      <div>24H</div>
+                      <!-- <div>24H</div> -->
                       <!-- <div class="update-time">
                         <v-icon
                             color="right_icon"
@@ -138,12 +138,12 @@
                     —
                 </div>
                 <v-subheader v-if='connection.address'>
-                    <div class="add-price" style="border-right:2px solid;padding-right:12px">
+                    <div class="add-price">
                         <div>${{assetToCurrency(myTotalUnStake,assetInfo.current_price)| asset(2)}}</div>
-                        <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
+                        <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
                     </div>
                     <div class="time-price" style="margin-left:12px">
-                      <div>24H</div>
+                      <!-- <div>24H</div> -->
                       <!-- <div class="update-time">
                         <v-icon
                             color="right_icon"
@@ -269,6 +269,7 @@ export default {
         this.getBalanceList();
     },
     async getBalanceList() {
+        if(!this.connection.address)return;
         this.myChart.showLoading();
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
@@ -402,27 +403,24 @@ export default {
           tooltip:{
             trigger:'axis',
               formatter(params) {
-                var relVal = params[0].name;
+                var relVal = params[0].value[0]+'<br>';
                 for (var i = 0, l = params.length; i < l; i++) {
                   var yValue = Number(params[i].value[1]).toFixed(5)
-                    relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                    relVal += params[i].seriesName +':'+yValue;
                 }
                 return relVal;
               },
           },
           xAxis: {
             type: 'time',
-            //data: ['Oct/18', 'Oct/19', 'Oct/20', 'Oct/21', 'Oct/22', 'Oct/23', 'Oct/24'],
-            //刻度线
             axisTick: {
               show: false
             },
             axisLine: {
               show:false,
               lineStyle: {
-                  // type: 'solid',
-                  color: 'rgba(134,142,158,.6)', //坐标线的颜色
-                  width: '1' //坐标线的宽度
+                  color: 'rgba(134,142,158,.6)', 
+                  width: '1'
                 }
             },
             axisLabel: {

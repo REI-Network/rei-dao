@@ -236,7 +236,7 @@ export default {
 
         this.chartData = chartData.data.data;
         let priceData = this.chartData.prices.map((item,index)=>{
-            if(index < this.chartData.prices.length){
+            if(index < this.chartData.prices.length-1){
                 return {
                     "value": [
                         dayjs(item[0]).format('YYYY-MM-DD HH:00'),
@@ -247,7 +247,7 @@ export default {
             
         })
         let marketData = this.chartData.market_caps.map((item,index)=>{
-            if(index < this.chartData.market_caps.length){
+            if(index < this.chartData.market_caps.length-1){
                 return {
                     "value": [
                         dayjs(item[0]).format('YYYY-MM-DD HH:00'),
@@ -259,7 +259,7 @@ export default {
         })
         this.priceData = priceData;
         this.marketData = marketData;
-         this.myChart.hideLoading();
+        this.myChart.hideLoading();
         this.myChart.setOption({
             series: [
               {
@@ -278,7 +278,7 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                            var relVal = params[0].name;
+                            var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5);
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
@@ -313,8 +313,9 @@ export default {
                             show: true,
                             textStyle: {
                                 color: "rgba(134,142,158,.6)",
-                              }
                             },
+                            formatter: '${value}'
+                        },
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
@@ -386,7 +387,7 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                        var relVal = params[0].name;
+                        var relVal = params[0].value[0]+'<br>';
                         for (var i = 0, l = params.length; i < l; i++) {
                         var yValue = Number(params[i].value[1]).toFixed(5)
                             relVal +=params[i].marker + params[i].seriesName +':'+yValue;
@@ -414,22 +415,31 @@ export default {
                     },
                     yAxis: {
                         type: 'value',
+                        axisLabel:{
+                            show: true,
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                            },
+                            formatter:function(value){
+                                var txt=[];
+                                if(value>=10*6){
+                                    txt.push(value/(10**6)+'M');
+                                }else{
+                                    txt.push(value);
+                                }
+                                return txt;
+                            }
+                        },
                         splitLine: {
                             show:false,
-                            },
-                            axisLabel: {//x轴文字的配置
-                                show: true,
-                                textStyle: {
-                                    color: "rgba(134,142,158,.6)",
-                                }
-                            },
-                            axisLine: {
-                                lineStyle: {
-                                    type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
-                                }
-                            },
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
+                                width: '1' //坐标线的宽度
+                            }
+                        },
                     },
 
                     legend: {
@@ -513,7 +523,7 @@ export default {
   .v-chip-group .v-chip--active{
     color: #FFF;
 }
-.charts-faq .theme--dark.v-chip[data-v-194d4ec5]:not(.v-chip--active){
+.charts-faq .theme--dark.v-chip:not(.v-chip--active){
     background-color:transparent !important;
 }
 .theme--dark.v-chip:not(.v-chip--active){

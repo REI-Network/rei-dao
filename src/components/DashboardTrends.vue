@@ -61,7 +61,7 @@
                         </v-tab>
                         <v-tab key="4" v-if="showMenu">
                             <v-radio
-                                label="Amount Of Gas Saved For Users"
+                                label="Gas Saved for Users"
                                 value="4"
                                 >
                             </v-radio>
@@ -269,7 +269,7 @@ export default {
                 }
                 return {
                     "value": [
-                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD'),
                         total
                     ]
                 }
@@ -317,7 +317,7 @@ export default {
         this.resVotingDataSeven = _dataVotingSeven.map(function(item,i){
             return {
                 "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD'),
                     web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_dataVotingSeven[i>0?i-1:0].voteStake)))
                 ]
                 }
@@ -338,7 +338,7 @@ export default {
         this.resFeeStakeDataSeven = _dataFeeStakeSeven.map(function(item,i){
             return {
                 "value": [
-                    dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                    dayjs.unix(item.timestamp).format('YYYY-MM-DD'),
                     web3.utils.fromWei(web3.utils.toBN(item.feeStake).sub(web3.utils.toBN(_dataFeeStakeSeven[i>0?i-1:0].feeStake)))
                 ]
                 }
@@ -459,13 +459,13 @@ export default {
                 this.resFeeUsageData.push({
                      "value": [
                         dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD HH:00'),
-                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsage))
+                        totalGasSave.feeUsage?web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsage)):0
                     ]
                 })
                 this.resFeeUsageSumData.push({
                      "value": [
                         dayjs.unix(totalGasSave.timestamp).format('YYYY-MM-DD HH:00'),
-                        web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsageSum))
+                        totalGasSave.feeUsageSum?web3.utils.fromWei(web3.utils.toBN(totalGasSave.feeUsageSum)):0
                     ]
                 })
             }
@@ -701,10 +701,10 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                            var relVal = params[0].name;
+                            var relVal = params[0].value[0];
                             for (var i = 0, l = params.length; i < l; i++) {
-                                var yValue = Number(params[i].value[1]).toFixed(5)
-                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                                var yValue = Number(params[i].value[1]).toFixed(5);
+                                relVal = relVal+'<br>'+ params[i].marker + params[i].seriesName +':'+yValue;
                             }
                             return relVal;
                         },
@@ -745,11 +745,21 @@ export default {
                     yAxis: 
                         {
                             type: 'value',
+
                             axisLabel: {//x轴文字的配置
                                 show: true,
                                 textStyle: {
-                                color: "rgba(134,142,158,.6)",
-                              }
+                                    color: "rgba(134,142,158,.6)",
+                                },
+                                formatter:function(value){
+                                    var txt=[];
+                                    if(value>=10*6){
+                                        txt.push(value/(10**6)+'M');
+                                    }else{
+                                        txt.push(value);
+                                    }
+                                    return txt;
+                                }
                             },
                             axisLine: {
                                 lineStyle: {
@@ -774,7 +784,7 @@ export default {
                         },
                     ]
                 };
-                    this.myChart.setOption(option);
+                this.myChart.setOption(option);
                 window.addEventListener("resize", function() {
                     this.myChart.resize()
                 })
@@ -792,7 +802,7 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                            var relVal = params[0].name;
+                            var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5)
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
@@ -858,7 +868,9 @@ export default {
                             type: 'bar',
                             data: [
                             ],
-                            barMaxWidth:'18',
+                            barMaxWidth:'40%',
+                            barWidth:'40',
+                            barMinWidth:'10%',
                             barGap: '40%',
                             itemStyle:{
                                 color:'#2F86F6'
@@ -884,7 +896,7 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                            var relVal = params[0].name;
+                            var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5)
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
@@ -976,7 +988,7 @@ export default {
                     tooltip:{
                         trigger:'axis',
                         formatter(params) {
-                            var relVal = params[0].name;
+                            var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5)
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue+'<br/>';
@@ -985,7 +997,7 @@ export default {
                         },
                     },
                     legend: {
-                        data: [ 'Savings On Gas For User', 'Total Stake'],
+                        data: [ 'Amount Saved Gas', 'Total Saved Gas'],
                         top: 'bottom',
                         itemWidth: 16,
                         itemHeight: 16,
@@ -1043,20 +1055,21 @@ export default {
                     },
                     series: [
                         {       
-                            name: 'Savings On Gas For User',
+                            name: 'Amount Saved Gas',
                             type: 'bar',
                             data: [],
                             barWidth:'18',
+                            barMaxWidth:'40%',
+                            barMinWidth:'10%',
                             barGap: '40%',
                             itemStyle:{
                                 color:'#28AA91'
                             }
                         },
                         {
-                            name: 'Total Savings On Gas For User',
+                            name: 'Total Saved Gas',
                             type: 'line',
                             data: [],
-                            barWidth:'12',
                             itemStyle:{
                                 color:'#EC733C'
                             }
@@ -1100,7 +1113,7 @@ export default {
 .v-chip-group .v-chip--active{
     color: #FFF;
 }
-.theme--dark.v-chip[data-v-ec4e21ac]:not(.v-chip--active){
+.theme--dark.v-chip:not(.v-chip--active){
     background: #1D1A36;
 }
 .theme--light.v-chip:not(.v-chip--active){
@@ -1112,8 +1125,12 @@ export default {
 .trend-head{
   display: flex;
 }
+.theme--light.v-application .chip_group {
+    background-color: rgb(105, 121, 248) !important;
+    border-color: rgb(105, 121, 248) !important;
+}
 .theme--dark.v-chip:not(.v-chip--active){
-    background-color:#9F9DB9;
+    background-color:transparent;
    }
 .theme--dark.v-tabs-items{
     background-color:transparent;      

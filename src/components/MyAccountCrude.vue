@@ -17,12 +17,12 @@
                                  —
                             </div>
                             <v-subheader v-if='connection.address'>
-                                <div class="add-price" style="border-right:2px solid;padding-right:12px">
+                                <div class="add-price">
                                     <div>${{assetToCurrency(gasStakeTotalAmount, assetInfo.current_price) | asset(2)}}</div>
-                                    <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
+                                    <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
                                 </div>
                                 <div class="time-price" style="margin-left:12px">
-                                    <div>24H</div>
+                                    <!-- <div>24H</div> -->
                                     <!-- <div class="update-time">
                                         <v-icon
                                             color="right_icon"
@@ -94,8 +94,8 @@
                                     <span>Daily Available Crude Oil Does Not Accumulate And Resets To 0 Every Day</span>
                                 </v-tooltip>
                              </v-subheader>
-                            </div>
-                          <a @click="routeLink()">
+                        </div>
+                        <a @click="routeLink()">
                             <v-icon
                                 size="22"
                                 v-if='connection.address'
@@ -104,8 +104,7 @@
                             >
                             mdi-arrow-right-circle-outline
                             </v-icon>
-                          </a>
-                        <div v-if='!connection.address'></div>
+                        </a>
                     </v-card>
                 </v-card>
              </v-card>
@@ -123,9 +122,7 @@ import { postRpcRequest } from '../service/CommonService'
 export default {
   filters,
   data() {
-    return {
-        
-    };
+    return {}
   },
   watch: {
   '$store.state.connection': function() {
@@ -136,10 +133,7 @@ export default {
       this.connect();
       this.init();
   },
-  destroyed() {
-    
-  },
-   computed: {
+  computed: {
    ...mapGetters({
       connection: 'connection',
       gasStakeTotalAmount: 'gasStakeTotalAmount',
@@ -150,10 +144,7 @@ export default {
     }),
   },
   methods: {
-    routeLink(){
-      this.$router.push('/dashboards')
-    },
-      ...mapActions({
+    ...mapActions({
       addTx: 'addTx',
       setGasStakeTotalAmount: 'setGasStakeTotalAmount',
       setLeftCrude: 'setLeftCrude',
@@ -210,6 +201,9 @@ export default {
     },
     assetToCurrency(item,price){
         return item*price
+    },
+    routeLink(){
+      this.$router.push('/stakeforgas')
     }
   },
 };
