@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="ops background">
-      <span class="network mr-1" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
+      <span class="network mr-2" v-if="connection.network && connection.network != 'mainnet'">{{ connection.network }}</span>
       <v-btn depressed class="grey btn-connect btn-addwallet" color="error" v-if="connection.network && connection.network != 'REI Network' && connection.network != 'REI Testnet' && connection.network != 'REI Devnet'" rounded @click="switchGXChainNet()">
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
         {{$t('msg.neterror')}}
@@ -443,11 +443,13 @@ export default {
   ;
 }
 .network {
-  background-color: rgba(243, 132, 30, 0.05);
-  color: rgb(243, 132, 30);
-  font-weight: 500;
+  background: linear-gradient(135deg, #FAAD5D 0%,#Fc9153  100%);
+  color:#FFF;
+  line-height: 24px;
+  font-size: 14px;
   border-radius: 20px;
-  padding: 6px 10px;
+  padding: 5px 10px;
+  margin-right: 12px;
 }
 
 .txs {
