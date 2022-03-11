@@ -12,7 +12,7 @@
       <div class="account-balance header_account" v-if="connection.address">
         <span class="amount">
           <v-progress-circular indeterminate size="18" :width="2" v-if="connection.loading"></v-progress-circular>
-          <span v-else class="bebas">{{ connection.balance | asset(2) }} {{getSymbol}}</span>
+          <span v-else class="bebas">{{ connection.balance | asset(4) }} {{getSymbol}}</span>
         </span>
         <v-btn depressed rounded @click="dialogAcc = true" class="blue-grey" :class="dark ? 'darken-2' : 'lighten-2'">
           <jazzicon v-if="pendingTxs.length == 0" class="d-flex" :address="connection.address" :diameter="16"></jazzicon>

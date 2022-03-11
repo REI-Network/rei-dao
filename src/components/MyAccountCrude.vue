@@ -12,7 +12,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei sub-title" v-if='connection.address'>{{gasStakeTotalAmount | asset(2) }}<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei sub-title" v-if='connection.address'>{{gasStakeTotalAmount | asset(4) }}<span class="rei">REI</span></v-subheader>
                              <div v-if='!connection.address' class="not-connection">
                                  —
                             </div>
@@ -73,7 +73,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei sub-title" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(2) }}<span class="rei">REI</span></v-subheader>
+                            <v-subheader class="total-rei sub-title" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(4) }}</v-subheader>
                             <div v-if='!connection.address' class="not-connection">
                                 —
                             </div>
