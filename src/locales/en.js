@@ -157,7 +157,7 @@ export default {
   },
   my_account:{
     balance:'balance',
-    balance_tip:'Freely Usable REI,Excluding Stakes IN Vote,Gas Stake',
+    balance_tip:'Freely Usable REI,Excluding Stakes In Vote,Gas Stake',
     voting:'Voting',
     validator:'Validator Voting Stake',
     validator_tip:'If You Cancel The Vote,You Need To Wait 7 Days To Withdraw REI',
