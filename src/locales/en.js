@@ -24,7 +24,7 @@ export default {
   },
   account: {
     title: 'Account',
-    unlock: 'Unlock Wallet',
+    unlock: 'Connect Wallet',
     connect: 'Select A Wallet',
     connected_with: 'Connected with ',
     copy_address: 'Copy Address',
