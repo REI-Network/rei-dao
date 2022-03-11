@@ -76,7 +76,10 @@
                 color="background"
                 style="height:480px"
             >
-                <v-subheader class="price-more sub-title"><h3>Price And Market Stats</h3></v-subheader>
+                <v-subheader class="price-more sub-title">
+                    <h3>Price And Market Stats</h3>
+                    <a href="https://www.coingecko.com/en/coins/gxchain" class="title-detailed" target="_blank">more></a>
+                </v-subheader>
                 <v-list
                     subheader
                     two-line
@@ -536,6 +539,14 @@ export default {
    .price-more{
         display: flex;
         justify-content: space-between;
+        .title-detailed{
+            font-size: 16px;
+            color: #868E9E;
+        }
+        .title-detailed:hover{
+            color: #6979F8;
+            text-decoration:underline;
+        }
     } 
 }
 .theme--dark.v-tabs-items{
