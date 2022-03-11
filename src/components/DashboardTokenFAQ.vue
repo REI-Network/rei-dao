@@ -69,24 +69,24 @@ export default {
         radios:'Total Voting Stake',
         faqList:[
           {
+            title:'Why We build REI Network?',
+            content:'When we had the first idea about blockchain in the year 2016, we wanted to develop a high-performance blockchain that could adapt to the growing business demands.',
+            url:'https://docs.rei.network/rei-network/why-we-build-rei-network'
+          },
+          {
             title:'What is REI DAO?',
-            content:'Introduction to REI DAO,about Vision and more...',
-            url:''
+            content:'REI DAO is a decentralized governance community, a manifestation of the REI Network blockchain spirit of being more decentralized, open and transparent in its governance model, and returning on-chain governance to each REI holder.',
+            url:'https://docs.rei.network/rei-dao/what-is-rei-dao'
           },
           {
-            title:'What is REI NETWORK?',
-            content:'REI Network is not a new project, but an upgraded version of GXChain.',
-            url:'https://docs.rei.network/'
+            title:'What is REI?',
+            content:'REI keeps the REI Network running and secures the REI Network . When you send REI or use an application on the REI Network.',
+            url:'https://docs.rei.network/rei-network/introduction-to-rei'
           },
           {
-            title:'What is the trends chart showing ?',
-            content:'The graph of total stake shows nodal voting stats for the following time periods: hourly, daily, weekly, monthly.',
-            url:''
-          },
-          {
-            title:'Detailed explanation of token distribution.',
-            content:'Get more information about token distribution, etc.',
-            url:''
+            title:'What is REIcosystem?',
+            content:'The Foundation will use the unlocked 250 million REI to incentivize the REI Network`s ecological contributors and developers.',
+            url:'https://docs.rei.network/rei-dao/reicosystem'
           }
         ],
     };

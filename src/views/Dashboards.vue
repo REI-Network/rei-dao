@@ -49,10 +49,6 @@ export default {
       font-size: 14px;
       color: #868E9E;
     }
-     .title-detailed:hover{
-      color: #6979F8;
-      text-decoration:underline;
-    }
 }
 .dashboard{
   padding-left:40px;

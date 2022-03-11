@@ -96,17 +96,17 @@ export default {
           {
             title:'How to become a node validator?',
             content:'A validator is a participant in the network who runs validator nodes to run and secure the network.',
-            url:'https://docs.rei.network/guides/become-a-validator'
+            url:'https://docs.rei.network/rei-dao/guides/become-a-validator'
           },
           {
             title:'How to vote for a node validator?',
             content:'Once you login you will find this on the Validator of the Staking Dashboard. Here you will see an Unstake button for each of the validators.',
-            url:'https://docs.rei.network/guides/voting-for-a-validator'
+            url:'https://docs.rei.network/rei-dao/guides/voting-for-a-validator'
           },
           {
-            title:'Introduction to the total voting stake chart？',
-            content:'he graph of total voting stake shows nodal voting data for the following time periods: hourly, daily, weekly, monthly.',
-            url:''
+            title:'What is the responsibility of the REI holder?',
+            content:'The responsibility of REI holders is primarily to ensure the stable and secure operation and ecological growth of the REI Network.',
+            url:'https://docs.rei.network/rei-network/introduction-to-rei'
           }
         ],
         myChart: null,
