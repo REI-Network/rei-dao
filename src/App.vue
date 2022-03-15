@@ -121,7 +121,6 @@ a{
 }
 .theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
   border: none;
-  background-color:#E2E4EA;
 }
 .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:not(.v-data-table__mobile-row), .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:not(.v-data-table__mobile-row){
   border-color: #504985;
@@ -147,5 +146,13 @@ a{
 }
 .v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
   margin-right:12px;
+}
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
+        /* background-color: transparent; */
+    }
+@media screen and (max-width: 900px) {
+    .v-slide-group__content{
+      width: 100%;
+    }
 }
 </style>

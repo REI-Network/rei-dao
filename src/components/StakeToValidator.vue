@@ -30,7 +30,7 @@
                     <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
             </v-tabs>
             <!-- <v-divider /> -->
-            <div class="btn-div">
+            <div class="btn-div" v-if="this.width>900">
                 <v-btn
                     text
                     outlined
@@ -56,7 +56,34 @@
                     </v-icon>
                 </v-btn>
             </div>
-            
+            <div v-else>
+            <v-divider class="faq_border" />
+            <v-row  class="iphone-btn" justify="space-between" align="center">
+                <div>
+                    <span class="iconfont">&#xe601;</span>
+                    <v-btn
+                        text
+                        outlined
+                        color="primary"
+                        v-if="isNode"
+                        @click="setRate"
+                        >
+                        {{$t('stake.set_commission_rate')}}
+                    </v-btn>
+                    <v-btn
+                        class="v-btn"
+                        text
+                        outlined
+                        color="validator"
+                        v-if="connection.address"
+                        @click="stakeToNode"
+                    >
+                    {{$t('stake.stake_to_other_node')}}
+                    </v-btn>
+                </div>
+                 <div>></div>
+            </v-row>
+            </div>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
                 <v-tab-item key="11" >
@@ -603,6 +630,7 @@ export default {
         rewardDialog: false,
         setCommissionRateDialog: false,
         myStakeList: [],
+        width:'',  
         items: [{ state: 'All', val: '' },{ state: 'Active Validator', val: '1' },{ state: 'Unactive Validator', val: '2' }],
         itemsPages:[10, 20, 50],
         headers: [
@@ -687,6 +715,7 @@ export default {
   mounted() {
       this.connect();
       this.init();
+      this.windowWidth();
   },
   methods: {
     ...mapActions({
@@ -699,6 +728,7 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+   
     async init() {
         
         this.stakeListLoading = true;
@@ -1129,7 +1159,13 @@ export default {
         } else {
             this.nodeList = this.activeList.concat(this.notActiveList);
         }
-    }
+    },
+     windowWidth(){
+        const that = this;  
+        that.width = window.innerWidth;
+        console.log('屏幕宽度',) // 屏幕宽度 
+     }
+   
   },
   computed: {
     ...mapGetters({
@@ -1314,6 +1350,12 @@ export default {
     .text-bod{
         text-align: right;
     }
+    .iphone-btn{
+        // margin-top:20px;
+        // border-top:1px solid grey;
+        padding:16px 20px;
+        color:#868E9E;
+    }
     @media screen and (max-width: 900px) {
         .vote-list{
             position: static !important;
@@ -1368,11 +1410,15 @@ export default {
             margin-top: -32px;
         }
         .select-card{
-            width:100%;
+            width:46%;
             margin-top:-10px;
+            display: flex;
+            // background: red;
+            justify-content: space-between !important;
         }
         .select-second{
-            margin-right:0;
+            margin-left:12px;
+            // background: blue($color: #000000);
         }
         .d-select{
             margin-left:0;
@@ -1380,6 +1426,14 @@ export default {
         }
         .text-filed{
             width:300px !important;
+        }
+        .card-tab{
+            width:100% !important;
+        }
+        .v-tabs:not(.v-tabs--vertical) .v-tab{
+            width: 50%;
+            padding-left: 12px;
+            padding-right:12px;
         }
     }
 </style>
