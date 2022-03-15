@@ -196,7 +196,7 @@
                                     v-if="item.address==connection.address"
                                     tile
                                     small
-                                    color="success"
+                                    color="vote_button"
                                     class="mr-4"
                                     @click="handleReward(item)"
                                     >
@@ -247,7 +247,7 @@
                                     <v-btn
                                         tile
                                         small
-                                        color="success"
+                                        color="vote_button"
                                         class="mr-4"
                                         @click="handleStaking(item)"
                                         >
@@ -256,7 +256,7 @@
                                     <v-btn
                                         tile
                                         small
-                                        color="success"
+                                        color="start_unstake"
                                         class="mr-4"
                                         @click="handleClaim(item)"
                                     >
@@ -1380,7 +1380,7 @@ export default {
         }
         .my-voted-validator{
             width:auto;
-            margin:16px 16px;
+            margin:20px 16px;
         }
          .right-outline{
             display: flex;

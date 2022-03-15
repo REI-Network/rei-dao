@@ -273,9 +273,11 @@ export default {
 }
 .stake-name{
     font-size: 12px;
+    color: #868e9e;
 }
 .deposit{
     font-size: 12px;
+    color: #868e9e;
 }
 .from-voting{
     display: flex;

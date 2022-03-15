@@ -1110,6 +1110,9 @@ export default {
         justify-content: flex-end;
     }
 }
+.v-input--radio-group--row .v-input--radio-group__input{
+  margin-left: 20px;
+}
 .v-chip-group .v-chip--active{
     color: #FFF;
 }

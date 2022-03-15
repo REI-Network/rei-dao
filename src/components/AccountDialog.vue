@@ -9,7 +9,7 @@
       <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded @click="connect('metamask')">
         {{ $t('account.unlock') }}
       </v-btn>
-      <div class="account-balance header_account" v-if="connection.address">
+      <div class="account-balance" v-if="connection.address">
         <span class="amount">
           <v-progress-circular indeterminate size="18" :width="2" v-if="connection.loading"></v-progress-circular>
           <span v-else class="bebas">{{ connection.balance | asset(4) }} {{getSymbol}}</span>
@@ -42,7 +42,7 @@
       <v-card color="start_unstake" >
         <v-card-title>{{ $t('account.title') }}</v-card-title>
         <v-divider></v-divider>
-        <v-sheet class="ma-4 pa-4" :class="dark ? 'current_wallet' : 'gradient'" rounded v-if="connection.walletName">
+        <v-sheet class="ma-4 pa-4" :class="dark ? 'current' : 'gradient'" rounded v-if="connection.walletName">
           <div class="d-flex stretch">
             <div class="d-flex text--#FFF">
               <span>{{ $t('account.connected_with') }}</span>
@@ -412,7 +412,7 @@ export default {
   white-space: nowrap;
 }
 .theme--dark.v-sheet{
-  background: #403E59 !important;
+  background: #403E59 ;
 }
 .green-dot {
   width: 4px;
@@ -427,13 +427,13 @@ export default {
   border-radius: 20px;
   display: flex;
   align-items: center;
-  .theme--dark.v-btn.v-btn--has-bg[data-v-07306f55]{
+  background-color: #6979f8;
+  .v-btn.v-btn--has-bg[data-v-07306f55]{
   background-color: #4856C0  !important;
 }
-.theme--dark.account-balance{
-  background: #6979F8;
+.bebas{
+  color: #FFF;
 }
-
   .amount {
     padding-right: 0.5rem;
   }
@@ -460,6 +460,9 @@ export default {
     min-width: 30px;
     text-align: center;
   }
+}
+.current{
+  background-color: #403E59 !important;
 }
 .gradient {
   background: linear-gradient(135deg, #6979F8 0%, #4856C0 100%);

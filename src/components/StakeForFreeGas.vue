@@ -30,7 +30,7 @@
                             {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                         </template>
                         <template v-slot:item.withdraw="{ item }">
-                            {{ item.availableTime }}
+                            {{ item.availableTime}}
                         </template>
                         <!-- <template v-slot:item.isActive="{ item }">
                             {{ status[item.isActive] }}

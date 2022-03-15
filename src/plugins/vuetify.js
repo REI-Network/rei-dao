@@ -46,6 +46,7 @@ export default new Vuetify({
       },
       dark: {
         primary: '#FFF',
+        secondary: '#1D1A36',
         vote_button:'#6979F8',
         start_unstake:'#595777',
         radio_day:'#5A5878',

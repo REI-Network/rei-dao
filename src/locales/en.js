@@ -90,7 +90,7 @@ export default {
     days: ' days',
     hour: ' hour',
     minute: 'minute',
-    neterror:'Swith to REI Network',
+    neterror:'Switch to REI Network',
     loading: 'Loading... Please wait'
   },
   unstake:{

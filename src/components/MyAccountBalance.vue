@@ -19,20 +19,21 @@
                     v-bind="attrs"
                     v-on="on"
                     dense
-                    style="margin-left:8px"
+                    size="14"
+                    style="margin-left:4px"
                   >
-                    mdi-help-circle-outline
+                    mdi-alert-circle-outline
                   </v-icon>
                 </template>
-                 <span>Freely Usable REI,Excluding Stakes In Vote,Gas Stake</span>
+                 <span>Freely Usable REI,Excluding Stakes<br/> In Vote,Gas Stake</span>
             </v-tooltip>
           </v-subheader>
-          <v-subheader class="total-rei sub-title" v-if='connection.address'>{{ connection.balance | asset(4) }}<span class="rei">REI</span></v-subheader>
+          <v-subheader class="total-banlance sub-title " v-if='connection.address'>{{ connection.balance | asset(4) }}<span class="rei">REI</span></v-subheader>
           <div v-if='!connection.address' class="not-connection">
                 —
           </div>
           <v-subheader v-if='connection.address' style="height:16px">
-            <div class="add-price">
+            <div class="add-price" style="margin-top:12px;">
                <div>${{assetToCurrency(connection.balance,assetInfo.current_price) | asset(2)}}</div>
                <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
             </div>
@@ -73,7 +74,7 @@
                 <div v-if='!connection.address' class="not-connection">
                     —
                 </div>
-                <v-subheader v-if='connection.address'>
+                <v-subheader v-if='connection.address' class="middle-hei">
                     <div class="add-price" >
                         <div>${{assetToCurrency(myTotalStake,assetInfo.current_price)| asset(2)}}</div>
                         <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
@@ -104,12 +105,13 @@
                           v-bind="attrs"
                           v-on="on"
                           dense
-                          style="margin-left:8px"
+                          size="14"
+                          style="margin-left:4px"
                         >
-                          mdi-help-circle-outline
+                          mdi-alert-circle-outline
                         </v-icon>
                       </template>
-                 <span>If You Cancel The Vote,You Need To Wait 7 Days To Withdraw REI</span>
+                 <span>If You Cancel The Vote,You Need To <br/>Wait 7 Days To Withdraw REI</span>
                 </v-tooltip>
               </v-subheader>
              </div>
@@ -137,7 +139,7 @@
                 <div v-if='!connection.address' class="not-connection">
                     —
                 </div>
-                <v-subheader v-if='connection.address'>
+                <v-subheader v-if='connection.address' class="middle-hei">
                     <div class="add-price">
                         <div>${{assetToCurrency(myTotalUnStake,assetInfo.current_price)| asset(2)}}</div>
                         <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
@@ -168,9 +170,10 @@
                           v-bind="attrs"
                           v-on="on"
                           dense
-                          style="margin-left:8px"
+                          size="14"
+                          style="margin-left:4px"
                         >
-                          mdi-help-circle-outline
+                          mdi-alert-circle-outline
                         </v-icon>
                       </template>
                  <span>Stake REIs And Earn More</span>
@@ -503,6 +506,15 @@ export default {
   .secend-card{
     height: 380px;
   }
+  .total-banlance{
+    font-size: 40px;
+    font-weight: 700;
+    .rei{
+       font-size: 16px;
+       font-weight: normal;
+       margin-left: 8px;
+    }
+  }
   .total-rei{
     font-size: 28px;
     font-weight: 700;
@@ -530,7 +542,7 @@ export default {
     margin: 0 16px 16px 16px;
       .content-left{
         width:350px;
-        margin:6px 0;
+        margin:12px 0;
       }
       .icon-right{
         margin-right:20px;
@@ -542,6 +554,9 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+    }
+    .middle-hei{
+      height: 32px;
     }
     .time-price{
         width: 44%;

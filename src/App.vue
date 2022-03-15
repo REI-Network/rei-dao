@@ -136,7 +136,7 @@ a{
   justify-content: flex-end;
 }
 .v-tabs:not(.v-tabs--vertical):not(.v-tabs--right) > .v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__prev{
-  display:none ;
+  display:none;
 }
 .theme--dark.v-icon{
   color:#5c5a7a;
@@ -147,9 +147,9 @@ a{
 .v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
   margin-right:12px;
 }
-.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
-        /* background-color: transparent; */
-    }
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td{
+  height: 56px;
+}
 @media screen and (max-width: 900px) {
     .v-slide-group__content{
       width: 100%;

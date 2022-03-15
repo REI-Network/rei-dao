@@ -16,7 +16,7 @@
                              <div v-if='!connection.address' class="not-connection">
                                  —
                             </div>
-                            <v-subheader v-if='connection.address'>
+                            <v-subheader v-if='connection.address' class="middle-hei">
                                 <div class="add-price">
                                     <div>${{assetToCurrency(gasStakeTotalAmount, assetInfo.current_price) | asset(2)}}</div>
                                     <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
@@ -46,9 +46,10 @@
                                             v-bind="attrs"
                                             v-on="on"
                                             dense
-                                            style="margin-left:8px"
+                                            size="14"
+                                            style="margin-left:4px"
                                         >
-                                         mdi-help-circle-outline
+                                         mdi-alert-circle-outline
                                         </v-icon>
                                     </template>
                                     <span>Stake REI,Earn Crude As Gas</span>
@@ -73,7 +74,7 @@
                         outlined
                     >
                         <div class="content-left">
-                            <v-subheader class="total-rei sub-title" style="margin-top:28px" v-if='connection.address'>{{ leftCrude | asset(4) }}</v-subheader>
+                            <v-subheader class="total-rei sub-title" style="margin-top:16px" v-if='connection.address'>{{ leftCrude | asset(4) }}</v-subheader>
                             <div v-if='!connection.address' class="not-connection">
                                 —
                             </div>
@@ -86,9 +87,10 @@
                                             v-on="on"
                                             color="right_icon"
                                             dense
-                                            style="margin-left:8px"
+                                            size="14"
+                                            style="margin-left:4px"
                                         >
-                                            mdi-help-circle-outline
+                                            mdi-alert-circle-outline
                                         </v-icon>
                                     </template>
                                     <span>Remaining available gas, 1CRUDE ≈ 1e9 Gwei</span>
@@ -244,12 +246,15 @@ export default {
     margin: 0 16px 16px 16px;
       .content-left{
         width:350px;
-        // margin:12px 0; 
+        margin:12px 0; 
       }
       .icon-right{
         margin-right:20px;
         margin-top: 64px;
       }
+    }
+    .middle-hei{
+      height: 32px;
     }
   .add-price{
       width: 56%;
