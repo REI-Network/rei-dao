@@ -14,7 +14,7 @@
           <v-progress-circular indeterminate size="18" :width="2" v-if="connection.loading"></v-progress-circular>
           <span v-else class="bebas">{{ connection.balance | asset(4) }} {{getSymbol}}</span>
         </span>
-        <v-btn depressed rounded @click="dialogAcc = true" class="blue-grey" :class="dark ? 'darken-2' : 'lighten-2'">
+        <v-btn depressed rounded @click="dialogAcc = true" :class="dark ? 'darken-2' : 'lighten-2'">
           <jazzicon v-if="pendingTxs.length == 0" class="d-flex" :address="connection.address" :diameter="16"></jazzicon>
           <span class="ml-2 bebas" v-if="$vuetify.breakpoint.mdAndUp && pendingTxs.length == 0">&nbsp;{{ connection.address | addr }}</span>
           <v-progress-circular size="18" width="2" class="mr-1" v-if="pendingTxs.length > 0" indeterminate color="primary"></v-progress-circular>
@@ -60,12 +60,12 @@
           <v-row class="account-op" no-gutters>
             <v-col>
               <v-btn color="secondary" :text="!dark" depressed small @click="copyAddr">
-                <v-icon color="#FFF" small>{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
+                <v-icon class="account-icon" small>{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 {{ addrCopying ? $t('account.copied') : $t('account.copy_address') }}
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan.rei.network/address/${connection.address}`"><v-icon small color="#FFF">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan.rei.network/address/${connection.address}`"><v-icon small class="account-icon">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -428,19 +428,19 @@ export default {
   display: flex;
   align-items: center;
   background-color: #6979f8;
-  .v-btn.v-btn--has-bg[data-v-07306f55]{
-  background-color: #4856C0  !important;
-}
 .bebas{
   color: #FFF;
+}
+
+.v-btn.v-btn--has-bg{
+  background-color: #4856C0;
 }
   .amount {
     padding-right: 0.5rem;
   }
 }
-.theme--dark.v-btn.v-btn--has-bg{
-  background-color: transparent !important
-  ;
+.account-icon{
+  color: #FFF;
 }
 .network {
   background: linear-gradient(135deg, #FAAD5D 0%,#Fc9153  100%);
@@ -462,7 +462,7 @@ export default {
   }
 }
 .current{
-  background-color: #403E59 !important;
+  background-color: #403E59;
 }
 .gradient {
   background: linear-gradient(135deg, #6979F8 0%, #4856C0 100%);

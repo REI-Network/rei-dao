@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation app class="d-md-none" color="primary" background-color="background">
+  <v-bottom-navigation app class="d-md-none" color="primary" background-color="background" :value="value">
       <template v-for="link in links">
         <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show">
         <span>{{ $t(link.text) }}</span>
@@ -13,6 +13,7 @@ import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      value:0,
       links: [
         {
           icon: '&#xe604;',

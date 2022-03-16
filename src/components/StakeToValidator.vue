@@ -174,10 +174,9 @@
                                     tile
                                     small
                                     color='vote_button'
-                                    class="mr-4 font-btn"
+                                    class="mr-4 font-btn btn-radius"
                                     v-if='connection.address'
                                     @click="handleStaking(item)"
-                                    style="border-radius:4px"
                                     >
                                     {{$t('stake.staking')}}
                                     </v-btn>
@@ -185,10 +184,9 @@
                                     tile
                                     small
                                     color="start_unstake"
-                                    class="mr-4 unstake_btn"
+                                    class="mr-4 unstake_btn btn-radius"
                                     v-if='connection.address'
                                     @click="handleClaim(item)"
-                                    style="border-radius:4px"
                                     >
                                     {{$t('stake.claim')}}
                                     </v-btn>
@@ -196,7 +194,7 @@
                                     v-if="item.address==connection.address"
                                     tile
                                     small
-                                    color="vote_button"
+                                    color="vote_button btn-radius"
                                     class="mr-4"
                                     @click="handleReward(item)"
                                     >
@@ -248,7 +246,7 @@
                                         tile
                                         small
                                         color="vote_button"
-                                        class="mr-4"
+                                        class="mr-4 btn-radius"
                                         @click="handleStaking(item)"
                                         >
                                         {{$t('stake.staking')}}
@@ -257,7 +255,7 @@
                                         tile
                                         small
                                         color="start_unstake"
-                                        class="mr-4"
+                                        class="mr-4 btn-radius"
                                         @click="handleClaim(item)"
                                     >
                                         {{$t('stake.claim')}}
@@ -1288,6 +1286,9 @@ export default {
     }
     .v-btn{
         text-transform: none !important;
+    }
+    .btn-radius{
+        border-radius: 4px;
     }
     .theme--dark.v-tabs-items{
         background-color:transparent;

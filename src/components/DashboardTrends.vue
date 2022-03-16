@@ -28,7 +28,6 @@
                 <v-tabs v-model="tab" 
                     background-color="background"
                     hide-slider 
-                    class="trend-tab"
                     >
                     <v-radio-group
                         v-model="radios"
@@ -36,6 +35,7 @@
                         row
                         dense
                         style="margin-top:0;"
+                        class="trend-tab"
                     >
                         <v-tab key="1">
                             <v-radio
@@ -1095,6 +1095,7 @@ export default {
 
 <style scoped lang="scss">
 .trends-radio{
+    margin-left: 20px;
     label{
         font-size: 12px;
     }
@@ -1110,9 +1111,6 @@ export default {
         justify-content: flex-end;
     }
 }
-.v-input--radio-group--row .v-input--radio-group__input{
-  margin-left: 20px;
-}
 .v-chip-group .v-chip--active{
     color: #FFF;
 }
@@ -1124,9 +1122,6 @@ export default {
 }
 .theme--light.sub-title{
     color: #000;
-}
-.trend-head{
-  display: flex;
 }
 .theme--light.v-application .chip_group {
     background-color: rgb(105, 121, 248) !important;
@@ -1149,8 +1144,9 @@ export default {
        background: #1D1A36;
    }
 @media screen and (max-width: 900px) {
-   .trends-head{
-        // display: inline !important;
+
+   .v-slide-group__content{
+        margin-left: 20px;
    }
    .v-tab{
        padding: 0 !important;

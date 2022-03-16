@@ -119,9 +119,9 @@ a{
   border: none;
   background-color:#252243;
 }
-.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
+/* .theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr:last-child > th{
   border: none;
-}
+} */
 .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:not(.v-data-table__mobile-row), .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:not(.v-data-table__mobile-row){
   border-color: #504985;
 }
@@ -150,9 +150,19 @@ a{
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td{
   height: 56px;
 }
+.v-data-table > .v-data-table__wrapper .v-data-table__mobile-table-row{
+  padding-top: 20px;
+}
+.theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr:last-child>th{
+  background-color:#E2E4EA;
+  border: none;
+}
+.v-list.v-select-list.v-sheet.theme--dark.theme--dark{
+  background-color: #595777 !important;
+}
 @media screen and (max-width: 900px) {
-    .v-slide-group__content{
-      width: 100%;
+    .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
+      padding-bottom: 20px;
     }
 }
 </style>

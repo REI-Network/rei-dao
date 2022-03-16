@@ -51,7 +51,7 @@
                   v-for="(item, i) in faqList"
                   :key="i">
                   <a :href='item.url' target="_blank" style="width: 100% !important;">
-                    <v-card class="ma-3 list-card" outlined color="faq_border">
+                    <v-card class="ma-5 list-card" outlined color="faq_border">
                     <v-list-item-content class=“text-truncate”>
                       <v-list-item-title v-text="item.title"></v-list-item-title>
                       <v-list-item-subtitle v-text="item.content">   
@@ -391,11 +391,13 @@ export default {
   }
 }
 .v-list-item__subtitle[data-v-271c5252]{
-    overflow: hidden !important;
-    text-overflow:ellipsis !important;
+    overflow: hidden;
+    text-overflow:ellipsis;
     display:-webkit-box;
-    -webkit-box-orient:vertical;  
     -webkit-line-clamp:2;  
+    overflow:hidden;
+    /* autoprefixer: ignore next */
+    -webkit-box-orient:vertical;  
 }
 .update-time{
     display: flex;
@@ -410,10 +412,10 @@ export default {
    justify-content: space-between;
    border-radius: 6px;
  } 
- .v-list-item__title, .v-list-item__subtitle{
-  overflow: visible !important;
-  white-space: normal !important;
-}
+//  .v-list-item__title, .v-list-item__subtitle{
+//   overflow: visible !important;
+//   white-space: normal !important;
+// }
 @media screen and (max-width: 900px) {
     .charts-faq{
     display: flex;
