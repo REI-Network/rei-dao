@@ -129,7 +129,7 @@ export default {
                 },
               formatter:function(name){
                 var index = 0;
-                var clientlabels = ['Circulated','REIecosystem','Maketing','Node Rewards'];
+                var clientlabels = ['Circulated','REIecosystem','Marketing','Node Rewards'];
                 var clientcounts = ['750,000,000','150,000,000','50,000,000','50,000,000'];
                 clientlabels.forEach(function(value,i){
                   if(value == name){
