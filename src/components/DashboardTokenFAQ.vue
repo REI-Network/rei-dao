@@ -9,7 +9,25 @@
             rounded="4"
             color="background"
           >
-          <v-subheader class="sub-title"><h3>Token Distribution</h3></v-subheader>
+          <v-subheader class="sub-title">
+            <h3>Token Distribution</h3>
+            <v-tooltip bottom color="start_unstake">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    color="right_icon"
+                    dense
+                    size="16"
+                    style="margin-left:4px"
+                  >
+                    mdi-alert-circle-outline
+                  </v-icon>
+                </template>
+                <h3>What is node rewards？</h3>
+                <span>Remaining 50M are node rewards, <br/>will be minted over 5 years</span>
+             </v-tooltip>
+          </v-subheader>
             <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>
             <!-- <div class="update-time" style="margin-top:-20px">
                  <v-icon
