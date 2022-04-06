@@ -159,8 +159,8 @@ export default {
             },
             color:['#F46F6F', '#64B5FF','#FF9743','#4CC7B6'],
             title:{
-                text:"1BN",
-                left:"27%",
+                text:'1B',
+                left:"28%",
                 top:"41%",
                 textStyle:{
                     color:"#868e9e",
