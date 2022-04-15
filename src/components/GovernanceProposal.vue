@@ -86,8 +86,13 @@
                 </v-row>
             </v-col>
         </v-row> 
-        <h3 class="title">Recently Proposal</h3>
-        <v-card outlined class="recently-proposal">
+        <h3 class="title">Recently Proposed</h3>
+        <v-card 
+            outlined 
+            class="recently-proposal"  
+            v-for="(item, i) in proposalList"
+            :key="i"
+            >
             <v-row align="center">
                 <v-col cols="12" md="11">
                     <v-row align="center" style="margin-left:20px;">
@@ -97,14 +102,16 @@
                                 alt="John"
                             >
                         </v-avatar>
-                        <h5>Reidao by reidao.eth</h5>
-                        <div class="active">Active</div>
+                        <h5>{{item.author}}</h5>
+                        <!-- <div class="active" v-if="item.state==active">Active</div> -->
+                        <div class="active closed" v-if="item.state=='closed'">Closed</div>
+                         <!-- <div class="active pending" v-if="item.state==pending">Pending</div> -->
                     </v-row>
                     <v-list-item>
                         <v-list-item-content>
-                            <v-list-item-title class="list-title">Governance Proposal From GXChain 2.0 To REI Nework</v-list-item-title>
+                            <v-list-item-title class="list-title">{{item.title}}</v-list-item-title>
                             <v-list-item-subtitle class="list-content">
-                                Governnance Proposal From GXChain 2.0 TO REI Network, Governnance Proposal From GXChain 2.0 TO RE…134dnfgj  hgtgt tu  gfdt csbclopyqwo ngjgo
+                                {{item.body}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle class="list-time">
                                 end in 4 days
@@ -117,68 +124,7 @@
                 </v-col>
             </v-row>
         </v-card>
-         <v-card outlined class="recently-proposal">
-            <v-row align="center">
-                <v-col cols="12" md="11">
-                    <v-row align="center" style="margin-left:20px;">
-                        <v-avatar size="24">
-                            <img
-                                src="https://cdn.vuetifyjs.com/images/john.jpg"
-                                alt="John"
-                            >
-                        </v-avatar>
-                        <h5>Reidao by reidao.eth</h5>
-                        <div class="active pending">Pending</div>
-                    </v-row>
-                    <v-list >
-                        <v-list-item>
-                        <v-list-item-content>
-                            <v-list-item-title class="list-title">Governance Proposal From GXChain 2.0 To REI Nework</v-list-item-title>
-                            <v-list-item-subtitle class="list-content">
-                                Governnance Proposal From GXChain 2.0 TO REI Network, Governnance Proposal From GXChain 2.0 TO RE…134dnfgj  hgtgt tu  gfdt csbclopyqwo ngjgo
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle class="list-time">
-                                end in 4 days
-                            </v-list-item-subtitle>
-                        </v-list-item-content>
-                    </v-list-item>
-                    </v-list>
-                </v-col>
-                <v-col cols="12" md="1" class="right-arrow">
-                    <v-icon  size="22"> mdi-arrow-right-circle-outline</v-icon>
-                </v-col>
-            </v-row>
-        </v-card>
-         <v-card outlined class="recently-proposal">
-            <v-row align="center">
-                <v-col cols="12" md="11">
-                    <v-row align="center" style="margin-left:20px;">
-                        <v-avatar size="24">
-                            <img
-                                src="https://cdn.vuetifyjs.com/images/john.jpg"
-                                alt="John"
-                            >
-                        </v-avatar>
-                        <h5>Reidao by reidao.eth</h5>
-                        <div class="active closed">Closed</div>
-                    </v-row>
-                    <v-list-item>
-                        <v-list-item-content>
-                            <v-list-item-title class="list-title">Governance Proposal From GXChain 2.0 To REI Nework</v-list-item-title>
-                            <v-list-item-subtitle class="list-content">
-                                Governnance Proposal From GXChain 2.0 TO REI Network, Governnance Proposal From GXChain 2.0 TO RE…134dnfgj  hgtgt tu  gfdt csbclopyqwo ngjgo
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle class="list-time">
-                                end in 4 days
-                            </v-list-item-subtitle>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-col>
-                <v-col cols="12" md="1" class="right-arrow">
-                    <v-icon  size="24"> mdi-arrow-right-circle-outline</v-icon>
-                </v-col>
-            </v-row>
-        </v-card>
+        <div class="footer-all">View ALL Proposals On Snapshot ></div>
      </v-card>
    </v-container>
 </template>
@@ -193,7 +139,7 @@ export default {
   filters,
   data() {
     return {   
-       
+       proposalList:[],
     }
   },
   watch: {
@@ -227,7 +173,7 @@ export default {
                 first: 20,
                  skip: 0,
                 where: {
-                    space_in: ["REI Network.eth"],
+                    space_in: ["rei-network.eth"],
                     state: "closed"
                 },
                 orderBy: "created",
@@ -357,6 +303,11 @@ a:hover{
     .right-arrow{
         margin-bottom: 20px;
     }
+}
+.footer-all{
+    color: #6979F8;
+    text-align: center;
+    margin-top: 20px;
 }
 @media screen and (max-width: 900px) {
     .proposal{

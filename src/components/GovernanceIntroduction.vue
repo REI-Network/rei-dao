@@ -4,11 +4,7 @@
          <v-row justify="space-between">
             <v-col cols="12" md="8">
                 <h2>Introduction To REI Governance</h2>
-                <div class="introduction-text">REI holders are responsible for managing the REI network,
-                    including adjusting the verification node incentive parameters,
-                    daily free gas parameters, etc., and improving the governance 
-                    process itself. Anyone can become a REI holder, and all are    
-                     welcome to join us in creating the future of the REI network.
+                <div class="introduction-text">$REI holders are responsible for managing the REI network, including adjusting the verification node incentive parameters, daily free gas parameters, etc., and improving the governance process itself. Anyone can become a $REI holder, and all are welcome to join us in creating the future of the REI network.
                 </div>
                 <v-btn 
                     color="#6979F8"
@@ -68,9 +64,7 @@
                             <v-card flat class="step-content">
                                 <h2>Community Consensus</h2>
                                 <v-card-text>
-                                    The first step in participating in governance is to initiate any 
-                                    discussion that benefits the REI Network and to build influence 
-                                    in the community so that more people agree with your proposal.
+                                    The first step in participating in governance is to initiate a proposal that benefits the REI Network and building influence in the community will make more people agree with your proposal.
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
@@ -146,9 +140,7 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>Community Consensus</h2> -->
                                 <v-card-text>
-                                    The first step in participating in governance is to initiate any 
-                                    discussion that benefits the REI Network and to build influence 
-                                    in the community so that more people agree with your proposal.
+                                    The first step in participating in governance is to initiate a proposal that benefits the REI Network and building influence in the community will make more people agree with your proposal.
                                 </v-card-text>
                             </v-card>
                     </v-expansion-panel-content>
@@ -244,7 +236,7 @@
                                 <v-list-item-content>
                                     <v-list-item-title> <h3>Discord</h3></v-list-item-title>
                                     <v-list-item-subtitle class="tools-text">
-                                        Join our discord, tell us your ideal, build influence in the
+                                        Join our discord, let us know your idea,  build influence in the
                                         community, and talk to our community governance coordinator.
                                     </v-list-item-subtitle>
                                     <a href="https://discord.com/invite/zhwWkXYtJt" target="_blank"><div class="tools-link">Join REI DAO Discord ></div></a>
@@ -282,7 +274,7 @@
                                 <v-list-item-content>
                                     <v-list-item-title> <h3>Governance Forum</h3></v-list-item-title>
                                     <v-list-item-subtitle class="tools-text">
-                                       Proposal discussion, the arena of debate. Let everyone hear
+                                       Proposal discussion, the venue for debate. Let everyone hear
                                         your ideas and interact with the community.
                                     </v-list-item-subtitle>
                                     <div class="tools-link">Enter The Forum ></div>

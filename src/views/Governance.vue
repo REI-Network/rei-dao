@@ -2,7 +2,7 @@
   <v-container class="myAccount stake_background">
      <div class="header-title">
       <h1>Governance</h1>
-      <div class="title-detailed">The REI Token Enables Community Ownership,Join And Start Participating in Governance.</div>
+      <div class="title-detailed">$REI empowers community ownership. Join REI DAO and start participating in governance.</div>
     </div>
           <GovernanceIntroduction></GovernanceIntroduction>
           <GovernanceProposal></GovernanceProposal>
