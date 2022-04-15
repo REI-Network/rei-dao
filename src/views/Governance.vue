@@ -49,5 +49,9 @@ export default {
     padding-left:20px;
     padding-right:20px;
   }
+  .container{
+    padding: 12px!important;
+  }
+  
 }
 </style>

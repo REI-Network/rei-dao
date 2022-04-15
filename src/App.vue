@@ -163,6 +163,9 @@ a{
 .theme--dark.v-tabs-items{
     background-color: transparent !important;
 }
+ .v-expansion-panel-content__wrap{
+        padding: 12px !important;
+    }
 @media screen and (max-width: 900px) {
     .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
       padding-bottom: 20px;

@@ -2,7 +2,7 @@
   <v-bottom-navigation app class="d-md-none" color="primary" background-color="background" :value="value">
       <template v-for="link in links">
         <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show">
-        <span>{{ $t(link.text) }}</span>
+        <!-- <span>{{ $t(link.text) }}</span> -->
         <span class="iconfont" v-html="link.icon"></span>
         </v-btn>
      </template>
@@ -82,8 +82,8 @@ export default {
 
 <style scoped lang="scss">
 .v-item-group.v-bottom-navigation .v-btn.v-btn--active{
-  color: white;
-  background:#6979f8;
+  color: #6979f8;
+  background:transparent;
 }
 .theme--dark.v-bottom-navigation .v-btn:not(.v-btn--active){
    color: #868e9e;
