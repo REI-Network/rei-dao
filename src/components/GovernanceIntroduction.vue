@@ -134,7 +134,7 @@
                     </v-tabs>
             </v-col>
             <v-expansion-panels accordion v-else class="process_step">
-                <v-expansion-panel>
+                <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 1: Community consensus</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
@@ -145,7 +145,7 @@
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
-                 <v-expansion-panel>
+                 <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 2: Consensus check</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
@@ -162,7 +162,7 @@
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
-                 <v-expansion-panel>
+                 <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 3: Proposal review</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
@@ -187,7 +187,7 @@
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
-                 <v-expansion-panel>
+                 <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 4: Voting</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
@@ -202,7 +202,7 @@
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
-                 <v-expansion-panel>
+                 <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 5: Security mechanisms</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
@@ -257,7 +257,7 @@
                                         Participate and follow the latest developments of the proposal,
                                         express your opinion and exercise your right to vote
                                     </v-list-item-subtitle>
-                                    <a href="https://snapshot.org/#/rei-network.eth" target="_blank"><div class="tools-link">Vote On Snapshot With REI ></div></a>
+                                    <a href="https://snapshot.org/#/rei-network.eth" target="_blank"><div class="tools-link">View All Proposals On Snapshot ></div></a>
                                 </v-list-item-content>
                             </v-list-item>
                         </v-list>
@@ -453,6 +453,10 @@ a:hover{
         }
     }
 }
+  .expansion{
+        background-color: #100D22 !important;
+        opacity: 0.6;
+    }
 @media screen and (max-width: 900px) {
     .v-list-item{
         padding: 0 !important;

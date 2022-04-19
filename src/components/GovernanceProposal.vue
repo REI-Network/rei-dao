@@ -9,7 +9,7 @@
                         <v-img src="../assets/images/totalProposal.png" width="60px"/>
                     </v-col>
                     <v-col class="proposal-number" style="padding-top:0;">
-                        <h1 v-if='connection.address'>8</h1>
+                        <h1 v-if='connection.address'>{{this.length}}</h1>
                         <h1 v-else> —</h1>
                         <div class="total">Total proposal ></div>
                     </v-col>
@@ -35,7 +35,7 @@
                                     <v-img v-else src="../assets/images/active.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="active">1</h1>
+                                    <h1 v-if='connection.address' class="active">{{this.activeNumber}}</h1>
                                     <h1 v-else class="active"> —</h1>
                                     <div class="number">Active ></div>
                                 </v-col>
@@ -48,7 +48,7 @@
                                     <v-img v-else src="../assets/images/pending.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">                                   
-                                    <h1 v-if='connection.address' class="pending">1</h1>
+                                    <h1 v-if='connection.address' class="pending">{{this.pendingNumber}}</h1>
                                     <h1 v-else class="pending"> —</h1>
                                     <div class="number">Pending ></div>
                                 </v-col>
@@ -63,9 +63,9 @@
                                     <v-img v-else src="../assets/images/closed.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="closed">6</h1>
+                                    <h1 v-if='connection.address' class="closed">{{this.closedNumber}}</h1>
                                     <h1 v-else class="closed"> —</h1>
-                                    <div class="number">closed ></div>
+                                    <div class="number">Closed ></div>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -76,7 +76,7 @@
                                     <v-img v-else src="../assets/images/core.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="core">2</h1>
+                                    <h1 v-if='connection.address' class="core">{{this.coreNumber}}</h1>
                                     <h1 v-else class="core"> —</h1>
                                     <div class="number">Core ></div>
                                 </v-col>
@@ -87,11 +87,14 @@
             </v-col>
         </v-row> 
         <h3 class="title">Recently Proposed</h3>
+        <template  v-for="(item, i) in proposalList">
         <v-card 
             outlined 
-            class="recently-proposal"  
-            v-for="(item, i) in proposalList"
+            class="recently-proposal"             
             :key="i"
+            :href="`https://snapshot.org/#/gitcoindao.eth/proposal/`+item.id" 
+            target="_blank"
+            v-if="i < 4"
             >
             <v-row align="center">
                 <v-col cols="12" md="11">
@@ -102,10 +105,11 @@
                                 alt="John"
                             >
                         </v-avatar>
-                        <h5>{{item.author}}</h5>
-                        <!-- <div class="active" v-if="item.state==active">Active</div> -->
-                        <div class="active closed" v-if="item.state=='closed'">Closed</div>
-                         <!-- <div class="active pending" v-if="item.state==pending">Pending</div> -->
+                        <h5>{{item.author | addr}}</h5>
+                        <div class="active" v-if="item.state=='active'">Active</div>
+                        <div class="active closed" v-else-if="item.state=='closed'">Closed</div>
+                         <div class="active pending" v-else-if="item.state=='pending'">Pending</div>
+                          <div class="active pending" v-else>Pending</div>
                     </v-row>
                     <v-list-item>
                         <v-list-item-content>
@@ -120,11 +124,12 @@
                     </v-list-item>
                 </v-col>
                 <v-col cols="12" md="1" class="right-arrow">
-                    <v-icon  size="22"> mdi-arrow-right-circle-outline</v-icon>
+                   <v-icon  size="22"> mdi-arrow-right-circle-outline</v-icon>
                 </v-col>
             </v-row>
         </v-card>
-        <div class="footer-all">View ALL Proposals On Snapshot ></div>
+        </template>
+        <div class="footer-all"><a href="https://snapshot.org/#/rei-network.eth" target="_blank">View ALL Proposals On Snapshot ></a></div>
      </v-card>
    </v-container>
 </template>
@@ -140,6 +145,11 @@ export default {
   data() {
     return {   
        proposalList:[],
+       closedNumber:0,
+       activeNumber:0,
+       pendingNumber:0,
+       coreNumber:0,
+       length:0,
     }
   },
   watch: {
@@ -202,7 +212,19 @@ export default {
             fetchPolicy: 'cache-first',
         })
         this.proposalList = proposals;
-        console.log('proposal',proposals)
+        console.log('proposalList',this.proposalList)
+        this.length = this.proposalList.length;
+        this.proposalList.map(item => {
+            if(item.state=="active"){
+                this.activeNumber++;
+            }else if(item.state=="closed"){
+                 this.closedNumber++;
+            }else if(item.state=="pending"){
+                 this.pendingNumber++;
+            }else{
+                 this.coreNumber++;
+            }
+        });
     }
   },
 };
@@ -254,6 +276,9 @@ a:hover{
     .title{
         margin-top: 40px;
     }
+    .recently-proposal:hover{
+        text-decoration: none;
+    }
     .recently-proposal{
         margin-top: 30px;
         padding-top: 30px;
@@ -302,6 +327,9 @@ a:hover{
     }
     .right-arrow{
         margin-bottom: 20px;
+        a{
+            text-decoration: none;
+        }
     }
 }
 .footer-all{
@@ -331,6 +359,11 @@ a:hover{
     }
     .overview-card{
         padding:24px 0;
+    }
+    .right-arrow{
+        text-align: right;
+        padding-right: 30px !important;
+        margin-top: -60px;
     }
 }
 </style>
