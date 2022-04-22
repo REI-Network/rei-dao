@@ -8,7 +8,7 @@
           <!-- <v-divider /> -->
           <v-row justify="space-between" align="center" class="warn-tip">
              <v-subheader class="sub-tip">
-                <v-icon
+                <!-- <v-icon
                     color="primary"
                     dark
                     dense
@@ -16,10 +16,10 @@
                     size="16"
                   >
                     mdi-alert-circle-outline
-              </v-icon> 
+              </v-icon>  -->
               <div class="warn">7 Days After Initiating A Redemption Operation,You Can Receive It On The Receive It On The Redemption Page</div>
           </v-subheader>
-          <v-card outlined class="select-card">
+            <v-card outlined class="select-card">
             <v-select
               class="d-select"
               :items="itemsPages"
@@ -35,7 +35,7 @@
           <v-data-table
                 :headers="headers"
                 :items="nodeList"
-                class="elevation-1"
+                class="elevation-0 data-margin"
                 hide-default-footer
                 :items-per-page="itemsPerPage"
                 :loading="unStakeListLoading"
@@ -60,11 +60,12 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                     <v-btn
-                        tile
                         small
-                        color="success"
+                        color="vote_button"
                         :disabled="claimStatus(item)"
                         @click="unstake(item)"
+                        height="32"
+                        style="color:#FFF"
                     >
                     {{ $t('unstake.gettitle')}}
                     </v-btn>
@@ -264,21 +265,38 @@ export default {
 .theme--dark.v-list{
   background: #595777 !important;
 }
+// .v-btn.v-btn--has-bg{
+//   color: #FFF;
+//   background:#6979F8 ;
+// }
 .warn-tip{
   margin-top: 1px;
   margin-bottom: 1px;
-  height:50px
+  height:50px;
 }
 .sub-tip{
-  height:36px;
-  display:flex;
-  align-items: flex-start;
+  // height:36px;
+  // display:flex;
+  // align-items: flex-start;
+    padding:1px 12px;
+    border: 1px #FB7E36 solid;
+    color:#FB7E36;
+    margin:0 12px;
+    margin-top:-24px;
+    height:36px;
+    border-radius: 4px;
 }
 .warn{
   margin-left: 6px;
   font-size: 12px;
 }
-
+ .text-caption{
+    // margin: 0 12px;
+    padding:12px;
+    border: 1px #FB7E36 solid;
+    color:#FB7E36;
+    border-radius: 4px;
+    }
 .select-card{
   border:none;
   background-color: transparent;
@@ -290,12 +308,19 @@ export default {
 }
 @media screen and (max-width: 900px){
   .warn-tip{
-  margin-bottom:62px;
+  margin-top:30px;
+}
+.sub-tip{
+ height:68px;
+ margin-bottom: 20px;
+}
+.data-margin{
+  margin-top:80px
 }
   .select-card{
-    width: 90% !important; 
-    margin-top: 28px;
-    margin-left:5%;
+    width: 94% !important; 
+    margin-bottom: 28px;
+    margin-left:3%;
     }
   .d-select{
     width:100% !important;

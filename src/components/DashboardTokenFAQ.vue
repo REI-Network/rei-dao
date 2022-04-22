@@ -217,7 +217,7 @@ export default {
               },
               option:{
                 title:{
-                  text:"1BN",
+                  text:"1B",
                   left:"18%",
                   top:"43%",
                   textStyle:{

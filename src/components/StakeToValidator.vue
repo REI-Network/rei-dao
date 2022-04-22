@@ -29,16 +29,16 @@
                     <v-tab key="11" class="v-tab-left">Validator List</v-tab>
                     <v-tab key="12">{{$t('unstake.title')}}</v-tab> 
             </v-tabs>
-            <!-- <v-divider /> -->
             <div class="btn-div" v-if="this.width>900">
                 <v-btn
                     text
                     outlined
-                    color="primary"
+                    color="validator"
                     v-if="isNode"
                     @click="setRate"
                     >
                     {{$t('stake.set_commission_rate')}}
+                     <span class="iconfont">&#xe618;</span>
                 </v-btn>
                 <v-btn
                     class="v-btn"
@@ -49,27 +49,25 @@
                     @click="stakeToNode"
                 >
                 {{$t('stake.stake_to_other_node')}}
-                    <v-icon
-                        color="validator"
-                        >
-                        mdi-plus-box-outline
-                    </v-icon>
+                    <span class="iconfont">&#xe601;</span>
                 </v-btn>
             </div>
             <div v-else>
             <v-divider class="faq_border" />
-            <v-row  class="iphone-btn" justify="space-between" align="center">
+            <v-row @click="stakeToNode" class="iphone-btn" justify="space-between" align="center">
                 <div>
                     <span class="iconfont">&#xe601;</span>
-                    <v-btn
+                    <!-- <v-btn
                         text
                         outlined
-                        color="primary"
+                        color="validator"
                         v-if="isNode"
                         @click="setRate"
                         >
                         {{$t('stake.set_commission_rate')}}
-                    </v-btn>
+                    </v-btn> -->
+
+
                     <v-btn
                         class="v-btn"
                         text
@@ -80,6 +78,32 @@
                     >
                     {{$t('stake.stake_to_other_node')}}
                     </v-btn>
+                </div>
+                 <div>></div>
+            </v-row>
+            <v-divider v-if="isNode"/>
+            <v-row @click="setRate" v-if="isNode" class="iphone-btn" justify="space-between" align="center">
+                <div>
+                    <span class="iconfont">&#xe618;</span>
+                    <v-btn
+                        text
+                        outlined
+                        color="validator"
+                        
+                        @click="setRate"
+                        >
+                        {{$t('stake.set_commission_rate')}}
+                    </v-btn>
+                    <!-- <v-btn
+                        class="v-btn"
+                        text
+                        outlined
+                        color="validator"
+                        v-if="connection.address"
+                        @click="stakeToNode"
+                    >
+                    {{$t('stake.stake_to_other_node')}}
+                    </v-btn> -->
                 </div>
                  <div>></div>
             </v-row>
@@ -145,7 +169,7 @@
                             <v-data-table
                                 :headers="headers"
                                 :items="nodeList"
-                                class="elevation-1"
+                                class="elevation-0"
                                 hide-default-footer
                                 :items-per-page="itemsPerPage"
                                 :loading="stakeListLoading"
@@ -177,6 +201,7 @@
                                     class="mr-4 font-btn btn-radius"
                                     v-if='connection.address'
                                     @click="handleStaking(item)"
+                                    height="32"
                                     >
                                     {{$t('stake.staking')}}
                                     </v-btn>
@@ -187,6 +212,7 @@
                                     class="mr-4 unstake_btn btn-radius"
                                     v-if='connection.address'
                                     @click="handleClaim(item)"
+                                    height="32"
                                     >
                                     {{$t('stake.claim')}}
                                     </v-btn>
@@ -195,8 +221,10 @@
                                     tile
                                     small
                                     color="vote_button btn-radius"
-                                    class="mr-4"
+                                    class="mr-4 get-reward"
                                     @click="handleReward(item)"
+                                    height="32"
+                                    style="color:#FFF"
                                     >
                                     {{$t('stake.get_reward')}}
                                     </v-btn>
@@ -221,7 +249,7 @@
                                 :headers="myStakeHeaders"
                                 :items="myStakeList"
                                 :items-per-page="itemsMyVotedPerPage"
-                                class="elevation-1"
+                                class="elevation-0"
                                 hide-default-footer
                                 :loading="myStakeListLoading"
                                 :loading-text="$t('msg.loading')"
@@ -247,7 +275,9 @@
                                         small
                                         color="vote_button"
                                         class="mr-4 btn-radius"
+                                        style="color:#FFF"
                                         @click="handleStaking(item)"
+                                        height="32"
                                         >
                                         {{$t('stake.staking')}}
                                     </v-btn>
@@ -257,6 +287,7 @@
                                         color="start_unstake"
                                         class="mr-4 btn-radius"
                                         @click="handleClaim(item)"
+                                        height="32"
                                     >
                                         {{$t('stake.claim')}}
                                     </v-btn>
@@ -296,8 +327,12 @@
             ref="stakeform"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
-            <div class="pb-1 text-body-1 text-bod">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
+            <div class="pb-1 text-body-1" style="padding-left:12px;"><span class="font-color">{{$t('stake.node')}}</span>: <Address :val="currentItem.address"></Address></div>
+            <div class="pb-1 text-body-1 text-bod">
+                <span class="font-color">{{$t('stake.wallet_balance')}}:</span> 
+                <span style="font-weight:bold">{{ connection.balance | asset(2) }}</span>
+                <span class="font-color"> REI</span>
+                 </div>
             <v-row>
                 <v-col class="from-voting">
                     <div class="input-title">Amount</div>
@@ -344,7 +379,7 @@
     <v-dialog v-model="stakeToNodeDialog" width="500" class="dialog-card">
       <v-card :class="dark?'dialog-night':'dialog-daytime'" style="padding:12px">
             <div class="dialog-validator">
-                <v-card-title class="dialog-title">Voting To Other Validator</v-card-title>
+                <v-card-title class="dialog-title">Voting To Validator</v-card-title>
                 <div @click="cancelStakingToNode" class="close-btn"><v-icon>mdi-close</v-icon> </div>                     
             </div>
             <!-- <v-divider></v-divider> -->
@@ -369,8 +404,12 @@
                         ></v-text-field>
                 </v-col>
             </v-row>        
-            <div class="text-bod">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(2) }} REI</div>
-            <v-row justify="space-between" style="margin-top:4px">
+            <div class="text-bod">
+                <span class="font-color">{{$t('stake.wallet_balance')}}:</span>
+                 <span style="font-weight:bold;">{{ connection.balance | asset(2) }} </span>
+                 <span class="font-color">REI</span>
+                 </div>
+            <v-row justify="space-between" style="margin-top:20px">
                 <v-col class="from-voting from-amount">
                     <div class="input-title">Amount</div>
                        <v-text-field
@@ -425,8 +464,15 @@
             ref="claimform"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.node')}}: <Address :val="currentItem.address"></Address></div>
-            <div class="pb-1 text-body-1 share-rei">{{$t('stake.commonnsion_share_balance')}}{{currentItem.balannceOfShare | asset(2)}}REI</div>
+            <div class="pb-1 text-body-1" style="padding-left:12px;">
+                <span class="font-color">{{$t('stake.node')}}:</span> 
+                <Address :val="currentItem.address"></Address>
+                </div>
+            <div class="pb-1 text-body-1 share-rei">
+                <span class="font-color">{{$t('stake.commonnsion_share_balance')}}</span>
+                <span style="font-weight:bold">{{currentItem.balannceOfShare | asset(2)}}</span>
+                <span class="font-color">REI</span>
+             </div>
             <v-row>
                 <v-col class="from-voting">
                 <div class="input-title">Amount</div>
@@ -488,39 +534,59 @@
     </v-dialog>
     <!-- reward -->
     <v-dialog v-model="rewardDialog" width="500" class="dialog-card">
-      <v-card>
-          <v-card-title>{{$t('stake.reward_info')}}</v-card-title>
-          <v-divider></v-divider>
-        <v-list rounded class="ma-dialog">
+      <v-card :class="dark?'dialog-night':'dialog-daytime'">
+          <div class="dialog-validator">
+            <v-card-title>{{$t('stake.reward_info')}}</v-card-title>
+            <div @click="cancelReward" class="close-btn"><v-icon>mdi-close</v-icon></div>  
+          </div>
+          <!-- <v-divider></v-divider> -->
+        <v-list rounded class="ma-dialog start_unstake">
           <v-form
             ref="claimRewardForm"
             lazy-validation
           >
-              <div class="pb-1 text-body-1">{{$t('stake.reward_balance')}}: {{rewardBalance | asset(2)}} REI</div>
-            <v-text-field
-                v-model="rewardForm.amount"
-                :label="$t('stake.amount')"
-                required
-                :rules="amountRules"
-            ><template v-slot:append>
-                    <v-btn text @click="setAllReward()">
-                    {{ $t('stake.max') }}
-                    </v-btn>
-                </template>
-            </v-text-field>
-            <div :class="dark?'pb-3 text-day':'pb-3 text-caption'"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
+              <div class="pb-1 text-body-1" style="text-align:right">
+                  <span class="font-color">{{$t('stake.reward_balance')}} </span>
+                  <span style="font-weight:bold">{{rewardBalance | asset(2)}} </span>
+                 <span class="font-color"> REI</span>
+            </div>
+             <v-row>
+                <v-col class="from-voting">
+                    <div class="input-title">Amount</div>
+                    <v-text-field
+                        v-model="rewardForm.amount"
+                        :label="$t('stake.amount')"
+                        required
+                        :rules="amountRules"
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                    ><template v-slot:append>
+                        <v-btn text x-small @click="setAllReward()">
+                            {{ $t('stake.max') }}
+                        </v-btn>
+                    </template>
+                    </v-text-field> 
+                </v-col>
+            </v-row> 
+            <div :class="dark?'pb-3 text-day':'pb-3 text-caption'"><strong>{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div>
             
-            <div class="text-center">
+            <div class="text-center" style="margin-top:20px">
                 <v-btn
-                class="mr-4"
-                color="primary"
+                    color="btn_button"
+                    outlined
+                    class="mr-4 cancel-btn"
+                    @click="cancelReward"
+                 >
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
+                <v-btn
+                class="font-btn"
+                color="vote_button"
                 :loading="rewardLoading"
                 @click="submitClaimReward"
                 >
                 {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelReward">
-                {{$t('stake.btn_cancel')}}
                 </v-btn>
             </div>
           </v-form>
@@ -528,15 +594,21 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="setCommissionRateDialog" width="500">
-      <v-card class="dialog-card">
-          <v-card-title>{{$t('stake.set_commission_rate')}}</v-card-title>
-          <v-divider></v-divider>
+      <v-card class="dialog-card" :class="dark?'dialog-night':'dialog-daytime'">
+           <div class="dialog-validator"> 
+                <v-card-title>{{$t('stake.set_commission_rate')}}</v-card-title>
+                <div @click="cancelSetRate" class="close-btn"> <v-icon>mdi-close</v-icon></div>  
+            </div>  
+          <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-dialog">
           <v-form
             ref="form"
             lazy-validation
           >
-            <div class="pb-1 text-body-1">{{$t('stake.commission_rate')}}: {{currentAddress.commissionRate}}% </div>
+            <div class="pb-1 text-body-1" style="text-align:right">
+                <span class="font-color">{{$t('stake.commission_rate')}}: </span>
+                <span style="font-weight:bold">{{currentAddress.commissionRate}}%</span>
+            </div>
              <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
@@ -552,29 +624,40 @@
                     <span>{{$t('stake.tips_commission_rate',{commissionRateInterval: dateFormat((currentAddress.updateTimestamp*1+commissionRateInterval*1)*1000)} )}}</span>
                 </v-tooltip>
              </div>
-            <v-text-field
-                v-model="rateForm.amount"
-                :label="$t('stake.commission_rate')"
-
-                :rules="rateRules"
-                clearable
-                suffix="%"
-                persistent-hint
-                required
-            ></v-text-field>
-            
+              <v-row>
+                <v-col class="from-voting">
+                <!-- <div class="input-title">{{$t('stake.commission_rate')}}</div> -->
+                    <v-text-field
+                        v-model="rateForm.amount"
+                        :label="$t('stake.commission_rate')"
+                        :rules="rateRules"
+                        suffix="%"
+                        persistent-hint
+                        required
+                        outlined
+                        background-color="input_other"
+                        class="text-filed"
+                        height="24"
+                    ></v-text-field>
+                </v-col>  
+            </v-row>       
             <div class="text-center">
+                <v-btn 
+                    @click="cancelSetRate"
+                    color="btn_button"
+                    outlined
+                    class="mr-4 cancel-btn"
+                >
+                {{$t('stake.btn_cancel')}}
+                </v-btn>
                 <v-btn
-                class="mr-4"
-                color="primary"
+                class="font-btn"
+                color="vote_button"
                 :loading="setRateLoading"
                 @click="submitSetRate"
                 >
                 {{$t('stake.btn_submit')}}
-                </v-btn>
-                <v-btn @click="cancelSetRate">
-                {{$t('stake.btn_cancel')}}
-                </v-btn>
+                </v-btn> 
             </div>
           </v-form>
         </v-list>
@@ -1242,6 +1325,7 @@ export default {
        border-radius:10px;
        margin-left: 16px;
        padding:2px 12px;
+       color:#FFF;
     }
    .v-application .text-center{
         text-align: right !important;
@@ -1314,6 +1398,7 @@ export default {
         padding-bottom:0;
         // padding-top:8;  
         .input-title{
+            color:#868E9E;
             margin-top: 12px;
             width: 80px;
             text-align: center;
@@ -1324,12 +1409,16 @@ export default {
         text-align:right; 
         margin-bottom:12px;
     }
+    .font-color{
+        color:#868E9E;
+    }
     .text-caption{
         margin-top:12px;
+        margin-left:12px;
         padding:12px;
-        background-color:#FFF5DB;
-        border: 1px #F8E769 solid;
-        color:#868E9E;
+        // background-color:#FFF5DB;
+        border: 1px #FB7E36 solid;
+        color:#FB7E36;
         border-radius: 4px;
     }
     .text-day{
@@ -1354,7 +1443,7 @@ export default {
     .iphone-btn{
         // margin-top:20px;
         // border-top:1px solid grey;
-        padding:16px 20px;
+        padding:20px;
         color:#868E9E;
     }
     @media screen and (max-width: 900px) {
@@ -1390,7 +1479,12 @@ export default {
             // margin-top:-16px;
             padding: 0;
         }
+        .get-reward{
+            width: 196px !important;
+            margin-top:12px;
+        }
         .dialog-validator{
+            padding-left: 12px;
             .v-card__subtitle, .v-card__text, .v-card__title{
                 padding:0;
             }

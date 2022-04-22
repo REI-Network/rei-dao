@@ -35,6 +35,7 @@ export default {
 <style scoped lang="scss">
 .header-title{
   margin: 1.5rem 0;
+  padding-left: 12px;
     .title-detailed{
       font-size: 14px;
       color: #868E9E;

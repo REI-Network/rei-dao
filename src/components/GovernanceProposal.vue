@@ -1,7 +1,7 @@
 <template>
    <v-container class="stake_background">
      <v-card class="proposal">
-        <h2>Proposal Overview</h2> 
+        <h2 class="proposal-title">Proposal Overview</h2> 
         <v-row justify="space-between" align="start">
             <v-col cols="12" md="5" class="overview">
                 <v-row align="center" justify="flex-start">
@@ -86,7 +86,7 @@
                 </v-row>
             </v-col>
         </v-row> 
-        <h3 class="title">Recently Proposed</h3>
+        <h3 class="title proposal-title">Recently Proposed</h3>
         <template  v-for="(item, i) in proposalList">
         <v-card 
             outlined 
@@ -233,6 +233,9 @@ export default {
 <style scoped lang="scss">
 a:hover{
         text-decoration: underline;
+    }
+    .proposal-title{
+        margin-left: -12px;
     }
 .proposal{
     margin-top: 20px;

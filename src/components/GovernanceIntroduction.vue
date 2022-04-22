@@ -133,7 +133,7 @@
                         </v-tab-item>
                     </v-tabs>
             </v-col>
-            <v-expansion-panels accordion v-else class="process_step">
+            <v-expansion-panels accordion v-else class="process_step elevation-0">
                 <v-expansion-panel :class="dark?'expansion':''">
                     <v-expansion-panel-header>STEP 1: Community consensus</v-expansion-panel-header>
                     <v-expansion-panel-content>
@@ -277,7 +277,7 @@
                                        Proposal discussion, the venue for debate. Let everyone hear
                                         your ideas and interact with the community.
                                     </v-list-item-subtitle>
-                                    <div class="tools-link">Enter The Forum ></div>
+                                    <a href="https://forum.rei.network/" target="_blank"><div class="tools-link">Enter The Forum ></div></a>
                                 </v-list-item-content>
                             </v-list-item>
                         </v-list>

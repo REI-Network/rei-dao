@@ -32,7 +32,7 @@ export default new Vuetify({
         error: colors.red.accent3,
         background: "#FFF" ,
         vote_button:'#6979F8',
-        // start_unstake:'#E2E4EA',
+        // start_unstake:'#f3f4fa',
         chips:"#E2E4EA",
         input_other:'#F5F5F7',
         current_wallet:"#6979F8",

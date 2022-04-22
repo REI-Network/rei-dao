@@ -86,7 +86,11 @@
                     </v-text-field>
               </v-col>
           </v-row>
-            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
+            <div class="pb-1 text-body-1" style="text-align:right">
+                <span class="font-color">{{$t('stake.wallet_balance')}}:</span>
+                 <span style="font-weight:bold">{{ connection.balance | asset(8) }} </span>
+                 <span class="font-color">{{symbol}}</span>
+                 </div>
             <v-row>
               <v-col class="from-voting">
                   <div class="input-title">Amount</div>
@@ -288,8 +292,12 @@ export default {
         width: 80px;
         text-align: center;
         height:40px;
+        color:#868E9E;
     }
  }
+ .font-color{
+        color:#868E9E;
+    }
   .text-body-1{
         margin-bottom: 20px;
     }

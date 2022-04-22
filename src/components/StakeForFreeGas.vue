@@ -11,7 +11,7 @@
                     <v-data-table
                         :headers="headers"
                         :items="nodeList"
-                        class="background elevation-1"
+                        class="background elevation-0"
                         hide-default-footer
                         :items-per-page="itemsPerPage"
                         :loading="stakeListLoading"
@@ -141,9 +141,9 @@
             lazy-validation
             class="start_unstake"
           >
-          <!-- <v-row> -->
-              <v-col class="from-voting">
-                  <div class="input-title">Address</div>
+          <v-row class="from-voting" justify="start" >
+            <div class="input-title">Address</div>
+            <v-col cols="12" md="10">
                         <v-text-field
                             v-model="form.address"
                             :label="$t('stake.address')"
@@ -154,11 +154,16 @@
                         >
                     </v-text-field>
               </v-col>
-          <!-- </v-row> -->
-            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stake.wallet_balance')}}: {{ connection.balance | asset(8) }} {{symbol}}</div>
-            <!-- <v-row> -->
-              <div class="from-voting">
+          </v-row>
+            <div class="pb-1 text-body-1" style="text-align:right">
+                <span class="font-color"> {{$t('stake.wallet_balance')}}: </span>
+                <span style="font-weight:bold;">{{ connection.balance | asset(8) }}</span>
+                <span class="font-color">{{symbol}}</span>
+            </div>
+            <v-row class="from-voting">
+              <!-- <div class="from-voting"> -->
                   <div class="input-title">Amount</div>
+                  <v-col cols="12" md="10">
                         <v-text-field
                         v-model="form.amount"
                         :label="$t('stake.amount')"
@@ -177,8 +182,9 @@
                         </v-btn>
                     </template>
             </v-text-field>
-              </div>
-          <!-- </v-row> -->
+            </v-col>
+              <!-- </div> -->
+          </v-row>
             <div class="text-center">
                 <v-btn 
                 color="btn_button"
@@ -210,10 +216,14 @@
             lazy-validation
             class="start_unstake"
           >
-            <div class="pb-1 text-body-1" style="text-align:right">{{$t('stakeforgas.estimate_withdraw')}}: {{ estimateWithdrawableAmount | asset(8) }} REI</div>
-            <!-- <v-row> -->
-                <v-col class="from-voting">
-                    <div class="input-title">Amount</div>
+            <div class="pb-1 text-body-1" style="text-align:right">
+                <span class="font-color">{{$t('stakeforgas.estimate_withdraw')}}: </span>
+                <span style="font-weight:bold">{{ estimateWithdrawableAmount | asset(8) }} </span>
+               <span class="font-color"> REI</span>
+            </div>
+            <v-row class="from-voting" >
+                <div class="input-title">Amount</div>
+                <v-col cols="12" md="10">  
                     <v-text-field
                         v-model="withdrawForm.amount"
                         :label="$t('stake.amount')"
@@ -233,7 +243,7 @@
                     </template>
                  </v-text-field>
                 </v-col>
-            <!-- </v-row> -->
+            </v-row>
             
             <div class="text-center">
                 <v-btn 
@@ -691,11 +701,16 @@ export default {
     padding-bottom:0;
     padding-top:0;
     .input-title{
-        width: 80px;
-        text-align: center;
+        margin-left: 22px;
+        margin-top:22px;
+        text-align: left;
         height:40px;
+        color:#868E9E;
     }
  }
+  .font-color{
+        color:#868E9E;
+    }
 .v-sheet.v-card{
     padding-bottom: 8px;
 }
