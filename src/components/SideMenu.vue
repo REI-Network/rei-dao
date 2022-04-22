@@ -73,13 +73,6 @@ export default {
           link: '/stakeforgas',
           name: 'stakeforgas',
           show: false,
-        },
-        {
-          icon: '&#xe615;',
-          text: 'Governance',
-          link: '/governance',
-          name: 'governance',
-          show: true,
         }
       ]
     };
