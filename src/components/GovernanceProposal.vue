@@ -9,8 +9,7 @@
                         <v-img src="../assets/images/totalProposal.png" width="60px"/>
                     </v-col>
                     <v-col class="proposal-number" style="padding-top:0;">
-                        <h1 v-if='connection.address'>{{this.length}}</h1>
-                        <h1 v-else> —</h1>
+                        <h1>{{this.length}}</h1>
                         <div class="total">Total proposal ></div>
                     </v-col>
                 </v-row>
@@ -19,9 +18,8 @@
                         <v-img src="../assets/images/amount.png" width="60px"/>
                     </v-col>
                     <v-col class="proposal-number" style="padding-top:0;">
-                        <h1 v-if='connection.address'>151,611,651</h1>
-                        <h1 v-else class="pending"> —</h1>
-                        <div class="total">Amount Of Voting Addresses</div>
+                        <h1>{{this.spaceInfo.followersCount}}</h1>
+                        <div class="total">Amount Of members</div>
                     </v-col>
                 </v-row>
             </v-col>
@@ -35,8 +33,7 @@
                                     <v-img v-else src="../assets/images/active.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="active">{{this.activeNumber}}</h1>
-                                    <h1 v-else class="active"> —</h1>
+                                    <h1 class="active">{{this.activeNumber}}</h1>
                                     <div class="number">Active ></div>
                                 </v-col>
                             </v-row>
@@ -48,8 +45,7 @@
                                     <v-img v-else src="../assets/images/pending.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">                                   
-                                    <h1 v-if='connection.address' class="pending">{{this.pendingNumber}}</h1>
-                                    <h1 v-else class="pending"> —</h1>
+                                    <h1 class="pending">{{this.pendingNumber}}</h1>
                                     <div class="number">Pending ></div>
                                 </v-col>
                             </v-row>
@@ -63,8 +59,7 @@
                                     <v-img v-else src="../assets/images/closed.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="closed">{{this.closedNumber}}</h1>
-                                    <h1 v-else class="closed"> —</h1>
+                                    <h1 class="closed">{{this.closedNumber}}</h1>
                                     <div class="number">Closed ></div>
                                 </v-col>
                             </v-row>
@@ -76,8 +71,7 @@
                                     <v-img v-else src="../assets/images/core.png" width="45px"/>
                                 </v-col>
                                 <v-col class="proposal-number">
-                                    <h1 v-if='connection.address' class="core">{{this.coreNumber}}</h1>
-                                    <h1 v-else class="core"> —</h1>
+                                    <h1 class="core">{{this.coreNumber}}</h1>
                                     <div class="number">Core ></div>
                                 </v-col>
                             </v-row>
@@ -92,7 +86,7 @@
             outlined 
             class="recently-proposal"             
             :key="i"
-            :href="`https://snapshot.org/#/gitcoindao.eth/proposal/`+item.id" 
+            :href="`https://snapshot.org/#/${spaceName}/proposal/`+item.id" 
             target="_blank"
             v-if="i < 4"
             >
@@ -101,8 +95,8 @@
                     <v-row align="center" style="margin-left:20px;">
                         <v-avatar size="24">
                             <img
-                                src="https://cdn.vuetifyjs.com/images/john.jpg"
-                                alt="John"
+                                src="../assets/images/rei.svg"
+                                alt="rei-network"
                             >
                         </v-avatar>
                         <h5>{{item.author | addr}}</h5>
@@ -129,7 +123,7 @@
             </v-row>
         </v-card>
         </template>
-        <div class="footer-all"><a href="https://snapshot.org/#/rei-network.eth" target="_blank">View ALL Proposals On Snapshot ></a></div>
+        <div class="footer-all"><a :href="`https://snapshot.org/#/${spaceName}`" target="_blank">View ALL Proposals On Snapshot ></a></div>
      </v-card>
    </v-container>
 </template>
@@ -143,13 +137,17 @@ let client = null;
 export default {
   filters,
   data() {
-    return {   
+    return {
+       spaceName:'rei-network.eth',
        proposalList:[],
        closedNumber:0,
        activeNumber:0,
        pendingNumber:0,
        coreNumber:0,
        length:0,
+       spaceInfo:{
+           followersCount:0
+       }
     }
   },
   watch: {
@@ -159,12 +157,10 @@ export default {
       this.getProposalList()
   },
   computed: {
-
-
-...mapGetters({
-      connection: 'connection',
-      apiUrl: 'apiUrl',
-      dark: 'dark'
+    ...mapGetters({
+        connection: 'connection',
+        apiUrl: 'apiUrl',
+        dark: 'dark'
     }),
   },
   methods: {
@@ -172,19 +168,17 @@ export default {
       addTx: 'addTx',
     }),
     async getProposalList(){
-         let url = "https://hub.snapshot.org/graphql";
+        let url = "https://hub.snapshot.org/graphql";
         client = new ApolloClient({
             uri: `${url}`,
             cache: new InMemoryCache(),
         })
         const proposal = gql`
-         query {
+         query proposal($space: String) {
             proposals (
-                first: 20,
-                 skip: 0,
+                skip: 0,
                 where: {
-                    space_in: ["rei-network.eth"],
-                    state: "closed"
+                    space: $space,
                 },
                 orderBy: "created",
                 orderDirection: desc
@@ -208,6 +202,7 @@ export default {
         const {data:{proposals}} = await client.query({
             query: proposal,
             variables: {
+                space: this.spaceName
             },
             fetchPolicy: 'cache-first',
         })
@@ -225,6 +220,27 @@ export default {
                  this.coreNumber++;
             }
         });
+
+        const spaceql = gql`
+         query spaces($id: String) {
+            space(id: $id) {
+                id
+                name
+                about
+                network
+                symbol
+                followersCount
+            }
+        }
+        `
+        const {data:{space}} = await client.query({
+            query: spaceql,
+            variables: {
+                id: this.spaceName
+            },
+            fetchPolicy: 'cache-first',
+        })
+        this.spaceInfo = space;
     }
   },
 };
