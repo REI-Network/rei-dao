@@ -44,26 +44,27 @@
                             :disabled="item.availableTimePercent<1"
                             v-if='connection.address'
                             @click="handleWithdraw(item)"
+                            height="32"
                             >
                                 Withdraw
                             </v-btn>
                             <v-btn
-                            tile
                             small
                             color="start_unstake"
                             class="mr-4 unstake_btn"
                             v-if='connection.address'
                             @click="deposit(item)"
+                            height="32"
                             >
                                 Stake more
                             </v-btn>
                             <v-btn
                             v-if="item.address==connection.address"
-                            tile
                             small
                             color="success"
                             class="mr-4 withdraw"
                             @click="handleReward(item)"
+                            height="32"
                             >
                                 {{$t('stake.get_reward')}}
                             </v-btn>

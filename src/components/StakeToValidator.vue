@@ -609,7 +609,7 @@
                 <span class="font-color">{{$t('stake.commission_rate')}}: </span>
                 <span style="font-weight:bold">{{currentAddress.commissionRate}}%</span>
             </div>
-             <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}}: {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}
+             <div class="pb-1 text-body-1" v-if="currentAddress.updateTimestamp!=0">{{$t('stake.last_update_time')}} {{currentAddress.updateTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -618,7 +618,7 @@
                         v-bind="attrs"
                         v-on="on"
                         >
-                        mdi-help-circle-outline
+                         mdi-alert-circle-outline
                         </v-icon>
                     </template>
                     <span>{{$t('stake.tips_commission_rate',{commissionRateInterval: dateFormat((currentAddress.updateTimestamp*1+commissionRateInterval*1)*1000)} )}}</span>
@@ -1282,6 +1282,9 @@ export default {
     .v-tab-left{
         margin-left: 0 !important;
     }
+}
+.get-reward.theme--light.v-btn.v-btn--has-bg{
+    background-color: #6979f8;
 }
 .btn-div{
     position: absolute;

@@ -17,7 +17,7 @@
                   >
                     mdi-alert-circle-outline
               </v-icon>  -->
-              <div class="warn">7 Days After Initiating A Redemption Operation,You Can Receive It On The Receive It On The Redemption Page</div>
+              <div class="warn">Note: 7 days after the redemption operation is initiated, you can receive it on the redemption page</div>
           </v-subheader>
             <v-card outlined class="select-card">
             <v-select
