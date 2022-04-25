@@ -103,7 +103,7 @@
                         <div class="active" v-if="item.state=='active'">Active</div>
                         <div class="active closed" v-else-if="item.state=='closed'">Closed</div>
                          <div class="active pending" v-else-if="item.state=='pending'">Pending</div>
-                          <div class="active pending" v-else>Pending</div>
+                          <div class="active core" v-else>Core</div>
                     </v-row>
                     <v-list-item>
                         <v-list-item-content>
@@ -111,9 +111,15 @@
                             <v-list-item-subtitle class="list-content">
                                 {{item.body}}
                             </v-list-item-subtitle>
-                            <v-list-item-subtitle class="list-time">
-                                end in 4 days
+                            <v-list-item-subtitle v-if="item.state=='active'" class="list-time">
+                                end{{this.endTime}}
                             </v-list-item-subtitle>
+                            <v-list-item-subtitle v-else-if="item.state=='closed'" class="list-time">
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle v-else-if="item.state=='pending'" class="list-time">
+                                start{{this.startTime}}
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle v-else class="list-time"></v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                 </v-col>
@@ -131,7 +137,9 @@
 
 import { mapGetters, mapActions } from 'vuex';
 import filters from '../filters';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
+import dayjs from 'dayjs';
+
 let client = null;
 /* eslint-disable no-undef */
 export default {
@@ -145,6 +153,8 @@ export default {
        pendingNumber:0,
        coreNumber:0,
        length:0,
+       endTime:'',
+       startTime:'',
        spaceInfo:{
            followersCount:0
        }
@@ -219,6 +229,13 @@ export default {
             }else{
                  this.coreNumber++;
             }
+            var relativeTime = require('dayjs/plugin/relativeTime')
+                dayjs.extend(relativeTime)
+                let endDate = dayjs.unix(item.end)
+                this.endTime = dayjs().from(dayjs(endDate))
+                console.log('endTime:',this.endTime)
+                let startDate = dayjs.unix(item.start)
+                this.startTime = dayjs().from(dayjs(startDate))
         });
 
         const spaceql = gql`
@@ -241,7 +258,7 @@ export default {
             fetchPolicy: 'cache-first',
         })
         this.spaceInfo = space;
-    }
+    },
   },
 };
 </script>
@@ -342,6 +359,9 @@ a:hover{
         }
         .closed{
             background-color: #258ABE;
+        }
+        .core{
+            background-color: #E95767;
         }
     }
     .right-arrow{
