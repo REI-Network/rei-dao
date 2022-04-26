@@ -218,13 +218,10 @@
                                     </v-btn>
                                     <v-btn
                                     v-if="item.address==connection.address"
-                                    tile
-                                    small
-                                    color="vote_button btn-radius"
+                                    small 
                                     class="mr-4 get-reward"
                                     @click="handleReward(item)"
-                                    height="32"
-                                    style="color:#FFF"
+                                    height="32" 
                                     >
                                     {{$t('stake.get_reward')}}
                                     </v-btn>
@@ -1283,8 +1280,9 @@ export default {
         margin-left: 0 !important;
     }
 }
-.get-reward.theme--light.v-btn.v-btn--has-bg{
-    background-color: #6979f8;
+.get-reward.v-btn.v-btn--has-bg{
+    background-color: #FC884A;
+    color:#FFF !important;
 }
 .btn-div{
     position: absolute;
@@ -1315,10 +1313,10 @@ export default {
     .active{
        width:30px;
        height: 20px;
-       background-color: #FC9354;
+       background-color: #43C06D;
        border-radius:15px;
-       margin-left: 16px;
-       padding:2px 12px;
+       margin-left: 8px;
+       padding:2px 8px;
        color:#FFF;
     } 
     .not-active{
@@ -1326,8 +1324,8 @@ export default {
        height: 20px;
        background-color: #5F82AD;
        border-radius:10px;
-       margin-left: 16px;
-       padding:2px 12px;
+       margin-left: 2px;
+       padding:2px 8px;
        color:#FFF;
     }
    .v-application .text-center{
@@ -1428,10 +1426,11 @@ export default {
         margin-top:12px;
         padding:12px;
         background-color:transparent;
-        border: 1px #FFA4A4 solid;
-        color:#C2C1D6;
+        border: 1px #9F9DB9 solid;
+        color:#9F9DB9;
         border-radius: 4px;
         font-size:12px;
+        font-weight:300 !important;
     }
     .share-rei{
         text-align:right;

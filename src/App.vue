@@ -172,12 +172,26 @@ a{
     .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat) > .v-input__control > .v-input__slot{
       text-shadow: none !important;
     }
+     .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper){
+      background-color: #2B274A !important;
+      opacity: 0.7;
+    }
 @media screen and (max-width: 900px) {
-    .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
+    .v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
       padding-bottom: 20px;
     }
     .theme--light.v-data-table>.v-data-table__wrapper>table>thead>tr:last-child>th{
       background-color: #FFF !important;
+    }
+    .v-data-table__mobile-row__header{
+      font-weight:normal;
+      color: #767272 !important;
+    }
+    .v-application--is-ltr .v-data-table__mobile-row__cell{
+      font-weight: 600;
+    }
+   .v-data-table > .v-data-table__wrapper > table > tbody > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper){
+      background-color: transparent !important;
     }
 }
 </style>

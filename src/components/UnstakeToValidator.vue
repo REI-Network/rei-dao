@@ -7,7 +7,7 @@
             </v-card-actions>    -->
           <!-- <v-divider /> -->
           <v-row justify="space-between" align="center" class="warn-tip">
-             <v-subheader class="sub-tip">
+             <v-subheader :class="dark?'dark-tip':'sub-tip'">
                 <!-- <v-icon
                     color="primary"
                     dark
@@ -286,17 +286,19 @@ export default {
     height:36px;
     border-radius: 4px;
 }
+.dark-tip{
+    padding:1px 12px;
+    border: 1px #9F9DB9 solid;
+    color:#9F9DB9;
+    margin:0 12px;
+    margin-top:-24px;
+    height:36px;
+    border-radius: 4px;
+}
 .warn{
   margin-left: 6px;
   font-size: 12px;
 }
- .text-caption{
-    // margin: 0 12px;
-    padding:12px;
-    border: 1px #FB7E36 solid;
-    color:#FB7E36;
-    border-radius: 4px;
-    }
 .select-card{
   border:none;
   background-color: transparent;
@@ -311,6 +313,10 @@ export default {
   margin-top:30px;
 }
 .sub-tip{
+ height:68px;
+ margin-bottom: 20px;
+}
+.dark-tip{
  height:68px;
  margin-bottom: 20px;
 }
