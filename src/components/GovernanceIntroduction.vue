@@ -47,7 +47,7 @@
                         <v-tab class="step-tab">
                             <div class="step-left process_step">
                                 <span class="iconfont">&#xe609;</span>
-                                 STEP 4: Voting
+                                 STEP 4: Snapshot voting
                             </div>
                             <div class="triangle"></div>
                         </v-tab>
@@ -64,7 +64,9 @@
                             <v-card flat class="step-content">
                                 <h2>Community Consensus</h2>
                                 <v-card-text>
-                                    The first step in participating in governance is to initiate a proposal that benefits the REI Network and building influence in the community will make more people agree with your proposal.
+                                    Provide voting tools and multiple voting strategies 
+                                    for surveying community sentiment on specific proposals or parameters, 
+                                    allowing every $REI holder to participate more fairly in community governance.
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
@@ -72,13 +74,11 @@
                             <v-card flat class="step-content">
                                 <h2>Consensus check</h2>
                                 <v-card-text>
-                                    Once initial proposals are generated, further proposal discussions
-                                     can be initiated in the REI forum, and the Council of Deliberators 
-                                     will provide proposal templates, and all proposals will need to 
-                                     follow the format of the proposal template for publication;
-                                      the quality of the proposal and the logic behind it will be very 
-                                      important, and is one of the main indicators for a proposal to make 
-                                      it to the voting chain on the chain.
+                                   After the initial proposals are generated, further proposal discussions 
+                                   need to be initiated in the Forum Consensus Check board, and the proposals
+                                    all need to follow the format of the proposal template for publication; 
+                                    the quality of the proposal and the logic behind it will be very important
+                                     and one of the main indicators of whether a proposal will make it to the ballot.
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
@@ -86,27 +86,23 @@
                             <v-card flat class="step-content">
                                 <h2>proposal review</h2>
                                 <v-card-text>
-                                    The Council of Councillors has a very democratic and fair process of 
-                                    proceedings, contains：
+                                    Proposals will be reviewed by the Governance Committee.
                                 </v-card-text>
-                                <h4>Motion Triage</h4>
+                                <h4>What is the Governance Committee?</h4>
                                 <v-card-text>
-                                    Adopted proposals are categorized, those involving on-chain parameter
-                                     changes will generate REINetwork Improvement Proposals (GIP) and the 
-                                     core team will initiate an on-chain vote; those not involving on-chain 
-                                     parameter changes will be categorized as off-chain activity programs.
+                                    The committee is composed of 21 deliberators,
+                                     and the first members will be invited from nodes, community members,
+                                      pioneers, and project parties who have contributed to REI Network before,
+                                       and later will be decided by the committee itself. The discussion process
+                                        will be moderated and recorded by the council members in three sessions: 
+                                        motion presentation, motion review, and motion vote.
                                 </v-card-text>
-                                <h4>Review Process</h4>
-                                <v-card-text>
-                                    The process is: Eligibility Review - Format Review - Content Discussion - Voting. 
-                                    Community proposals can only be qualified for on-chain voting if they 
-                                    are approved by a majority vote.
-                                </v-card-text>
+                                <a style="margin-left:20px;">Learn more  ></a>
                             </v-card>
                         </v-tab-item>
                         <v-tab-item>
                             <v-card flat class="step-content">
-                                <h2>voting off-chain</h2>
+                                <h2>Snapshot voting</h2>
                                 <v-card-text>
                                     Provide voting tools and multiple voting strategies for surveying community
                                      sentiment on specific proposals or parameters, allowing every coin holder
@@ -140,7 +136,9 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>Community Consensus</h2> -->
                                 <v-card-text>
-                                    The first step in participating in governance is to initiate a proposal that benefits the REI Network and building influence in the community will make more people agree with your proposal.
+                                    Provide voting tools and multiple voting strategies for surveying community 
+                                    sentiment on specific proposals or parameters, allowing every $REI holder to
+                                     participate more fairly in community governance.
                                 </v-card-text>
                             </v-card>
                     </v-expansion-panel-content>
@@ -151,13 +149,12 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>Consensus check</h2> -->
                                 <v-card-text>
-                                    Once initial proposals are generated, further proposal discussions
-                                     can be initiated in the REI forum, and the Council of Deliberators 
-                                     will provide proposal templates, and all proposals will need to 
-                                     follow the format of the proposal template for publication;
-                                      the quality of the proposal and the logic behind it will be very 
-                                      important, and is one of the main indicators for a proposal to make 
-                                      it to the voting chain on the chain.
+                                    After the initial proposals are generated, further proposal 
+                                    discussions need to be initiated in the Forum Consensus Check 
+                                    board, and the proposals all need to follow the format of the 
+                                    proposal template for publication; the quality of the proposal 
+                                    and the logic behind it will be very important and one of the
+                                     main indicators of whether a proposal will make it to the ballot.
                                 </v-card-text>
                             </v-card>
                     </v-expansion-panel-content>
@@ -168,27 +165,22 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>proposal review</h2> -->
                                 <v-card-text>
-                                    The Council of Councillors has a very democratic and fair process of 
-                                    proceedings, contains：
+                                    Proposals will be reviewed by the Governance Committee.
                                 </v-card-text>
-                                <h4>Motion Triage</h4>
+                                <h4>What is the Governance Committee?</h4>
                                 <v-card-text>
-                                    Adopted proposals are categorized, those involving on-chain parameter
-                                     changes will generate REINetwork Improvement Proposals (GIP) and the 
-                                     core team will initiate an on-chain vote; those not involving on-chain 
-                                     parameter changes will be categorized as off-chain activity programs.
+                                    The committee is composed of 21 deliberators, and the first members will
+                                     be invited from nodes, community members, pioneers, and project parties 
+                                     who have contributed to REI Network before, and later will be decided by 
+                                     the committee itself. The discussion process will be moderated and recorded 
+                                     by the council members in three sessions: motion presentation, motion review, and motion vote.
                                 </v-card-text>
-                                <h4>Review Process</h4>
-                                <v-card-text>
-                                    The process is: Eligibility Review - Format Review - Content Discussion - Voting. 
-                                    Community proposals can only be qualified for on-chain voting if they 
-                                    are approved by a majority vote.
-                                </v-card-text>
+                                <a style="margin-left:20px;" href="">Learn more ></a>
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
                  <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 4: Voting</v-expansion-panel-header>
+                    <v-expansion-panel-header>STEP 4: Snapshot voting</v-expansion-panel-header>
                     <v-expansion-panel-content>
                          <v-card flat class="step-content">
                                 <!-- <h2>voting off-chain</h2> -->

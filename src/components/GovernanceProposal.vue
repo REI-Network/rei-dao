@@ -112,12 +112,12 @@
                                 {{item.body}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-if="item.state=='active'" class="list-time">
-                                end{{this.endTime}}
+                                end {{endTime}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else-if="item.state=='closed'" class="list-time">
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else-if="item.state=='pending'" class="list-time">
-                                start{{this.startTime}}
+                                start {{startTime}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else class="list-time"></v-list-item-subtitle>
                         </v-list-item-content>
@@ -236,6 +236,7 @@ export default {
                 console.log('endTime:',this.endTime)
                 let startDate = dayjs.unix(item.start)
                 this.startTime = dayjs().from(dayjs(startDate))
+                console.log('startTime:',this.startTime)
         });
 
         const spaceql = gql`
