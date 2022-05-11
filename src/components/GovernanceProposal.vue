@@ -10,7 +10,7 @@
                     </v-col>
                     <v-col class="proposal-number" style="padding-top:0;">
                         <h1>{{this.length}}</h1>
-                        <div class="total">Total proposal ></div>
+                        <div class="total">Total proposal</div>
                     </v-col>
                 </v-row>
                 <v-row align="center" justify="flex-start" style="margin-top:26px">
@@ -34,7 +34,7 @@
                                 </v-col>
                                 <v-col class="proposal-number">
                                     <h1 class="active">{{this.activeNumber}}</h1>
-                                    <div class="number">Active ></div>
+                                    <div class="number">Active</div>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -46,7 +46,7 @@
                                 </v-col>
                                 <v-col class="proposal-number">                                   
                                     <h1 class="pending">{{this.pendingNumber}}</h1>
-                                    <div class="number">Pending ></div>
+                                    <div class="number">Pending</div>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -60,7 +60,7 @@
                                 </v-col>
                                 <v-col class="proposal-number">
                                     <h1 class="closed">{{this.closedNumber}}</h1>
-                                    <div class="number">Closed ></div>
+                                    <div class="number">Closed</div>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -72,7 +72,7 @@
                                 </v-col>
                                 <v-col class="proposal-number">
                                     <h1 class="core">{{this.coreNumber}}</h1>
-                                    <div class="number">Core ></div>
+                                    <div class="number">Core</div>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -129,7 +129,7 @@
             </v-row>
         </v-card>
         </template>
-        <div class="footer-all"><a :href="`https://snapshot.org/#/${spaceName}`" target="_blank">View ALL Proposals On Snapshot ></a></div>
+        <div class="footer-all"><a :href="`https://snapshot.org/#/${spaceName}`" target="_blank">View All Proposals On Snapshot ></a></div>
      </v-card>
    </v-container>
 </template>
@@ -272,6 +272,9 @@ a:hover{
     }
     .proposal-title{
         margin-left: -12px;
+    }
+    a{
+        color: #6979F8;
     }
 .proposal{
     margin-top: 20px;

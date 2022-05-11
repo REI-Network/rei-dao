@@ -10,6 +10,8 @@
                     color="#6979F8"
                     class="introduction-btn"
                     height="44"
+                    href="https://docs.rei.network/rei-dao/guides/governance"
+                    target="_blank"
                 >
                     Learn More >
                 </v-btn>
@@ -64,9 +66,7 @@
                             <v-card flat class="step-content">
                                 <h2>Community Consensus</h2>
                                 <v-card-text>
-                                    Provide voting tools and multiple voting strategies 
-                                    for surveying community sentiment on specific proposals or parameters, 
-                                    allowing every $REI holder to participate more fairly in community governance.
+                                   The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space.
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
@@ -74,28 +74,19 @@
                             <v-card flat class="step-content">
                                 <h2>Consensus check</h2>
                                 <v-card-text>
-                                   After the initial proposals are generated, further proposal discussions 
-                                   need to be initiated in the Forum Consensus Check board, and the proposals
-                                    all need to follow the format of the proposal template for publication; 
-                                    the quality of the proposal and the logic behind it will be very important
-                                     and one of the main indicators of whether a proposal will make it to the ballot.
+                                  You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal.
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
                         <v-tab-item>
                             <v-card flat class="step-content">
-                                <h2>proposal review</h2>
+                                <h2>Proposal review</h2>
                                 <v-card-text>
-                                    Proposals will be reviewed by the Governance Committee.
+                                    Proposals will be reviewed by REI DAO Council.
                                 </v-card-text>
-                                <h4>What is the Governance Committee?</h4>
+                                <h4>What is the REI DAO Council?</h4>
                                 <v-card-text>
-                                    The committee is composed of 21 deliberators,
-                                     and the first members will be invited from nodes, community members,
-                                      pioneers, and project parties who have contributed to REI Network before,
-                                       and later will be decided by the committee itself. The discussion process
-                                        will be moderated and recorded by the council members in three sessions: 
-                                        motion presentation, motion review, and motion vote.
+                                    The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote.
                                 </v-card-text>
                                 <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more  ></a>
                             </v-card>
@@ -118,7 +109,7 @@
                                      impact of harmful proposals on the REI Network or REI DAO community by
                                       setting a time delay before formal implementation of the proposal.
                                 </v-card-text>
-                                <v-card-text>
+                                <v-card-text style="padding-top:0;">
                                     New code is reserved for a 24-hour public notice period before deployment
                                      to REI Network, during which time all community members can review the
                                       code to confirm the security of REI Network. If the code is reviewed 
@@ -136,9 +127,7 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>Community Consensus</h2> -->
                                 <v-card-text>
-                                    Provide voting tools and multiple voting strategies for surveying community 
-                                    sentiment on specific proposals or parameters, allowing every $REI holder to
-                                     participate more fairly in community governance.
+                                   The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space.
                                 </v-card-text>
                             </v-card>
                     </v-expansion-panel-content>
@@ -149,12 +138,7 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>Consensus check</h2> -->
                                 <v-card-text>
-                                    After the initial proposals are generated, further proposal 
-                                    discussions need to be initiated in the Forum Consensus Check 
-                                    board, and the proposals all need to follow the format of the 
-                                    proposal template for publication; the quality of the proposal 
-                                    and the logic behind it will be very important and one of the
-                                     main indicators of whether a proposal will make it to the ballot.
+                                   You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal.
                                 </v-card-text>
                             </v-card>
                     </v-expansion-panel-content>
@@ -165,15 +149,11 @@
                          <v-card flat class="step-content">
                                 <!-- <h2>proposal review</h2> -->
                                 <v-card-text>
-                                    Proposals will be reviewed by the Governance Committee.
+                                    Proposals will be reviewed by REI DAO Council.
                                 </v-card-text>
-                                <h4>What is the Governance Committee?</h4>
+                                <h4>What is the REI DAO Council?</h4>
                                 <v-card-text>
-                                    The committee is composed of 21 deliberators, and the first members will
-                                     be invited from nodes, community members, pioneers, and project parties 
-                                     who have contributed to REI Network before, and later will be decided by 
-                                     the committee itself. The discussion process will be moderated and recorded 
-                                     by the council members in three sessions: motion presentation, motion review, and motion vote.
+                                    The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote.
                                 </v-card-text>
                                 <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more ></a>
                             </v-card>
@@ -418,6 +398,9 @@ a:hover{
         .theme--dark.step-content{
             background: #5C5A7A;
         }
+    }
+    a{
+        color: #6979F8;
     }
     .tools{
         .tool{
