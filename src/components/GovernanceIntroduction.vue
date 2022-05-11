@@ -97,7 +97,7 @@
                                         will be moderated and recorded by the council members in three sessions: 
                                         motion presentation, motion review, and motion vote.
                                 </v-card-text>
-                                <a style="margin-left:20px;">Learn more  ></a>
+                                <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more  ></a>
                             </v-card>
                         </v-tab-item>
                         <v-tab-item>
@@ -175,7 +175,7 @@
                                      the committee itself. The discussion process will be moderated and recorded 
                                      by the council members in three sessions: motion presentation, motion review, and motion vote.
                                 </v-card-text>
-                                <a style="margin-left:20px;" href="">Learn more ></a>
+                                <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more ></a>
                             </v-card>
                     </v-expansion-panel-content>
                 </v-expansion-panel>

@@ -112,12 +112,12 @@
                                 {{item.body}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-if="item.state=='active'" class="list-time">
-                                end {{endTime}}
+                                end {{item.end}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else-if="item.state=='closed'" class="list-time">
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else-if="item.state=='pending'" class="list-time">
-                                start {{startTime}}
+                                start {{item.start}}
                             </v-list-item-subtitle>
                             <v-list-item-subtitle v-else class="list-time"></v-list-item-subtitle>
                         </v-list-item-content>
@@ -219,7 +219,7 @@ export default {
         this.proposalList = proposals;
         console.log('proposalList',this.proposalList)
         this.length = this.proposalList.length;
-        this.proposalList.map(item => {
+        this.proposalList = this.proposalList.map(item => {
             if(item.state=="active"){
                 this.activeNumber++;
             }else if(item.state=="closed"){
@@ -230,15 +230,17 @@ export default {
                  this.coreNumber++;
             }
             var relativeTime = require('dayjs/plugin/relativeTime')
-                dayjs.extend(relativeTime)
-                let endDate = dayjs.unix(item.end)
-                this.endTime = dayjs().from(dayjs(endDate))
-                console.log('endTime:',this.endTime)
-                let startDate = dayjs.unix(item.start)
-                this.startTime = dayjs().from(dayjs(startDate))
-                console.log('startTime:',this.startTime)
+            dayjs.extend(relativeTime)
+            let endDate = dayjs.unix(item.end)
+            let endTime = dayjs().to(dayjs(endDate))
+            let startDate = dayjs.unix(item.start)
+            let startTime = dayjs().to(dayjs(startDate))
+            return{
+                ...item,
+                end:endTime,
+                start:startTime
+            }
         });
-
         const spaceql = gql`
          query spaces($id: String) {
             space(id: $id) {
