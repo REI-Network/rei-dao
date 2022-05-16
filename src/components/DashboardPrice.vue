@@ -78,7 +78,7 @@
             >
                 <v-subheader class="price-more sub-title">
                     <h3>Price And Market Stats</h3>
-                    <a href="https://www.coingecko.com/en/coins/gxchain" class="title-detailed" target="_blank">more></a>
+                    <a href="https://www.coingecko.com/en/coins/rei-network" class="title-detailed" target="_blank">more></a>
                 </v-subheader>
                 <v-list
                     subheader
