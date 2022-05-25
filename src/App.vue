@@ -176,6 +176,10 @@ a{
       background-color: #2B274A !important;
       opacity: 0.7;
     }
+    .v-slider--horizontal .v-slider__track-container{
+    height: 8px !important;
+    border-radius: 10px;
+}
 @media screen and (max-width: 900px) {
     .v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
       padding-bottom: 20px;

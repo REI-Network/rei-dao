@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "29832665",
+      "name": "Union",
+      "font_class": "Union",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
       "icon_id": "29210251",
       "name": "Vector",
       "font_class": "Vector",

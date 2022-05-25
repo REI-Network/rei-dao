@@ -22,6 +22,12 @@ export const getAssetInfo = (apiurl,params) => http({
     url: `${apiurl}market/asset/info`,
     params
 });
+export const getCalculation = (params) => http({
+    method: 'GET',
+    url:'https://gateway.rei.network/api/validator',
+    params
+});
+
 
 export const postRpcRequest = (apiurl,params) => http({
     method: 'POST',
