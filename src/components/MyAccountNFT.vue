@@ -92,7 +92,7 @@
                             <div class="title">Details</div>
                             <v-row justify="space-between" no-gutters class="detail">
                                 <div class="font-grey">Contract address</div>
-                               <a href=""> <div class="right-content">{{ this.nftConfig | addr }}</div></a>
+                               <a :href="`https://scan.rei.network/address/${nftConfig}`" target="_blank"> <div class="right-content">{{ nftConfig | addr }}</div></a>
                             </v-row>
                             <!-- <v-row justify="space-between" no-gutters class="detail">
                                 <div class="font-grey">Token ID</div>
@@ -150,6 +150,7 @@ export default {
         nftConfig:'',
         totalSupply:0,
         nftList:[],
+        imageShow:true,
     };
   },
    watch: {
