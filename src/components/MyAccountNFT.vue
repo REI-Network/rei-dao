@@ -139,7 +139,7 @@ export default {
         pageCount: 1,
         itemsPerPage: 6,
         pageSize:6,
-        loading:true,
+        loading:false,
         badgeNFTDialog:false,
         badgeNFTBalance:'',
         badgeNFTImg:'',
@@ -180,6 +180,7 @@ export default {
       }
     },
       async init(){  
+          this.loading = true;
           if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
               this.nftConfig = nft_contract_test;
           }else{
@@ -187,14 +188,17 @@ export default {
           }
             let contract = new web3.eth.Contract(abiBadgesNFT,this.nftConfig);
             this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address,0).call();
-            let url = await contract.methods.uri(0).call();
-            this.totalSupply = await contract.methods.totalSupply(0).call();
-            const { data } = await this.$axios.get(url);
-            this.nftName = data.name;
-            this.badgeNFTImg = data.image;
-            this.description = data.description;
-            this.nftList = [];
-            this.nftList.push(data);
+            if(this.badgeNFTBalance > 0){
+                let url = await contract.methods.uri(0).call();
+                this.totalSupply = await contract.methods.totalSupply(0).call();
+                const { data } = await this.$axios.get(url);
+                this.nftName = data.name;
+                this.badgeNFTImg = data.image;
+                this.description = data.description;
+                this.nftList = [];
+                this.nftList.push(data);   
+            }
+            this.loading = false;
       },
 
       openProposal(){
