@@ -46,7 +46,7 @@
             </template>
            </v-data-iterator>
       </v-row>
-        <div class="pagination">
+        <div class="pagination"  v-if="this.badgeNFTBalance!=0">
             <v-pagination
             v-model="page"
             :length="pageCount"
@@ -104,7 +104,7 @@
                             </v-row>
                             <v-row justify="space-between" no-gutters class="detail">
                                 <div class="font-grey">Metadate</div>
-                               <a href="https://gateway.pinata.cloud/ipfs/QmXpdQaYhF5sJNoAnzCnNTC4nkNeb15XwNSgPzdPppPrQn/0.json" target="_blank"><div class="right-content">IPFS</div></a> 
+                               <a :href="url" target="_blank"><div class="right-content">IPFS</div></a> 
                             </v-row>
                             <v-row justify="space-between" no-gutters class="detail">
                                 <div class="font-grey">BlockChain</div>
@@ -151,6 +151,7 @@ export default {
         totalSupply:0,
         nftList:[],
         imageShow:true,
+        url:'',
     };
   },
    watch: {
@@ -189,14 +190,14 @@ export default {
             let contract = new web3.eth.Contract(abiBadgesNFT,this.nftConfig);
             this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address,0).call();
             if(this.badgeNFTBalance > 0){
-                let url = await contract.methods.uri(0).call();
+                this.url = await contract.methods.uri(0).call();
                 this.totalSupply = await contract.methods.totalSupply(0).call();
-                const { data } = await this.$axios.get(url);
+                const { data } = await this.$axios.get(this.url);
                 this.nftName = data.name;
                 this.badgeNFTImg = data.image;
                 this.description = data.description;
                 this.nftList = [];
-                this.nftList.push(data);   
+                this.nftList.push(data); 
             }
             this.loading = false;
       },
@@ -229,6 +230,7 @@ export default {
     justify-content: center;
     flex-wrap: wrap;
     color: #868E9E;
+    margin-bottom: 28px;
 }
 .data-list{
     display: flex;
