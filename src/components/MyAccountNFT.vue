@@ -6,7 +6,7 @@
         <h3 class="sub-title">My Badge NFTs</h3>
         <v-tooltip right color="start_unstake">
           <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" dense size="18" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+            <v-icon v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
           </template>
           <span>Get badges through participation and contributions in governance</span>
         </v-tooltip>
@@ -14,7 +14,7 @@
       <v-row 
         justify="start" 
         no-gutters 
-        style="margin-left:50px;"
+        style="padding:0 4px"
       >     
            <v-data-iterator
             :items="nftList"
@@ -27,21 +27,22 @@
             :class="this.nftList.length!==0?'data-list':'data-nft'"
             > 
             <template  v-slot:item="{ item }">
-                <v-card  outlined class="nftList" @click="openProposal()">
+                <v-col cols="6" md="4" class="rei-genesis">
+                    <v-card  outlined class="nftList" @click="openProposal()">
                         <video
                             controls
                             preload="meta"
-                            class="video-play"
                             :src="item.image"
                             :poster="poster"
-                            style="width:302px"
+                            style="width:100%"
                         >
                          </video>
                     <div class="nft-text">
-                        <div class="rei-text">REI DAO<v-icon size="14" color="orange">mdi-star</v-icon></div> 
+                        <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div> 
                         <div style="font-size:18px">{{ item.name }}</div>
                     </div>
                 </v-card>
+                </v-col>
             </template>
            </v-data-iterator>
       </v-row>
@@ -64,14 +65,13 @@
                             class="video-play"
                             :src="this.badgeNFTImg"
                             :poster="poster"
-                            style="width:460px"
                         >
                   </video>
                     </v-col>
                     <v-col cols="12" sm="6">
                         <v-row no-gutters justify="space-between">
-                            <div>REI DAO<v-icon size="14" color="orange">mdi-star</v-icon></div>
-                            <v-icon size="24" @click="cancelProposal()">mdi-close</v-icon>
+                            <div>REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
+                            <v-icon size="22" @click="cancelProposal()">mdi-close</v-icon>
                         </v-row>
                         <div class="genesis">{{ this.nftName }}</div>
                         <v-row>
@@ -228,23 +228,23 @@ export default {
 }
 .data-list{
     display: flex;
-    width: 99%;
-    justify-content: flex-start;
+    width: 100%;
+    // justify-content: space-between;
     flex-wrap: wrap;
 }
 .theme--light.nftList{
-    width: 29%;
+    // width: 31%;
     background-color: #F7F8FF;
     border: none;
-    margin: 12px 45px 40px 0;
+    margin: 12px 0;
     padding: 0px;
     border-radius: 5px;
 }
 .theme--dark.nftList{
-     width: 29%;
+    // width: 31%;
     background-color: #13112B;
     border: none;
-    margin: 12px 45px 40px 0;
+    margin-top: 28px;
     padding: 0px;
     border-radius: 5px;
 }
@@ -256,6 +256,9 @@ export default {
        margin-bottom: 6px;
     }
 }
+.star{
+    margin: 0 0 4px 4px;
+    }
 .pagination{
     padding:0 24px 24px 0;
 }
@@ -268,6 +271,9 @@ a:hover{
     .genesis{
         font-size: 26px;
         font-weight: bold;
+    }
+    .video-play{
+        width: 460px;
     }
     .owners{
         display: flex;
@@ -310,5 +316,15 @@ a:hover{
     }
 }
 @media screen and (max-width: 900px) {
+.theme--light.nftList{
+    width: 100%;
+  }
+  .rei-genesis{
+      flex: 0 0 auto !important;
+      max-width: 100% !important;
+  }
+  .video-play{
+        width: 100% !important;
+    }
 }
 </style>
