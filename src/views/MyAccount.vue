@@ -14,16 +14,17 @@
         <MyAccountCrude></MyAccountCrude>
       </v-col>
     </v-row>
-    <!-- <v-row>
+    <v-row>
       <v-col>
-        <MyAccountProposals></MyAccountProposals>
+        <MyAccountNFT></MyAccountNFT>
       </v-col>
-    </v-row> -->
+    </v-row>
   </v-container>
 </template>
 <script>
 import MyAccountBalance from '../components/MyAccountBalance';
 import MyAccountCrude from '../components/MyAccountCrude';
+import MyAccountNFT from '../components/MyAccountNFT';
 import { mapGetters } from 'vuex';
 // import MyAccountProposals from '../components/MyAccountProposals';
 
@@ -31,7 +32,7 @@ export default {
   components:{
     MyAccountBalance,
     MyAccountCrude,
-    // MyAccountProposals
+    MyAccountNFT
   },
   data() {
     return {
