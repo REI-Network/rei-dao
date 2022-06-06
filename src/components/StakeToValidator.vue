@@ -30,10 +30,10 @@
           <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
         </v-tabs>
         <div class="btn-div" v-if="this.width > 900">
-          <v-btn text outlined color="validator" @click="setCalculation()">
+          <!-- <v-btn text outlined color="validator" @click="setCalculation()">
             Earnings Calculation
             <span class="iconfont">&#xe619;</span>
-          </v-btn>
+          </v-btn> -->
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
             {{ $t('stake.set_commission_rate') }}
             <span class="iconfont">&#xe618;</span>
