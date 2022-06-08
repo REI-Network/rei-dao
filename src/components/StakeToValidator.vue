@@ -44,26 +44,16 @@
           </v-btn>
         </div>
         <div v-else>
-            <v-divider class="faq_border" />
+            <!-- <v-divider class="faq_border" />
           <v-row @click="setCalculation()" class="iphone-btn" justify="space-between" align="center">
             <div>
               <v-icon>mdi-library-outline</v-icon>
-              <!-- <v-btn
-                        text
-                        outlined
-                        color="validator"
-                        v-if="isNode"
-                        @click="setRate"
-                        >
-                        {{$t('stake.set_commission_rate')}}
-                    </v-btn> -->
-
               <v-btn class="v-btn" text outlined color="validator">
                 Earnings Calculation
               </v-btn>
             </div>
             <div>></div>
-          </v-row>
+          </v-row> -->
           <v-divider class="faq_border" />
           <v-row @click="stakeToNode" class="iphone-btn" justify="space-between" align="center">
             <div>
