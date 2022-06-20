@@ -27,6 +27,11 @@ export const getCalculation = (params) => http({
     url:'https://gateway.rei.network/api/validator',
     params
 });
+export const getValidatorDetails = (params) => http({
+    method: 'GET',
+    url:'https://gateway.rei.network/api/validator/details',
+    params
+});
 
 
 export const postRpcRequest = (apiurl,params) => http({

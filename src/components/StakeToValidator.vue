@@ -121,10 +121,13 @@
             </v-row>
             <v-tabs-items v-model="tab2">
               <v-tab-item key="111">
-                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
-                    <Address :val="item.address"></Address>
-                    <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
+                        <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
+                        <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                        <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
+                        <span class="nodeName" v-else>{{ item.address | addr }}</span>
+                        <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
                   </template>
                   <template v-slot:item.power="{ item }">
                     {{ item.power | asset(2) }}
@@ -137,13 +140,13 @@
                                     {{ status[item.isActive] }}
                                 </template> -->
                   <template v-slot:item.actions="{ item }">
-                    <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" @click="handleStaking(item)" height="32">
+                    <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" @click.stop="handleStaking(item)" height="32">
                       {{ $t('stake.staking') }}
                     </v-btn>
-                    <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click="handleClaim(item)" height="32">
+                    <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
                       {{ $t('stake.claim') }}
                     </v-btn>
-                    <v-btn v-if="item.address == connection.address" small class="mr-4 get-reward" @click="handleReward(item)" height="32">
+                    <v-btn v-if="item.address == connection.address" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
                       {{ $t('stake.get_reward') }}
                     </v-btn>
                     <span v-if="!connection.address"> - </span>
@@ -154,9 +157,13 @@
                 </div>
               </v-tab-item>
               <v-tab-item key="122">
-                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" class="elevation-0" hide-default-footer :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
+                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
                   <template v-slot:item.address="{ item }">
-                    <Address :val="item.address"></Address>
+                    <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                    <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
+                    <span class="nodeName" v-else>{{ item.address | addr }}</span>
+                    <!-- <Address :val="item.address"></Address> -->
                   </template>
                   <template v-slot:item.power="{ item }">
                     {{ item.power | asset(2) }}
@@ -169,10 +176,10 @@
                   </template>
 
                   <template v-slot:item.actions="{ item }">
-                    <v-btn tile small color="vote_button" class="mr-4 btn-radius" style="color: #fff" @click="handleStaking(item)" height="32">
+                    <v-btn tile small color="vote_button" class="mr-4 btn-radius" style="color: #fff" @click.stop="handleStaking(item)" height="32">
                       {{ $t('stake.staking') }}
                     </v-btn>
-                    <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click="handleClaim(item)" height="32">
+                    <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
                       {{ $t('stake.claim') }}
                     </v-btn>
                     <span v-if="!connection.address"> - </span>
@@ -484,6 +491,64 @@
         </v-row>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="validatorDialog" width="600">
+      <v-card class="validator-info">
+        <v-row justify="space-between" class="title-info">
+          <v-card-title style="margin-left:-12px;margin-top:-20px">Validator info</v-card-title>
+          <div @click="closeDetails">
+            <v-icon>mdi-close</v-icon>
+          </div>
+        </v-row>
+          <v-list>
+            <v-list-item class="info-item" v-if="detailsItem.nodeName" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/nodeName.svg" class="logo-image" width="20" height="20"/>
+                <span>Node Name</span>
+              </v-list-item-subtitle>
+              <h5> 
+                {{ detailsItem.nodeName }}
+              </h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item">
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/validator-ic.svg" class="logo-image" width="20" height="20"/>
+                <span>Validator Address</span>
+              </v-list-item-subtitle>
+              <h5 v-if="this.width > 900"> 
+                {{ detailsItem.address }}
+                <v-btn @click="copyAddr(item.address)">
+                  <v-icon small color="#868E9E">mdi-content-copy</v-icon>
+                </v-btn>
+              </h5>
+               <h5 v-else><Address :val="detailsItem.address"></Address></h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item" three-line v-if="detailsItem.nodeDesc" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/description.svg" class="logo-image" width="20" height="20"/>
+                <span>Description</span>
+              </v-list-item-subtitle>
+              <h5 style="line-height:20px"> 
+                {{ detailsItem.nodeDesc }}
+              </h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item" v-if="detailsItem.website" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/website.svg" class="logo-image" width="20" height="20"/>
+                <span>Website</span>
+                <v-btn depressed small target="_blank" :href="detailsItem.website"><v-icon small color="#868E9E">mdi-open-in-new</v-icon></v-btn>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          </v-list>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -503,6 +568,7 @@ import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import { getCalculation } from '../service/CommonService'
+import { getValidatorDetails } from '../service/CommonService'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -533,6 +599,7 @@ export default {
       rewardDialog: false,
       setCommissionRateDialog: false,
       calculationDialog: false,
+      validatorDialog:false,
       myStakeList: [],
       width: '',
       stake: 0,
@@ -614,6 +681,9 @@ export default {
       activeList: [],
       notActiveList: [],
       indexedNodeList: [],
+      detailsItem:'',
+      addrCopying: false,
+      detailsList:[],
       receiveBalance: 0,
       commissionShare: '',
       commissionRateInterval: 0,
@@ -642,7 +712,7 @@ export default {
     this.init();
     this.windowWidth();
     this.getCalculation();
-    this.Calculation()
+    this.Calculation();
   },
   methods: {
     ...mapActions({
@@ -763,6 +833,24 @@ export default {
       this.notActiveList = notActiveList;
       this.stakeListLoading = false;
       this.getMyStakeList();
+      let Details = await getValidatorDetails();
+      this.detailsList = Details.data.data;
+      this.nodeList = this.nodeList.map((item) => {
+        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+        if(detail){
+          var nodeName = detail.nodeName;
+          var logo = detail.logo;
+          var website = detail.website;
+          var nodeDesc = detail.nodeDesc;
+        }
+        return{
+          ...item,
+          nodeName:nodeName,
+          logo:logo,
+          website:website,
+          nodeDesc:nodeDesc
+        }
+      });
     },
     async getMyStakeList() {
       this.myStakeListLoading = true;
@@ -815,6 +903,22 @@ export default {
         }
         this.myStakeList = arr;
       }
+      this.myStakeList = this.myStakeList.map((item) => {
+        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+        if(detail){
+          var nodeName = detail.nodeName;
+          var logo = detail.logo;
+          var website = detail.website;
+          var nodeDesc = detail.nodeDesc;
+        }
+        return{
+          ...item,
+          nodeName:nodeName,
+          logo:logo,
+          website:website,
+          nodeDesc:nodeDesc
+        }
+      })
       this.myStakeListLoading = false;
     },
     async getBalanceOfShare(activeValidatorsShare) {
@@ -1109,7 +1213,52 @@ export default {
         let votingRewardsYear= 10000000*((parseFloat(this.modelItems.power) + this.stake + this.totalAmount)/this.totalAmount)*(this.modelItems.commissionRate/100);
         this.UserRewardsYear = votingRewardsYear*this.stake/(parseFloat(this.modelItems.power) + this.stake)/365*this.days;
         this.current = this.UserRewardsYear/(this.stake * 365)*this.days*100;
-    }
+    },
+    async validatorDetails(value){
+      this.validatorDialog = true;
+      this.detailsItem = value;
+    },
+    async myVoteDetails(value){
+      this.validatorDialog = true;
+      this.detailsItem = value;
+    },
+    closeDetails(){
+      this.validatorDialog = false;
+    },
+     copyToClipboard(str) {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+     sleep(timestamp) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timestamp);
+      })
+      },
+    async copyAddr(addr) {
+      try {
+        window.navigator.clipboard.writeText(addr);
+        this.copyToClipboard(addr);
+      } catch (ex) {
+        console.log(ex);
+      } finally {
+        this.addrCopying = true;
+        await this.sleep(500);
+        this.addrCopying = false;
+      }
+    },
+   
   },
   computed: {
     ...mapGetters({
@@ -1247,6 +1396,15 @@ export default {
 .btn-radius {
   border-radius: 4px;
 }
+.logo-image{
+  display: inline-block;
+  vertical-align: middle;
+  margin-right:8px;
+  border-radius: 20px;
+}
+.nodeName{
+  margin: 0 8px;
+}
 .theme--dark.v-tabs-items {
   background-color: transparent;
 }
@@ -1366,6 +1524,32 @@ export default {
 .item-list{
   color: black;
 }
+.theme--dark.validator-info{
+    padding: 20px;
+    background-color: #595777;
+     .v-btn.v-btn--has-bg{
+    background-color: transparent;
+    padding-left:0 !important;
+  }
+  }
+  .theme--light.validator-info{
+    padding: 20px;
+    .v-btn.v-btn--has-bg{
+    background-color: transparent;
+  }
+  }
+  .info-item{
+    padding:0;
+    h5{
+    padding-left:28px;
+  }
+  }
+  .info-icon{
+    margin-right:8px;
+  }
+  .title-info{
+    margin:10px 0 0 1px;
+  }
 @keyframes metronome-example {
   from {
     transform: scale(0.5);
@@ -1459,6 +1643,9 @@ export default {
     width: 50%;
     padding-left: 12px;
     padding-right: 12px;
+  }
+  .title-info{
+    margin:12px 0;
   }
 }
 </style>

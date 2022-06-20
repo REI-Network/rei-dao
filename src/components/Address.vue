@@ -2,8 +2,7 @@
     <span>
         {{val | addr}}
         <v-btn color="secondary" :text="!dark" depressed small @click="copyAddr(val)">
-            <v-icon small color="validator">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
-            
+            <v-icon small color="validator">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>     
         </v-btn>
     </span>
   

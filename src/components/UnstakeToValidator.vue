@@ -41,10 +41,15 @@
                 :loading="unStakeListLoading"
                 :loading-text="$t('msg.loading')"
                 :page.sync="page"
+                @click:row="validatorDetails"
                 @page-count="pageCount = $event"
             >
                 <template v-slot:item.validator="{ item }">
-                    <Address :val="item.validator"></Address>
+                    <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                    <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
+                    <span class="nodeName" v-else>{{ item.validator | addr }}</span>
+                    <!-- <Address :val="item.validator"></Address> -->
                 </template>
                 <template v-slot:item.timestamp="{ item }">
                     {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')  }}
@@ -63,7 +68,7 @@
                         small
                         color="vote_button"
                         :disabled="claimStatus(item)"
-                        @click="unstake(item)"
+                        @click.stop="unstake(item)"
                         height="32"
                         style="color:#FFF"
                     >
@@ -83,7 +88,64 @@
             </div>
       </v-col>
     </v-row>
-    
+     <v-dialog v-model="validatorDialog" width="600">
+      <v-card class="validator-info">
+        <v-row justify="space-between" class="title-info">
+          <v-card-title style="margin-left:-12px;margin-top:-20px">Validator info</v-card-title>
+          <div @click="closeDetails">
+            <v-icon>mdi-close</v-icon>
+          </div>
+        </v-row>
+          <v-list>
+            <v-list-item class="info-item" v-if="detailsItem.nodeName" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/nodeName.svg" class="logo-image" width="20" height="20"/>
+                <span>Node Name</span>
+              </v-list-item-subtitle>
+              <h5> 
+                {{ detailsItem.nodeName }}
+              </h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item">
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/validator-ic.svg" class="logo-image" width="20" height="20"/>
+                <span>Validator Address</span>
+              </v-list-item-subtitle>
+              <h5 v-if="width > 900"> 
+                {{ detailsItem.validator }}
+                <v-btn @click="copyAddr(item.validator)">
+                  <v-icon small color="#868E9E">mdi-content-copy</v-icon>
+                </v-btn>
+              </h5>
+               <h5 v-else><Address :val="detailsItem.validator"></Address></h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item" three-line v-if="detailsItem.nodeDesc" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/description.svg" class="logo-image" width="20" height="20"/>
+                <span>Description</span>
+              </v-list-item-subtitle>
+              <h5 style="line-height:20px"> 
+                {{ detailsItem.nodeDesc }}
+              </h5>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="info-item" v-if="detailsItem.website" >
+            <v-list-item-content>
+              <v-list-item-subtitle>
+                <v-img src="../assets/images/website.svg" class="logo-image" width="20" height="20"/>
+                <span>Website</span>
+                <v-btn depressed small target="_blank" :href="detailsItem.website"><v-icon small color="#868E9E">mdi-open-in-new</v-icon></v-btn>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          </v-list>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -94,9 +156,11 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import filters from '../filters';
 import Address from '../components/Address';
+import find from 'lodash/find';
 //import { getUnstake } from '../service/CommonService'
 import util from '../utils/util'
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+import { getValidatorDetails } from '../service/CommonService'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 let client = null;
@@ -139,8 +203,12 @@ export default {
             { text: this.$t('unstake.status'), value: 'state' },
             { text: this.$t('unstake.opertion'), value: 'actions', sortable: false }
         ],
-        nodeList: [
-        ],
+        validatorDialog:false,
+        detailsItem:'',
+        width:'',
+        nodeList: [],
+        addrCopying: false,
+        detailsList:[],
         receiveBalance: 0,
         commissionShare:'',
         rules: {
@@ -154,7 +222,8 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    this.init();
+    this.windowWidth();
   },
   destroyed() {
     
@@ -193,6 +262,25 @@ export default {
             fetchPolicy: 'cache-first',
         })
         this.nodeList = unStakeInfos
+        let Details = await getValidatorDetails();
+        // console.log('Details',Details)
+        this.detailsList = Details.data.data;
+        this.nodeList = this.nodeList.map((item) => {
+        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.validator));
+        if(detail){
+          var nodeName = detail.nodeName;
+          var logo = detail.logo;
+          var website = detail.website;
+          var nodeDesc = detail.nodeDesc;
+        }
+        return{
+          ...item,
+          nodeName:nodeName,
+          logo:logo,
+          website:website,
+          nodeDesc:nodeDesc
+        }
+      })
         this.unStakeListLoading = false;
 
     },
@@ -249,7 +337,52 @@ export default {
             str = val/60 + '分后';
         }
         return str;
-    }
+    },   
+     async validatorDetails(value){
+      this.validatorDialog = true;
+      this.detailsItem = value;
+    },
+     windowWidth() {
+      const that = this;
+      that.width = window.innerWidth;
+    },
+    closeDetails(){
+      this.validatorDialog = false;
+    },
+     copyToClipboard(str) {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+     sleep(timestamp) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timestamp);
+      })
+      },
+    async copyAddr(addr) {
+      try {
+        window.navigator.clipboard.writeText(addr);
+        this.copyToClipboard(addr);
+      } catch (ex) {
+        console.log(ex);
+      } finally {
+        this.addrCopying = true;
+        await this.sleep(500);
+        this.addrCopying = false;
+      }
+    },
+
   },
   computed: {
     ...mapGetters({
@@ -308,6 +441,41 @@ export default {
   width:80px;
   border: none;
 }
+.logo-image{
+  display: inline-block;
+  vertical-align: middle;
+  margin-right:8px;
+  border-radius: 20px;
+}
+.nodeName{
+  margin: 0 8px;
+}
+.theme--dark.validator-info{
+    padding: 20px;
+    background-color: #595777;
+     .v-btn.v-btn--has-bg{
+    background-color: transparent;
+    padding-left:0 !important;
+  }
+  }
+  .theme--light.validator-info{
+    padding: 20px;
+    .v-btn.v-btn--has-bg{
+    background-color: transparent;
+  }
+  }
+  .info-item{
+    padding:0;
+    h5{
+    padding-left:28px;
+  }
+  }
+  .info-icon{
+    margin-right:8px;
+  }
+  .title-info{
+    margin:10px 0 0 1px;
+  }
 @media screen and (max-width: 900px){
   .warn-tip{
   margin-top:30px;
@@ -330,6 +498,9 @@ export default {
     }
   .d-select{
     width:100% !important;
+  }
+  .title-info{
+    margin:12px 0;
   }
 }
 </style>

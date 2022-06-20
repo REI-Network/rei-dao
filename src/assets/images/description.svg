@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>信息</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Validator-验证者详情" transform="translate(-387.000000, -494.000000)">
+            <g id="信息" transform="translate(387.000000, 494.000000)">
+                <rect id="Rectangle-14" stroke="#979797" fill="#D8D8D8" opacity="0" x="0.5" y="0.5" width="23" height="23"></rect>
+                <rect id="Rectangle-11" stroke="#858EA0" stroke-width="1.5" x="4.75" y="2.75" width="14.5" height="17.5" rx="3"></rect>
+                <path d="M7.73476483,8 C7.32896542,8 7,7.55228475 7,7 C7,6.44771525 7.32896542,6 7.73476483,6 L16.2652352,6 C16.6710346,6 17,6.44771525 17,7 C17,7.55228475 16.6710346,8 16.2652352,8 L7.73476483,8 Z M7.73476483,12 C7.32896542,12 7,11.5522847 7,11 C7,10.4477153 7.32896542,10 7.73476483,10 L16.2652352,10 C16.6710346,10 17,10.4477153 17,11 C17,11.5522847 16.6710346,12 16.2652352,12 L7.73476483,12 Z M7.73476483,16 C7.32896542,16 7,15.5522847 7,15 C7,14.4477153 7.32896542,14 7.73476483,14 L16.2652352,14 C16.6710346,14 17,14.4477153 17,15 C17,15.5522847 16.6710346,16 16.2652352,16 L7.73476483,16 Z" id="Combined-Shape" fill="#858EA0" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>
