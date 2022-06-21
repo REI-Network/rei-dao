@@ -176,7 +176,7 @@
                   </template>
 
                   <template v-slot:item.actions="{ item }">
-                    <v-btn tile small color="vote_button" class="mr-4 btn-radius" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                    <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" style="color: #fff" @click.stop="handleStaking(item)" height="32">
                       {{ $t('stake.staking') }}
                     </v-btn>
                     <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
@@ -324,7 +324,7 @@
               <v-btn @click="cancelClaim" color="btn_button" outlined class="mr-4 cancel-btn">
                 {{ $t('stake.btn_cancel') }}
               </v-btn>
-              <v-btn color="vote_button" :disabled="!approved" :loading="claimLoading" @click="submitClaim">
+              <v-btn color="vote_button" class="font-btn" :disabled="!approved" :loading="claimLoading" @click="submitClaim">
                 {{ $t('stake.btn_submit') }}
               </v-btn>
             </div>
@@ -519,8 +519,8 @@
               </v-list-item-subtitle>
               <h5 v-if="this.width > 900"> 
                 {{ detailsItem.address }}
-                <v-btn @click="copyAddr(item.address)">
-                  <v-icon small color="#868E9E">mdi-content-copy</v-icon>
+                <v-btn @click="copyAddr(detailsItem.address)">
+                  <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </h5>
                <h5 v-else><Address :val="detailsItem.address"></Address></h5>

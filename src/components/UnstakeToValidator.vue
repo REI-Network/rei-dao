@@ -116,8 +116,8 @@
               </v-list-item-subtitle>
               <h5 v-if="width > 900"> 
                 {{ detailsItem.validator }}
-                <v-btn @click="copyAddr(item.validator)">
-                  <v-icon small color="#868E9E">mdi-content-copy</v-icon>
+                <v-btn @click="copyAddr(detailsItem.validator)">
+                  <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </h5>
                <h5 v-else><Address :val="detailsItem.validator"></Address></h5>
