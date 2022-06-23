@@ -1,7 +1,7 @@
 <template>
-  <v-bottom-navigation app class="d-md-none" color="primary" background-color="background" :value="value">
+  <v-bottom-navigation app class="d-md-none" color="primary" background-color="background" v-model="value">
       <template v-for="link in links">
-        <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show">
+        <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show" :value="link.name">
         <!-- <span>{{ $t(link.text) }}</span> -->
         <span class="iconfont" v-html="link.icon"></span>
         </v-btn>
@@ -10,17 +10,18 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import find from 'lodash/find';
 export default {
   data() {
     return {
-      value:0,
+      value:'',
       links: [
         {
           icon: '&#xe604;',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards',
-          show: true
+          show: true,
         },
         {
           icon: '&#xe603;',
@@ -68,7 +69,14 @@ export default {
         }
     }
   },
+  mounted(){
+   this.getRoute()
+  },
   methods: {
+    getRoute(){
+        let path = find(this.links, (item) => item.link == this.$route.path);
+        this.value = path.name;
+    },
     go(e, link) {
       if (link != this.$route.path) {
         this.$router.replace(link);

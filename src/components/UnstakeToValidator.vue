@@ -76,7 +76,7 @@
                     </v-btn>
                 </template>
             </v-data-table>
-            <div class="text-center pt-2">
+            <div class="text-center pt-2" v-if="nodeList.length > 0">
                 <v-pagination
                     v-model="page"
                     :length="pageCount"

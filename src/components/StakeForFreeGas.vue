@@ -30,7 +30,7 @@
                             {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                         </template>
                         <template v-slot:item.withdraw="{ item }">
-                            {{ item.availableTime}}
+                            {{ availableTime != 0 ? item.availableTime : "00D : 00H : 00M"}}
                         </template>
                         <!-- <template v-slot:item.isActive="{ item }">
                             {{ status[item.isActive] }}
@@ -51,29 +51,16 @@
                             <v-btn
                             small
                             color="start_unstake"
-                            class="mr-4 unstake_btn"
+                            class="unstake_btn"
                             v-if='connection.address'
                             @click="deposit(item)"
                             height="32"
                             >
                                 Stake more
                             </v-btn>
-                            <v-btn
-                            v-if="item.address==connection.address"
-                            small
-                            color="success"
-                            class="mr-4 withdraw"
-                            @click="handleReward(item)"
-                            height="32"
-                            >
-                                {{$t('stake.get_reward')}}
-                            </v-btn>
-                            <span v-if='!connection.address'>
-                                -
-                            </span>
                         </template>
                     </v-data-table>
-                    <div class="text-pagination pt-2">
+                    <div class="text-pagination pt-2" v-if="nodeList.length > 0">
                         <v-pagination
                             v-model="page"
                             :length="pageCount"
@@ -115,7 +102,7 @@
                             {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                         </template>
                     </v-data-table>
-                    <div class="text-pagination pt-2">
+                    <div class="text-pagination pt-2" v-if="nodeListOther.length > 0">
                         <v-pagination
                             v-model="page"
                             :length="pageCount"
@@ -209,8 +196,11 @@
     </v-dialog>
     <v-dialog v-model="withdrawDialog" width="500">
       <v-card :class="dark?'dialog-night':'dialog-daytime'">
-          <v-card-title>{{$t('stakeforgas.withdraw_info')}}</v-card-title>
-          <!-- <v-divider></v-divider> -->
+          <div class="dialog-validator"> 
+                <v-card-title class="dialog-title">{{$t('stakeforgas.withdraw_info')}}</v-card-title>
+                <div @click="cancelWithdraw" class="close-btn"><v-icon>mdi-close</v-icon></div>   
+            </div> 
+          
         <v-list rounded class="ma-4 start_unstake">
           <v-form 
             ref="withdrawform"
@@ -363,7 +353,7 @@ export default {
         currentAddress: {},
         leftCrude:0,
         usedCrude:0,
-        
+        availableTime:0,
         approved: true,
         rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
         amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v>0) || this.$t('msg.please_input_not_zero')],
@@ -440,9 +430,8 @@ export default {
         let depositsList = deposits.map(async (item) => {
             let feeUserDeposit = await this.feeContract.methods.userDeposit(item.by,item.to).call()
             let nowTime = Date.now();
-            let availableTime = feeUserDeposit.timestamp*1000+3*24*3600*1000
-            let passTime = this.timeDiff(availableTime,nowTime);
-
+            this.availableTime  = feeUserDeposit.timestamp*1000+3*24*3600*1000;
+            let passTime = this.timeDiff(this.availableTime,nowTime);
             let passedTime = nowTime - feeUserDeposit.timestamp*1000
             let passTimepercent = passedTime/(3*24*3600*1000);
             let availableTimePercent = passTimepercent>1 ? 1 : passTimepercent
@@ -675,9 +664,11 @@ export default {
 }
 .dialog-night{
     background-color:#595777;
+    padding:20px 0;
 }
 .dialog-daytime{
     background-color: #FFF;
+    padding:20px 0;
 }
 .dialog-validator{
     display: flex;
@@ -686,12 +677,19 @@ export default {
         margin-left:12px;
     }
     .close-btn{
-        margin-top: 20px;
+      
         margin-right:20px;
         padding: 0;
         background-color: transparent;
         cursor: pointer;
     }
+}
+.v-btn {
+  text-transform: none !important;
+}
+.get-reward.v-btn.v-btn--has-bg {
+  background-color: #fc884a;
+  color: #fff !important;
 }
 .v-application .text-center{
     text-align: right !important;
@@ -731,7 +729,7 @@ export default {
     @media screen and (max-width: 900px) {
         .gas-list{
             margin-top:-4px;
-            margin-bottom:8px;
+            margin-bottom:28px;
         }
         .dialog-validator{
             .v-card__subtitle, .v-card__text, .v-card__title{
@@ -758,7 +756,7 @@ export default {
             height:40px;
         }
         .text-filed{
-            width:300px !important;
+            width:320px !important;
         }
     }
 </style>

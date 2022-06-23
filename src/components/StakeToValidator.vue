@@ -114,7 +114,7 @@
                 </v-card>
               </v-col>
               <v-col class="right-outline" v-if="this.tab2 == 1">
-                <v-card outlined class="select-card select-second">
+                <v-card outlined class="select-card select-second vote-select">
                   <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
                 </v-card>
               </v-col>
@@ -124,7 +124,7 @@
                 <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
-                        <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                        <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                         <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
                         <span class="nodeName" v-else>{{ item.address | addr }}</span>
                         <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
@@ -152,7 +152,7 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <div class="text-center pt-2">
+                <div class="text-center pt-2" v-if="nodeList.length > 0">
                   <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                 </div>
               </v-tab-item>
@@ -160,7 +160,7 @@
                 <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
                   <template v-slot:item.address="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
-                    <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                     <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
                     <span class="nodeName" v-else>{{ item.address | addr }}</span>
                     <!-- <Address :val="item.address"></Address> -->
@@ -185,7 +185,7 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <div class="text-center pt-2">
+                <div class="text-center pt-2" v-if="myStakeList.length > 0">
                   <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                 </div>
               </v-tab-item>
@@ -206,7 +206,7 @@
         <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-dialog start_unstake">
           <v-form ref="stakeform" lazy-validation>
-            <div class="pb-1 text-body-1" style="padding-left: 12px">
+            <div class="pb-1 text-body-1">
               <span class="font-color">{{ $t('stake.node') }}</span
               >: <Address :val="currentItem.address"></Address>
             </div>
@@ -292,7 +292,7 @@
         <!-- <v-divider></v-divider> -->
         <v-list rounded class="ma-dialog start_unstake">
           <v-form ref="claimform" lazy-validation>
-            <div class="pb-1 text-body-1" style="padding-left: 12px">
+            <div class="pb-1 text-body-1">
               <span class="font-color">{{ $t('stake.node') }}:</span>
               <Address :val="currentItem.address"></Address>
             </div>
@@ -1288,9 +1288,11 @@ export default {
 }
 .dialog-night {
   background-color: #595777;
+  padding:20px 0;
 }
 .dialog-daytime {
   background-color: #fff;
+  padding:20px 0;
 }
 .theme--dark.v-list {
   background-color: #595777;
@@ -1411,11 +1413,11 @@ export default {
 .dialog-validator {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   .dialog-title {
-    margin-left: 12px;
+    // margin-left: 12px;
   }
   .close-btn {
-    margin-top: 12px;
     margin-right: 16px;
     padding: 0;
     background-color: transparent;
@@ -1444,7 +1446,6 @@ export default {
 }
 .text-caption {
   margin-top: 12px;
-  margin-left: 12px;
   padding: 12px;
   // background-color:#FFF5DB;
   border: 1px #fb7e36 solid;
@@ -1629,12 +1630,15 @@ export default {
     margin-left: 12px;
     // background: blue($color: #000000);
   }
+  .vote-select{
+     margin-left: 18px;
+  }
   .d-select {
     margin-left: 0;
     width: 80%;
   }
   .text-filed {
-    width: 300px !important;
+    width: 320px !important;
   }
   .card-tab {
     width: 100% !important;
