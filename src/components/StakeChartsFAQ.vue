@@ -90,7 +90,7 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 export default {
   data() {
     return {
-        radios:'Total Voting Stake',
+        radios:'Total Voting Staked',
         tags:['7D'],
         faqList:[
           {
@@ -294,7 +294,7 @@ export default {
               },
             series: [
               {
-                name:'Total Voting Stake',
+                name:'Total Voting Staked',
                 data: [],
                 type: 'bar',
                 itemStyle: {

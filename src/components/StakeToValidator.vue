@@ -121,7 +121,7 @@
             </v-row>
             <v-tabs-items v-model="tab2">
               <v-tab-item key="111">
-                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                         <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
@@ -157,7 +157,7 @@
                 </div>
               </v-tab-item>
               <v-tab-item key="122">
-                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
+                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
                   <template v-slot:item.address="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                     <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>

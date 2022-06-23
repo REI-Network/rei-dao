@@ -25,7 +25,7 @@
                     mdi-alert-circle-outline
                   </v-icon>
                 </template>
-                 <span>Freely Usable REI,Excluding Stakes<br/> In Vote,Gas Stake</span>
+                 <span> Freely usable $REI, excluding $REI staked for voting and gas</span>
             </v-tooltip>
           </v-subheader>
           <v-subheader class="total-banlance sub-title " v-if='connection.address'>{{ connection.balance | asset(4) }}<span class="rei">REI</span></v-subheader>
@@ -96,7 +96,7 @@
                     -
                 </div>
               <v-subheader>
-                  Validator Voting Stake
+                  Validator Voting Staked
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -111,7 +111,7 @@
                           mdi-alert-circle-outline
                         </v-icon>
                       </template>
-                 <span>If You Cancel The Vote,You Need To <br/>Wait 7 Days To Withdraw REI</span>
+                 <span>If you cancel the voting,<br /> $REI can be withdrawn after 7 days</span>
                 </v-tooltip>
               </v-subheader>
              </div>
@@ -161,7 +161,7 @@
                     -
                 </div>
               <v-subheader>
-                  Pending Unstake
+                  Pending Unstaked
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -176,7 +176,7 @@
                           mdi-alert-circle-outline
                         </v-icon>
                       </template>
-                 <span>Stake REIs And Earn More</span>
+                 <span>Stake $REI and earn more</span>
                 </v-tooltip>
               </v-subheader>
              </div>

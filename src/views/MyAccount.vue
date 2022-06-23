@@ -2,7 +2,7 @@
   <v-container class="myAccount stake_background">
      <div class="header-title">
       <h1>My Account</h1>
-      <div class="title-detailed">Get more information about your personal account, about balances, voting , etc.</div>
+      <div class="title-detailed">Details about your account, balances, and voting</div>
     </div>
     <v-row>
       <v-col>

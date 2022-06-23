@@ -78,12 +78,12 @@ export default {
     tips_commission_rate: 'The next time you can set is after {commissionRateInterval}',
     status: 'Status',
     isActive: 'Active',
-    notActive: 'Unactive'
+    notActive: 'Inactive'
   },
   msg: {
     please_input_number: 'Please enter the number',
     please_input_1_100_num: 'Please enter an integer from 1-100',
-    please_input_amount: 'Please input amount',
+    please_input_amount: 'Please enter amount',
     please_input_correct_num: 'Please enter the correct number',
     please_input_address: 'Please enter the address',
     please_input_not_zero: 'Please enter a number greater than 0',
@@ -91,16 +91,17 @@ export default {
     hour: ' hour',
     minute: 'minute',
     neterror:'Switch to REI Network',
-    loading: 'Loading... Please wait'
+    loading: 'Loading... Please wait',
+    nodatatext: 'No data'
   },
   unstake:{
-    title: 'Pending Unstake',
+    title: 'Pending Unstaked',
     list_title: 'Pending Unstake list',
     node: 'Node',
     create_time: 'Create time',
     unstake_available: 'Available Time',
-    shares: 'Unstake Shares',
-    get_value: 'Unstake Value',
+    shares: 'Unstaked Shares',
+    get_value: 'Unstaked Value',
     status: 'Status',
     opertion: 'Opertion',
     gettitle: 'Unstake',
@@ -126,7 +127,7 @@ export default {
   dashborad:{
     trends:'Trends',
     total_stake:'Total Stake',
-    voting_stake:'Total Voting Stake',
+    voting_stake:'Total Voting Staked',
     gas_stake:'Total Gas Stake',
     amount_user:'Amount Of Gas Saved For Users',
     price:'Price',
@@ -169,7 +170,7 @@ export default {
     crude_tip:'Daily Available Crude Oil Does Not Accumulate And Resets To 0 Every Day',
   },
   voting:{
-    stake_radios:'Total Voting Stake',
+    stake_radios:'Total Voting Staked',
     faq_title1:'How to become a node validator?',
     faq_content1:'A validator is a participant in the network who runs validator nodes to run and secure the network.',
     faq_title2:'How to vote for a node validator?',

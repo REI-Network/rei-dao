@@ -55,7 +55,7 @@ export default {
         },
         {
           icon: '&#xe603;',
-          text: 'MyAccount',
+          text: 'My Account',
           link: '/myAccount',
           name: 'myAccount',
           show: true,

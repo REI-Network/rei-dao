@@ -39,7 +39,7 @@
                     >
                         <v-tab key="1">
                             <v-radio
-                                label="Total Stake"
+                                label="Total Staked"
                                 value="1"
                                 class="trends-radio"
                                 >
@@ -47,14 +47,14 @@
                         </v-tab>
                         <v-tab key="2">
                             <v-radio
-                                label="Total Voting Stake"
+                                label="Total Staked for Voting"
                                 value="2"
                                 >
                             </v-radio>
                         </v-tab>
                         <v-tab key="3" v-if="showMenu">
                             <v-radio
-                                label="Total Gas Stake"
+                                label="Total Staked for Gas"
                                 value="3"
                                 >
                             </v-radio>

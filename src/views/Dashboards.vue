@@ -1,8 +1,8 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <h1>Dashboard</h1>
-      <div class="title-detailed">Get more information about the rei network</div>
+      <h1>Dashboards</h1>
+      <div class="title-detailed">Get more information about REI Network</div>
     </div>
     <v-row>
       <v-col>

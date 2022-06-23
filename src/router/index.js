@@ -21,7 +21,7 @@ const routes = [
   },
   {
     path: '/myAccount',
-    name: 'MyAccount',
+    name: 'My Account',
     component: MyAccount
   },
   {

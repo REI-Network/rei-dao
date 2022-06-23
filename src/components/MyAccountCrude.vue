@@ -38,7 +38,7 @@
                                 -
                             </div>
                             <v-subheader>
-                                Total Stake
+                                Total staked
                                 <v-tooltip right color="start_unstake">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
@@ -52,7 +52,7 @@
                                          mdi-alert-circle-outline
                                         </v-icon>
                                     </template>
-                                    <span>Stake REI,Earn Crude As Gas</span>
+                                    <span>Stake $REI to earn Crude as Gas</span>
                                 </v-tooltip>
                             </v-subheader>
                             </div>
@@ -79,7 +79,7 @@
                                 —
                             </div>
                             <v-subheader class="">
-                                Left Crude
+                                Crude left
                                 <v-tooltip right color="start_unstake">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-icon
@@ -93,7 +93,7 @@
                                             mdi-alert-circle-outline
                                         </v-icon>
                                     </template>
-                                    <span>Remaining available gas, 1CRUDE ≈ 1e9 Gwei</span>
+                                    <span>Remaining Gas, 1 Crude ≈ 1e9 Gwei</span>
                                 </v-tooltip>
                              </v-subheader>
                         </div>
