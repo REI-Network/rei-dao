@@ -777,7 +777,7 @@ export default {
             
                     series: [
                         {       
-                            name: 'Total Stake',
+                            name: 'Total Staked',
                             type: 'line',
                             data: [
                             ],
@@ -864,7 +864,7 @@ export default {
                     },
                     series: [
                         {       
-                            name: 'Total Voting Stake',
+                            name: 'Total Staked for Voting',
                             type: 'bar',
                             data: [
                             ],
@@ -958,7 +958,7 @@ export default {
                     },
                     series: [
                         {
-                            name: 'Total Gas Stake',
+                            name: 'Total Staked for Gas',
                             type: 'bar',
                             data: [
                             
