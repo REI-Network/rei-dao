@@ -2,29 +2,6 @@
   <v-container class="background">
     <v-row>
       <v-col cols="12" md="12" sm="12">
-        <!-- <v-card-actions>
-                <v-card-title>{{$t('stake.node_list')}}
-                </v-card-title>
-                <v-spacer></v-spacer>
-                <v-btn
-                    text
-                    outlined
-                    color="primary"
-                    v-if="isNode"
-                    @click="setRate"
-                    >
-                    {{$t('stake.set_commission_rate')}}
-                </v-btn>
-                <v-btn
-                    text
-                    outlined
-                    color="primary"
-                    v-if="connection.address"
-                    @click="stakeToNode"
-                >
-                {{$t('stake.stake_to_other_node')}}
-            </v-btn>
-            </v-card-actions>    -->
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">Validator List</v-tab>
           <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
@@ -614,7 +591,7 @@ export default {
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
-        { state: 'Unactive Validator', val: '2' }
+        { state: 'Inactive Validator', val: '2' }
       ],
       itemsPages: [10, 20, 50],
       headers: [
