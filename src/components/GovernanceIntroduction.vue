@@ -3,7 +3,7 @@
      <v-card class="Introduction">
          <v-row justify="space-between">
             <v-col cols="12" md="8">
-                <h2>Introduction To REI Governance</h2>
+                <h2>Introduction to REI Governance</h2>
                 <div class="introduction-text">$REI holders are responsible for managing the REI network, including adjusting the verification node incentive parameters, daily free gas parameters, etc., and improving the governance process itself. Anyone can become a $REI holder, and all are welcome to join us in creating the future of the REI network.
                 </div>
                 <v-btn 

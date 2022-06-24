@@ -25,7 +25,7 @@
                   </v-icon>
                 </template>
                 <h3>What is node rewards？</h3>
-                <span>Remaining 50M are node rewards, <br/>will be minted over 5 years</span>
+                <span>Remaining 50M are node rewards, <br/>will be minted in 5 years</span>
              </v-tooltip>
           </v-subheader>
             <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>

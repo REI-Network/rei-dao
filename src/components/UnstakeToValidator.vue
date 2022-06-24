@@ -2,10 +2,6 @@
   <v-container>
     <v-row>
       <v-col>
-            <!-- <v-card-actions>
-                <v-card-title>{{$t('unstake.list_title')}}</v-card-title>
-            </v-card-actions>    -->
-          <!-- <v-divider /> -->
           <v-row justify="space-between" align="center" class="warn-tip">
              <v-subheader :class="dark?'dark-tip':'sub-tip'">
                 <!-- <v-icon
@@ -17,7 +13,7 @@
                   >
                     mdi-alert-circle-outline
               </v-icon>  -->
-              <div class="warn">Note: 7 days after the redemption operation is initiated, you can receive it on the redemption page</div>
+              <div class="warn">Note: Redemption is available after 7 days on the redemption page</div>
           </v-subheader>
             <v-card outlined class="select-card">
             <v-select
@@ -38,6 +34,7 @@
                 class="elevation-0 data-margin"
                 hide-default-footer
                 :items-per-page="itemsPerPage"
+                :no-data-text="$t('msg.nodatatext')"
                 :loading="unStakeListLoading"
                 :loading-text="$t('msg.loading')"
                 :page.sync="page"
