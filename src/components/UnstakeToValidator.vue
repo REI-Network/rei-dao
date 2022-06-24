@@ -46,7 +46,7 @@
             >
                 <template v-slot:item.validator="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
-                    <v-img v-else src="../assets/images/placeholder.svg" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                     <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
                     <span class="nodeName" v-else>{{ item.validator | addr }}</span>
                     <!-- <Address :val="item.validator"></Address> -->
