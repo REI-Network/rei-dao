@@ -198,7 +198,7 @@ export default {
             { text: this.$t('unstake.shares'), value: 'shares' },
             { text: this.$t('unstake.get_value'), value: 'values' },
             { text: this.$t('unstake.status'), value: 'state' },
-            { text: this.$t('unstake.opertion'), value: 'actions', sortable: false }
+            { text: this.$t('unstake.operation'), value: 'actions', sortable: false }
         ],
         validatorDialog:false,
         detailsItem:'',

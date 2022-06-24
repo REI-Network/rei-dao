@@ -103,7 +103,7 @@ export default {
     shares: 'Unstaked Shares',
     get_value: 'Unstaked Value',
     status: 'Status',
-    opertion: 'Opertion',
+    operation: 'Operation',
     gettitle: 'Unstake',
     retrieve: 'Retrieved',
     not_retrieve: 'Not retrieved'
