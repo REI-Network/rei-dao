@@ -809,7 +809,6 @@ export default {
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
       this.stakeListLoading = false;
-      this.getMyStakeList();
       let Details = await getValidatorDetails();
       this.detailsList = Details.data.data;
       this.nodeList = this.nodeList.map((item) => {
@@ -828,6 +827,7 @@ export default {
           nodeDesc:nodeDesc
         }
       });
+      this.getMyStakeList();
     },
     async getMyStakeList() {
       this.myStakeListLoading = true;
@@ -1162,12 +1162,28 @@ export default {
     },
     changeState() {
       if (this.listFilter == '1') {
-        this.nodeList = this.activeList.concat(this.notActiveList);
+        this.nodeList = this.activeList;
       } else if (this.listFilter == '2') {
         this.nodeList = this.notActiveList;
       } else {
         this.nodeList = this.activeList.concat(this.notActiveList);
       }
+      this.nodeList = this.nodeList.map((item) => {
+        let obj = {}
+        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+        if(detail){
+          obj = {
+            nodeName:  detail.nodeName,
+            logo: detail.logo,
+            website: detail.website,
+            nodeDesc: detail.nodeDesc
+          }
+        }
+        return{
+          ...item,
+          ...obj
+        }
+      });
     },
     windowWidth() {
       const that = this;
