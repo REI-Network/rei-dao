@@ -148,7 +148,7 @@ a{
   margin-right:12px;
 }
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td{
-  height: 56px;
+  height: 64px;
 }
 .v-data-table > .v-data-table__wrapper .v-data-table__mobile-table-row{
   padding-top: 20px;

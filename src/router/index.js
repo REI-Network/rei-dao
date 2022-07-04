@@ -5,6 +5,7 @@ import MyAccount from '../views/MyAccount.vue';
 import Stake from '../views/Stake.vue';
 import StakeForGas from '../views/StakeForGas.vue';
 import Governance from '../views/Governance.vue';
+import Bridge from '../views/Bridge.vue';
 
 
 const routes = [
@@ -39,6 +40,11 @@ const routes = [
     path: '/governance',
     name: 'Governance',
     component: Governance
+  },
+  {
+    path: '/bridge',
+    name: 'Bridge',
+    component: Bridge
   }
 ];
 
