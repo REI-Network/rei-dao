@@ -428,7 +428,7 @@ export default {
         })
         this.depositList = deposits;
         let depositsList = deposits.map(async (item) => {
-            let feeUserDeposit = await this.feeContract.methods.userDeposit(item.by,item.to).call()
+            let feeUserDeposit = await this.feeContract.methods.userDeposit(item.to,item.by).call()
             let nowTime = Date.now();
             this.availableTime  = feeUserDeposit.timestamp*1000+3*24*3600*1000;
             let passTime = this.timeDiff(this.availableTime,nowTime);
