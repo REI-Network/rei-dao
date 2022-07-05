@@ -137,6 +137,29 @@
 <script>
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
+import { mapActions, mapGetters } from 'vuex';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+import abiERC20 from '../abis/abiERC20'
+import dayjs from 'dayjs';
+import Web3 from 'web3';
+
+const tokenList = gql`
+  query getTokenList{
+    createNewErc20Results(first: 100, orderBy: timestamp, orderDirection: desc) {
+      id
+      creator
+      erc20Address
+      name
+      symbol
+      decimals
+      value
+      admin
+      txHash
+      timestamp
+    }
+  }
+`
+let client = null;
 
 export default {
   data() {
@@ -169,11 +192,66 @@ export default {
   },
   watch: {},
   mounted() {
-    this.getBridgeList()
+    this.connect();
+    this.getdata();
+    this.getBridgeList();
   },
-  computed: {},
+  computed: {
+     ...mapGetters({
+      connection: 'connection',
+      apiUrl: 'apiUrl'
+    })
+  },
   methods: {
+    connect() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+      }
+    },
+    async getdata(){
+      try{
+         let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}erc20-factory`,
+            cache: new InMemoryCache(),
+        })
+
+        //let charts = []
+        const {data:createNewErc20Results} = await client.query({
+            query: tokenList,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        console.log('createNewErc20Results',createNewErc20Results)
+        for(let i = 0;i<createNewErc20Results.length; i++){
+          console.log(createNewErc20Results[i].erc20Address)
+           this.getTokenInfo(createNewErc20Results[i].erc20Address)
+        }
+       
+      } catch(e){
+        console.log(e)
+      }
+    },
+    async getTokenInfo(contractAddress){
+      let contract = new web3.eth.Contract(abiERC20, contractAddress);
+      const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
+      const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
+      let members = [];
+        for (var i = 0; i < Number(roleNumber); i++) {
+          let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
+          members.push(member);
+        }
+      console.log('MINTER_ROLE',MINTER_ROLE);
+      console.log('roleNumber',roleNumber)
+      console.log('members',members)
+
+    },
     getBridgeList(){
+
+       this.getTokenInfo()
       this.bridgeList = this.bridgeList.map((item) => {
         let menuUp = item.minter-5
         return{
