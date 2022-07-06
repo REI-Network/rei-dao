@@ -140,10 +140,13 @@
 import { mapActions, mapGetters } from 'vuex';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 import abiBridgedERC20 from '../abis/abiBridgedERC20'
+import abiFactory from '../abis/abiFactory'
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
+
+const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7'
 
 const tokenList = gql`
   query getTokenList{
@@ -235,6 +238,8 @@ export default {
         })
         //this.grantRole()
         //this.setMintCap()
+        //this.createrERC20()
+        console.log('resultList',resultList)
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
           console.log(resultList[i].erc20Address)
@@ -255,6 +260,7 @@ export default {
       let symbol = await contract.methods.symbol().call();
       let name = await contract.methods.name().call();
       let decimals = await contract.methods.decimals().call();
+      console.log('token',symbol,name)
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
       let members = [];
       for (var i = 0; i < Number(roleNumber); i++) {
@@ -378,6 +384,40 @@ export default {
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
+    },
+    async createrERC20(){
+      try {
+        let newERC20 = {
+          name: 't USD',
+          symbol: 'TUSD',
+          decimals: 18
+        }
+        let contract = new web3.eth.Contract(abiFactory,testFactory);
+        let res = await contract.methods.create(newERC20.name, newERC20.symbol, newERC20.decimals).send({
+            from: this.connection.address,
+            value: web3.utils.numberToHex(web3.utils.toWei('10'))
+        });
+        if(res.transactionHash) {
+            console.log(res);
+            this.addTx({
+              tx: {
+                txid: res.transactionHash,
+                type: 'issue',
+                status: 'PENDING',
+                data: {
+                  name: newERC20.symbol
+                },
+                timestamp: new Date().getTime()
+              }
+            });
+            //this.dialog = false;
+        }
+      } catch(e){
+         //this.dialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+
     }
 
   }
