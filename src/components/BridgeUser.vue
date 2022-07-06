@@ -139,9 +139,11 @@
 /* eslint-disable no-unused-vars */
 import { mapActions, mapGetters } from 'vuex';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
-import abiERC20 from '../abis/abiERC20'
+import abiBridgedERC20 from '../abis/abiBridgedERC20'
 import dayjs from 'dayjs';
 import Web3 from 'web3';
+import find from 'lodash/find';
+const mintAddress = require('../bridges/mintAddress/index.json')
 
 const tokenList = gql`
   query getTokenList{
@@ -169,6 +171,9 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
+      currentItem:{},
+      capForm:{},
+      grantFrom:{},
       menuUp:0,
       stakeListLoading: false,
       headers: [
@@ -203,6 +208,9 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     connect() {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -219,39 +227,55 @@ export default {
         })
 
         //let charts = []
-        const {data:createNewErc20Results} = await client.query({
+        const {data:{createNewErc20Results:resultList}} = await client.query({
             query: tokenList,
             variables: {
             },
             fetchPolicy: 'cache-first',
         })
-        console.log('createNewErc20Results',createNewErc20Results)
-        for(let i = 0;i<createNewErc20Results.length; i++){
-          console.log(createNewErc20Results[i].erc20Address)
-           this.getTokenInfo(createNewErc20Results[i].erc20Address)
+        //this.grantRole()
+        //this.setMintCap()
+        let arr = [];
+        for(let i = 0;i < resultList.length; i++){
+          console.log(resultList[i].erc20Address)
+          let list =  await this.getTokenInfo(resultList[i].erc20Address);
+          console.log('list',list)
+          arr = arr.concat(list)
         }
+        console.log(arr)
        
       } catch(e){
         console.log(e)
       }
     },
     async getTokenInfo(contractAddress){
-      let contract = new web3.eth.Contract(abiERC20, contractAddress);
+      let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
+      let totalSupply = await contract.methods.totalSupply().call();
+      let symbol = await contract.methods.symbol().call();
+      let name = await contract.methods.name().call();
+      let decimals = await contract.methods.decimals().call();
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
       let members = [];
-        for (var i = 0; i < Number(roleNumber); i++) {
-          let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
-          members.push(member);
+      for (var i = 0; i < Number(roleNumber); i++) {
+        let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
+        let mintSupply = await contract.methods.minterSupply(member).call();
+        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member)
+        let obj = {
+          ...mintAddressInfo,
+          cap: mintSupply.cap,
+          total: mintSupply.total,
+          totalSupply,
+          symbol,
+          name,
+          decimals,
+          contractAddress
         }
-      console.log('MINTER_ROLE',MINTER_ROLE);
-      console.log('roleNumber',roleNumber)
-      console.log('members',members)
-
+        members.push(obj);
+      }
+      return members;
     },
     getBridgeList(){
-
-       this.getTokenInfo()
       this.bridgeList = this.bridgeList.map((item) => {
         let menuUp = item.minter-5
         return{
@@ -259,7 +283,103 @@ export default {
           menuUp:menuUp
         }
       })
+    },
+    async grantRole(){
+      try {
+        let contract = new web3.eth.Contract(abiBridgedERC20, this.grantFrom.contractAddress);
+        const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
+        let mintAddress = this.grantFrom.mintAddress;
+        let res = await contract.methods.grantRole(MINTER_ROLE, mintAddress).send(
+            {
+              from: this.connection.address
+            })
+        if(res.transactionHash) {
+            console.log(res);
+            this.addTx({
+              tx: {
+                txid: res.transactionHash,
+                type: 'grantRole',
+                status: 'PENDING',
+                data: {
+                  role: 'MINTER_ROLE',
+                  to: mintAddress
+                },
+                timestamp: new Date().getTime()
+              }
+            });
+            //this.dialog = false;
+        }
+      } catch(e){
+        //this.dialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+    },
+    async revokeRole(){
+      try {
+        let contract = new web3.eth.Contract(abiBridgedERC20,  this.currentItem.contractAddress);
+        const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
+        let mintAddress =  this.currentItem.mintAddress;
+        let res = await contract.methods.revokeRole(MINTER_ROLE, mintAddress).send(
+            {
+              from: this.connection.address
+            })
+        if(res.transactionHash) {
+            console.log(res);
+            this.addTx({
+              tx: {
+                txid: res.transactionHash,
+                type: 'revokeRole',
+                status: 'PENDING',
+                data: {
+                  role: 'MINTER_ROLE',
+                  to: mintAddress
+                },
+                timestamp: new Date().getTime()
+              }
+            });
+            //this.dialog = false;
+        }
+      } catch(e){
+        //this.dialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+    },
+    openSetCap(item){
+      this.currentItem = item;
+    },
+    async setMintCap(){
+      try {
+        let contract = new web3.eth.Contract(abiBridgedERC20, this.currentItem.contractAddress);
+        let mintAddress = this.currentItem.mintAddress;
+        let res = await contract.methods.setMinterCap(mintAddress,  web3.utils.numberToHex(web3.utils.toWei(this.capForm.amount))).send(
+            {
+              from: this.connection.address
+            })
+        if(res.transactionHash) {
+            console.log(res);
+            this.addTx({
+              tx: {
+                txid: res.transactionHash,
+                type: 'setMintCap',
+                status: 'PENDING',
+                data: {
+                  to: mintAddress
+                },
+                timestamp: new Date().getTime()
+              }
+            });
+            //this.dialog = false;
+        }
+        console.log(res)
+      } catch(e){
+        //this.dialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
     }
+
   }
 };
 </script>
