@@ -46,7 +46,7 @@
                         <div class="left-img">
                           <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
                         </div>
-                        <span class="label-text">{{ item.label }}</span>
+                        <span class="label-text">{{ item.name }}</span>
                         <v-icon size="16">mdi-open-in-new</v-icon>
                     </div>
                   </template>
@@ -55,11 +55,11 @@
                         <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
                         </div>
-                        <span class="label-text">{{ item.target }}</span>
+                        <span class="label-text">{{ item.targetChain }}</span>
                     </div>
                   </template>
                    <template v-slot:item.address="{ item }">
-                     <span class="minter-address">{{item.address | addr}}</span>
+                     <span class="minter-address">{{ item.mintAddress | addr }}</span>
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
@@ -76,7 +76,7 @@
                     </div>
                   </template>
                   <template v-slot:item.operation="{ item }">
-                  <v-btn  small color="vote_button" class="mr-2" style="color: #fff" @click="openMinterCup(item)" height="32">
+                  <v-btn  small color="vote_button" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
                       Set Minter Cap
                     </v-btn>
                     <v-btn  small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
@@ -163,7 +163,7 @@
             <v-col cols="12" md="10">
               <h3>Set Minter Cap</h3>
             </v-col>
-           <v-col cols="12" md="1" @click="cancelMinterCup()" class="close-dialog">
+           <v-col cols="12" md="1" @click="cancelMinterCap()" class="close-dialog">
               <v-icon>mdi-close</v-icon>
             </v-col>
           </v-row>
@@ -214,6 +214,11 @@
                 </v-text-field>
                 </v-col>
             </v-row>
+            <div class="submit-btn">
+            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
+                Set 
+            </v-btn>
+          </div>
         </v-card>
       </v-dialog>
       <v-dialog v-model="RevokeDialog" width="500">
@@ -257,7 +262,7 @@
         <v-card class="minter-card">
           <v-row justify="space-between" class="dialog-title" no-gutters>
             <v-col cols="12" md="10">
-              <h3>Create Your Token</h3>
+              <h3>Grant Role</h3>
             </v-col>
             <v-col cols="12" md="1" @click="cancelGrantRole()" class="close-dialog">
               <v-icon>mdi-close</v-icon>
@@ -268,13 +273,14 @@
             <v-col cols="12" md="9">
               <v-combobox
                outlined
-               label="Combobox"
+               label="Address"
                :items="ContractItems"
+               v-model="contractAddress"
                >
                </v-combobox>
             </v-col>
           </v-row>
-          <div>
+          <div style="display:none;">
             <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
             <strong>Binance USD (BUSD) </strong>
@@ -293,20 +299,28 @@
           </v-row>
           </div>
           <v-row no-gutters>
-            <v-col cols="12" md="2" class="left-title contract">Minter Address</v-col>
+            <v-col cols="12" md="3" class="left-title contract">Minter Address</v-col>
             <v-col cols="12" md="9">
-              <v-combobox
-               outlined
-               label="Combobox"
-               :items="items"
-               >
-               </v-combobox>
+              <v-row no-gutters>
+                <v-col cols="12" md="10">
+                  <v-combobox
+                    outlined
+                    label="Address"
+                    :items="items"
+                    v-model="minterAddress"
+                  >
+                  </v-combobox>
+                </v-col>
+                <v-col cols="12" md="2">
+                 <v-img src="../assets/images/add.png"  class="add-plus" />
+               </v-col>
+              </v-row>
             </v-col>
-            <v-col cols="12" md="1">
+            <!-- <v-col cols="12" md="1">
              <v-img src="../assets/images/add.png"  class="add-plus" />
-            </v-col>
+            </v-col> -->
           </v-row>
-          <div>
+          <div style="display:none;">
              <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
             <strong>Binance USD (BUSD) </strong>
@@ -315,6 +329,11 @@
             <span class="left-title">Target Chain</span>
             <strong>BNB Smart Chain</strong>
           </v-row>
+          </div>
+          <div class="submit-btn">
+            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
+                Grant 
+            </v-btn>
           </div>
         </v-card>
       </v-dialog>
@@ -375,7 +394,7 @@
               <span class="left-title">REI</span>
             </div>
             <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
-                Grant 
+                Great 
             </v-btn>
           </v-row>
         </v-card>
@@ -392,6 +411,7 @@ import abiBridgedERC20 from '../abis/abiBridgedERC20'
 import abiFactory from '../abis/abiFactory'
 import dayjs from 'dayjs';
 import util from '../utils/util';
+import filters from '../filters';
 import Web3 from 'web3';
 import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
@@ -417,6 +437,7 @@ const tokenList = gql`
 let client = null;
 
 export default {
+  filters,
   data() {
     return {
       tab: '1',
@@ -433,6 +454,8 @@ export default {
       RevokeDialog:false,
       grantRoleDialog:false,
       greatTokenDialog:false,
+      contractAddress:"",
+      minterAddress:"",
       headers: [
             {text:'Label', value: 'label'},
             { text: 'Target Chain', value: 'target' },
@@ -441,18 +464,18 @@ export default {
             { text: 'Operation', value: 'operation' },
         ],
         bridgeList:[
-          {
-            label:"USDT",
-            target:"Binance Smart Chain",
-            address:"gdt61...83265",
-            minter:60,
-          },
-          {
-            label:"USDT",
-            target:"Binance Smart Chain",
-            address:"gd003...r3216",
-            minter:88,
-          }
+          // {
+          //   name:"USDT",
+          //   targetChain:"Binance Smart Chain",
+          //   mintAddress:"gdt61...83265",
+          //   minter:60,
+          // },
+          // {
+          //   name:"USDT",
+          //   targetChain:"Binance Smart Chain",
+          //   mintAddress:"gd003...r3216",
+          //   minter:88,
+          // }
         ],
         ContractItems:["1k3o348brr40kk092933","00000yu8760k67234333"],
         items:["1q2w3e4r5t6y7u8iou","0a9s8d7f6gh5j4k3l"],
@@ -509,6 +532,8 @@ export default {
           console.log('list',list)
           arr = arr.concat(list)
         }
+        this.bridgeList = arr;
+        console.log('bridgeList',this.bridgeList)
         console.log(arr)
        
       } catch(e){
@@ -678,11 +703,11 @@ export default {
       }
 
     },
-    openMinterCup(value){
+    openMinterCap(value){
       this.setMinterCupDialog = true;
       console.log('value',value)
     },
-    cancelMinterCup(){
+    cancelMinterCap(){
       this.setMinterCupDialog = false;
     },
     openRevoke(value){
@@ -748,6 +773,10 @@ export default {
     }
   }
 }
+.submit-btn{
+  text-align: right;
+  margin-top:20px;
+}
  .minter-cap{
     padding: 12px;
     font-size: 12px;
@@ -800,9 +829,9 @@ export default {
     margin-top: 12px;
   }
   .add-plus{
-   margin-top:8px;
-  text-align: right;
-  display: inline-block;
+    text-align: right;
+    width:56px;
+    margin-left: 8px;
   }
 }
 @media screen and (max-width: 900px) {
