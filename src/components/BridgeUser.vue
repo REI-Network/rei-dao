@@ -63,20 +63,20 @@
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: 360,510.69</span>
-                      <span>Max: 10M USDT</span>
+                      <span>Used Amount: {{ item.total | asset(2) }}</span>
+                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <div>0</div>
-                      <div :style="{marginLeft:item.menuUp+'%'}">
+                      <div :style="{marginLeft:item.minter-5+'%'}">
                         <v-icon color="#6979F8">mdi-menu-up</v-icon>
                         <span>{{item.minter}}%</span>
                       </div>
                     </div>
                   </template>
                   <template v-slot:item.operation="{ item }">
-                  <v-btn  small color="vote_button" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
+                  <v-btn  small color="#6979F8" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
                       Set Minter Cap
                     </v-btn>
                     <v-btn  small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
@@ -136,7 +136,7 @@
                     <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <div>0</div>
-                      <div :style="{marginLeft:item.menuUp+'%'}" class="minter-item">
+                      <div :style="{marginLeft:item.minter-5+'%'}">
                         <v-icon color="#6979F8">mdi-menu-up</v-icon>
                         <span>{{item.minter}}%</span>
                       </div>
@@ -157,8 +157,8 @@
           </v-row>
         </v-tab-item>
       </v-tabs-items>
-      <v-dialog v-model="setMinterCupDialog" width="500">
-        <v-card class="minter-card">
+      <v-dialog v-model="setMinterCapDialog" width="500">
+        <v-card class="minter-card" v-model="setMinterCap">
           <v-row justify="space-between" class="dialog-title">
             <v-col cols="12" md="10">
               <h3>Set Minter Cap</h3>
@@ -173,30 +173,30 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
-            <strong>BNB Smart Chain</strong>
+            <strong>{{ setMinterCap.targetChain }}</strong>
           </v-row>
           <v-row justify="space-between" class="set-minter">
             <div>
               <span class="left-title">Used Amount:</span> 
-              <strong> 360,510.69 </strong>
+              <strong> {{ setMinterCap.total }} </strong>
             </div>
             <div>
               <span class="left-title">Max:</span> 
-              <strong> 10M </strong> 
+              <strong> {{ setMinterCap.cap | asset(2) }} </strong> 
               <span class="left-title">USDT</span>
             </div>
           </v-row>
-          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" value="70%"></v-progress-linear>
+          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterCap.minter+'%'"></v-progress-linear>
           <div class="">
             <div>0</div>
-            <div  class="minter-item" style="margin-left:70%">
+            <div  class="minter-item" :style="{marginLeft:setMinterCap.minter-2+'%'}">
               <v-icon color="#6979F8">mdi-menu-up</v-icon>
-              <span>70%</span>
+              <span>{{setMinterCap.minter}}%</span>
             </div>
           </div>
           <div class="min-minter ">
             <span class="left-title">Min Minter Cap:</span> 
-            <strong> 360,510,69 </strong>
+            <strong> {{ setMinterCap.total | asset(2) }} </strong>
             <span class="left-title">USDT</span>
           </div>
           <v-row class="from-voting" justify="space-between">
@@ -215,14 +215,14 @@
                 </v-col>
             </v-row>
             <div class="submit-btn">
-            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" class="mr-4" @click="setMintCap()"  style="color: #fff" height="32" width="120">
                 Set 
             </v-btn>
           </div>
         </v-card>
       </v-dialog>
       <v-dialog v-model="RevokeDialog" width="500">
-        <v-card class="minter-card">
+        <v-card class="minter-card" v-model="revoke">
           <v-row justify="space-between" class="dialog-title">
             <v-col cols="12" md="10">
               <h3>Do you want to revoke this Minter ?</h3>
@@ -241,18 +241,18 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
-            <strong>BNB Smart Chain</strong>
+            <strong>{{revoke.targetChain}}</strong>
           </v-row>
           <v-divider class="revoke-divider" />
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Address</span>
-            <strong>0xADbBf74bc8d9CFfeC78526169cd81FdcBbA35eC2</strong>
+            <strong>{{revoke.mintAddress}}</strong>
           </v-row>
           <div class="text-center">
-             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" height="32" width="80">
+             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="32" width="80">
                 no
             </v-btn>
-            <v-btn  small color="vote_button" class="mr-4 revoke-btn" style="color: #fff" height="32" width="80">
+            <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff"  @click="this.revokeRole()" height="32" width="80">
                 yes  
             </v-btn>
           </div>
@@ -277,25 +277,31 @@
                :items="ContractItems"
                v-model="contractAddress"
                >
+               <template v-slot:selection="data">
+                    <div>{{ data.item.erc20Address | addr }}</div>
+                  </template>
+                  <template #item="{ item }">
+                    <div>{{ item.erc20Address }}</div>
+                  </template>
                </v-combobox>
             </v-col>
           </v-row>
-          <div style="display:none;">
+          <div v-if="this.contractAddress">
             <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <strong>{{ this.contractAddress.name }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
-            <span class="left-title">Target Chain</span>
-            <strong>BNB Smart Chain</strong>
+            <span class="left-title">Symbol</span>
+            <strong>{{ this.contractAddress.symbol }}</strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Decimals</span>
-            <strong>18 </strong>
+            <strong>{{ this.contractAddress.decimals }} </strong>
           </v-row>
-          <v-row justify="space-between" class="title-row" no-gutters>
+          <v-row justify="space-between" class="title-row" no-gutters v-if="this.contractAddress.totalSupply">
             <span class="left-title">Total Supply</span>
-            <strong>1,000,000.00</strong>
+            <strong>{{ this.contractAddress.totalSupply }}</strong>
           </v-row>
           </div>
           <v-row no-gutters>
@@ -306,9 +312,15 @@
                   <v-combobox
                     outlined
                     label="Address"
-                    :items="items"
+                    :items="MinterItems"
                     v-model="minterAddress"
                   >
+                  <template v-slot:selection="data">
+                    <div>{{ data.item.mintAddress | addr }}</div>
+                  </template>
+                  <template #item="{ item }">
+                    <div>{{ item.mintAddress }}</div>
+                  </template>
                   </v-combobox>
                 </v-col>
                 <v-col cols="12" md="2">
@@ -320,18 +332,18 @@
              <v-img src="../assets/images/add.png"  class="add-plus" />
             </v-col> -->
           </v-row>
-          <div style="display:none;">
+          <div v-if="this.minterAddress">
              <v-row justify="space-between" class="title-row" no-gutters>
-            <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <span class="left-title">Bridges</span>
+            <strong>{{ this.minterAddress.bridges }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
-            <strong>BNB Smart Chain</strong>
+            <strong>{{ this.minterAddress.targetChain }}</strong>
           </v-row>
           </div>
           <div class="submit-btn">
-            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" class="mr-4" @click="grantRole()" style="color: #fff" height="32" width="120">
                 Grant 
             </v-btn>
           </div>
@@ -393,7 +405,7 @@
               <strong class="service-fees">10 </strong>
               <span class="left-title">REI</span>
             </div>
-            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" class="mr-4" style="color: #fff" height="32" width="120">
                 Great 
             </v-btn>
           </v-row>
@@ -450,12 +462,14 @@ export default {
       grantFrom:{},
       menuUp:0,
       stakeListLoading: false,
-      setMinterCupDialog:false,
+      setMinterCapDialog:false,
       RevokeDialog:false,
       grantRoleDialog:false,
       greatTokenDialog:false,
       contractAddress:"",
       minterAddress:"",
+      revoke:"",
+      setMinterCap:"",
       headers: [
             {text:'Label', value: 'label'},
             { text: 'Target Chain', value: 'target' },
@@ -463,31 +477,25 @@ export default {
             { text: 'Address', value: 'address' },
             { text: 'Operation', value: 'operation' },
         ],
-        bridgeList:[
-          // {
-          //   name:"USDT",
-          //   targetChain:"Binance Smart Chain",
-          //   mintAddress:"gdt61...83265",
-          //   minter:60,
-          // },
-          // {
-          //   name:"USDT",
-          //   targetChain:"Binance Smart Chain",
-          //   mintAddress:"gd003...r3216",
-          //   minter:88,
-          // }
-        ],
-        ContractItems:["1k3o348brr40kk092933","00000yu8760k67234333"],
-        items:["1q2w3e4r5t6y7u8iou","0a9s8d7f6gh5j4k3l"],
+        bridgeList:[],
+        ContractItems:[],
+        MinterItems:[],
         addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
         TokenRules:[(v) => !!v || "Please enter the token"]
     };
   },
-  watch: {},
+  watch: {
+   contractAddress:function(newVal,oldVal){
+         this.getMintInfo()
+    },
+    minterAddress:function(newVal,oldVal){
+       this.getMintInfo()
+    }
+  },
   mounted() {
     this.connect();
     this.getdata();
-    this.getBridgeList();
+    // this.getMintInfo();
   },
   computed: {
      ...mapGetters({
@@ -507,6 +515,7 @@ export default {
       }
     },
     async getdata(){
+       this.stakeListLoading = true;
       try{
          let url = this.apiUrl.graph;
         client = new ApolloClient({
@@ -521,24 +530,38 @@ export default {
             },
             fetchPolicy: 'cache-first',
         })
-        //this.grantRole()
+        // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
-        console.log('resultList',resultList)
+        this.MinterItems = mintAddress.data
+        this.ContractItems = resultList
+        console.log('ContractItems',this.ContractItems)
+        
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
           console.log(resultList[i].erc20Address)
           let list =  await this.getTokenInfo(resultList[i].erc20Address);
-          console.log('list',list)
+          // console.log('list',list)
           arr = arr.concat(list)
         }
         this.bridgeList = arr;
-        console.log('bridgeList',this.bridgeList)
-        console.log(arr)
+        this.bridgeList = this.bridgeList.map((item) => {
+        let total = web3.utils.fromWei(web3.utils.toBN(item.total))
+        let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+        let minter =(total/cap)*100
+        return{
+          ...item,
+          total:total,
+          cap:cap,
+          minter:minter,
+        }
+      })
+      // console.log(arr)
        
       } catch(e){
         console.log(e)
       }
+       this.stakeListLoading = false;
     },
     async getTokenInfo(contractAddress){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
@@ -568,14 +591,17 @@ export default {
       }
       return members;
     },
-    getBridgeList(){
-      this.bridgeList = this.bridgeList.map((item) => {
-        let menuUp = item.minter-5
-        return{
-          ...item,
-          menuUp:menuUp
-        }
-      })
+     async getMintInfo(contractAddress, mintAddress){
+      contractAddress = this.contractAddress.erc20Address;
+      mintAddress = this.minterAddress.mintAddress;
+      let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
+      const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
+      const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
+      for (var i = 0; i < Number(roleNumber); i++) {
+        let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call(); 
+      console.log('memter',member)
+      }
+
     },
     async grantRole(){
       try {
@@ -704,15 +730,17 @@ export default {
 
     },
     openMinterCap(value){
-      this.setMinterCupDialog = true;
-      console.log('value',value)
+      this.setMinterCapDialog = true;
+      this.setMinterCap = value;
+      console.log('value',this.setMinterCap)
     },
     cancelMinterCap(){
-      this.setMinterCupDialog = false;
+      this.setMinterCapDialog = false;
     },
     openRevoke(value){
       this.RevokeDialog = true;
-      console.log('value2',value)
+      this.revoke = value,
+      console.log('value2',this.revoke)
     },
     cancelRevoke(){
       this.RevokeDialog = false;
@@ -781,6 +809,9 @@ export default {
     padding: 12px;
     font-size: 12px;
     width: 340px;
+  }
+  .minter-item{
+    margin-top:-28px;
   }
   .set-minter{
     padding: 12px;
