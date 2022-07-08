@@ -158,7 +158,7 @@
         </v-tab-item>
       </v-tabs-items>
       <v-dialog v-model="setMinterCapDialog" width="500">
-        <v-card class="minter-card" v-model="setMinterCap">
+        <v-card class="minter-card" >
           <v-row justify="space-between" class="dialog-title">
             <v-col cols="12" md="10">
               <h3>Set Minter Cap</h3>
@@ -173,30 +173,30 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
-            <strong>{{ setMinterCap.targetChain }}</strong>
+            <strong>{{ setMinterItem.targetChain }}</strong>
           </v-row>
           <v-row justify="space-between" class="set-minter">
             <div>
               <span class="left-title">Used Amount:</span> 
-              <strong> {{ setMinterCap.total }} </strong>
+              <strong> {{ setMinterItem.total | asset(2) }} </strong>
             </div>
             <div>
               <span class="left-title">Max:</span> 
-              <strong> {{ setMinterCap.cap | asset(2) }} </strong> 
+              <strong> {{ setMinterItem.cap | asset(2) }} </strong> 
               <span class="left-title">USDT</span>
             </div>
           </v-row>
-          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterCap.minter+'%'"></v-progress-linear>
+          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterItem.minter+'%'"></v-progress-linear>
           <div class="">
             <div>0</div>
-            <div  class="minter-item" :style="{marginLeft:setMinterCap.minter-2+'%'}">
+            <div  class="minter-item" :style="{marginLeft:setMinterItem.minter-2+'%'}">
               <v-icon color="#6979F8">mdi-menu-up</v-icon>
-              <span>{{setMinterCap.minter}}%</span>
+              <span>{{setMinterItem.minter}}%</span>
             </div>
           </div>
           <div class="min-minter ">
             <span class="left-title">Min Minter Cap:</span> 
-            <strong> {{ setMinterCap.total | asset(2) }} </strong>
+            <strong> {{ setMinterItem.total | asset(2) }} </strong>
             <span class="left-title">USDT</span>
           </div>
           <v-row class="from-voting" justify="space-between">
@@ -210,6 +210,7 @@
                     background-color="input_other" 
                     class="text-filed"
                     :rules="addressRules"
+                    v-model="minterCap"
                   >
                 </v-text-field>
                 </v-col>
@@ -222,7 +223,7 @@
         </v-card>
       </v-dialog>
       <v-dialog v-model="RevokeDialog" width="500">
-        <v-card class="minter-card" v-model="revoke">
+        <v-card class="minter-card">
           <v-row justify="space-between" class="dialog-title">
             <v-col cols="12" md="10">
               <h3>Do you want to revoke this Minter ?</h3>
@@ -252,7 +253,7 @@
              <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="32" width="80">
                 no
             </v-btn>
-            <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff"  @click="this.revokeRole()" height="32" width="80">
+            <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="revokeRole()" height="32" width="80">
                 yes  
             </v-btn>
           </div>
@@ -465,6 +466,7 @@ export default {
       itemsPerPage: 10,
       currentItem:{},
       capForm:{},
+      minterCap:"",
       grantFrom:{},
       createForm:{
         name:'',
@@ -480,7 +482,7 @@ export default {
       contractAddress:"",
       minterAddress:"",
       revoke:"",
-      setMinterCap:"",
+      setMinterItem:"",
       createLoading: false,
       headers: [
           {text:'Label', value: 'label'},
@@ -510,7 +512,6 @@ export default {
   mounted() {
     this.connect();
     this.getdata();
-    // this.getMintInfo();
   },
   computed: {
      ...mapGetters({
@@ -550,13 +551,12 @@ export default {
         //this.createrERC20()
         this.MinterItems = mintAddress.data
         this.ContractItems = resultList
-        console.log('ContractItems',this.ContractItems)
         
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
           console.log(resultList[i].erc20Address)
           let list =  await this.getTokenInfo(resultList[i].erc20Address);
-          // console.log('list',list)
+          console.log('list',list)
           arr = arr.concat(list)
         }
         this.bridgeList = arr;
@@ -651,9 +651,9 @@ export default {
     },
     async revokeRole(){
       try {
-        let contract = new web3.eth.Contract(abiBridgedERC20,  this.currentItem.contractAddress);
+        let contract = new web3.eth.Contract(abiBridgedERC20,  this.revoke.contractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
-        let mintAddress =  this.currentItem.mintAddress;
+        let mintAddress =  this.revoke.mintAddress;
         let res = await contract.methods.revokeRole(MINTER_ROLE, mintAddress).send(
             {
               from: this.connection.address
@@ -682,12 +682,13 @@ export default {
     },
     async setMintCap(){
       try {
-        let contract = new web3.eth.Contract(abiBridgedERC20, this.currentItem.contractAddress);
-        let mintAddress = this.currentItem.mintAddress;
-        let res = await contract.methods.setMinterCap(mintAddress,  web3.utils.numberToHex(web3.utils.toWei(this.capForm.amount))).send(
+        let contract = new web3.eth.Contract(abiBridgedERC20, this.setMinterItem.contractAddress);
+        let mintAddress = this.setMinterItem.mintAddress;
+        let res = await contract.methods.setMinterCap(mintAddress,  web3.utils.numberToHex(web3.utils.toWei(this.minterCap))).send(
             {
               from: this.connection.address
             })
+            console.log('res',res)
         if(res.transactionHash) {
             console.log(res);
             this.addTx({
@@ -746,16 +747,14 @@ export default {
     },
     openMinterCap(value){
       this.setMinterCapDialog = true;
-      this.setMinterCap = value;
-      console.log('value',this.setMinterCap)
+      this.setMinterItem = value;
     },
     cancelMinterCap(){
       this.setMinterCapDialog = false;
     },
     openRevoke(value){
       this.RevokeDialog = true;
-      this.revoke = value,
-      console.log('value2',this.revoke)
+      this.revoke = value;
     },
     cancelRevoke(){
       this.RevokeDialog = false;
