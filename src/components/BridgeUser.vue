@@ -13,7 +13,7 @@
             <span class="iconfont">&#xe618;</span>
             Add minter
           </v-btn>
-          <v-btn text outlined color="validator" @click="openGreatToken()">
+          <v-btn text outlined color="validator" @click="openCreateToken()">
             <span class="iconfont">&#xe601;</span>
             Create your token
           </v-btn>
@@ -337,69 +337,75 @@
           </div>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="greatTokenDialog" width="500">
+      <v-dialog v-model="createTokenDialog" width="500">
         <v-card class="minter-card">
-          <v-row justify="space-between" class="dialog-title">
-            <v-col cols="12" md="10">
-              <h3>Create Your Token</h3>
-            </v-col>
-           <v-col cols="12" md="1" @click="cancelGreatToken()" class="close-dialog">
-              <v-icon>mdi-close</v-icon>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <div class="create-field">
-                <div class="left-title">Contract Address</div>
-                <v-text-field 
-                  label="1-16 characters" 
-                  required 
-                  outlined 
-                  background-color="input_other" 
-                  class="text-filed from-voting"
-                  :rules="addressRules"
-                  >
-                </v-text-field>
+          <v-form ref="creatERCForm" lazy-validation>
+            <v-row justify="space-between" class="dialog-title">
+              <v-col cols="12" md="10">
+                <h3>Create Your Token</h3>
+              </v-col>
+            <v-col cols="12" md="1" @click="cancelCreateToken()" class="close-dialog">
+                <v-icon>mdi-close</v-icon>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <div class="create-field">
+                  <div class="left-title">Token Name</div>
+                  <v-text-field 
+                    label="1-16 characters" 
+                    required 
+                    outlined 
+                    background-color="input_other" 
+                    class="text-filed from-voting"
+                    v-model="createForm.name"
+                    :rules="tokenNameRules"
+                    >
+                  </v-text-field>
+                </div>
+                <div class="create-field">
+                  <div class="left-title">Token symbol</div>
+                  <v-text-field 
+                    label="1-16 characters" 
+                    required 
+                    outlined 
+                    background-color="input_other" 
+                    class="text-filed from-voting"
+                    v-model="createForm.symbol"
+                    :rules="tokenSymbolRules"
+                    >
+                  </v-text-field>
+                </div>
+                <div class="create-field">
+                  <div class="left-title">Decimals</div>
+                  <v-text-field 
+                    label="Default value : 18" 
+                    required 
+                    outlined 
+                    background-color="input_other" 
+                    class="text-filed from-voting"
+                    v-model="createForm.decimals"
+                    :rules="tokenDecimalsRules"
+                    >
+                  </v-text-field>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row justify="space-between">
+              <div>
+                <span class="left-title">Services Fees : </span>
+                <strong class="service-fees">10 </strong>
+                <span class="left-title">REI</span>
               </div>
-              <div class="create-field">
-                <div class="left-title">Token Name</div>
-                <v-text-field 
-                  label="1-16 characters" 
-                  required 
-                  outlined 
-                  background-color="input_other" 
-                  class="text-filed from-voting"
-                  :rules="TokenRules"
-                  >
-                </v-text-field>
-              </div>
-              <div class="create-field">
-                <div class="left-title">Decimals</div>
-                <v-text-field 
-                  label="Default value : 18" 
-                  required 
-                  outlined 
-                  background-color="input_other" 
-                  class="text-filed from-voting"
-                  :rules="addressRules"
-                  >
-                </v-text-field>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row justify="space-between">
-            <div>
-              <span class="left-title">Services Fees : </span>
-              <strong class="service-fees">10 </strong>
-              <span class="left-title">REI</span>
-            </div>
-            <v-btn  small color="vote_button" class="mr-4" style="color: #fff" height="32" width="120">
-                Great 
-            </v-btn>
-          </v-row>
+              <v-btn @click="createrERC20" small color="vote_button"  :loading="createLoading" class="font-btn mr-4" height="32" width="120">
+                  Create 
+              </v-btn>
+            </v-row>
+          </v-form>
         </v-card>
       </v-dialog>
     </v-card>
+    
   </v-container>
 </template>
 <script>
@@ -448,14 +454,20 @@ export default {
       currentItem:{},
       capForm:{},
       grantFrom:{},
+      createForm:{
+        name:'',
+        symbol:'',
+        decimals:''
+      },
       menuUp:0,
       stakeListLoading: false,
       setMinterCupDialog:false,
       RevokeDialog:false,
       grantRoleDialog:false,
-      greatTokenDialog:false,
+      createTokenDialog:false,
       contractAddress:"",
       minterAddress:"",
+      createLoading: false,
       headers: [
             {text:'Label', value: 'label'},
             { text: 'Target Chain', value: 'target' },
@@ -480,7 +492,10 @@ export default {
         ContractItems:["1k3o348brr40kk092933","00000yu8760k67234333"],
         items:["1q2w3e4r5t6y7u8iou","0a9s8d7f6gh5j4k3l"],
         addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
-        TokenRules:[(v) => !!v || "Please enter the token"]
+        TokenRules:[(v) => !!v || "Please enter the token"],
+        tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
+        tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
+        tokenDecimalsRules:  [(v) => !!v || "Please enter the Token Decimals"],
     };
   },
   watch: {},
@@ -671,11 +686,9 @@ export default {
     },
     async createrERC20(){
       try {
-        let newERC20 = {
-          name: 't USD',
-          symbol: 'TUSD',
-          decimals: 18
-        }
+        if (!this.$refs.creatERCForm.validate()) return;
+        this.createLoading = true;
+        let newERC20 = this.createForm;
         let contract = new web3.eth.Contract(abiFactory,testFactory);
         let res = await contract.methods.create(newERC20.name, newERC20.symbol, newERC20.decimals).send({
             from: this.connection.address,
@@ -694,10 +707,12 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+            this.createTokenDialog = false;
+            this.createLoading = false;
         }
       } catch(e){
-         //this.dialog = false;
+        this.createTokenDialog = false;
+        this.createLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
@@ -717,17 +732,17 @@ export default {
     cancelRevoke(){
       this.RevokeDialog = false;
     },
-     openGrantRole(){
+    openGrantRole(){
       this.grantRoleDialog = true;
     },
     cancelGrantRole(){
       this.grantRoleDialog = false;
     },
-    openGreatToken(){
-      this.greatTokenDialog = true;
+    openCreateToken(){
+      this.createTokenDialog = true;
     },
-    cancelGreatToken(){
-      this.greatTokenDialog = false;
+    cancelCreateToken(){
+      this.createTokenDialog = false;
     }
   }
 };
@@ -818,6 +833,10 @@ export default {
     height: 40px;
     }
   }
+.font-btn.v-btn.v-btn--has-bg {
+  color: #fff;
+  background: #6979f8;
+}
 .text-center{
   margin-top:20px;
   text-align: right !important;
