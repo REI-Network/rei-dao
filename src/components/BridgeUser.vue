@@ -102,7 +102,7 @@
             <v-col>
                <v-data-table
                   :headers="headers"
-                  :items="bridgeList"
+                  :items="chainList"
                   class="background elevation-0"
                   hide-default-footer
                   :items-per-page="itemsPerPage"
@@ -116,7 +116,7 @@
                         <div class="left-img">
                           <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
                         </div>
-                        <span class="label-text">{{ item.label }}</span>
+                        <span class="label-text">{{ item.name }}</span>
                         <v-icon size="16">mdi-open-in-new</v-icon>
                     </div>
                   </template>
@@ -125,25 +125,36 @@
                         <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
                         </div>
-                        <span class="label-text">{{ item.target }}</span>
+                        <span class="label-text">{{ item.targetChain }}</span>
                     </div>
+                  </template>
+                   <template v-slot:item.address="{ item }">
+                     <span class="minter-address">{{ item.mintAddress | addr }}</span>
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: 360,510.69</span>
-                      <span>Max: 10M USDT</span>
+                      <span>Used Amount: {{ item.total | asset(2) }}</span>
+                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <div>0</div>
-                      <div :style="{marginLeft:item.minter-5+'%'}">
+                      <div v-if="item.minter>0" :style="{marginLeft:item.minter-5+'%'}">
                         <v-icon color="#6979F8">mdi-menu-up</v-icon>
                         <span>{{item.minter}}%</span>
                       </div>
                     </div>
                   </template>
+                  <template v-slot:item.operation="{ item }">
+                  <v-btn  small color="#6979F8" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
+                      Set Minter Cap
+                    </v-btn>
+                    <v-btn  small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
+                      Revoke
+                    </v-btn>
+                  </template>
                 </v-data-table>
-                <div class="text-pagination pt-2" v-if="bridgeList.length > 0">
+                <div class="text-pagination pt-2" v-if="chainList.length > 0">
                   <v-pagination
                     v-model="page"
                     :length="pageCount"
@@ -160,12 +171,12 @@
       <v-dialog v-model="setMinterCapDialog" width="500">
         <v-card class="minter-card" >
           <v-row justify="space-between" class="dialog-title">
-            <v-col cols="12" md="10">
+            <div>
               <h3>Set Minter Cap</h3>
-            </v-col>
-           <v-col cols="12" md="1" @click="cancelMinterCap()" class="close-dialog">
+            </div>
+           <div @click="cancelMinterCap()" class="close-dialog">
               <v-icon>mdi-close</v-icon>
-            </v-col>
+            </div>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
@@ -189,13 +200,13 @@
           <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterItem.minter+'%'"></v-progress-linear>
           <div class="">
             <div>0</div>
-            <div  class="minter-item" :style="{marginLeft:setMinterItem.minter-2+'%'}">
+            <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter-2+'%'}">
               <v-icon color="#6979F8">mdi-menu-up</v-icon>
               <span>{{setMinterItem.minter}}%</span>
             </div>
           </div>
           <div class="min-minter ">
-            <span class="left-title">Min Minter Cap:</span> 
+            <span class="left-title" style="text-align:left">Min Minter Cap:</span> 
             <strong> {{ setMinterItem.total | asset(2) }} </strong>
             <span class="left-title">USDT</span>
           </div>
@@ -225,12 +236,12 @@
       <v-dialog v-model="RevokeDialog" width="500">
         <v-card class="minter-card">
           <v-row justify="space-between" class="dialog-title">
-            <v-col cols="12" md="10">
+            <div>
               <h3>Do you want to revoke this Minter ?</h3>
-            </v-col>
-            <v-col cols="12" md="1" @click="cancelRevoke()" class="close-dialog">
+            </div>
+            <div @click="cancelRevoke()" class="close-dialog">
               <v-icon>mdi-close</v-icon>
-            </v-col>
+            </div>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
@@ -238,7 +249,7 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Cap</span>
-            <strong>10M</strong>
+            <strong>{{ revoke.cap | asset(2) }}</strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
@@ -502,6 +513,7 @@ export default {
           { text: 'Operation', value: 'operation' },
       ],
       bridgeList:[],
+      chainList:[],
       ContractItems:[],
       MinterItems:[],
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
@@ -562,8 +574,27 @@ export default {
           console.log('list',list)
           arr = arr.concat(list)
         }
-        this.bridgeList = arr;
-        this.bridgeList = this.bridgeList.map((item) => {
+        arr.map((item) => {
+          if(item.bridges == "Cbridges"){
+           this.bridgeList.push(item)
+          }else{
+            this.chainList.push(item)
+          }
+        })
+        console.log('bridgeList',this.bridgeList)
+        console.log('chainList',this.chainList)
+        this.chainList = this.chainList.map((item) => {
+        let total = web3.utils.fromWei(web3.utils.toBN(item.total))
+        let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+        let minter =(total/cap)*100
+        return{
+          ...item,
+          total:total,
+          cap:cap,
+          minter:minter,
+        }
+      })
+      this.bridgeList = this.bridgeList.map((item) => {
         let total = web3.utils.fromWei(web3.utils.toBN(item.total))
         let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
         let minter =(total/cap)*100
@@ -764,7 +795,6 @@ export default {
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
-
     },
     openMinterCap(value){
       this.setMinterCapDialog = true;
@@ -814,6 +844,9 @@ export default {
   .v-btn.v-btn--outlined.v-btn--text{
     border:none;
   }
+}
+.theme--light.v-progress-linear{
+  background-color:#f5f5f5;
 }
   .theme--dark.v-application .text-pagination[data-v-b6724c44][data-v-b6724c44]{
     background-color:#1d1a36;
@@ -905,5 +938,11 @@ export default {
   }
 }
 @media screen and (max-width: 900px) {
+  .bridge-user{
+    margin-bottom: 20px;
+  }
+  .minter-cap{
+    width: 240px;
+  }
 }
 </style>
