@@ -271,37 +271,40 @@
           <v-row no-gutters>
             <v-col cols="12" md="3" class="left-title contract">Contract Address</v-col>
             <v-col cols="12" md="9">
-              <v-combobox
+              <v-autocomplete
                outlined
                label="Address"
                :items="ContractItems"
-               v-model="contractAddress"
+               v-model="selectContractAddress"
+               item-text="erc20Address"
+               item-value="erc20Address"
+               @change="selectContractChange"
                >
-               <template v-slot:selection="data">
-                    <div>{{ data.item.erc20Address | addr }}</div>
+                  <template v-slot:selection="data">
+                      <div>{{ data.item.erc20Address | addr }}</div>
                   </template>
-                  <template #item="{ item }">
-                    <div>{{ item.erc20Address }}</div>
+                  <template v-slot:item="data">
+                    <div>{{ data.item.erc20Address }}</div>
                   </template>
-               </v-combobox>
+               </v-autocomplete>
             </v-col>
           </v-row>
-          <div v-if="this.contractAddress">
+          <div v-if="this.selectContractAddressInfo">
             <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>{{ this.contractAddress.name }} </strong>
+            <strong>{{ this.selectContractAddressInfo.name }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Symbol</span>
-            <strong>{{ this.contractAddress.symbol }}</strong>
+            <strong>{{ this.selectContractAddressInfo.symbol }}</strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Decimals</span>
-            <strong>{{ this.contractAddress.decimals }} </strong>
+            <strong>{{ this.selectContractAddressInfo.decimals }} </strong>
           </v-row>
-          <v-row justify="space-between" class="title-row" no-gutters v-if="this.contractAddress.totalSupply">
+          <v-row justify="space-between" class="title-row" no-gutters v-if="this.selectContractAddressInfo.totalSupply">
             <span class="left-title">Total Supply</span>
-            <strong>{{ this.contractAddress.totalSupply }}</strong>
+            <strong>{{ this.selectContractAddressInfo.totalSupply }}</strong>
           </v-row>
           </div>
           <v-row no-gutters>
@@ -309,10 +312,13 @@
             <v-col cols="12" md="9">
               <v-row no-gutters>
                 <v-col cols="12" md="10">
-                  <v-combobox
+                  <v-autocomplete
                     outlined
                     label="Address"
                     :items="MinterItems"
+                    @change="selectMintAddrChange"
+                    item-text="mintAddress"
+                    item-value="mintAddress"
                     v-model="minterAddress"
                   >
                   <template v-slot:selection="data">
@@ -321,7 +327,7 @@
                   <template #item="{ item }">
                     <div>{{ item.mintAddress }}</div>
                   </template>
-                  </v-combobox>
+                  </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="2">
                  <v-img src="../assets/images/add.png"  class="add-plus" />
@@ -332,18 +338,18 @@
              <v-img src="../assets/images/add.png"  class="add-plus" />
             </v-col> -->
           </v-row>
-          <div v-if="this.minterAddress">
+          <div v-if="this.selectMintAddressInfo">
              <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Bridges</span>
-            <strong>{{ this.minterAddress.bridges }} </strong>
+            <strong>{{ this.selectMintAddressInfo.bridges }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
-            <strong>{{ this.minterAddress.targetChain }}</strong>
+            <strong>{{ this.selectMintAddressInfo.targetChain }}</strong>
           </v-row>
           </div>
           <div class="submit-btn">
-            <v-btn  small color="#6979F8" class="mr-4" @click="grantRole()" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" class="mr-4" @click="grantRole()" :loading="grantLoading" :disabled="grantBtnDisable" style="color: #fff" height="32" width="120">
                 Grant 
             </v-btn>
           </div>
@@ -477,11 +483,15 @@ export default {
       RevokeDialog:false,
       grantRoleDialog:false,
       createTokenDialog:false,
-      contractAddress:"",
+      selectContractAddress: '',
+      selectContractAddressInfo:'',
       minterAddress:"",
+      selectMintAddressInfo:'',
+      grantLoading:false,
       revoke:"",
       setMinterCap:"",
       createLoading: false,
+      grantBtnDisable:false,
       headers: [
           {text:'Label', value: 'label'},
           { text: 'Target Chain', value: 'target' },
@@ -500,12 +510,6 @@ export default {
     };
   },
   watch: {
-   contractAddress:function(newVal,oldVal){
-         this.getMintInfo()
-    },
-    minterAddress:function(newVal,oldVal){
-       this.getMintInfo()
-    }
   },
   mounted() {
     this.connect();
@@ -548,13 +552,12 @@ export default {
         // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
-        this.MinterItems = mintAddress.data
-        this.ContractItems = resultList
+        this.MinterItems = mintAddress.data;
+        this.ContractItems = resultList;
         console.log('ContractItems',this.ContractItems)
         
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
-          console.log(resultList[i].erc20Address)
           let list =  await this.getTokenInfo(resultList[i].erc20Address);
           // console.log('list',list)
           arr = arr.concat(list)
@@ -571,7 +574,7 @@ export default {
           minter:minter,
         }
       })
-      // console.log(arr)
+      console.log(arr)
        
       } catch(e){
         console.log(e)
@@ -585,7 +588,6 @@ export default {
       let symbol = await contract.methods.symbol().call();
       let name = await contract.methods.name().call();
       let decimals = await contract.methods.decimals().call();
-      console.log('token',symbol,name)
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
       let members = [];
       for (var i = 0; i < Number(roleNumber); i++) {
@@ -606,23 +608,42 @@ export default {
       }
       return members;
     },
-     async getMintInfo(contractAddress, mintAddress){
-      contractAddress = this.contractAddress.erc20Address;
-      mintAddress = this.minterAddress.mintAddress;
+     async getMintInfo(){
+      this.grantLoading = true;
+      let contractAddress = this.selectContractAddressInfo.erc20Address;
+      let mintAddress = this.minterAddress;
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
+      let flag = false; 
       for (var i = 0; i < Number(roleNumber); i++) {
         let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call(); 
-      console.log('memter',member)
+        if(member == mintAddress){
+          flag = true;
+          break;
+        } else {
+          flag = false;
+        }
       }
-
+      this.grantLoading = false;
+      this.grantBtnDisable = flag;
+    },
+    selectMintAddrChange(){
+      this.selectMintAddressInfo = find(mintAddress.data,(item)=> item.mintAddress == this.minterAddress)
+      this.getMintInfo()
+    },
+    selectContractChange(){
+      this.selectContractAddressInfo = find(this.ContractItems,(item)=> item.erc20Address == this.selectContractAddress)
+      if(this.minterAddress){
+        this.getMintInfo()
+      }
     },
     async grantRole(){
       try {
-        let contract = new web3.eth.Contract(abiBridgedERC20, this.grantFrom.contractAddress);
+        this.grantRoleDialog = false;
+        let contract = new web3.eth.Contract(abiBridgedERC20, this.selectContractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
-        let mintAddress = this.grantFrom.mintAddress;
+        let mintAddress = this.minterAddress;
         let res = await contract.methods.grantRole(MINTER_ROLE, mintAddress).send(
             {
               from: this.connection.address
@@ -641,10 +662,10 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+           this.grantRoleDialog = false;
         }
       } catch(e){
-        //this.dialog = false;
+        this.grantRoleDialog = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
