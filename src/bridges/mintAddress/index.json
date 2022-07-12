@@ -1,0 +1,12 @@
+{"data":[
+  {
+    "targetChain": "BNB SMART CHAIN",
+	  "mintAddress": "0x8D395Fed2A40f3bB20289b277F7FE34Af5ae8756",
+	  "bridges": "Cbridges"
+  },
+  {
+    "targetChain": "BNB SMART CHAIN",
+	  "mintAddress": "0x8f701bfF69d2c3a956003EF89e8Aa43f338018Fe",
+	  "bridges": "Multichain"
+  }
+]}
