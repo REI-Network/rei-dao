@@ -3,7 +3,7 @@
     <v-card class="bridge-user">
       <v-row justify="space-between">
         <v-col cols="12" md="5"><h3>Bridges asset Management on REI Network</h3></v-col>
-        <v-col class="title-right" cols="12" md="6">
+        <v-col class="title-right" cols="12" md="6" v-if="this.connection.address == admin">
           <v-row>
             <v-btn text outlined color="validator">
               <span class="iconfont">&#xe619;</span>
@@ -52,9 +52,9 @@
                   </template>
                   <template v-slot:item.target="{ item }">
                      <div class="bridge-label">
-                        <div class="left-img">
+                        <!-- <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
-                        </div>
+                        </div> -->
                         <span class="label-text">{{ item.targetChain }}</span>
                     </div>
                   </template>
@@ -68,9 +68,9 @@
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
                     <div class="process">
-                      <div>0</div>
-                      <div :style="{marginLeft:item.minter-5+'%'}">
-                        <v-icon color="#6979F8">mdi-menu-up</v-icon>
+                      <!-- <div>0</div> -->
+                      <div :style="{marginLeft:item.minter+'%'}">
+                        <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
                         <span>{{item.minter}}%</span>
                       </div>
                     </div>
@@ -138,9 +138,9 @@
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
                     <div class="process">
-                      <div>0</div>
-                      <div v-if="item.minter>0" :style="{marginLeft:item.minter-5+'%'}">
-                        <v-icon color="#6979F8">mdi-menu-up</v-icon>
+                      <!-- <div>0</div> -->
+                      <div v-if="item.minter>0" :style="{marginLeft:item.minter+'%'}">
+                        <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
                         <span>{{item.minter}}%</span>
                       </div>
                     </div>
@@ -199,9 +199,9 @@
           </v-row>
           <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterItem.minter+'%'"></v-progress-linear>
           <div class="">
-            <div>0</div>
-            <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter-2+'%'}">
-              <v-icon color="#6979F8">mdi-menu-up</v-icon>
+            <!-- <div>0</div> -->
+            <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter+'%'}">
+              <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
               <span>{{setMinterItem.minter}}%</span>
             </div>
           </div>
@@ -210,6 +210,7 @@
             <strong> {{ setMinterItem.total | asset(2) }} </strong>
             <span class="left-title">USDT</span>
           </div>
+           <v-form ref="setMinterERCForm" lazy-validation>
           <v-row class="from-voting" justify="space-between">
               <v-col  cols="12" md="2">
                 <div class="input-title">Minter Cap</div>
@@ -220,7 +221,7 @@
                     outlined 
                     background-color="input_other" 
                     class="text-filed"
-                    :rules="addressRules"
+                    :rules="minterRules"
                     v-model="minterCap"
                   >
                 </v-text-field>
@@ -231,6 +232,7 @@
                 Set 
             </v-btn>
           </div>
+          </v-form>
         </v-card>
       </v-dialog>
       <v-dialog v-model="revokeDialog" width="500">
@@ -482,6 +484,7 @@ import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
 
 const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7'
+const adminAddress ="0x5C8FB2f2681955A17981cA66171C2E38EfB7862f"
 
 const tokenList = gql`
   query getTokenList{
@@ -536,12 +539,12 @@ export default {
       setMinterItem:"",
       createLoading: false,
       grantBtnDisable:false,
+      admin:"",
       headers: [
           {text:'Label', value: 'label'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
           { text: 'Address', value: 'address' },
-          { text: 'Operation', value: 'operation' },
       ],
       bridgeList:[],
       chainList:[],
@@ -551,7 +554,7 @@ export default {
         name:'',
         contractAddress:''
       },
-      addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
+      minterRules: [(v) => !!v || "Please enter the Minter Cap",(v)=>(v && util.isNumber(v) && v > this.setMinterItem.total) || "Please enter a number greater than Min Minter Cap"],
       tokenRules:[(v) => !!v || "Please enter the token"],
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
@@ -559,11 +562,14 @@ export default {
     };
   },
   watch: {
+    '$store.state.connection': function() {
+      this.switchAccount();
+    },
   },
   mounted() {
     this.connect();
     this.getdata();
-    this.windowWidth()
+    this.windowWidth();
   },
   computed: {
      ...mapGetters({
@@ -768,6 +774,7 @@ export default {
     },
     async setMintCap(){
       try {
+         if (!this.$refs.setMinterERCForm.validate()) return;
         let contract = new web3.eth.Contract(abiBridgedERC20, this.setMinterItem.contractAddress);
         let mintAddress = this.setMinterItem.mintAddress;
         let res = await contract.methods.setMinterCap(mintAddress,  web3.utils.numberToHex(web3.utils.toWei(this.minterCap))).send(
@@ -836,6 +843,18 @@ export default {
         this.createLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
+      }
+    },
+    switchAccount(){
+      this.admin = adminAddress
+      if(this.connection.address == this.admin){
+        this.headers = [
+          {text:'Label', value: 'label'},
+          { text: 'Target Chain', value: 'target' },
+          { text: 'Minter Cap', value: 'minter' },
+          { text: 'Address', value: 'address' },
+          { text: 'Operation', value: 'operation' },
+       ]
       }
     },
     windowWidth() {
@@ -939,7 +958,7 @@ export default {
     width: 340px;
   }
   .minter-item{
-    margin-top:-28px;
+    // margin-top:-28px;
   }
   .set-minter{
     padding: 12px;
