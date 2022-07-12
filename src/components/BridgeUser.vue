@@ -2,7 +2,7 @@
   <v-container style="padding: 0">
     <v-card class="bridge-user">
       <v-row justify="space-between">
-        <v-col cols="12" md="5"><h3>Bridge asset Management on REI Network</h3></v-col>
+        <v-col cols="12" md="5"><h3>Bridges asset Management on REI Network</h3></v-col>
         <v-col class="title-right" cols="12" md="6">
           <v-row>
             <v-btn text outlined color="validator">
@@ -434,6 +434,36 @@
           </v-form>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="createSuccessDialog" width="500">
+        <v-card class="minter-card">
+          <v-row justify="space-between" class="dialog-title">
+            <div>
+              <h3>Created Successfully</h3>
+            </div>
+          </v-row>
+          <v-row justify="space-between" class="title-row" no-gutters>
+            <span class="left-title">Token Name</span>
+          </v-row>
+           <v-row justify="space-between" class="title-row" no-gutters>
+            <strong>{{tokenResult.name}} </strong>
+          </v-row>
+         
+          <v-row justify="space-between" class="title-row" no-gutters>
+            <span class="left-title">Contract Address</span>
+          </v-row>
+           <v-row justify="space-between" class="title-row" no-gutters>
+            <strong>
+              {{tokenResult.contractAddress}}
+              <a class="text-body-2 text-decoration-none" :href="`https://scan.rei.network/address/${tokenResult.contractAddress}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+            </strong>
+          </v-row>
+          <div class="text-center">
+            <v-btn small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="closeSucessDialog()" height="32" width="80">
+                OK  
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
     </v-card>
     
   </v-container>
@@ -496,6 +526,7 @@ export default {
       RevokeDialog:false,
       grantRoleDialog:false,
       createTokenDialog:false,
+      createSuccessDialog:false,
       selectContractAddress: '',
       selectContractAddressInfo:'',
       minterAddress:"",
@@ -516,6 +547,10 @@ export default {
       chainList:[],
       ContractItems:[],
       MinterItems:[],
+      tokenResult:{
+        name:'',
+        contractAddress:''
+      },
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
       TokenRules:[(v) => !!v || "Please enter the token"],
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
@@ -584,28 +619,28 @@ export default {
         console.log('bridgeList',this.bridgeList)
         console.log('chainList',this.chainList)
         this.chainList = this.chainList.map((item) => {
-        let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-        let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
-        let minter =(total/cap)*100
-        return{
-          ...item,
-          total:total,
-          cap:cap,
-          minter:minter,
-        }
-      })
-      this.bridgeList = this.bridgeList.map((item) => {
-        let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-        let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
-        let minter =(total/cap)*100
-        return{
-          ...item,
-          total:total,
-          cap:cap,
-          minter:minter,
-        }
-      })
-      console.log(arr)
+          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
+          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+          let minter =(total/cap)*100
+          return{
+            ...item,
+            total:total,
+            cap:cap,
+            minter:minter,
+          }
+        })
+        this.bridgeList = this.bridgeList.map((item) => {
+          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
+          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+          let minter =(total/cap)*100
+          return{
+            ...item,
+            total:total,
+            cap:cap,
+            minter:minter,
+          }
+        })
+        console.log(arr)
        
       } catch(e){
         console.log(e)
@@ -773,8 +808,15 @@ export default {
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei('10'))
         });
+       
         if(res.transactionHash) {
             console.log(res);
+            let tx = await web3.eth.getTransactionReceipt(res.transactionHash)
+            let contractAddress = this.getLogsTopicRes(tx);
+            this.tokenResult = {
+              name: newERC20.name,
+              contractAddress
+            }
             this.addTx({
               tx: {
                 txid: res.transactionHash,
@@ -787,6 +829,7 @@ export default {
               }
             });
             this.createTokenDialog = false;
+            this.createSuccessDialog = true;
             this.createLoading = false;
         }
       } catch(e){
@@ -795,6 +838,17 @@ export default {
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
+    },
+    getLogsTopicRes(tx){
+      let addr = '';
+      let hashStr = web3.utils.sha3("CreateERC20(address,address,string,string,uint8,address)")
+      if(tx.logs.length>0){
+        let topics = tx.logs[2] && tx.logs[2].topics;
+        if(topics[0] == hashStr){
+          addr = '0x'+ topics[2].substr(26)
+        }
+      }
+      return addr;
     },
     openMinterCap(value){
       this.setMinterCapDialog = true;
@@ -821,6 +875,9 @@ export default {
     },
     cancelCreateToken(){
       this.createTokenDialog = false;
+    },
+    closeSucessDialog(){
+      this.createSuccessDialog = false;
     }
   }
 };
