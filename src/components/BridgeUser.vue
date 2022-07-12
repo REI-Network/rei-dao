@@ -233,7 +233,7 @@
           </div>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="RevokeDialog" width="500">
+      <v-dialog v-model="revokeDialog" width="500">
         <v-card class="minter-card">
           <v-row justify="space-between" class="dialog-title">
             <div>
@@ -262,10 +262,10 @@
           </v-row>
           <div class="text-center">
              <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="32" width="80">
-                no
+                NO
             </v-btn>
             <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="revokeRole()" height="32" width="80">
-                yes  
+                YES 
             </v-btn>
           </div>
         </v-card>
@@ -273,12 +273,12 @@
       <v-dialog v-model="grantRoleDialog" width="580">
         <v-card class="minter-card">
           <v-row justify="space-between" class="dialog-title" no-gutters>
-            <v-col cols="12" md="10">
+            <div>
               <h3>Grant Role</h3>
-            </v-col>
-            <v-col cols="12" md="1" @click="cancelGrantRole()" class="close-dialog">
+            </div>
+            <div cols="12" md="1" @click="cancelGrantRole()" class="close-dialog">
               <v-icon>mdi-close</v-icon>
-            </v-col>
+            </div>
           </v-row>
           <v-row no-gutters>
             <v-col cols="12" md="3" class="left-title contract">Contract Address</v-col>
@@ -286,7 +286,7 @@
               <v-autocomplete
                outlined
                label="Address"
-               :items="ContractItems"
+               :items="contractItems"
                v-model="selectContractAddress"
                item-text="erc20Address"
                item-value="erc20Address"
@@ -327,7 +327,7 @@
                   <v-autocomplete
                     outlined
                     label="Address"
-                    :items="MinterItems"
+                    :items="minterItems"
                     @change="selectMintAddrChange"
                     item-text="mintAddress"
                     item-value="mintAddress"
@@ -371,12 +371,12 @@
         <v-card class="minter-card">
           <v-form ref="creatERCForm" lazy-validation>
             <v-row justify="space-between" class="dialog-title">
-              <v-col cols="12" md="10">
+              <div>
                 <h3>Create Your Token</h3>
-              </v-col>
-            <v-col cols="12" md="1" @click="cancelCreateToken()" class="close-dialog">
+              </div>
+            <div @click="cancelCreateToken()" class="close-dialog">
                 <v-icon>mdi-close</v-icon>
-              </v-col>
+              </div>
             </v-row>
             <v-row>
               <v-col>
@@ -434,8 +434,32 @@
           </v-form>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="createdSuccessDialog" width="500">
+        <v-card class="minter-card">
+          <v-row justify="space-between" class="dialog-title">
+            <div>
+              <h3>Created Successfully</h3>
+            </div>
+            <div class="close-dialog">
+              <v-icon>mdi-close</v-icon>
+            </div>
+          </v-row>
+           <v-row justify="space-between" class="title-row" no-gutters>
+            <span class="left-title">Token</span>
+            <strong>XREI</strong>
+          </v-row>
+          <v-row justify="space-between" class="title-row" no-gutters>
+            <span class="left-title">Contract Address</span>
+            <strong>0x65b9A7F1c1d90d34702354daa239e88e190ff249</strong>
+          </v-row>
+          <div class="submit-btn">
+            <v-btn  small color="#6979F8" class="mr-4"  style="color: #fff" height="32" width="120">
+                OK 
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
     </v-card>
-    
   </v-container>
 </template>
 <script>
@@ -491,11 +515,13 @@ export default {
         decimals:''
       },
       menuUp:0,
+      width:0,
       stakeListLoading: false,
       setMinterCapDialog:false,
-      RevokeDialog:false,
+      revokeDialog:false,
       grantRoleDialog:false,
       createTokenDialog:false,
+      createdSuccessDialog:false,
       selectContractAddress: '',
       selectContractAddressInfo:'',
       minterAddress:"",
@@ -514,10 +540,10 @@ export default {
       ],
       bridgeList:[],
       chainList:[],
-      ContractItems:[],
-      MinterItems:[],
+      contractItems:[],
+      minterItems:[],
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
-      TokenRules:[(v) => !!v || "Please enter the token"],
+      tokenRules:[(v) => !!v || "Please enter the token"],
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
       tokenDecimalsRules:  [(v) => !!v || "Please enter the Token Decimals"],
@@ -528,6 +554,7 @@ export default {
   mounted() {
     this.connect();
     this.getdata();
+    this.windowWidth()
   },
   computed: {
      ...mapGetters({
@@ -565,8 +592,8 @@ export default {
         // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
-        this.MinterItems = mintAddress.data
-        this.ContractItems = resultList
+        this.minterItems = mintAddress.data
+        this.contractItems = resultList
         
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
@@ -581,8 +608,6 @@ export default {
             this.chainList.push(item)
           }
         })
-        console.log('bridgeList',this.bridgeList)
-        console.log('chainList',this.chainList)
         this.chainList = this.chainList.map((item) => {
         let total = web3.utils.fromWei(web3.utils.toBN(item.total))
         let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
@@ -664,7 +689,7 @@ export default {
       this.getMintInfo()
     },
     selectContractChange(){
-      this.selectContractAddressInfo = find(this.ContractItems,(item)=> item.erc20Address == this.selectContractAddress)
+      this.selectContractAddressInfo = find(this.contractItems,(item)=> item.erc20Address == this.selectContractAddress)
       if(this.minterAddress){
         this.getMintInfo()
       }
@@ -796,6 +821,10 @@ export default {
         this.$dialog.notify.warning(e.message);
       }
     },
+     windowWidth() {
+      const that = this;
+      that.width = window.innerWidth;
+    },
     openMinterCap(value){
       this.setMinterCapDialog = true;
       this.setMinterItem = value;
@@ -804,11 +833,11 @@ export default {
       this.setMinterCapDialog = false;
     },
     openRevoke(value){
-      this.RevokeDialog = true;
+      this.revokeDialog = true;
       this.revoke = value;
     },
     cancelRevoke(){
-      this.RevokeDialog = false;
+      this.revokeDialog = false;
     },
     openGrantRole(){
       this.grantRoleDialog = true;
