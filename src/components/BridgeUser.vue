@@ -559,6 +559,44 @@ export default {
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
       tokenDecimalsRules:  [(v) => !!v || "Please enter the Token Decimals"],
+      tokenInfoList:[
+        {
+          decimals: "8",
+          erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+          name:"Wrapped BTC",
+          symbol:"WBTC"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+          name:"Tether USD",
+          symbol:"USDT"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+          name:"USD Coin",
+          symbol:"USDC"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+          name:"Wrapped Ether",
+          symbol:"WETH"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+          name:"Dai Stablecoin",
+          symbol:"DAI"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+          name:"Binance USD",
+          symbol:"BUSD"
+        }
+      ]
     };
   },
   watch: {
@@ -592,14 +630,15 @@ export default {
     async getdata(){
        this.stakeListLoading = true;
       try{
-         let url = this.apiUrl.graph;
+         //let url = this.apiUrl.graph;
+         let url = "https://api-graphql-testnet.rei.network/";
         client = new ApolloClient({
             uri: `${url}erc20-factory`,
             cache: new InMemoryCache(),
         })
 
         //let charts = []
-        const {data:{createNewErc20Results:resultList}} = await client.query({
+        let {data:{createNewErc20Results:resultList}} = await client.query({
             query: tokenList,
             variables: {
             },
@@ -608,6 +647,7 @@ export default {
         // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
+        resultList = this.tokenInfoList
         this.minterItems = mintAddress.data
         this.contractItems = resultList
         
@@ -617,6 +657,7 @@ export default {
           console.log('list',list)
           arr = arr.concat(list)
         }
+        console.log('arr',arr)
         arr.map((item) => {
           if(item.bridges == "Cbridges"){
            this.bridgeList.push(item)
@@ -665,7 +706,12 @@ export default {
       for (var i = 0; i < Number(roleNumber); i++) {
         let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
         let mintSupply = await contract.methods.minterSupply(member).call();
-        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member)
+        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member);
+        if(!mintAddressInfo){
+          mintAddressInfo = { 
+            mintAddress: member
+          }
+        }
         let obj = {
           ...mintAddressInfo,
           cap: mintSupply.cap,
