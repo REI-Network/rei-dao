@@ -570,6 +570,7 @@ export default {
     this.connect();
     this.getdata();
     this.windowWidth();
+    this.switchAccount();
   },
   computed: {
      ...mapGetters({
