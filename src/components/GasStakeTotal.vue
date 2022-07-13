@@ -9,7 +9,7 @@
                 color="background"
             >
                 <h3>Resources Of {{ connection.address | addr }}</h3>
-                <div class="deposit">Deposit REI Gets Crude</div>
+                <div class="deposit">Deposit $REI to Get Crude</div>
                 <v-row >
                     <v-col class="row-circular">
                     <div class="circular">
@@ -23,7 +23,7 @@
                             {{connection.address?leftCrudePercent:'-'}}%
                         </v-progress-circular>
                         <h4>{{leftCrude | asset(8) }}</h4>
-                        <div class="stake-name">Left Crude</div>
+                        <div class="stake-name">Crude left</div>
                     </div>
                     <div class="circular">
                         <v-progress-circular
@@ -36,7 +36,7 @@
                             {{connection.address?usedCrudePercent:'-'}}%
                         </v-progress-circular>
                         <h4>{{usedCrude  | asset(8) }}</h4>
-                        <div class="stake-name">Crude Used</div>                      
+                        <div class="stake-name">Crude consumed</div>                      
                     </div>
                     </v-col>
                 </v-row>   

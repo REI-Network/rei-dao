@@ -18,6 +18,7 @@
                         :loading-text="$t('msg.loading')"
                         :page.sync="page"
                         @page-count="pageCount = $event"
+                        :no-data-text="$t('msg.nodatatext')"
                     >
                         <template v-slot:item.address="{ item }">
                         <!-- <Address :val="item.address"></Address> -->
@@ -86,6 +87,7 @@
                         :loading-text="$t('msg.loading')"
                         :page.sync="page"
                         @page-count="pageCount = $event"
+                        :no-data-text="$t('msg.nodatatext')"
                     >
                         <template v-slot:item.by="{ item }">
                         <!-- <Address :val="item.address"></Address> -->
@@ -305,7 +307,7 @@ export default {
             },
             { text: 'Amount', value: 'amount' },
             { text: 'Deposit Time', value: 'deposit' },
-            { text: 'Withdraw Countdown', value: 'withdraw' },
+            { text: 'Withdrawal Countdown', value: 'withdraw' },
             // { text: this.$t('stake.status'), value: 'isActive' },
             { text: 'Operation', value: 'operation', sortable: false },
             // { text: '10', value: 'ten'}
@@ -617,7 +619,7 @@ export default {
         return web3.utils.fromWei(web3.utils.toBN(val))
     },
     timeDiff (a, b) {
-        if(a<b) return '0H:0M'
+        if(a<b) return '00D: 00H: 00M'
         let endDate = new Date(a);//结束时间
         let now = new Date(b);//开始时间
         let endTime = endDate.getTime();//结束时间

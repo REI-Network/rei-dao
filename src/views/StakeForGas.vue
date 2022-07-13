@@ -2,7 +2,7 @@
   <v-container class="gasStake stake_background">
      <div class="header-title">
       <h1>Gas Stake</h1>
-      <a href="https://docs.rei.network/guides/stake-for-free-gas" target="_blank" class="title-detailed">How to get crude by stake REI?</a>
+      <a href="https://docs.rei.network/guides/stake-for-free-gas" target="_blank" class="title-detailed">How to get Crude by staking $REI?</a>
     </div>
     <v-row>
       <v-col>
