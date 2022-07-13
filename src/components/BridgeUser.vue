@@ -2,19 +2,19 @@
   <v-container style="padding: 0">
     <v-card class="bridge-user">
       <v-row justify="space-between">
-        <v-col cols="12" md="5"><h3>Bridges asset Management on REI Network</h3></v-col>
-        <v-col class="title-right" cols="12" md="6" v-if="this.connection.address == admin">
-          <v-row>
-            <v-btn text outlined color="validator">
-              <span class="iconfont">&#xe619;</span>
+        <v-col cols="12" md="5"><h3>Bridges Asset Management on REI Network</h3></v-col>
+        <v-col class="title-right">
+          <v-row justify="end" no-gutters>
+            <v-btn text outlined color="validator" v-if="this.connection.address != admin">
+              <v-img src="../assets/images/light token info.svg" class="icon-logo" width="16" height="16" />
             Submit Token Info
           </v-btn>
-          <v-btn text outlined color="validator" @click="openGrantRole()">
-            <span class="iconfont">&#xe618;</span>
+          <v-btn text outlined color="validator" @click="openGrantRole()" v-if="this.connection.address == admin">
+            <v-img src="../assets/images/light add minter.svg" class="icon-logo" width="16" height="16" />
             Add minter
           </v-btn>
-          <v-btn text outlined color="validator" @click="openCreateToken()">
-            <span class="iconfont">&#xe601;</span>
+          <v-btn text outlined color="validator" style="padding-right:4px;" @click="openCreateToken()">
+            <v-img src="../assets/images/light create token.svg" class="icon-logo" width="16" height="16" />
             Create your token
           </v-btn>
           </v-row>
@@ -41,12 +41,12 @@
                   :page.sync="page"
                   @page-count="pageCount = $event"
                 >
-                  <template v-slot:item.label="{ item }">
+                  <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
+                          <v-img src="../assets/images/token logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        <span class="label-text">{{ item.name }}</span>
+                        <span class="label-text">{{ item.symbol }}</span>
                         <v-icon size="16">mdi-open-in-new</v-icon>
                     </div>
                   </template>
@@ -55,7 +55,7 @@
                         <!-- <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
                         </div> -->
-                        <span class="label-text">{{ item.targetChain }}</span>
+                        <span >{{ item.targetChain }}</span>
                     </div>
                   </template>
                    <template v-slot:item.address="{ item }">
@@ -66,7 +66,7 @@
                       <span>Used Amount: {{ item.total | asset(2) }}</span>
                       <span>Max: {{ item.cap | asset(2) }}USDT</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
                       <div :style="{marginLeft:item.minter+'%'}">
@@ -111,21 +111,21 @@
                   :page.sync="page"
                   @page-count="pageCount = $event"
                 >
-                  <template v-slot:item.label="{ item }">
+                  <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
+                          <v-img src="../assets/images/token logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        <span class="label-text">{{ item.name }}</span>
+                        <span class="label-text">{{ item.symbol }}</span>
                         <v-icon size="16">mdi-open-in-new</v-icon>
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
                      <div class="bridge-label">
-                        <div class="left-img">
+                        <!-- <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
-                        </div>
-                        <span class="label-text">{{ item.targetChain }}</span>
+                        </div> -->
+                        <span>{{ item.targetChain }}</span>
                     </div>
                   </template>
                    <template v-slot:item.address="{ item }">
@@ -136,7 +136,7 @@
                       <span>Used Amount: {{ item.total | asset(2) }}</span>
                       <span>Max: {{ item.cap | asset(2) }}USDT</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
                       <div v-if="item.minter>0" :style="{marginLeft:item.minter+'%'}">
@@ -180,7 +180,7 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <strong>{{ setMinterItem.symbol }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
@@ -197,7 +197,7 @@
               <span class="left-title">USDT</span>
             </div>
           </v-row>
-          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterItem.minter+'%'"></v-progress-linear>
+          <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.minter+'%'"></v-progress-linear>
           <div class="">
             <!-- <div>0</div> -->
             <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter+'%'}">
@@ -211,11 +211,11 @@
             <span class="left-title">USDT</span>
           </div>
            <v-form ref="setMinterERCForm" lazy-validation>
-          <v-row class="from-voting" justify="space-between">
-              <v-col  cols="12" md="2">
-                <div class="input-title">Minter Cap</div>
-              </v-col>
-                <v-col cols="12" md="10">
+          <div class="from-voting" >
+              <!-- <v-col  class="cap-name"> -->
+                <div class="input-title ">Minter Cap</div>
+              <!-- </v-col> -->
+                <!-- <v-col> -->
                   <v-text-field 
                     required
                     outlined 
@@ -225,10 +225,10 @@
                     v-model="minterCap"
                   >
                 </v-text-field>
-                </v-col>
-            </v-row>
+                <!-- </v-col> -->
+            </div>
             <div class="submit-btn">
-            <v-btn  small color="#6979F8" class="mr-4" @click="setMintCap()"  style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" @click="setMintCap()"  style="color: #fff" height="36" width="120">
                 Set 
             </v-btn>
           </div>
@@ -247,7 +247,7 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <strong>{{revoke.symbol}} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Cap</span>
@@ -260,13 +260,14 @@
           <v-divider class="revoke-divider" />
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Address</span>
-            <strong>{{revoke.mintAddress}}</strong>
+            <strong  v-if="width > 900 ">{{revoke.mintAddress}}</strong>
+            <strong  v-else>{{revoke.mintAddress}}</strong>
           </v-row>
           <div class="text-center">
-             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="32" width="80">
+             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="36" width="80">
                 NO
             </v-btn>
-            <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="revokeRole()" height="32" width="80">
+            <v-btn  small color="#6979F8" class="revoke-btn" style="color: #fff" @click="revokeRole()" height="36" width="80">
                 YES 
             </v-btn>
           </div>
@@ -298,7 +299,8 @@
                       <div>{{ data.item.erc20Address | addr }}</div>
                   </template>
                   <template v-slot:item="data">
-                    <div>{{ data.item.erc20Address }}</div>
+                    <div v-if="width>900">{{ data.item.erc20Address }}</div>
+                    <div v-else>{{ data.item.erc20Address | addr}}</div>
                   </template>
                </v-autocomplete>
             </v-col>
@@ -339,12 +341,14 @@
                     <div>{{ data.item.mintAddress | addr }}</div>
                   </template>
                   <template #item="{ item }">
-                    <div>{{ item.mintAddress }}</div>
+                    <div v-if="width > 900">{{ item.mintAddress }}</div>
+                    <div v-else>{{ item.mintAddress | addr}}</div>
                   </template>
                   </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="2">
-                 <v-img src="../assets/images/add.png"  class="add-plus" />
+                 <v-img src="../assets/images/add_link_normal.svg"  class="add-plus" />
+                 <!-- <div class="add-plus"></div> -->
                </v-col>
               </v-row>
             </v-col>
@@ -363,7 +367,7 @@
           </v-row>
           </div>
           <div class="submit-btn">
-            <v-btn  small color="#6979F8" class="mr-4" @click="grantRole()" :loading="grantLoading" :disabled="grantBtnDisable" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" @click="grantRole()" :loading="grantLoading" :disabled="grantBtnDisable" style="color: #fff" height="36" width="120">
                 Grant 
             </v-btn>
           </div>
@@ -423,13 +427,13 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row justify="space-between">
+            <v-row justify="space-between" no-gutters>
               <div>
-                <span class="left-title">Services Fees : </span>
+                <span class="left-title">  Services Fees : </span>
                 <strong class="service-fees">10 </strong>
                 <span class="left-title">REI</span>
               </div>
-              <v-btn @click="createrERC20" small color="vote_button"  :loading="createLoading" class="font-btn mr-4" height="32" width="120">
+              <v-btn @click="createrERC20" small color="vote_button"  :loading="createLoading" class="font-btn" height="36" width="120">
                   Create 
               </v-btn>
             </v-row>
@@ -460,7 +464,7 @@
             </strong>
           </v-row>
           <div class="text-center">
-            <v-btn small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="closeSucessDialog()" height="32" width="80">
+            <v-btn small color="#6979F8" class="revoke-btn" style="color: #fff" @click="closeSucessDialog()" height="32" width="80">
                 OK  
             </v-btn>
           </div>
@@ -541,7 +545,7 @@ export default {
       grantBtnDisable:false,
       admin:"",
       headers: [
-          {text:'Label', value: 'label'},
+          {text:'Symbol', value: 'symbol'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
           { text: 'Address', value: 'address' },
@@ -850,7 +854,7 @@ export default {
       this.admin = adminAddress
       if(this.connection.address == this.admin){
         this.headers = [
-          {text:'Label', value: 'label'},
+          {text:'Symbol', value: 'symbol'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
           { text: 'Address', value: 'address' },
@@ -910,6 +914,9 @@ export default {
 .vote-list{
   margin-top:30px;
 }
+.icon-logo{
+  margin-right: 6px;
+}
 .v-btn {
   text-transform: none !important;
   }
@@ -919,10 +926,12 @@ export default {
     text-transform: none !important;
     margin-left: 0 !important;
   }
-.title-right{
-  margin-top: 10px;
+.title-right{ 
   .v-btn.v-btn--outlined.v-btn--text{
     border:none;
+  }
+  .right-row{
+    text-align: right;
   }
 }
 .theme--light.v-progress-linear{
@@ -935,11 +944,10 @@ export default {
     display: flex;
     align-items: center;
     .left-img{
-      height: 24px;
-      width: 24px;
+      margin-left:-6px;
     }
     .label-text{
-      margin-left: 13px;
+      margin-left: 10px;
       margin-right: 12px;
     }
     .minter-address{
@@ -951,7 +959,6 @@ export default {
 }
 .submit-btn{
   text-align: right;
-  margin-top:20px;
 }
  .minter-cap{
     padding: 12px;
@@ -988,14 +995,13 @@ export default {
   .create-field{
     margin-top:8px;
   }
-  .from-voting {
-  margin-top: 12px;
   .input-title {
     color: #868e9e;
-    margin-top: 15px;
-    text-align: center;
-    height: 40px;
+      text-align: left !important;
     }
+  .cap-name{
+    padding:0 ;
+    margin-bottom: -10px;
   }
 .font-btn.v-btn.v-btn--has-bg {
   color: #fff;
@@ -1015,6 +1021,7 @@ export default {
     text-align: right;
     width:56px;
     margin-left: 8px;
+    background-image: url("../assets/images/add_link_normal.svg") center center no-repeat;
   }
 }
 @media screen and (max-width: 900px) {
@@ -1024,5 +1031,15 @@ export default {
   .minter-cap{
     width: 240px;
   }
+  // .from-voting {
+  //   .input-title {
+  //     margin-left: 12px;
+  //     text-align: left !important;
+  //   }
+  // }
+  // .cap-name{
+  //   padding:0 ;
+  //   margin-bottom: -20px;
+  // }
 }
 </style>

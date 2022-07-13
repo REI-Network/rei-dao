@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>椭圆形</title>
+    <defs>
+        <circle id="path-1" cx="12" cy="12" r="12"></circle>
+        <filter x="-37.5%" y="-37.5%" width="175.0%" height="175.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.15 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Validator" transform="translate(-361.000000, -534.000000)">
+            <g id="编组" transform="translate(367.000000, 369.000000)">
+                <g id="REI-logo-07" transform="translate(0.000000, 171.000000)">
+                    <g id="椭圆形">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#E2E4EA" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <path d="M7.00798331,6.00013851 L13.4634854,6.00013851 C14.2323001,5.99400788 14.9886007,6.19149318 15.6529076,6.57184066 C16.3121856,6.94610838 16.8597203,7.48415517 17.2405879,8.13200898 C17.6283401,8.7846101 17.8300006,9.52781744 17.8243672,10.2834919 C17.8327159,11.136598 17.5738651,11.9715873 17.0829175,12.6752269 C16.6066038,13.375575 15.9298121,13.9215485 15.1379842,14.2442208 L18,18 L14.5073029,18 L11.8897759,14.5678258 L9.79415767,14.5678258 L9.79415767,18 L7,18 L7.00798331,6.00013851 Z M13.4943336,11.9971402 C13.8946846,12.0059853 14.2804699,11.8466324 14.5582401,11.5576818 C14.9894556,11.1292943 15.1186827,10.481948 14.885087,9.92038459 C14.6514914,9.35882122 14.1016223,8.9949452 13.4943336,9.00005309 L10,9.00005309 L10,12 L13.4943336,11.9971402 Z" id="形状" fill="#C4C4D5" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
