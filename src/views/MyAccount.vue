@@ -9,7 +9,7 @@
           <MyAccountBalance></MyAccountBalance>
       </v-col>
     </v-row>
-    <v-row v-if="showItem">
+    <v-row>
       <v-col>
         <MyAccountCrude></MyAccountCrude>
       </v-col>
@@ -42,13 +42,7 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
-    }),
-    showItem:function(){
-        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-           return true;
-        }
-        return false
-    }
+    })
   },
 };
 </script>

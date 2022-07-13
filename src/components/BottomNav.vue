@@ -42,7 +42,7 @@ export default {
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'stakeforgas',
-          show: false
+          show: true
         },
         {
           icon: '&#xe615;',
@@ -66,15 +66,6 @@ export default {
         connection: 'connection',
         dark: 'dark'
     })
-  },
-  watch: {
-    '$store.state.connection': function() {
-        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-            let item = this.links[3]
-            item.show = true;
-            this.$set(this.links, 3, item)
-        }
-    }
   },
   mounted(){
    this.getRoute()
