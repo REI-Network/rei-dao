@@ -52,14 +52,14 @@
                                 >
                             </v-radio>
                         </v-tab>
-                        <v-tab key="3" v-if="showMenu">
+                        <v-tab key="3">
                             <v-radio
                                 label="Total Staked for Gas"
                                 value="3"
                                 >
                             </v-radio>
                         </v-tab>
-                        <v-tab key="4" v-if="showMenu">
+                        <v-tab key="4">
                             <v-radio
                                 label="Gas Saved for Users"
                                 value="4"
@@ -143,13 +143,7 @@ export default {
       totalStakes: 'totalStakes',
       connection: 'connection',
       apiUrl: 'apiUrl'
-    }),
-    showMenu:function(){
-        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-           return true;
-        }
-        return false
-    }
+    })
   },
   watch: {
        tab:{
