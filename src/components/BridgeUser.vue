@@ -6,15 +6,15 @@
         <v-col class="title-right">
           <v-row justify="end" no-gutters>
             <v-btn text outlined color="validator" v-if="this.connection.address != admin">
-              <v-img src="../assets/images/light token info.svg" class="icon-logo" width="16" height="16" />
+              <v-img src="../assets/images/light-token-info.svg" class="icon-logo" width="16" height="16" />
             Submit Token Info
           </v-btn>
           <v-btn text outlined color="validator" @click="openGrantRole()" v-if="this.connection.address == admin">
-            <v-img src="../assets/images/light add minter.svg" class="icon-logo" width="16" height="16" />
+            <v-img src="../assets/images/light-add-minter.svg" class="icon-logo" width="16" height="16" />
             Add minter
           </v-btn>
           <v-btn text outlined color="validator" style="padding-right:4px;" @click="openCreateToken()">
-            <v-img src="../assets/images/light create token.svg" class="icon-logo" width="16" height="16" />
+            <v-img src="../assets/images/light-create-token.svg" class="icon-logo" width="16" height="16" />
             Create your token
           </v-btn>
           </v-row>
@@ -64,14 +64,14 @@
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
                       <span>Used Amount: {{ item.total | asset(2) }}</span>
-                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
+                      <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
                       <div :style="{marginLeft:item.minter+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
-                        <span>{{item.minter}}%</span>
+                        <span>{{item.minter | asset(3) }}%</span>
                       </div>
                     </div>
                   </template>
@@ -134,7 +134,7 @@
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
                       <span>Used Amount: {{ item.total | asset(2) }}</span>
-                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
+                      <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
                     <div class="process">
@@ -194,7 +194,7 @@
             <div>
               <span class="left-title">Max:</span> 
               <strong> {{ setMinterItem.cap | asset(2) }} </strong> 
-              <span class="left-title">USDT</span>
+              <span class="left-title">{{ setMinterItem.symbol }}</span>
             </div>
           </v-row>
           <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.minter+'%'"></v-progress-linear>
@@ -208,14 +208,11 @@
           <div class="min-minter ">
             <span class="left-title" style="text-align:left">Min Minter Cap:</span> 
             <strong> {{ setMinterItem.total | asset(2) }} </strong>
-            <span class="left-title">USDT</span>
+            <span class="left-title">{{setMinterItem.symbol}}</span>
           </div>
-           <v-form ref="setMinterERCForm" lazy-validation>
+           <v-form ref="setMinterERCForm"  lazy-validation>
           <div class="from-voting" >
-              <!-- <v-col  class="cap-name"> -->
-                <div class="input-title ">Minter Cap</div>
-              <!-- </v-col> -->
-                <!-- <v-col> -->
+                <div class="input-title">Minter Cap</div>
                   <v-text-field 
                     required
                     outlined 
@@ -225,13 +222,12 @@
                     v-model="minterCap"
                   >
                 </v-text-field>
-                <!-- </v-col> -->
+                 <div class="submit-btn">
+                   <v-btn  small color="#6979F8" @click="setMintCap()"  style="color: #fff" height="36" width="120">
+                     Set 
+                   </v-btn>
+                </div>
             </div>
-            <div class="submit-btn">
-            <v-btn  small color="#6979F8" @click="setMintCap()"  style="color: #fff" height="36" width="120">
-                Set 
-            </v-btn>
-          </div>
           </v-form>
         </v-card>
       </v-dialog>
@@ -561,7 +557,9 @@ export default {
         name:'',
         contractAddress:''
       },
-      minterRules: [(v) => !!v || "Please enter the Minter Cap",(v)=>(v && util.isNumber(v) && v > this.setMinterItem.total) || "Please enter a number greater than Min Minter Cap"],
+      val:false,
+      //  minterRules:[],
+      minterRules:[(v) => !!v || "Please enter the Minter Cap",(v)=>(v && util.isNumber(v) && v > this.setMinterItem.total) || "Please enter a number greater than Min Minter Cap"],
       tokenRules:[(v) => !!v || "Please enter the token"],
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
@@ -674,8 +672,8 @@ export default {
           }
         })
         this.chainList = this.chainList.map((item) => {
-          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+           let total = web3.utils.toBN(item.total).div(web3.utils.toBN(10**item.decimals)).toString()
+          let cap = web3.utils.toBN(item.cap).div(web3.utils.toBN(10**item.decimals)).toString()
           let minter =(total/cap)*100
           return{
             ...item,
@@ -685,8 +683,10 @@ export default {
           }
         })
         this.bridgeList = this.bridgeList.map((item) => {
-          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
+          let total = web3.utils.toBN(item.total).div(web3.utils.toBN(10**item.decimals)).toString()
+          let cap = web3.utils.toBN(item.cap).div(web3.utils.toBN(10**item.decimals)).toString()
+
+          console.log('total',total,'cap',cap)
           let minter =(total/cap)*100
           return{
             ...item,
