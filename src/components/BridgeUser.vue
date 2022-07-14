@@ -22,7 +22,7 @@
       </v-row>
       <v-tabs v-model="tab" align-with-title hide-slider class="vote-list" background-color="background">
         <v-radio-group v-model="radios" mandatory row dense style="margin-top: 0" class="trend-tab">
-          <v-tab key="1"> <v-radio label="Cbridge" value="1" class="trends-radio"> </v-radio></v-tab>
+          <v-tab key="1"> <v-radio label="cBridge" value="1" class="trends-radio"> </v-radio></v-tab>
           <v-tab key="2"> <v-radio label="Multichain" value="2" class="trends-radio"> </v-radio></v-tab>
         </v-radio-group>
       </v-tabs>
@@ -36,7 +36,7 @@
                   class="background elevation-0"
                   hide-default-footer
                   :items-per-page="itemsPerPage"
-                  :loading="stakeListLoading"
+                  :loading="getListLoading"
                   :loading-text="$t('msg.loading')"
                   :page.sync="page"
                   @page-count="pageCount = $event"
@@ -106,10 +106,10 @@
                   class="background elevation-0"
                   hide-default-footer
                   :items-per-page="itemsPerPage"
-                  :loading="stakeListLoading"
+                  :loading="getListLoading"
                   :loading-text="$t('msg.loading')"
-                  :page.sync="page"
-                  @page-count="pageCount = $event"
+                  :page.sync="page2"
+                  @page-count="pageCount2 = $event"
                 >
                   <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
@@ -156,8 +156,8 @@
                 </v-data-table>
                 <div class="text-pagination pt-2" v-if="chainList.length > 0">
                   <v-pagination
-                    v-model="page"
-                    :length="pageCount"
+                    v-model="page2"
+                    :length="pageCount2"
                     color="vote_button"
                     background-color="start_unstake"
                     class="v-pagination"
@@ -486,6 +486,7 @@ import filters from '../filters';
 import Web3 from 'web3';
 import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
+const tokenProfileList = require('../bridges/tokenProfile/tokenList.json')
 
 const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7'
 const adminAddress ="0x5C8FB2f2681955A17981cA66171C2E38EfB7862f"
@@ -516,6 +517,8 @@ export default {
       radios: null,
       page: 1,
       pageCount: 0,
+      page2:1,
+      pageCount2: 0,
       itemsPerPage: 10,
       currentItem:{},
       capForm:{},
@@ -528,7 +531,7 @@ export default {
       },
       menuUp:0,
       width:0,
-      stakeListLoading: false,
+      getListLoading: false,
       setMinterCapDialog:false,
       revokeDialog:false,
       grantRoleDialog:false,
@@ -563,6 +566,44 @@ export default {
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
       tokenDecimalsRules:  [(v) => !!v || "Please enter the Token Decimals"],
+      tokenInfoList:[
+        {
+          decimals: "8",
+          erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+          name:"Wrapped BTC",
+          symbol:"WBTC"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+          name:"Tether USD",
+          symbol:"USDT"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+          name:"USD Coin",
+          symbol:"USDC"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+          name:"Wrapped Ether",
+          symbol:"WETH"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+          name:"Dai Stablecoin",
+          symbol:"DAI"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+          name:"Binance USD",
+          symbol:"BUSD"
+        }
+      ]
     };
   },
   watch: {
@@ -594,16 +635,16 @@ export default {
       }
     },
     async getdata(){
-       this.stakeListLoading = true;
+       this.getListLoading = true;
       try{
-         let url = this.apiUrl.graph;
+        let url = this.apiUrl.graph;
         client = new ApolloClient({
             uri: `${url}erc20-factory`,
             cache: new InMemoryCache(),
         })
 
         //let charts = []
-        const {data:{createNewErc20Results:resultList}} = await client.query({
+        let {data:{createNewErc20Results:resultList}} = await client.query({
             query: tokenList,
             variables: {
             },
@@ -612,6 +653,7 @@ export default {
         // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
+        resultList = resultList.concat(this.tokenInfoList)
         this.minterItems = mintAddress.data
         this.contractItems = resultList
         
@@ -621,8 +663,9 @@ export default {
           console.log('list',list)
           arr = arr.concat(list)
         }
+        console.log('arr',arr)
         arr.map((item) => {
-          if(item.bridges == "Cbridges"){
+          if(item.bridges == "cBridge"){
            this.bridgeList.push(item)
           }else{
             this.chainList.push(item)
@@ -655,7 +698,7 @@ export default {
       } catch(e){
         console.log(e)
       }
-       this.stakeListLoading = false;
+       this.getListLoading = false;
     },
     async getTokenInfo(contractAddress){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
@@ -669,7 +712,18 @@ export default {
       for (var i = 0; i < Number(roleNumber); i++) {
         let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
         let mintSupply = await contract.methods.minterSupply(member).call();
-        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member)
+        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member);
+        // BUSD
+        if('0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786' == contractAddress){
+          mintAddressInfo = find(mintAddress.data,(item) => {
+            return  item.mintAddress == member && item.targetChain == 'BNB Chain'
+          });
+        }
+        if(!mintAddressInfo){
+          mintAddressInfo = { 
+            mintAddress: member
+          }
+        }
         let obj = {
           ...mintAddressInfo,
           cap: mintSupply.cap,
