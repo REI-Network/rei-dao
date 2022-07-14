@@ -2,7 +2,7 @@
   {
     "targetChain": "BNB SMART CHAIN",
 	  "mintAddress": "0x8D395Fed2A40f3bB20289b277F7FE34Af5ae8756",
-	  "bridges": "Cbridges"
+	  "bridges": "cBridge"
   },
   {
     "targetChain": "BNB SMART CHAIN",
@@ -13,17 +13,21 @@
   {
     "targetChain": "Ethereum Mainnet",
 	  "mintAddress": "0xBB7684Cc5408F4DD0921E5c2Cadd547b8f1AD573",
-	  "bridges": "Cbridges old"
+	  "bridges": "cBridge",
+    "type": "old"
   },
   {
     "targetChain": "Ethereum Mainnet",
 	  "mintAddress": "0x9B36f165baB9ebe611d491180418d8De4b8f3a1f",
-	  "bridges": "Cbridge new"
+	  "bridges": "cBridge",
+    "type": "new"
+    
   },
   {
     "targetChain": "BNB Chain",
 	  "mintAddress": "0x9B36f165baB9ebe611d491180418d8De4b8f3a1f",
-	  "bridges": "Cbridges new"
+	  "bridges": "cBridge",
+    "type": "new"
   },
   {
     "targetChain": "Ethereum Mainnet",
