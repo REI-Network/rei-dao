@@ -653,13 +653,15 @@ export default {
         // this.grantRole()
         //this.setMintCap()
         //this.createrERC20()
-        resultList = resultList.concat(this.tokenInfoList)
+        if(this.connection.network == 'REI Network'){
+          resultList = resultList.concat(this.tokenInfoList)
+        }
         this.minterItems = mintAddress.data
         this.contractItems = resultList
         
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
-          let list =  await this.getTokenInfo(resultList[i].erc20Address);
+          let list =  await this.getTokenInfo(resultList[i].erc20Address,resultList[i]);
           console.log('list',list)
           arr = arr.concat(list)
         }
@@ -700,13 +702,14 @@ export default {
       }
        this.getListLoading = false;
     },
-    async getTokenInfo(contractAddress){
+    async getTokenInfo(contractAddress,token){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
+      const tokenProfile = find(tokenProfileList.data,(item) => item.address == contractAddress)
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
       let totalSupply = await contract.methods.totalSupply().call();
-      let symbol = await contract.methods.symbol().call();
-      let name = await contract.methods.name().call();
-      let decimals = await contract.methods.decimals().call();
+      let symbol = token.symbol;
+      let name = token.name;
+      let decimals = token.decimals;
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
       let members = [];
       for (var i = 0; i < Number(roleNumber); i++) {
@@ -732,7 +735,8 @@ export default {
           symbol,
           name,
           decimals,
-          contractAddress
+          contractAddress,
+          logo:tokenProfile.logo
         }
         members.push(obj);
       }
