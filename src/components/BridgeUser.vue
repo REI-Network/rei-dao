@@ -47,10 +47,23 @@
                           <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
                           <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        <span class="label-text">{{ item.symbol }}</span>
-                        <a :href="gotocBridgeUrl(item)" target="_blank">
-                          <v-icon size="16">mdi-open-in-new</v-icon>
-                        </a>
+                        
+                          <v-badge
+                             v-if="item.type=='new'"
+                            color="red"
+                            content="New"
+                          >
+                            <span class="label-text"> {{ item.symbol }}</span>
+                            <a :href="gotocBridgeUrl(item)" target="_blank">
+                              <v-icon size="16">mdi-open-in-new</v-icon>
+                            </a>
+                        </v-badge>
+                        <span v-else>
+                           <span class="label-text"> {{ item.symbol }}</span>
+                            <a :href="gotocBridgeUrl(item)" target="_blank">
+                              <v-icon size="16">mdi-open-in-new</v-icon>
+                            </a>
+                        </span>
                        
                     </div>
                   </template>
@@ -67,7 +80,7 @@
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: {{ item.total | asset(2) }}</span>
+                      <span>Used Amount: {{ item.total | asset(4) }}</span>
                       <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
@@ -75,7 +88,7 @@
                       <!-- <div>0</div> -->
                       <div :style="{marginLeft:item.minter+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
-                        <span>{{item.minter | asset(3) }}%</span>
+                        <span>{{item.percent | asset(3) }}%</span>
                       </div>
                     </div>
                   </template>
@@ -140,7 +153,7 @@
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: {{ item.total | asset(2) }}</span>
+                      <span>Used Amount: {{ item.total | asset(4) }}</span>
                       <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
                     <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
@@ -148,7 +161,7 @@
                       <!-- <div>0</div> -->
                       <div v-if="item.minter>0" :style="{marginLeft:item.minter+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
-                        <span>{{item.minter}}%</span>
+                        <span>{{item.percent | asset(3)}}%</span>
                       </div>
                     </div>
                   </template>
@@ -200,7 +213,7 @@
             </div>
             <div>
               <span class="left-title">Max:</span> 
-              <strong> {{ setMinterItem.cap | asset(2) }} </strong> 
+              <strong> {{ setMinterItem.cap | asset(4) }} </strong> 
               <span class="left-title">{{ setMinterItem.symbol }}</span>
             </div>
           </v-row>
@@ -214,7 +227,7 @@
           </div>
           <div class="min-minter ">
             <span class="left-title" style="text-align:left">Min Minter Cap:</span> 
-            <strong> {{ setMinterItem.total | asset(2) }} </strong>
+            <strong> {{ setMinterItem.total | asset(4) }} </strong>
             <span class="left-title">{{setMinterItem.symbol}}</span>
           </div>
            <v-form ref="setMinterERCForm"  lazy-validation>
@@ -254,7 +267,7 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Cap</span>
-            <strong>{{ revoke.cap | asset(2) }}</strong>
+            <strong>{{ revoke.cap | asset(4) }}</strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
@@ -270,7 +283,7 @@
              <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="36" width="80">
                 NO
             </v-btn>
-            <v-btn  small color="#6979F8" class="revoke-btn" style="color: #fff" @click="revokeRole()" height="36" width="80">
+            <v-btn  small color="#6979F8" :loading="revokeLoading" :disabled="revokeLoading" class="revoke-btn" style="color: #fff" @click="revokeRole()" height="36" width="80">
                 YES 
             </v-btn>
           </div>
@@ -491,8 +504,13 @@ import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
 const tokenProfileList = require('../bridges/tokenProfile/tokenList.json')
 
-const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7'
-const adminAddress ="0x5C8FB2f2681955A17981cA66171C2E38EfB7862f"
+const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7';
+const testAdminAddress = '0x5C8FB2f2681955A17981cA66171C2E38EfB7862f';
+const mainFactory = '0xF0FceDF9ab45edF14F5C15299E2E0CBE2D41661c';
+const mainAdminAddress = '0xF4954Eb3A4689EEf8F42dbBA33b8BcB9822771Df';
+
+let factoryAddress = '';
+let adminAddress = ''
 
 const tokenList = gql`
   query getTokenList{
@@ -535,6 +553,7 @@ export default {
       menuUp:0,
       width:0,
       getListLoading: false,
+      revokeLoading: false,
       setMinterCapDialog:false,
       revokeDialog:false,
       grantRoleDialog:false,
@@ -612,12 +631,18 @@ export default {
     };
   },
   watch: {
+     '$store.state.finishedTxs': function () {
+      this.getdata();
+    },
     '$store.state.connection': function() {
+      this.init()
       this.switchAccount();
+      this.getdata();
     },
   },
   mounted() {
     this.connect();
+    this.init();
     this.getdata();
     this.windowWidth();
     this.switchAccount();
@@ -639,8 +664,20 @@ export default {
         window.web3 = new Web3(window.web3.currentProvider);
       }
     },
+    init(){
+      if(this.connection.network == 'REI Network'){
+        factoryAddress = mainFactory;
+        adminAddress = mainAdminAddress;
+      } else if(this.connection.network == 'REI Testnet'){
+        factoryAddress = testFactory;
+        adminAddress = testAdminAddress;
+      }
+      
+    },
     async getdata(){
-       this.getListLoading = true;
+      this.getListLoading = true;
+      this.bridgeList = [];
+      this.chainList = [];
       try{
         let url = this.apiUrl.graph;
         client = new ApolloClient({
@@ -648,16 +685,12 @@ export default {
             cache: new InMemoryCache(),
         })
 
-        //let charts = []
         let {data:{createNewErc20Results:resultList}} = await client.query({
             query: tokenList,
             variables: {
             },
             fetchPolicy: 'cache-first',
         })
-        // this.grantRole()
-        //this.setMintCap()
-        //this.createrERC20()
         if(this.connection.network == 'REI Network'){
           resultList = resultList.concat(this.tokenInfoList)
         }
@@ -667,39 +700,13 @@ export default {
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
           let list =  await this.getTokenInfo(resultList[i].erc20Address,resultList[i]);
-          console.log('list',list)
           arr = arr.concat(list)
         }
-        console.log('arr',arr)
         arr.map((item) => {
-          if(item.bridges == "cBridge"){
-           this.bridgeList.push(item)
-          }else{
+          if(item.bridges == "cBridge") {
+            this.bridgeList.push(item)
+          } else {
             this.chainList.push(item)
-          }
-        })
-        this.chainList = this.chainList.map((item) => {
-           let total = web3.utils.toBN(item.total).div(web3.utils.toBN(10**item.decimals)).toString()
-          let cap = web3.utils.toBN(item.cap).div(web3.utils.toBN(10**item.decimals)).toString()
-          let minter =(total/cap)*100
-          return{
-            ...item,
-            total:total,
-            cap:cap,
-            minter:minter,
-          }
-        })
-        this.bridgeList = this.bridgeList.map((item) => {
-          let total = web3.utils.toBN(item.total).div(web3.utils.toBN(10**item.decimals)).toString()
-          let cap = web3.utils.toBN(item.cap).div(web3.utils.toBN(10**item.decimals)).toString()
-
-          console.log('total',total,'cap',cap)
-          let minter =(total/cap)*100
-          return{
-            ...item,
-            total:total,
-            cap:cap,
-            minter:minter,
           }
         })
         console.log(arr)
@@ -722,6 +729,11 @@ export default {
       for (var i = 0; i < Number(roleNumber); i++) {
         let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
         let mintSupply = await contract.methods.minterSupply(member).call();
+
+        let cap = mintSupply.cap/10**decimals;
+        
+        let total = mintSupply.total/10**decimals;
+        let percent = (total/cap)*100;
         let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member);
         // BUSD
         if('0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786' == contractAddress){
@@ -736,14 +748,15 @@ export default {
         }
         let obj = {
           ...mintAddressInfo,
-          cap: mintSupply.cap,
-          total: mintSupply.total,
+          cap,
+          total,
+          percent,
           totalSupply,
           symbol,
           name,
           decimals,
           contractAddress,
-          logo:tokenProfile.logo
+          logo:tokenProfile?.logo||''
         }
         members.push(obj);
       }
@@ -781,6 +794,7 @@ export default {
     },
     async grantRole(){
       try {
+        this.grantLoading = true;
         this.grantRoleDialog = false;
         let contract = new web3.eth.Contract(abiBridgedERC20, this.selectContractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
@@ -804,15 +818,18 @@ export default {
               }
             });
            this.grantRoleDialog = false;
+           this.grantLoading = false;
         }
       } catch(e){
         this.grantRoleDialog = false;
+        this.grantLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
     },
     async revokeRole(){
       try {
+        this.revokeLoading = true;
         let contract = new web3.eth.Contract(abiBridgedERC20,  this.revoke.contractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
         let mintAddress =  this.revoke.mintAddress;
@@ -834,10 +851,12 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+            this.revokeDialog = false;
+            this.revokeLoading = false;
         }
       } catch(e){
-        //this.dialog = false;
+        this.revokeDialog = false;
+        this.revokeLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
@@ -865,11 +884,11 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+            this.setMinterCapDialog = false;
         }
         console.log(res)
       } catch(e){
-        //this.dialog = false;
+        this.setMinterCapDialog = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
@@ -879,7 +898,7 @@ export default {
         if (!this.$refs.creatERCForm.validate()) return;
         this.createLoading = true;
         let newERC20 = this.createForm;
-        let contract = new web3.eth.Contract(abiFactory,testFactory);
+        let contract = new web3.eth.Contract(abiFactory,factoryAddress);
         let res = await contract.methods.create(newERC20.name, newERC20.symbol, newERC20.decimals).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei('10'))
