@@ -44,10 +44,14 @@
                   <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/token logo.svg" class="logo-img"  height="32" width="32"/>
+                          <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
+                          <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
                         <span class="label-text">{{ item.symbol }}</span>
-                        <v-icon size="16">mdi-open-in-new</v-icon>
+                        <a :href="gotocBridgeUrl(item)" target="_blank">
+                          <v-icon size="16">mdi-open-in-new</v-icon>
+                        </a>
+                       
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
@@ -79,7 +83,7 @@
                   <v-btn  small color="#6979F8" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
                       Set Minter Cap
                     </v-btn>
-                    <v-btn  small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
+                    <v-btn small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
                       Revoke
                     </v-btn>
                   </template>
@@ -114,10 +118,13 @@
                   <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/token logo.svg" class="logo-img"  height="32" width="32"/>
+                          <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
+                          <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
                         <span class="label-text">{{ item.symbol }}</span>
-                        <v-icon size="16">mdi-open-in-new</v-icon>
+                        <a :href="gotocMultichainUrl(item)" target="_blank">
+                          <v-icon size="16">mdi-open-in-new</v-icon>
+                        </a>
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
@@ -704,7 +711,7 @@ export default {
     },
     async getTokenInfo(contractAddress,token){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
-      const tokenProfile = find(tokenProfileList.data,(item) => item.address == contractAddress)
+      let tokenProfile = find(tokenProfileList.data,(item) => item.address == contractAddress)
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
       let totalSupply = await contract.methods.totalSupply().call();
       let symbol = token.symbol;
@@ -963,7 +970,20 @@ export default {
     },
     closeSucessDialog(){
       this.createSuccessDialog = false;
+    },
+    gotocBridgeUrl(token){
+      let url = '';
+      if(token.targetChain == 'Ethereum Mainnet'){
+        url = `https://cbridge.celer.network/#/transfer?sourceChainId=47805&destinationChainId=1&tokenSymbol=${token.symbol}`
+      } else if(token.targetChain == 'BNB Chain'){
+        url = `https://cbridge.celer.network/#/transfer?sourceChainId=47805&destinationChainId=56&tokenSymbol=${token.symbol}`
+      }
+      return url
+    },
+    gotocMultichainUrl(token){
+      return `https://app.multichain.org/#/router?bridgetoken=${token.contractAddress}&network=47805`
     }
+    
   }
 };
 </script>
