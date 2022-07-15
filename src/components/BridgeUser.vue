@@ -663,8 +663,6 @@ export default {
     },
     async getdata(){
       this.getListLoading = true;
-      this.bridgeList = [];
-      this.chainList = [];
       try{
         let url = this.apiUrl.graph;
         client = new ApolloClient({
@@ -680,6 +678,7 @@ export default {
         })
         if(this.connection.network == 'REI Network'){
           resultList = resultList.concat(this.tokenInfoList)
+          console.log('resultList',resultList)
         }
         this.minterItems = mintAddress.data.map((item)=>{
           return {
@@ -690,21 +689,27 @@ export default {
         this.contractItems = resultList
         
         let arr = [];
+        let bridgeList = [];
+        let chainList = [];
         for(let i = 0;i < resultList.length; i++){
           let list =  await this.getTokenInfo(resultList[i].erc20Address,resultList[i]);
           arr = arr.concat(list)
         }
         arr.map((item) => {
           if(item.bridges == "cBridge") {
-            this.bridgeList.push(item)
+            bridgeList.push(item)
           } else {
-            this.chainList.push(item)
+            chainList.push(item)
           }
         })
-        console.log(arr)
+        this.bridgeList = bridgeList;
+        this.chainList = chainList;
+        console.log('bridgeList',this.bridgeList)
+        console.log('chainList',this.chainList)
         this.getListLoading = false;
       } catch(e){
         this.getListLoading = false;
+        this.$dialog.notify.warning(e.message);
         console.log(e)
       }
       
