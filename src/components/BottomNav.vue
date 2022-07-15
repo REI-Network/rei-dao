@@ -52,7 +52,7 @@ export default {
           show: true,
         },
         {
-          icon: '&#xe615;',
+          icon: '&#xe61c;',
           text: 'Bridge',
           link: '/bridge',
           name: 'bridge',

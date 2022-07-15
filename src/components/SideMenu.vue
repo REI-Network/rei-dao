@@ -82,8 +82,8 @@ export default {
           show: true,
         },
         {
-          icon: '&#xe615;',
-          text: 'Bridge',
+          icon: '&#xe61c;',
+          text: 'Bridges',
           link: '/bridge',
           name: 'bridge',
           show: true,

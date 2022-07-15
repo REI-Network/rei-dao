@@ -1,8 +1,8 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <h1>Bridges asset Management</h1>
-      <div class="title-detailed">Easier management of cross-chain assets on REI Network</div>
+      <h1>Bridges Asset Management</h1>
+      <div class="title-detailed">Easier Management of Bridge Assets on REI Network</div>
     </div>
     <BridgeUser></BridgeUser>
   </v-container>

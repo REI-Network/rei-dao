@@ -2,19 +2,19 @@
   <v-container style="padding: 0">
     <v-card class="bridge-user">
       <v-row justify="space-between">
-        <v-col cols="12" md="5"><h3>Bridges asset Management on REI Network</h3></v-col>
-        <v-col class="title-right" cols="12" md="6">
-          <v-row>
-            <v-btn text outlined color="validator">
-              <span class="iconfont">&#xe619;</span>
+        <v-col cols="12" md="5"><h3>Bridges Asset Management on REI Network</h3></v-col>
+        <v-col class="title-right">
+          <v-row justify="end" no-gutters>
+            <v-btn text outlined color="validator" v-if="this.connection.address != admin">
+              <v-img src="../assets/images/light-token-info.svg" class="icon-logo" width="16" height="16" />
             Submit Token Info
           </v-btn>
-          <v-btn text outlined color="validator" @click="openGrantRole()">
-            <span class="iconfont">&#xe618;</span>
+          <v-btn text outlined color="validator" @click="openGrantRole()" v-if="this.connection.address == admin">
+            <v-img src="../assets/images/light-add-minter.svg" class="icon-logo" width="16" height="16" />
             Add minter
           </v-btn>
-          <v-btn text outlined color="validator" @click="openCreateToken()">
-            <span class="iconfont">&#xe601;</span>
+          <v-btn text outlined color="validator" style="padding-right:4px;" @click="openCreateToken()">
+            <v-img src="../assets/images/light-create-token.svg" class="icon-logo" width="16" height="16" />
             Create your token
           </v-btn>
           </v-row>
@@ -22,7 +22,7 @@
       </v-row>
       <v-tabs v-model="tab" align-with-title hide-slider class="vote-list" background-color="background">
         <v-radio-group v-model="radios" mandatory row dense style="margin-top: 0" class="trend-tab">
-          <v-tab key="1"> <v-radio label="Cbridge" value="1" class="trends-radio"> </v-radio></v-tab>
+          <v-tab key="1"> <v-radio label="cBridge" value="1" class="trends-radio"> </v-radio></v-tab>
           <v-tab key="2"> <v-radio label="Multichain" value="2" class="trends-radio"> </v-radio></v-tab>
         </v-radio-group>
       </v-tabs>
@@ -36,26 +36,43 @@
                   class="background elevation-0"
                   hide-default-footer
                   :items-per-page="itemsPerPage"
-                  :loading="stakeListLoading"
+                  :loading="getListLoading"
                   :loading-text="$t('msg.loading')"
                   :page.sync="page"
                   @page-count="pageCount = $event"
                 >
-                  <template v-slot:item.label="{ item }">
+                  <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
+                          <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
+                          <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        <span class="label-text">{{ item.name }}</span>
-                        <v-icon size="16">mdi-open-in-new</v-icon>
+                        
+                          <v-badge
+                             v-if="item.type=='new'"
+                            color="red"
+                            content="New"
+                          >
+                            <span class="label-text"> {{ item.symbol }}</span>
+                            <a :href="gotocBridgeUrl(item)" target="_blank">
+                              <v-icon size="16">mdi-open-in-new</v-icon>
+                            </a>
+                        </v-badge>
+                        <span v-else>
+                           <span class="label-text"> {{ item.symbol }}</span>
+                            <a :href="gotocBridgeUrl(item)" target="_blank">
+                              <v-icon size="16">mdi-open-in-new</v-icon>
+                            </a>
+                        </span>
+                       
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
                      <div class="bridge-label">
-                        <div class="left-img">
+                        <!-- <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
-                        </div>
-                        <span class="label-text">{{ item.targetChain }}</span>
+                        </div> -->
+                        <span >{{ item.targetChain }}</span>
                     </div>
                   </template>
                    <template v-slot:item.address="{ item }">
@@ -63,15 +80,15 @@
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: {{ item.total | asset(2) }}</span>
-                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
+                      <span>Used Amount: {{ item.total | asset(4) }}</span>
+                      <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.percent"></v-progress-linear>
                     <div class="process">
-                      <div>0</div>
-                      <div :style="{marginLeft:item.minter-5+'%'}">
-                        <v-icon color="#6979F8">mdi-menu-up</v-icon>
-                        <span>{{item.minter}}%</span>
+                      <!-- <div>0</div> -->
+                      <div :style="{marginLeft:item.percent+'%'}">
+                        <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
+                        <span>{{item.percent | asset(3) }}%</span>
                       </div>
                     </div>
                   </template>
@@ -79,7 +96,7 @@
                   <v-btn  small color="#6979F8" class="mr-2" style="color: #fff" @click="openMinterCap(item)" height="32">
                       Set Minter Cap
                     </v-btn>
-                    <v-btn  small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
+                    <v-btn small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32">
                       Revoke
                     </v-btn>
                   </template>
@@ -106,26 +123,29 @@
                   class="background elevation-0"
                   hide-default-footer
                   :items-per-page="itemsPerPage"
-                  :loading="stakeListLoading"
+                  :loading="getListLoading"
                   :loading-text="$t('msg.loading')"
-                  :page.sync="page"
-                  @page-count="pageCount = $event"
+                  :page.sync="page2"
+                  @page-count="pageCount2 = $event"
                 >
-                  <template v-slot:item.label="{ item }">
+                  <template v-slot:item.symbol="{ item }">
                     <div class="bridge-label">
                         <div class="left-img">
-                          <v-img src="../assets/images/rei.svg" class="logo-img"  height="24" width="24"/>
+                          <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
+                          <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        <span class="label-text">{{ item.name }}</span>
-                        <v-icon size="16">mdi-open-in-new</v-icon>
+                        <span class="label-text">{{ item.symbol }}</span>
+                        <a :href="gotocMultichainUrl(item)" target="_blank">
+                          <v-icon size="16">mdi-open-in-new</v-icon>
+                        </a>
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
                      <div class="bridge-label">
-                        <div class="left-img">
+                        <!-- <div class="left-img">
                           <v-img src="../assets/images/total.png" class="logo-img"  height="24" width="24"/>
-                        </div>
-                        <span class="label-text">{{ item.targetChain }}</span>
+                        </div> -->
+                        <span>{{ item.targetChain }}</span>
                     </div>
                   </template>
                    <template v-slot:item.address="{ item }">
@@ -133,15 +153,15 @@
                   </template>
                   <template v-slot:item.minter="{ item }">
                     <v-row justify="space-between" class="minter-cap">
-                      <span>Used Amount: {{ item.total | asset(2) }}</span>
-                      <span>Max: {{ item.cap | asset(2) }}USDT</span>
+                      <span>Used Amount: {{ item.total | asset(4) }}</span>
+                      <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.percent"></v-progress-linear>
                     <div class="process">
-                      <div>0</div>
-                      <div v-if="item.minter>0" :style="{marginLeft:item.minter-5+'%'}">
-                        <v-icon color="#6979F8">mdi-menu-up</v-icon>
-                        <span>{{item.minter}}%</span>
+                      <!-- <div>0</div> -->
+                      <div v-if="item.minter>0" :style="{marginLeft:item.percent+'%'}">
+                        <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
+                        <span>{{item.percent | asset(3)}}%</span>
                       </div>
                     </div>
                   </template>
@@ -156,8 +176,8 @@
                 </v-data-table>
                 <div class="text-pagination pt-2" v-if="chainList.length > 0">
                   <v-pagination
-                    v-model="page"
-                    :length="pageCount"
+                    v-model="page2"
+                    :length="pageCount2"
                     color="vote_button"
                     background-color="start_unstake"
                     class="v-pagination"
@@ -180,7 +200,7 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <strong>{{ setMinterItem.symbol }} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
@@ -193,44 +213,42 @@
             </div>
             <div>
               <span class="left-title">Max:</span> 
-              <strong> {{ setMinterItem.cap | asset(2) }} </strong> 
-              <span class="left-title">USDT</span>
+              <strong> {{ setMinterItem.cap | asset(4) }} </strong> 
+              <span class="left-title">{{ setMinterItem.symbol }}</span>
             </div>
           </v-row>
-          <v-progress-linear color="#6979F8" rounded background-color="#F5F5F5" :value="setMinterItem.minter+'%'"></v-progress-linear>
+          <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.percent"></v-progress-linear>
           <div class="">
-            <div>0</div>
-            <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter-2+'%'}">
-              <v-icon color="#6979F8">mdi-menu-up</v-icon>
-              <span>{{setMinterItem.minter}}%</span>
+            <!-- <div>0</div> -->
+            <div v-if="setMinterItem.percent > 0" class="minter-item" :style="{marginLeft:setMinterItem.percent-5+'%'}">
+              <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
+              <span>{{setMinterItem.percent | asset(3) }}%</span>
             </div>
           </div>
           <div class="min-minter ">
             <span class="left-title" style="text-align:left">Min Minter Cap:</span> 
-            <strong> {{ setMinterItem.total | asset(2) }} </strong>
-            <span class="left-title">USDT</span>
+            <strong> {{ setMinterItem.total | asset(4) }} </strong>
+            <span class="left-title">{{setMinterItem.symbol}}</span>
           </div>
-          <v-row class="from-voting" justify="space-between">
-              <v-col  cols="12" md="2">
+           <v-form ref="setMinterERCForm"  lazy-validation>
+          <div class="from-voting" >
                 <div class="input-title">Minter Cap</div>
-              </v-col>
-                <v-col cols="12" md="10">
                   <v-text-field 
                     required
                     outlined 
                     background-color="input_other" 
                     class="text-filed"
-                    :rules="addressRules"
+                    :rules="minterRules"
                     v-model="minterCap"
                   >
                 </v-text-field>
-                </v-col>
-            </v-row>
-            <div class="submit-btn">
-            <v-btn  small color="#6979F8" class="mr-4" @click="setMintCap()"  style="color: #fff" height="32" width="120">
-                Set 
-            </v-btn>
-          </div>
+                 <div class="submit-btn">
+                   <v-btn  small color="#6979F8" @click="setMintCap()"  style="color: #fff" height="36" width="120">
+                     Set 
+                   </v-btn>
+                </div>
+            </div>
+          </v-form>
         </v-card>
       </v-dialog>
       <v-dialog v-model="revokeDialog" width="500">
@@ -245,11 +263,11 @@
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Token</span>
-            <strong>Binance USD (BUSD) </strong>
+            <strong>{{revoke.symbol}} </strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Cap</span>
-            <strong>{{ revoke.cap | asset(2) }}</strong>
+            <strong>{{ revoke.cap | asset(4) }}</strong>
           </v-row>
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Target Chain</span>
@@ -258,13 +276,14 @@
           <v-divider class="revoke-divider" />
           <v-row justify="space-between" class="title-row" no-gutters>
             <span class="left-title">Minter Address</span>
-            <strong>{{revoke.mintAddress}}</strong>
+            <strong  v-if="width > 900 ">{{revoke.mintAddress}}</strong>
+            <strong  v-else>{{revoke.mintAddress}}</strong>
           </v-row>
           <div class="text-center">
-             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="32" width="80">
+             <v-btn  small outlined color="#868E9E" class="mr-4 revoke-btn" @click="cancelRevoke()" height="36" width="80">
                 NO
             </v-btn>
-            <v-btn  small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="revokeRole()" height="32" width="80">
+            <v-btn  small color="#6979F8" :loading="revokeLoading" :disabled="revokeLoading" class="revoke-btn" style="color: #fff" @click="revokeRole()" height="36" width="80">
                 YES 
             </v-btn>
           </div>
@@ -296,7 +315,8 @@
                       <div>{{ data.item.erc20Address | addr }}</div>
                   </template>
                   <template v-slot:item="data">
-                    <div>{{ data.item.erc20Address }}</div>
+                    <div v-if="width>900">{{ data.item.erc20Address }}</div>
+                    <div v-else>{{ data.item.erc20Address | addr}}</div>
                   </template>
                </v-autocomplete>
             </v-col>
@@ -329,20 +349,21 @@
                     label="Address"
                     :items="minterItems"
                     @change="selectMintAddrChange"
-                    item-text="mintAddress"
-                    item-value="mintAddress"
-                    v-model="minterAddress"
+                    item-text="minterAddress"
+                    item-value="id"
                   >
                   <template v-slot:selection="data">
                     <div>{{ data.item.mintAddress | addr }}</div>
                   </template>
                   <template #item="{ item }">
-                    <div>{{ item.mintAddress }}</div>
+                    <div v-if="width > 900">{{ item.mintAddress }}</div>
+                    <div v-else>{{ item.mintAddress | addr}}</div>
                   </template>
                   </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="2">
-                 <v-img src="../assets/images/add.png"  class="add-plus" />
+                 <v-img src="../assets/images/add_link_normal.svg"  class="add-plus" />
+                 <!-- <div class="add-plus"></div> -->
                </v-col>
               </v-row>
             </v-col>
@@ -361,7 +382,7 @@
           </v-row>
           </div>
           <div class="submit-btn">
-            <v-btn  small color="#6979F8" class="mr-4" @click="grantRole()" :loading="grantLoading" :disabled="grantBtnDisable" style="color: #fff" height="32" width="120">
+            <v-btn  small color="#6979F8" @click="grantRole()" :loading="grantLoading" :disabled="grantBtnDisable" style="color: #fff" height="36" width="120">
                 Grant 
             </v-btn>
           </div>
@@ -421,13 +442,13 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row justify="space-between">
+            <v-row justify="space-between" no-gutters>
               <div>
-                <span class="left-title">Services Fees : </span>
+                <span class="left-title">  Services Fees : </span>
                 <strong class="service-fees">10 </strong>
                 <span class="left-title">REI</span>
               </div>
-              <v-btn @click="createrERC20" small color="vote_button"  :loading="createLoading" class="font-btn mr-4" height="32" width="120">
+              <v-btn @click="createrERC20" small color="vote_button"  :loading="createLoading" class="font-btn" height="36" width="120">
                   Create 
               </v-btn>
             </v-row>
@@ -458,7 +479,7 @@
             </strong>
           </v-row>
           <div class="text-center">
-            <v-btn small color="#6979F8" class="mr-4 revoke-btn" style="color: #fff" @click="closeSucessDialog()" height="32" width="80">
+            <v-btn small color="#6979F8" class="revoke-btn" style="color: #fff" @click="closeSucessDialog()" height="32" width="80">
                 OK  
             </v-btn>
           </div>
@@ -480,8 +501,15 @@ import filters from '../filters';
 import Web3 from 'web3';
 import find from 'lodash/find';
 const mintAddress = require('../bridges/mintAddress/index.json')
+const tokenProfileList = require('../bridges/tokenProfile/tokenList.json')
 
-const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7'
+const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7';
+const testAdminAddress = '0x5C8FB2f2681955A17981cA66171C2E38EfB7862f';
+const mainFactory = '0xF0FceDF9ab45edF14F5C15299E2E0CBE2D41661c';
+const mainAdminAddress = '0xF4954Eb3A4689EEf8F42dbBA33b8BcB9822771Df';
+
+let factoryAddress = '';
+let adminAddress = ''
 
 const tokenList = gql`
   query getTokenList{
@@ -509,6 +537,8 @@ export default {
       radios: null,
       page: 1,
       pageCount: 0,
+      page2:1,
+      pageCount2: 0,
       itemsPerPage: 10,
       currentItem:{},
       capForm:{},
@@ -521,7 +551,8 @@ export default {
       },
       menuUp:0,
       width:0,
-      stakeListLoading: false,
+      getListLoading: false,
+      revokeLoading: false,
       setMinterCapDialog:false,
       revokeDialog:false,
       grantRoleDialog:false,
@@ -536,12 +567,12 @@ export default {
       setMinterItem:"",
       createLoading: false,
       grantBtnDisable:false,
+      admin:"",
       headers: [
-          {text:'Label', value: 'label'},
+          {text:'Symbol', value: 'symbol'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
           { text: 'Address', value: 'address' },
-          { text: 'Operation', value: 'operation' },
       ],
       bridgeList:[],
       chainList:[],
@@ -551,19 +582,69 @@ export default {
         name:'',
         contractAddress:''
       },
-      addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
+      val:false,
+      //  minterRules:[],
+      minterRules:[(v) => !!v || "Please enter the Minter Cap",(v)=>(v && util.isNumber(v) && v > this.setMinterItem.total) || "Please enter a number greater than Min Minter Cap"],
       tokenRules:[(v) => !!v || "Please enter the token"],
       tokenNameRules: [(v) => !!v || "Please enter the Token Name"],
       tokenSymbolRules: [(v) => !!v || "Please enter the Token symbol"],
       tokenDecimalsRules:  [(v) => !!v || "Please enter the Token Decimals"],
+      tokenInfoList:[
+        {
+          decimals: "8",
+          erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+          name:"Wrapped BTC",
+          symbol:"WBTC"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+          name:"Tether USD",
+          symbol:"USDT"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+          name:"USD Coin",
+          symbol:"USDC"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+          name:"Wrapped Ether",
+          symbol:"WETH"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+          name:"Dai Stablecoin",
+          symbol:"DAI"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+          name:"Binance USD",
+          symbol:"BUSD"
+        }
+      ]
     };
   },
   watch: {
+     '$store.state.finishedTxs': function () {
+      this.getdata();
+    },
+    '$store.state.connection': function() {
+      this.init()
+      this.switchAccount();
+      this.getdata();
+    },
   },
   mounted() {
     this.connect();
+    this.init();
     this.getdata();
-    this.windowWidth()
+    this.windowWidth();
+    this.switchAccount();
   },
   computed: {
      ...mapGetters({
@@ -582,61 +663,54 @@ export default {
         window.web3 = new Web3(window.web3.currentProvider);
       }
     },
+    init(){
+      if(this.connection.network == 'REI Network'){
+        factoryAddress = mainFactory;
+        adminAddress = mainAdminAddress;
+      } else if(this.connection.network == 'REI Testnet'){
+        factoryAddress = testFactory;
+        adminAddress = testAdminAddress;
+      }
+      
+    },
     async getdata(){
-       this.stakeListLoading = true;
+      this.getListLoading = true;
+      this.bridgeList = [];
+      this.chainList = [];
       try{
-         let url = this.apiUrl.graph;
+        let url = this.apiUrl.graph;
         client = new ApolloClient({
             uri: `${url}erc20-factory`,
             cache: new InMemoryCache(),
         })
 
-        //let charts = []
-        const {data:{createNewErc20Results:resultList}} = await client.query({
+        let {data:{createNewErc20Results:resultList}} = await client.query({
             query: tokenList,
             variables: {
             },
             fetchPolicy: 'cache-first',
         })
-        // this.grantRole()
-        //this.setMintCap()
-        //this.createrERC20()
-        this.minterItems = mintAddress.data
+        if(this.connection.network == 'REI Network'){
+          resultList = resultList.concat(this.tokenInfoList)
+        }
+        this.minterItems = mintAddress.data.map((item)=>{
+          return {
+            ...item,
+            id: item.mintAddress+encodeURIComponent(item.targetChain)
+          }
+        })
         this.contractItems = resultList
         
         let arr = [];
         for(let i = 0;i < resultList.length; i++){
-          let list =  await this.getTokenInfo(resultList[i].erc20Address);
-          console.log('list',list)
+          let list =  await this.getTokenInfo(resultList[i].erc20Address,resultList[i]);
           arr = arr.concat(list)
         }
         arr.map((item) => {
-          if(item.bridges == "Cbridges"){
-           this.bridgeList.push(item)
-          }else{
+          if(item.bridges == "cBridge") {
+            this.bridgeList.push(item)
+          } else {
             this.chainList.push(item)
-          }
-        })
-        this.chainList = this.chainList.map((item) => {
-          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
-          let minter =(total/cap)*100
-          return{
-            ...item,
-            total:total,
-            cap:cap,
-            minter:minter,
-          }
-        })
-        this.bridgeList = this.bridgeList.map((item) => {
-          let total = web3.utils.fromWei(web3.utils.toBN(item.total))
-          let cap = web3.utils.fromWei(web3.utils.toBN(item.cap))
-          let minter =(total/cap)*100
-          return{
-            ...item,
-            total:total,
-            cap:cap,
-            minter:minter,
           }
         })
         console.log(arr)
@@ -644,30 +718,49 @@ export default {
       } catch(e){
         console.log(e)
       }
-       this.stakeListLoading = false;
+       this.getListLoading = false;
     },
-    async getTokenInfo(contractAddress){
+    async getTokenInfo(contractAddress,token){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
+      let tokenProfile = find(tokenProfileList.data,(item) => item.address == contractAddress)
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
       let totalSupply = await contract.methods.totalSupply().call();
-      let symbol = await contract.methods.symbol().call();
-      let name = await contract.methods.name().call();
-      let decimals = await contract.methods.decimals().call();
+      let symbol = token.symbol;
+      let name = token.name;
+      let decimals = token.decimals;
       const roleNumber = await contract.methods.getRoleMemberCount(MINTER_ROLE).call();
       let members = [];
       for (var i = 0; i < Number(roleNumber); i++) {
         let member = await contract.methods.getRoleMember(MINTER_ROLE, i).call();
         let mintSupply = await contract.methods.minterSupply(member).call();
-        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member)
+
+        let cap = mintSupply.cap/10**decimals;
+        
+        let total = mintSupply.total/10**decimals;
+        let percent = (total/cap)*100;
+        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member);
+        // BUSD
+        if('0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786' == contractAddress){
+          mintAddressInfo = find(mintAddress.data,(item) => {
+            return  item.mintAddress == member && item.targetChain == 'BNB Chain'
+          });
+        }
+        if(!mintAddressInfo){
+          mintAddressInfo = { 
+            mintAddress: member
+          }
+        }
         let obj = {
           ...mintAddressInfo,
-          cap: mintSupply.cap,
-          total: mintSupply.total,
+          cap,
+          total,
+          percent,
           totalSupply,
           symbol,
           name,
           decimals,
-          contractAddress
+          contractAddress,
+          logo:tokenProfile?.logo||''
         }
         members.push(obj);
       }
@@ -693,8 +786,9 @@ export default {
       this.grantLoading = false;
       this.grantBtnDisable = flag;
     },
-    selectMintAddrChange(){
-      this.selectMintAddressInfo = find(mintAddress.data,(item)=> item.mintAddress == this.minterAddress)
+    selectMintAddrChange(e){
+      this.selectMintAddressInfo = find(this.minterItems,(item)=> item.id == e)
+      this.minterAddress = this.selectMintAddressInfo.mintAddress;
       this.getMintInfo()
     },
     selectContractChange(){
@@ -705,7 +799,7 @@ export default {
     },
     async grantRole(){
       try {
-        this.grantRoleDialog = false;
+        this.grantLoading = true;
         let contract = new web3.eth.Contract(abiBridgedERC20, this.selectContractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
         let mintAddress = this.minterAddress;
@@ -728,15 +822,18 @@ export default {
               }
             });
            this.grantRoleDialog = false;
+           this.grantLoading = false;
         }
       } catch(e){
         this.grantRoleDialog = false;
+        this.grantLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
     },
     async revokeRole(){
       try {
+        this.revokeLoading = true;
         let contract = new web3.eth.Contract(abiBridgedERC20,  this.revoke.contractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
         let mintAddress =  this.revoke.mintAddress;
@@ -758,16 +855,19 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+            this.revokeDialog = false;
+            this.revokeLoading = false;
         }
       } catch(e){
-        //this.dialog = false;
+        this.revokeDialog = false;
+        this.revokeLoading = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
     },
     async setMintCap(){
       try {
+         if (!this.$refs.setMinterERCForm.validate()) return;
         let contract = new web3.eth.Contract(abiBridgedERC20, this.setMinterItem.contractAddress);
         let mintAddress = this.setMinterItem.mintAddress;
         let res = await contract.methods.setMinterCap(mintAddress,  web3.utils.numberToHex(web3.utils.toWei(this.minterCap))).send(
@@ -788,11 +888,11 @@ export default {
                 timestamp: new Date().getTime()
               }
             });
-            //this.dialog = false;
+            this.setMinterCapDialog = false;
         }
         console.log(res)
       } catch(e){
-        //this.dialog = false;
+        this.setMinterCapDialog = false;
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
@@ -802,7 +902,7 @@ export default {
         if (!this.$refs.creatERCForm.validate()) return;
         this.createLoading = true;
         let newERC20 = this.createForm;
-        let contract = new web3.eth.Contract(abiFactory,testFactory);
+        let contract = new web3.eth.Contract(abiFactory,factoryAddress);
         let res = await contract.methods.create(newERC20.name, newERC20.symbol, newERC20.decimals).send({
             from: this.connection.address,
             value: web3.utils.numberToHex(web3.utils.toWei('10'))
@@ -838,6 +938,18 @@ export default {
         this.$dialog.notify.warning(e.message);
       }
     },
+    switchAccount(){
+      this.admin = adminAddress
+      if(this.connection.address == this.admin){
+        this.headers = [
+          {text:'Symbol', value: 'symbol'},
+          { text: 'Target Chain', value: 'target' },
+          { text: 'Minter Cap', value: 'minter' },
+          { text: 'Address', value: 'address' },
+          { text: 'Operation', value: 'operation' },
+       ]
+      }
+    },
     windowWidth() {
       const that = this;
       that.width = window.innerWidth;
@@ -868,6 +980,9 @@ export default {
       this.revokeDialog = false;
     },
     openGrantRole(){
+      if(!this.selectContractAddress&&!this.minterAddress){
+         this.grantBtnDisable = true;
+      }
       this.grantRoleDialog = true;
     },
     cancelGrantRole(){
@@ -881,7 +996,20 @@ export default {
     },
     closeSucessDialog(){
       this.createSuccessDialog = false;
+    },
+    gotocBridgeUrl(token){
+      let url = '';
+      if(token.targetChain == 'Ethereum Mainnet'){
+        url = `https://cbridge.celer.network/#/transfer?sourceChainId=47805&destinationChainId=1&tokenSymbol=${token.symbol}`
+      } else if(token.targetChain == 'BNB Chain'){
+        url = `https://cbridge.celer.network/#/transfer?sourceChainId=47805&destinationChainId=56&tokenSymbol=${token.symbol}`
+      }
+      return url
+    },
+    gotocMultichainUrl(token){
+      return `https://app.multichain.org/#/router?bridgetoken=${token.contractAddress}&network=47805`
     }
+    
   }
 };
 </script>
@@ -889,6 +1017,9 @@ export default {
 <style scoped lang="scss">
 .vote-list{
   margin-top:30px;
+}
+.icon-logo{
+  margin-right: 6px;
 }
 .v-btn {
   text-transform: none !important;
@@ -899,10 +1030,12 @@ export default {
     text-transform: none !important;
     margin-left: 0 !important;
   }
-.title-right{
-  margin-top: 10px;
+.title-right{ 
   .v-btn.v-btn--outlined.v-btn--text{
     border:none;
+  }
+  .right-row{
+    text-align: right;
   }
 }
 .theme--light.v-progress-linear{
@@ -915,11 +1048,10 @@ export default {
     display: flex;
     align-items: center;
     .left-img{
-      height: 24px;
-      width: 24px;
+      margin-left:-6px;
     }
     .label-text{
-      margin-left: 13px;
+      margin-left: 10px;
       margin-right: 12px;
     }
     .minter-address{
@@ -931,7 +1063,6 @@ export default {
 }
 .submit-btn{
   text-align: right;
-  margin-top:20px;
 }
  .minter-cap{
     padding: 12px;
@@ -939,7 +1070,7 @@ export default {
     width: 340px;
   }
   .minter-item{
-    margin-top:-28px;
+    // margin-top:-28px;
   }
   .set-minter{
     padding: 12px;
@@ -968,14 +1099,13 @@ export default {
   .create-field{
     margin-top:8px;
   }
-  .from-voting {
-  margin-top: 12px;
   .input-title {
     color: #868e9e;
-    margin-top: 15px;
-    text-align: center;
-    height: 40px;
+      text-align: left !important;
     }
+  .cap-name{
+    padding:0 ;
+    margin-bottom: -10px;
   }
 .font-btn.v-btn.v-btn--has-bg {
   color: #fff;
@@ -995,6 +1125,7 @@ export default {
     text-align: right;
     width:56px;
     margin-left: 8px;
+    background-image: url("../assets/images/add_link_normal.svg") center center no-repeat;
   }
 }
 @media screen and (max-width: 900px) {
@@ -1004,5 +1135,15 @@ export default {
   .minter-cap{
     width: 240px;
   }
+  // .from-voting {
+  //   .input-title {
+  //     margin-left: 12px;
+  //     text-align: left !important;
+  //   }
+  // }
+  // .cap-name{
+  //   padding:0 ;
+  //   margin-bottom: -20px;
+  // }
 }
 </style>
