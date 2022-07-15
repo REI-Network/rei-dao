@@ -83,10 +83,10 @@
                       <span>Used Amount: {{ item.total | asset(4) }}</span>
                       <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.percent"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
-                      <div :style="{marginLeft:item.minter+'%'}">
+                      <div :style="{marginLeft:item.percent+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
                         <span>{{item.percent | asset(3) }}%</span>
                       </div>
@@ -156,10 +156,10 @@
                       <span>Used Amount: {{ item.total | asset(4) }}</span>
                       <span>Max: {{ item.cap | asset(2) }} {{item.symbol}}</span>
                     </v-row>
-                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.minter"></v-progress-linear>
+                    <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.percent"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
-                      <div v-if="item.minter>0" :style="{marginLeft:item.minter+'%'}">
+                      <div v-if="item.minter>0" :style="{marginLeft:item.percent+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
                         <span>{{item.percent | asset(3)}}%</span>
                       </div>
@@ -217,12 +217,12 @@
               <span class="left-title">{{ setMinterItem.symbol }}</span>
             </div>
           </v-row>
-          <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.minter+'%'"></v-progress-linear>
+          <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.percent"></v-progress-linear>
           <div class="">
             <!-- <div>0</div> -->
-            <div v-if="setMinterItem.minter > 0" class="minter-item" :style="{marginLeft:setMinterItem.minter+'%'}">
+            <div v-if="setMinterItem.percent > 0" class="minter-item" :style="{marginLeft:setMinterItem.percent-5+'%'}">
               <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
-              <span>{{setMinterItem.minter}}%</span>
+              <span>{{setMinterItem.percent | asset(3) }}%</span>
             </div>
           </div>
           <div class="min-minter ">
