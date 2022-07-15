@@ -349,9 +349,8 @@
                     label="Address"
                     :items="minterItems"
                     @change="selectMintAddrChange"
-                    item-text="mintAddress"
-                    item-value="mintAddress"
-                    v-model="minterAddress"
+                    item-text="minterAddress"
+                    item-value="id"
                   >
                   <template v-slot:selection="data">
                     <div>{{ data.item.mintAddress | addr }}</div>
@@ -694,7 +693,12 @@ export default {
         if(this.connection.network == 'REI Network'){
           resultList = resultList.concat(this.tokenInfoList)
         }
-        this.minterItems = mintAddress.data
+        this.minterItems = mintAddress.data.map((item)=>{
+          return {
+            ...item,
+            id: item.mintAddress+encodeURIComponent(item.targetChain)
+          }
+        })
         this.contractItems = resultList
         
         let arr = [];
@@ -782,8 +786,9 @@ export default {
       this.grantLoading = false;
       this.grantBtnDisable = flag;
     },
-    selectMintAddrChange(){
-      this.selectMintAddressInfo = find(mintAddress.data,(item)=> item.mintAddress == this.minterAddress)
+    selectMintAddrChange(e){
+      this.selectMintAddressInfo = find(this.minterItems,(item)=> item.id == e)
+      this.minterAddress = this.selectMintAddressInfo.mintAddress;
       this.getMintInfo()
     },
     selectContractChange(){
@@ -795,7 +800,6 @@ export default {
     async grantRole(){
       try {
         this.grantLoading = true;
-        this.grantRoleDialog = false;
         let contract = new web3.eth.Contract(abiBridgedERC20, this.selectContractAddress);
         const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
         let mintAddress = this.minterAddress;
@@ -976,6 +980,9 @@ export default {
       this.revokeDialog = false;
     },
     openGrantRole(){
+      if(!this.selectContractAddress&&!this.minterAddress){
+         this.grantBtnDisable = true;
+      }
       this.grantRoleDialog = true;
     },
     cancelGrantRole(){
