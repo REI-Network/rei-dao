@@ -5,7 +5,7 @@
         <v-col cols="12" md="5"><h3>Bridges Asset Management on REI Network</h3></v-col>
         <v-col class="title-right">
           <v-row justify="end" no-gutters>
-            <v-btn text outlined color="validator" v-if="this.connection.address != admin">
+            <v-btn text outlined color="validator" href="https://github.com/REI-Network/rei-dao" target="_blank" v-if="this.connection.address != admin">
               <v-img src="../assets/images/light-token-info.svg" class="icon-logo" width="16" height="16" />
             Submit Token Info
           </v-btn>
@@ -47,24 +47,11 @@
                           <v-img v-if="item.logo" :src="item.logo" class="logo-img"  height="32" width="32"/>
                           <v-img v-else src="../assets/images/token-logo.svg" class="logo-img"  height="32" width="32"/>
                         </div>
-                        
-                          <v-badge
-                             v-if="item.type=='new'"
-                            color="red"
-                            content="New"
-                          >
-                            <span class="label-text"> {{ item.symbol }}</span>
-                            <a :href="gotocBridgeUrl(item)" target="_blank">
-                              <v-icon size="16">mdi-open-in-new</v-icon>
-                            </a>
-                        </v-badge>
-                        <span v-else>
-                           <span class="label-text"> {{ item.symbol }}</span>
-                            <a :href="gotocBridgeUrl(item)" target="_blank">
-                              <v-icon size="16">mdi-open-in-new</v-icon>
-                            </a>
-                        </span>
-                       
+                      <span class="label-text"> {{ item.symbol }}</span>
+                      <a :href="gotocBridgeUrl(item)" target="_blank">
+                        <v-icon size="16">mdi-open-in-new</v-icon>
+                      </a>
+                      <span class="pl-1" v-if="item.type=='new'"><v-icon color="red" size="24">mdi-new-box</v-icon> </span>
                     </div>
                   </template>
                   <template v-slot:item.target="{ item }">
@@ -159,7 +146,7 @@
                     <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="item.percent"></v-progress-linear>
                     <div class="process">
                       <!-- <div>0</div> -->
-                      <div v-if="item.minter>0" :style="{marginLeft:item.percent+'%'}">
+                      <div :style="{marginLeft:item.percent+'%'}">
                         <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
                         <span>{{item.percent | asset(3)}}%</span>
                       </div>
@@ -220,7 +207,7 @@
           <v-progress-linear color="#6979F8" rounded background-color="#E2E4EA" :value="setMinterItem.percent"></v-progress-linear>
           <div class="">
             <!-- <div>0</div> -->
-            <div v-if="setMinterItem.percent > 0" class="minter-item" :style="{marginLeft:setMinterItem.percent-5+'%'}">
+            <div class="minter-item" :style="{marginLeft:setMinterItem.percent-5+'%'}">
               <!-- <v-icon color="#6979F8">mdi-menu-up</v-icon> -->
               <span>{{setMinterItem.percent | asset(3) }}%</span>
             </div>
@@ -362,7 +349,9 @@
                   </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="2">
-                 <v-img src="../assets/images/add_link_normal.svg"  class="add-plus" />
+                  <a href="https://github.com/REI-Network/rei-dao" target="_blank">
+                    <v-img src="../assets/images/add_link_normal.svg"  class="add-plus" />
+                 </a>
                  <!-- <div class="add-plus"></div> -->
                </v-col>
               </v-row>
@@ -508,8 +497,8 @@ const testAdminAddress = '0x5C8FB2f2681955A17981cA66171C2E38EfB7862f';
 const mainFactory = '0xF0FceDF9ab45edF14F5C15299E2E0CBE2D41661c';
 const mainAdminAddress = '0xF4954Eb3A4689EEf8F42dbBA33b8BcB9822771Df';
 
-let factoryAddress = '';
-let adminAddress = ''
+let factoryAddress = mainFactory;
+let adminAddress = mainAdminAddress;
 
 const tokenList = gql`
   query getTokenList{
@@ -572,7 +561,6 @@ export default {
           {text:'Symbol', value: 'symbol'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
-          { text: 'Address', value: 'address' },
       ],
       bridgeList:[],
       chainList:[],
@@ -714,11 +702,12 @@ export default {
           }
         })
         console.log(arr)
-       
+        this.getListLoading = false;
       } catch(e){
+        this.getListLoading = false;
         console.log(e)
       }
-       this.getListLoading = false;
+      
     },
     async getTokenInfo(contractAddress,token){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
@@ -945,7 +934,7 @@ export default {
           {text:'Symbol', value: 'symbol'},
           { text: 'Target Chain', value: 'target' },
           { text: 'Minter Cap', value: 'minter' },
-          { text: 'Address', value: 'address' },
+          { text: 'Minter Address', value: 'address' },
           { text: 'Operation', value: 'operation' },
        ]
       }
@@ -1067,7 +1056,7 @@ export default {
  .minter-cap{
     padding: 12px;
     font-size: 12px;
-    width: 340px;
+    width: 100%;
   }
   .minter-item{
     // margin-top:-28px;
