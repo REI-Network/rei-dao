@@ -1,0 +1,28 @@
+{
+  "data":[
+    {
+      "tokenAddress": "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+      "targetChain": "BNB Chain"
+    },
+    {
+      "tokenAddress": "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+      "targetChain": "Ethereum Mainnet"
+    },
+    {
+      "tokenAddress": "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+      "targetChain": "Ethereum Mainnet"
+    },
+    {
+      "tokenAddress": "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+      "targetChain": "Ethereum Mainnet"
+    },
+    {
+      "tokenAddress": "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+      "targetChain": "Ethereum Mainnet"
+    },
+    {
+      "tokenAddress": "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+      "targetChain": "Ethereum Mainnet"
+    }
+  ]
+}

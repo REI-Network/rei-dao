@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "30558922",
+      "name": "bridge_nav",
+      "font_class": "bridge_nav",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
       "icon_id": "29832665",
       "name": "Union",
       "font_class": "Union",

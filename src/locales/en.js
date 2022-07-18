@@ -42,7 +42,11 @@ export default {
     setrate: 'Set CommissionRate to {amount}%',
     unstake: 'Unstake {amount}{symbol} to {to}',
     deposit: 'Staking {amount}{symbol} to {to}',
-    withdraw: 'withdraw {amount}{symbol} to {to}'
+    withdraw: 'withdraw {amount}{symbol} to {to}',
+    grantRole: 'Grant {role} for {to}',
+    revokeRole: 'Revoke {role} for {to}',
+    setMintCap: 'Set Mint Cap to {to}',
+    issue: 'Issue a new contract {name}',
   },
   stake: {
     node_list: 'Validator List',

@@ -1,0 +1,46 @@
+{"data":[
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0xBB7684Cc5408F4DD0921E5c2Cadd547b8f1AD573",
+	  "bridges": "cBridge",
+    "type": "old"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0x9B36f165baB9ebe611d491180418d8De4b8f3a1f",
+	  "bridges": "cBridge",
+    "type": "new"
+    
+  },
+  {
+    "targetChain": "BNB Chain",
+	  "mintAddress": "0x9B36f165baB9ebe611d491180418d8De4b8f3a1f",
+	  "bridges": "cBridge",
+    "type": "new"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0xe6801928061CDbE32AC5AD0634427E140EFd05F9",
+	  "bridges": "Multichain"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0xD67de0e0a0Fd7b15dC8348Bb9BE742F3c5850454",
+	  "bridges": "Multichain"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+	  "bridges": "Multichain"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0xDC42728B0eA910349ed3c6e1c9Dc06b5FB591f98",
+	  "bridges": "Multichain"
+  },
+  {
+    "targetChain": "Ethereum Mainnet",
+	  "mintAddress": "0x0dCb0CB0120d355CdE1ce56040be57Add0185BAa",
+	  "bridges": "Multichain"
+  }
+]}

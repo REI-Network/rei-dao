@@ -80,6 +80,13 @@ export default {
           link: '/governance',
           name: 'governance',
           show: true,
+        },
+        {
+          icon: '&#xe61c;',
+          text: 'Bridges',
+          link: '/bridge',
+          name: 'bridge',
+          show: true,
         }
       ]
     };
