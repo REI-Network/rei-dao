@@ -16,7 +16,7 @@ git branch add-mint-address-0xxxxx
 git checkout add-mint-address-0xxxxx
 ```
 
-4. Add your mint address information to the src/bridges/mintAddress/index.json.
+4. Add your mint address information to the src/bridgesInfo/minterList.json.
 
 5. Commit and push the information to your repo
   For example:

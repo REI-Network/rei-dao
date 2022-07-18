@@ -20,7 +20,7 @@ git branch xxx-token
 git checkout xxx-token
 ```
 
-4. Add your token information to the src/bridges/tokenProfile/tokenList.json. 
+4. Add your token information to the src/bridgesInfo/tokenList.json. 
 
 5. Commit and push the information to your repo
   For example:

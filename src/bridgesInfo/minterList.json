@@ -1,16 +1,5 @@
 {"data":[
   {
-    "targetChain": "BNB SMART CHAIN",
-	  "mintAddress": "0x8D395Fed2A40f3bB20289b277F7FE34Af5ae8756",
-	  "bridges": "cBridge"
-  },
-  {
-    "targetChain": "BNB SMART CHAIN",
-	  "mintAddress": "0x8f701bfF69d2c3a956003EF89e8Aa43f338018Fe",
-	  "bridges": "Multichain"
-  },
-
-  {
     "targetChain": "Ethereum Mainnet",
 	  "mintAddress": "0xBB7684Cc5408F4DD0921E5c2Cadd547b8f1AD573",
 	  "bridges": "cBridge",

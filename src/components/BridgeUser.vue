@@ -489,8 +489,9 @@ import util from '../utils/util';
 import filters from '../filters';
 import Web3 from 'web3';
 import find from 'lodash/find';
-const mintAddress = require('../bridges/mintAddress/index.json')
-const tokenProfileList = require('../bridges/tokenProfile/tokenList.json')
+const mintAddress = require('../bridgesInfo/minterList.json')
+const tokenProfileList = require('../bridgesInfo/tokenList.json')
+const tokenChainList = require('../bridgesInfo/tokenChainList.json')
 
 const testFactory = '0xb2C9dCC0604A379E65F0C7B4288C6663144B12C7';
 const testAdminAddress = '0x5C8FB2f2681955A17981cA66171C2E38EfB7862f';
@@ -528,7 +529,7 @@ export default {
       pageCount: 0,
       page2:1,
       pageCount2: 0,
-      itemsPerPage: 10,
+      itemsPerPage: 20,
       currentItem:{},
       capForm:{},
       minterCap:"",
@@ -717,6 +718,7 @@ export default {
     async getTokenInfo(contractAddress,token){
       let contract = new web3.eth.Contract(abiBridgedERC20, contractAddress);
       let tokenProfile = find(tokenProfileList.data,(item) => item.address == contractAddress)
+      let tokenChainInfo = find(tokenChainList.data,(item) => item.tokenAddress == contractAddress);
       const MINTER_ROLE = await contract.methods.MINTER_ROLE().call();
       let totalSupply = await contract.methods.totalSupply().call();
       let symbol = token.symbol;
@@ -732,13 +734,11 @@ export default {
         
         let total = mintSupply.total/10**decimals;
         let percent = (total/cap)*100;
-        let mintAddressInfo = find(mintAddress.data,(item) => item.mintAddress == member);
-        // BUSD
-        if('0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786' == contractAddress){
-          mintAddressInfo = find(mintAddress.data,(item) => {
-            return  item.mintAddress == member && item.targetChain == 'BNB Chain'
-          });
-        }
+       
+        let mintAddressInfo = find(mintAddress.data,(item) => {
+          return item.mintAddress == member && item.targetChain == tokenChainInfo.targetChain
+        });
+        
         if(!mintAddressInfo){
           mintAddressInfo = { 
             mintAddress: member
