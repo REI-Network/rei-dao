@@ -705,8 +705,6 @@ export default {
         })
         this.bridgeList = bridgeList;
         this.chainList = chainList;
-        console.log('bridgeList',this.bridgeList)
-        console.log('chainList',this.chainList)
         this.getListLoading = false;
       } catch(e){
         this.getListLoading = false;
