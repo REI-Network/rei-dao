@@ -292,7 +292,7 @@ export default {
         for(let i = 0; i < validators.length; i++){
             balanceResult.push({
                      "value": [
-                        dayjs(arrReverse[i].timestamp).format('YYYY-MM-DD HH:00'),
+                        dayjs(arrReverse[i].timestamp).format('YYYY-MM-DD'),
                         web3.utils.fromWei(web3.utils.toBN(validators[i]))
                     ]
                 })

@@ -190,7 +190,7 @@ export default {
             this.resTotalData = _totalStakeDay.map((item,i)=>{
                 return {
                     "value": [
-                        dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:00'),
+                        dayjs.unix(item.timestamp).format('YYYY-MM-DD'),
                         web3.utils.fromWei(web3.utils.toBN(item.voteStake).sub(web3.utils.toBN(_totalStakeDay[i>0?i-1:0].voteStake)))
                     ]
                 }
