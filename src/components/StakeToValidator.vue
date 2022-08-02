@@ -5,6 +5,7 @@
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">Validator List</v-tab>
           <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="13">My Voted Validators</v-tab>
         </v-tabs>
         <div class="btn-div" v-if="this.width > 900">
           <!-- <v-btn text outlined color="validator" @click="setCalculation()">
@@ -1208,8 +1209,9 @@ export default {
         this.current = this.UserRewardsYear/(this.stake * 365)*this.days*100;
     },
     async validatorDetails(value){
-      this.validatorDialog = true;
+      // this.validatorDialog = true;
       this.detailsItem = value;
+      this.$router.push('/stakeValidator')
     },
     async myVoteDetails(value){
       this.validatorDialog = true;

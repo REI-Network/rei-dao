@@ -7,6 +7,13 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
+          <StakeOverview></StakeOverview>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="12" sm="12">
+        <v-card class="flex-column mt-2">
             <!-- <v-tabs v-model="tabNav" centered>
                 <v-tab key="1">{{$t('stake.staking')}}</v-tab>
                 <v-tab key="2">{{$t('unstake.title')}}</v-tab> 
@@ -40,7 +47,7 @@ import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util'
 import StakeToValidator from '../components/StakeToValidator';
-// import UnstakeToValidator from '../components/UnstakeToValidator';
+import StakeOverview from '../components/StakeOverview';
 import StakeChartsFAQ from '../components/StakeChartsFAQ';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
@@ -49,6 +56,7 @@ export default {
   components:{
     StakeToValidator,
     // UnstakeToValidator,
+    StakeOverview,
     StakeChartsFAQ
   },
   filters,
