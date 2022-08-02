@@ -70,8 +70,8 @@
           </v-tab-item>
           <v-tab-item key="13">
               <v-data-table 
-                :headers="headers" 
-                :items="delegatorList" 
+                :headers="myWithHeaders" 
+                :items="myWithdrawalsList" 
                 class="elevation-0" 
                 hide-default-footer 
                 :items-per-page="itemsPerPage" 
@@ -80,13 +80,15 @@
                 :loading-text="$t('msg.loading')"
                 page.sync="page" 
                 @page-count="pageCount = $event">
-                <template v-slot:item.delegator="{ item }">
+                <template v-slot:item.time="{ item }">
                     <v-img :src="item.img" weight="24" height="24" />
-                    <span>{{ item.delegator }}</span>
-                    <span class="mine">mine</span>
+                    <span>{{ item.time }}</span>
+                </template>
+                 <template v-slot:item.amount="{ item }">
+                    - <span>{{ item.amount }}</span>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="delegatorList.length > 0">
+              <div class="text-center pt-2" v-if="myWithdrawalsList.length > 0">
                   <v-pagination 
                     v-model="page" 
                     :length="pageCount" 
@@ -135,6 +137,20 @@ export default {
         { text: "Amount ($REI)", value: 'amount' },
      ],
      myVotesList:[
+         {
+            time:"2022-12-19 12:30",
+            amount:121545.00
+         },
+          {
+            time:"2022-12-19 12:30",
+            amount:121545.00
+         }
+     ],
+     myWithHeaders:[
+        { text: "Time", value: 'time' },
+        { text: "Amount ($REI)", value: 'amount' },
+     ],
+     myWithdrawalsList:[
          {
             time:"2022-12-19 12:30",
             amount:121545.00

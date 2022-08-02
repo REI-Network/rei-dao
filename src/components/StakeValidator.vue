@@ -1,7 +1,7 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <div class="title-detailed"><span class="font-grey">Voting</span> / <span class="rei-fans">REI FANs</span></div>
+      <div class="title-detailed"><span class="font-grey"><a href="/stake">Voting</a></span> / <span class="rei-fans">REI FANs</span></div>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -31,8 +31,12 @@ export default {
   },
   data() {
     return {
-        
     };
+  },
+  mounted(){
+  },
+
+  methods:{
   }
 };
 </script>
@@ -53,6 +57,9 @@ export default {
 .dashboard{
   padding-left:40px;
   padding-right:40px;
+}
+a{
+  color:#868E9E;
 }
 @media screen and (max-width: 900px) {
   .dashboard{

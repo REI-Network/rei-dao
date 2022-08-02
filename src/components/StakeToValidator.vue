@@ -76,7 +76,7 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-row class="background" style="margin-top: 0px">
+            <!-- <v-row class="background" style="margin-top: 0px">
               <v-tabs v-model="tab2" hide-slider class="my-voted-validator" background-color="background" height="42">
                 <v-card outlined class="card-tab">
                   <v-tab key="111" style="font-size: 12px">Validator</v-tab>
@@ -96,10 +96,8 @@
                   <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
                 </v-card>
               </v-col>
-            </v-row>
-            <v-tabs-items v-model="tab2">
-              <v-tab-item key="111">
-                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            </v-row> -->
+            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                         <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
@@ -133,9 +131,12 @@
                 <div class="text-center pt-2" v-if="nodeList.length > 0">
                   <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                 </div>
-              </v-tab-item>
-              <v-tab-item key="122">
-                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
+          </v-tab-item>
+          <v-tab-item key="12">
+            <UnstakeToValidator></UnstakeToValidator>
+          </v-tab-item>
+          <v-tab-item key="13">
+            <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
                   <template v-slot:item.address="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                     <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
@@ -166,11 +167,6 @@
                 <div class="text-center pt-2" v-if="myStakeList.length > 0">
                   <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                 </div>
-              </v-tab-item>
-            </v-tabs-items>
-          </v-tab-item>
-          <v-tab-item key="12">
-            <UnstakeToValidator></UnstakeToValidator>
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -1211,7 +1207,15 @@ export default {
     async validatorDetails(value){
       // this.validatorDialog = true;
       this.detailsItem = value;
-      this.$router.push('/stakeValidator')
+      this.$router.push({
+        name:'StakeValidator',
+        query:{
+          id:value.address,
+        },
+        params:{
+          data:value,
+        }
+      })
     },
     async myVoteDetails(value){
       this.validatorDialog = true;

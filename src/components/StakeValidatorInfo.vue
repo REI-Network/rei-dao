@@ -39,26 +39,28 @@
         <v-row justify="space-between">
             <v-col cols="12" sm="3">
                 <div class="font-grey">Voting Power ($REI)</div>
-                <h2>21,185,112.71</h2>
+                <h2>{{ ValidatorInfo.power | asset(2)}}</h2>
             </v-col>
-             <v-col cols="12" sm="3">
+             <!-- <v-col cols="12" sm="3">
                 <div class="font-grey"> Rewards to be withdrawn($REI)</div>
-                <h2>178.00</h2>
-            </v-col>
-             <v-col cols="12" sm="3">
+                <h2>{{ ValidatorInfo.commissionShare }}</h2>
+            </v-col> -->
+            <!--  <v-col cols="12" sm="3">
                 <div class="font-grey">Commission Rate</div>
-                <h2>20%</h2>
-            </v-col>
+                <h2>{{ ValidatorInfo.commissionRate }}%</h2>
+            </v-col> -->
         </v-row>
     </v-card>
   </v-container>
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import filters from '../filters';
 export default {
+  filters,
   data() {
     return {
-     
+     ValidatorInfo:'',
     };
   },
   computed: {
@@ -68,8 +70,13 @@ export default {
     })
   },
   mounted(){
+      this.getReceive()
   },
   methods: {
+      getReceive(){
+       this.ValidatorInfo = this.$route.params.data;
+       console.log('12',this.ValidatorInfo);
+    }
   }
 };
 </script>
@@ -122,8 +129,12 @@ export default {
 .fans-content{
     margin: 28px 0;
 }
-.vote-number{
+.theme--light.vote-number{
     background-color: #F7F7F7;
+    padding: 12px 20px;
+}
+.theme--dark.vote-number{
+    background-color: #13112B;
     padding: 12px 20px;
 }
 </style>

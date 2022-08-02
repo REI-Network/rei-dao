@@ -29,7 +29,7 @@ const routes = [
   {
     path: '/stake',
     name: 'Stake',
-    component: Stake
+    component: Stake,
     // component: () => import('../views/Stake.vue')
   },
   {

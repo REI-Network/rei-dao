@@ -37,7 +37,7 @@
                             <v-col
                                 v-for="n in 5"
                                 :key="n"
-                                cols="12" md="2"
+                                cols="12" md="3"
                             >
                                 <v-img src="../assets/images/rei.svg"></v-img>
                             </v-col>
@@ -110,7 +110,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import * as echarts from 'echarts';
 export default {
   data() {
     return {
@@ -126,123 +125,70 @@ export default {
   mounted(){
       this.myCharts()
   },
-  methods: {
-    //   myCharts(){
-    //     const chart = this.$refs.chart;
-    //     if(chart){  
-    //         const myChart = this.$echarts.init(chart);
-    //         var option = {
-    //             xAxis: {},
-    //             yAxis: {},
-    //             series: [
-    //                 {
-    //                 symbolSize: 20,
-    //                 data: [
-    //                     [10.0, 8.04],
-    //                     [8.07, 6.95],
-    //                     [13.0, 7.58],
-    //                     [9.05, 8.81],
-    //                     [11.0, 8.33],
-    //                     [14.0, 7.66],
-    //                     [13.4, 6.81],
-    //                     [10.0, 6.33],
-    //                     [14.0, 8.96],
-    //                     [12.5, 6.82],
-    //                     [9.15, 7.2],
-    //                     [11.5, 7.2],
-    //                     [3.03, 4.23],
-    //                     [12.2, 7.83],
-    //                     [2.02, 4.47],
-    //                     [1.05, 3.33],
-    //                     [4.05, 4.96],
-    //                     [6.03, 7.24],
-    //                     [12.0, 6.26],
-    //                     [12.0, 8.84],
-    //                     [7.08, 5.82],
-    //                     [5.02, 5.68]
-    //                 ],
-    //                 type: 'scatter'
-    //                 }
-    //             ]
-    //         }
-    //         myChart.setOption(option)
-    //         window.addEventListener("resize", function() {
-    //             myChart.resize()
-    //         })
-    //     }
-    //      this.$on('hook:destroyed',()=>{
-    //      window.removeEventListener("resize", function() {
-    //         // myChart.resize();
-    //     });
-    //   })
-    //  }   
+  methods: {   
      myCharts(){
       const chart = this.$refs.chart;
       if(chart){
         this.myChart = this.$echarts.init(chart);
-        var option = {
-          tooltip:{
-            trigger:'axis',
-              formatter(params) {
-                var relVal = params[0].value[0]+'<br>';
-                for (var i = 0, l = params.length; i < l; i++) {
-                  var yValue = Number(params[i].value[1]).toFixed(5)
-                    relVal += params[i].seriesName +':'+yValue;
-                }
-                return relVal;
-              },
-          },
-          xAxis: {
-            type: 'time',
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show:false,
-              lineStyle: {
-                  color: 'rgba(134,142,158,.6)', 
-                  width: '1'
-                }
-            },
-            axisLabel: {
-              textStyle: {
-                fontSize: 12,
-              }
-            }, 
-            splitLine:{show: false}  
-                  
-          },
-          yAxis: {
-            type: 'value',
-            data:[],
-            axisTick: {
-              show: false
-              },
-            axisLine: {
-              show:false,
-              },
-            axisLabel:{
-              show:false,
-              },
-            splitLine: {
-              show: false,
-              },
-            },
-          series: [
-            {
-              name:'Balance',
-              data: [],
-              type: 'bar',
-              itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#46F5AC' },
-                { offset: 1, color: '#38ADF1' }
-                ])
-              },
-              barWidth: 20
+         var option = {
+                xAxis: {
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show:false,
+                    },
+                    axisLabel:{
+                        show:false,
+                    },
+                    splitLine: {
+                        show: false,
+                    },
+                },
+                yAxis: {
+                    data:[],
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show:false,
+                    },
+                    axisLabel:{
+                        show:false,
+                    },
+                    splitLine: {
+                        show: false,
+                    },
+                },
+                series: [
+                    {
+                        
+                        type: 'effectScatter',
+                        symbolSize: 20,
+                        data: [
+                            [18.22, 6.82],
+                        ],
+                        itemStyle:{
+                                color:'#2115E5'
+                            },
+                        },
+                    {
+                        data: [
+                            [3.0, 9.04],
+                            [5.07, 6.55],
+                            [16.22, 7.58],
+                            [16.65, 6.41],
+                            [18.22, 6.82],
+                            [27.55, 7.72],
+                            [29.99, 6.45]
+                        ],
+                        itemStyle:{
+                                color:'#2135E5'
+                            },
+                        type: 'scatter',
+                    }
+                ]
             }
-          ] 
-        };
           this.myChart.setOption(option)
           window.addEventListener("resize", function() {
             this.myChart.resize()
@@ -272,7 +218,7 @@ export default {
     font-size: 18px;
 }
 .node-number{
-    font-size: 40px;
+    font-size: 32px;
     font-weight: bolder;
 }
 .block{
