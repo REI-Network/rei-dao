@@ -9,7 +9,7 @@
                 <v-col cols="12" md="3">
                     <div class="block">
                         <div class="font-grey">Block Height</div>
-                        <div class="node-number">5,799,097</div>
+                        <div class="node-number">{{ blockHeight | asset(0)}}</div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Validators</div>
@@ -17,11 +17,14 @@
                     </div>
                     <div class="block">
                         <div class="font-grey">Current Node</div>
-                        <v-row align="center">
+                        <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
-                                <v-img src="../assets/images/rei.svg"></v-img>
+                                <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
                             </v-col>
-                            <v-col cols="12" md="9">
+                            <v-col cols="12" md="9" >
+                                <div class="miner">
+                                   {{ miner | addr }} 
+                                </div>
                                 <v-progress-linear
                                     indeterminate
                                     height="10"
@@ -34,21 +37,31 @@
                     <div class="block">
                         <div class="font-grey">Nodes</div>
                         <v-row>
-                            <v-col
-                                v-for="n in 5"
-                                :key="n"
-                                cols="12" md="3"
-                            >
-                                <v-img src="../assets/images/rei.svg"></v-img>
+                            <v-col class="map-nodes">
+                                <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                </div>
+                                <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                </div>
+                                <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                </div>
+                                <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                </div>
+                                <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                </div>
                             </v-col>
                         </v-row>
                     </div>
                 </v-col>
                 <v-col cols="12" md="9">
                     <!-- <v-img src="../assets/images/map.svg"></v-img> -->
-                    <div class="map-content">
+                    <!-- <div class="map-content"> -->
                         <div id="myCharts" ref="chart" class="dispribution" style="height:400px"></div>
-                    </div>
+                    <!-- </div> -->
                 </v-col>
             </v-row>
         </v-card>
@@ -77,10 +90,10 @@
                         <div class="font-grey">Total Txns</div>
                         <div class="node-number">159,166 <span class="font-grey">txns</span></div>
                     </div>
-                    <div class="block">
+                    <!-- <div class="block">
                         <div class="font-grey">Pending Transactions</div>
                         <div class="node-number">48,443 <span class="font-grey">txns</span></div>
-                    </div>
+                    </div> -->
                 </v-card>
             </v-col>
             <v-col cols="12" sm="3">
@@ -92,7 +105,7 @@
                     </div>
                     <div class="block">
                         <div class="font-grey">Wallet Addresses</div>
-                        <div class="node-number">6,451 <span class="font-green">+47</span></div>
+                        <div class="node-number">{{ stats.totalAddress | asset(0) }}<span class="font-green">+47</span></div>
                     </div>
                 </v-card>
             </v-col>
@@ -109,11 +122,19 @@
   </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+
+import Web3 from 'web3';
+import filters from '../filters';
+// import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 export default {
+filters,
   data() {
     return {
-     
+     blockHeight:'',
+     miner:'',
+     stats:{}
     };
   },
   computed: {
@@ -123,9 +144,18 @@ export default {
     })
   },
   mounted(){
-      this.myCharts()
+      this.myCharts();
+      this.connect();
+      this.getBlock();
   },
   methods: {   
+      connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
      myCharts(){
       const chart = this.$refs.chart;
       if(chart){
@@ -199,7 +229,67 @@ export default {
             this.myChart.resize();
         });
     })
-    },  
+    },
+//    myCharts(){
+//         var chartDom = document.getElementById('myCharts');
+//         var myChart = echarts.init(chartDom);
+//         $.get('../assets/images/map.svg', function (svg) {
+//         echarts.registerMap('iceland_svg', { svg: svg });
+//         var option = {
+//             tooltip: {},
+//             geo: {
+//             tooltip: {
+//                 show: true
+//             },
+//             map: 'iceland_svg',
+//             roam: true
+//             },
+//             series: {
+//             type: 'effectScatter',
+//             coordinateSystem: 'geo',
+//             geoIndex: 0,
+//             symbolSize: function (params) {
+//                 return (params[2] / 100) * 15 + 5;
+//             },
+//             itemStyle: {
+//                 color: '#b02a02'
+//             },
+//             encode: {
+//                 tooltip: 2
+//             },
+//             data: [
+//                 [488.2358421078053, 459.70913833075736, 100],
+//                 [770.3415644319939, 757.9672194986475, 30],
+//                 [1180.0329284196291, 743.6141808346214, 80],
+//                 [894.03790632245, 1188.1985153835008, 61],
+//                 [1372.98925630313, 477.3839988649537, 70],
+//                 [1378.62251255796, 935.6708486282843, 81]
+//             ]
+//             }
+//         };
+//         myChart.setOption(option);
+//         myChart.getZr().on('click', function (params) {
+//             var pixelPoint = [params.offsetX, params.offsetY];
+//             var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+//             console.log(dataPoint);
+//         });
+//         });
+
+// option && myChart.setOption(option);
+//    },
+   async getBlock(){
+        this.blockHeight = await web3.eth.getBlockNumber();
+        let block = await web3.eth.getBlock(this.blockHeight);
+        this.miner = block.miner
+        console.log('blockNumber', this.miner)
+        try {
+            const { data } = await this.$axios.get('https://gateway.rei.network/api/reistats')
+            this.stats = data.row.json;
+            console.log('this.stats',this.stats.totalAddress)
+        } catch (error) {
+            console.log(error)
+        }
+    }
   }
 };
 </script>
@@ -222,7 +312,7 @@ export default {
     font-weight: bolder;
 }
 .block{
-    margin-top: 12px;
+    margin-top: 16px;
     margin-bottom: 20px;
 }
 .rei-card{
@@ -238,5 +328,14 @@ export default {
     height: 100%;
     background: url('../assets/images/map.svg') no-repeat center;
     background-size: 100% 100%!important;
+}
+.map-nodes{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.miner{
+    text-align: right;
+    font-size: 14px;
 }
 </style>

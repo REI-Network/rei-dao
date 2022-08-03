@@ -4,7 +4,7 @@
     <v-row class="mt-5">
         <v-col class="rei-fans">
             <div>
-                <v-img src="../assets/images/closed-dark.png" width="42" height="42"/>
+                <v-img :src="detail.logo" width="42" height="42"/>
             </div>
             <div class="fans-right">
                 <v-row align="center">
@@ -17,7 +17,7 @@
                     </div>
                 </v-row>
                 <v-row>
-                    <span class="font-grey">0xADbBf74bc8d9CFfeC78526169cd81FdcBbA35eC2</span>
+                    <span class="font-grey">{{detail.nodeAddress}}</span>
                       <v-icon size="14">mdi-content-copy</v-icon>
                 </v-row>
             </div>
@@ -37,10 +37,10 @@
     </div>
     <v-card outlined class="vote-number">
         <v-row justify="space-between">
-            <v-col cols="12" sm="3">
+            <!-- <v-col cols="12" sm="3">
                 <div class="font-grey">Voting Power ($REI)</div>
                 <h2>{{ ValidatorInfo.power | asset(2)}}</h2>
-            </v-col>
+            </v-col> -->
              <!-- <v-col cols="12" sm="3">
                 <div class="font-grey"> Rewards to be withdrawn($REI)</div>
                 <h2>{{ ValidatorInfo.commissionShare }}</h2>
@@ -54,13 +54,25 @@
   </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
+import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
+import find from 'lodash/find';
+import abiConfig from '../abis/abiConfig';
+import { getValidatorDetails } from '../service/CommonService'
+import abiStakeManager from '../abis/abiStakeManager';
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+let client = null;
 export default {
   filters,
   data() {
     return {
-     ValidatorInfo:'',
+     detail: '',
+     stakeManagerContract:'',
+     stakeManageInstance:''
     };
   },
   computed: {
@@ -71,11 +83,22 @@ export default {
   },
   mounted(){
       this.getReceive()
+      this.init()
   },
   methods: {
-      getReceive(){
-       this.ValidatorInfo = this.$route.params.data;
-       console.log('12',this.ValidatorInfo);
+      async init(){
+            let contract = new web3.eth.Contract(abiConfig, config_contract);
+            this.stakeManagerContract = await contract.methods.stakeManager().call();
+            let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
+            this.stakeManageInstance = stake_contract;
+      },
+    async getReceive(){
+       let Details = await getValidatorDetails();
+       let address = this.$route.query.id;
+       let ValidatorInfo = Details.data.data
+       this.detail = find(ValidatorInfo, (item) => item.nodeAddress == address);
+       console.log('detail',this.detail)
+       console.log('12',this.$route.params.data );
     }
   }
 };

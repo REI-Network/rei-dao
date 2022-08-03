@@ -180,6 +180,9 @@ a{
     height: 8px !important;
     border-radius: 10px;
 }
+.theme--light.v-app-bar.v-toolbar.v-sheet[data-v-6e1afce0]{
+   box-shadow: 0 0 20px #ddd !important;
+}
 @media screen and (max-width: 900px) {
     .v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
       padding-bottom: 20px;
