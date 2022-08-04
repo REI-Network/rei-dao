@@ -4,7 +4,8 @@
     <v-row class="mt-5">
         <v-col class="rei-fans">
             <div>
-                <v-img :src="detail.logo" width="42" height="42"/>
+                <v-img v-if="detail.logo" :src="detail.logo" width="42" height="42"/>
+                <v-img v-else src="../assets/images/circle-icon.svg" width="42" height="42"/>
             </div>
             <div class="fans-right">
                 <v-row align="center">
@@ -37,18 +38,18 @@
     </div>
     <v-card outlined class="vote-number">
         <v-row justify="space-between">
-            <!-- <v-col cols="12" sm="3">
+            <v-col cols="12" sm="3">
                 <div class="font-grey">Voting Power ($REI)</div>
-                <h2>{{ ValidatorInfo.power | asset(2)}}</h2>
-            </v-col> -->
-             <!-- <v-col cols="12" sm="3">
+                <h2>{{ detailData.power | asset(2) }}</h2>
+            </v-col>
+             <v-col cols="12" sm="3">
                 <div class="font-grey"> Rewards to be withdrawn($REI)</div>
-                <h2>{{ ValidatorInfo.commissionShare }}</h2>
-            </v-col> -->
-            <!--  <v-col cols="12" sm="3">
+                <h2>{{ detailData.commissionShare | asset(2) }}</h2>
+            </v-col>
+             <v-col cols="12" sm="3">
                 <div class="font-grey">Commission Rate</div>
-                <h2>{{ ValidatorInfo.commissionRate }}%</h2>
-            </v-col> -->
+                <h2>{{ detailData.commissionRate }}%</h2>
+            </v-col>
         </v-row>
     </v-card>
   </v-container>
@@ -61,18 +62,22 @@ import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
-import abiConfig from '../abis/abiConfig';
-import { getValidatorDetails } from '../service/CommonService'
-import abiStakeManager from '../abis/abiStakeManager';
-const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
-let client = null;
+import { getCalculation,getValidatorDetails } from '../service/CommonService'
+
 export default {
   filters,
   data() {
     return {
      detail: '',
-     stakeManagerContract:'',
-     stakeManageInstance:''
+     detailData:'',
+     activeList:[
+         {
+            //  address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
+            //  power:"657659.99",
+            //  commissionShare:"123179341",
+            //  commissionRate:20
+         }
+     ]
     };
   },
   computed: {
@@ -83,22 +88,19 @@ export default {
   },
   mounted(){
       this.getReceive()
-      this.init()
   },
   methods: {
-      async init(){
-            let contract = new web3.eth.Contract(abiConfig, config_contract);
-            this.stakeManagerContract = await contract.methods.stakeManager().call();
-            let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
-            this.stakeManageInstance = stake_contract;
-      },
     async getReceive(){
        let Details = await getValidatorDetails();
        let address = this.$route.query.id;
        let ValidatorInfo = Details.data.data
        this.detail = find(ValidatorInfo, (item) => item.nodeAddress == address);
-       console.log('detail',this.detail)
-       console.log('12',this.$route.params.data );
+       let ValidatorData = await getCalculation();
+       this.activeList = ValidatorData.data.data.activeList;
+       this.detailData = find(this.activeList, (item) => item.address == address);
+    //    console.log('detail',this.detail)
+    //    console.log('detailData',this.detailData)
+    //    console.log('12',this.$route.params.data );
     }
   }
 };
