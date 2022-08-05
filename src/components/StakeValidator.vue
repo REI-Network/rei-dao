@@ -1,7 +1,7 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <div class="title-detailed"><span><a class="back-voting" href="/stake">Voting</a></span> / <span class="rei-fans">REI FANs</span></div>
+      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">Voting</a></span> / <span class="rei-fans">REI FANs</span></div>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -24,7 +24,8 @@
 import StakeValidatorInfo from '../components/StakeValidatorInfo';
 import StakeValidatorList from '../components/StakeValidatorList';
 
-export default { 
+export default {
+  name: 'StakeValidator',
   components:{
     StakeValidatorInfo,
     StakeValidatorList
@@ -37,6 +38,9 @@ export default {
   },
 
   methods:{
+    routeLink(){
+      this.$router.back()
+    },
   }
 };
 </script>

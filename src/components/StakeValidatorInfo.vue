@@ -21,7 +21,9 @@
                 <v-row>
                     <span class="font-grey" v-if="detail&&detail.nodeAddress">{{detail&&detail.nodeAddress}}</span>
                     <span class="font-grey" v-else>{{detailData&&detailData.address}}</span>
-                      <v-icon size="14">mdi-content-copy</v-icon>
+                    <v-btn class="copy-btn" @click="copyAddr(detail.nodeAddress)">
+                        <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
+                    </v-btn>
                 </v-row>
             </div>
         </v-col>
@@ -177,6 +179,7 @@ export default {
      unstakeDelay: 0,
      receiveBalance: 0,
      approved: true,
+     addrCopying: false,
      arr:[],
      status: {
         true: this.$t('stake.isActive'),
@@ -427,6 +430,39 @@ export default {
       }
       return str;
     },
+    copyToClipboard(str) {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+     sleep(timestamp) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timestamp);
+      })
+      },
+    async copyAddr(addr) {
+      try {
+        window.navigator.clipboard.writeText(addr);
+        this.copyToClipboard(addr);
+      } catch (ex) {
+        console.log(ex);
+      } finally {
+        this.addrCopying = true;
+        await this.sleep(500);
+        this.addrCopying = false;
+      }
+    },
   }
 };
 </script>
@@ -559,5 +595,9 @@ export default {
 .share-rei {
   text-align: right;
   margin: 12px 0;
+}
+.copy-btn.v-btn.v-btn--has-bg{
+    background-color: transparent !important;
+    margin-top:-8px;
 }
 </style>
