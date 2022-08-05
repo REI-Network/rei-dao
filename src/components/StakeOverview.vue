@@ -76,7 +76,7 @@ filters,
         this.inActiveList = OverviewData.data.data.inActiveList;
         this.totalAmount  = OverviewData.data.data.totalAmount;
         let chartInfoData = this.assetInfo.circulating_supply;
-        this.circulation = (this.totalAmount/chartInfoData)*100;
+        this.circulation = (this.totalStakeAmount/chartInfoData)*100;
     },
   }
 };
