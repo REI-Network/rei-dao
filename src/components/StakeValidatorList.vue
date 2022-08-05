@@ -17,7 +17,7 @@
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                page.sync="page" 
+                :page.sync="page" 
                 @page-count="pageCount = $event">
                 <template v-slot:item.delegator="{ item }">
                     <Address :val="item.delegator"></Address>

@@ -1,7 +1,7 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">Voting</a></span> / <span class="rei-fans">REI FANs</span></div>
+      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">Voting</a></span> / <span class="rei-fans" v-if="detail&&detail.nodeName">{{detail.nodeName}}</span></div>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -21,8 +21,14 @@
 </template>
 
 <script>
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
+import Web3 from 'web3';
 import StakeValidatorInfo from '../components/StakeValidatorInfo';
 import StakeValidatorList from '../components/StakeValidatorList';
+import { getValidatorDetails } from '../service/CommonService';
+import find from 'lodash/find';
 
 export default {
   name: 'StakeValidator',
@@ -32,15 +38,24 @@ export default {
   },
   data() {
     return {
+      detail:'',
+      validatorAddress:this.$route.query.id,
     };
   },
   mounted(){
+    this.getNodeName();
   },
 
   methods:{
     routeLink(){
       this.$router.back()
     },
+    async getNodeName(){
+      let validatorDetails = await getValidatorDetails();
+      let address = this.$route.query.id;
+      let validatorInfo = validatorDetails.data.data
+      this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
+    }
   }
 };
 </script>
