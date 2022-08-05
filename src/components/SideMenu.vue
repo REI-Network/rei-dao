@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent v-if="$vuetify.breakpoint.mdAndUp" class="background">
+  <v-navigation-drawer app permanent v-if="$vuetify.breakpoint.mdAndUp" class="background side-menu">
     <v-sheet class="d-flex pa-4 align-center" color="background">
       <router-link to="/">
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
@@ -7,13 +7,13 @@
                 class="mr-4" 
                 max-height="54"
                 max-width="164"
-                src="../assets/images/REI DAOwhite.svg"
+                src="../assets/images/REI-DAO-Night.svg"
                 ></v-img>
                 <v-img v-else
                 class="mr-4" 
-                max-height="54"
-                max-width="164"
-                src="../assets/images/REI DAO.svg"
+                max-height="64"
+                max-width="144"
+                src="../assets/images/REI-DAO.svg"
                 ></v-img>
         <!-- </v-avatar> -->
       </router-link>
@@ -22,7 +22,7 @@
         <small class="text--secondary">{{ version }}</small>
       </div> -->
     </v-sheet>
-    <v-divider></v-divider>
+    <!-- <v-divider></v-divider> -->
     <v-list>
       <template v-for="{ icon, text, link, show } in links">
         <v-list-item :key="text" link :to="link" v-if="show">
@@ -102,6 +102,9 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.theme--light.side-menu{
+   box-shadow: 0 0 20px #ddd !important;
+}
 .v-list .v-list-item--active{
   color: white;
   background:#6979f8 ;

@@ -6,6 +6,7 @@ import Stake from '../views/Stake.vue';
 import StakeForGas from '../views/StakeForGas.vue';
 import Governance from '../views/Governance.vue';
 import Bridge from '../views/Bridge.vue';
+import StakeValidator from '../components/StakeValidator.vue';
 
 
 const routes = [
@@ -28,7 +29,13 @@ const routes = [
   {
     path: '/stake',
     name: 'Stake',
-    component: Stake
+    component: Stake,
+    // component: () => import('../views/Stake.vue')
+  },
+  {
+    path: '/stake/validator',
+    name: 'StakeInfo',
+    component: StakeValidator,
     // component: () => import('../views/Stake.vue')
   },
   {
@@ -45,6 +52,11 @@ const routes = [
     path: '/bridge',
     name: 'Bridge',
     component: Bridge
+  },
+  {
+    path: '/stakeValidator',
+    name: 'stake',
+    component: StakeValidator
   }
 ];
 

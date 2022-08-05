@@ -717,7 +717,7 @@ export default {
                     xAxis:       
                         {
                             type: 'time',
-                            axisLabel: {//x轴文字的配置
+                            axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -726,8 +726,8 @@ export default {
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
+                                    color: 'rgba(134,142,158, 0.1)', 
+                                    width: '1' 
                                 }
                             },
                             splitLine: {
@@ -740,7 +740,7 @@ export default {
                         {
                             type: 'value',
 
-                            axisLabel: {//x轴文字的配置
+                            axisLabel: {
                                 show: true,
                                 textStyle: {
                                     color: "rgba(134,142,158,.6)",
@@ -758,8 +758,8 @@ export default {
                             axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
+                                    color: 'rgba(134,142,158, 0.1)', 
+                                    width: '1' 
                                 }
                             },
                             splitLine: {
@@ -816,7 +816,7 @@ export default {
                     },
                     xAxis:{
                         type: 'time',
-                         axisLabel: {//x轴文字的配置
+                         axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -825,8 +825,8 @@ export default {
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
+                                    color: 'rgba(134,142,158, 0.1)', 
+                                    width: '1',
                                 }
                             },
                             splitLine: {
@@ -837,7 +837,7 @@ export default {
                     },
                     yAxis: {
                         type: 'value',
-                         axisLabel: {//x轴文字的配置
+                         axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -846,8 +846,8 @@ export default {
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
+                                    color: 'rgba(134,142,158, 0.1)', 
+                                    width: '1' 
                                 }
                             },
                             splitLine: {
@@ -910,7 +910,7 @@ export default {
                     },
                     xAxis:{
                         type: 'time',
-                        axisLabel: {//x轴文字的配置
+                        axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -919,8 +919,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158, 0.1)', 
+                                width: '1' 
                             }
                         },
                         splitLine: {
@@ -931,7 +931,7 @@ export default {
                     },
                     yAxis: {
                         type: 'value',
-                        axisLabel: {//x轴文字的配置
+                        axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -940,8 +940,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158, 0.1)',
+                                width: '1'
                             }
                         },
                         splitLine: {
@@ -1006,7 +1006,7 @@ export default {
                         axisPointer: {
                             type: 'shadow'
                         },
-                         axisLabel: {//x轴文字的配置
+                         axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -1015,8 +1015,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158, 0.1)', 
+                                width: '1' 
                             }
                         },
                         splitLine: {
@@ -1027,7 +1027,7 @@ export default {
                     },
                     yAxis: {
                         type: 'value',
-                         axisLabel: {//x轴文字的配置
+                         axisLabel: {
                                 show: true,
                                 textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -1037,8 +1037,8 @@ export default {
                             lineStyle: {
                                 show: true,
                                 type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', //左边线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158, 0.1)',
+                                width: '1' 
                             },
                         },
                         splitLine: {
