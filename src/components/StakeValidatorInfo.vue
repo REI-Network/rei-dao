@@ -2,14 +2,14 @@
   <v-container>
     <h3>Validator Info</h3>
     <v-row class="mt-5 mb-5">
-        <v-col class="rei-fans">
+        <v-col class="rei-validator">
             <div>
                 <v-img v-if="detail&&detail.logo" :src="detail.logo" width="42" height="42"/>
                 <v-img v-else src="../assets/images/rei.svg" width="42" height="42"/>
             </div>
             <div class="fans-right">
                 <v-row align="center">
-                    <h3 v-if="detail&&detail.nodeName">{{detail.nodeName}}</h3>
+                    <h3 class="validator-nodename" v-if="detail&&detail.nodeName">{{detail.nodeName}}</h3>
                     <div v-if="detailData" class="active">{{status[detailData.isActive]}}</div>
                     <div class="three-img">
                         <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
@@ -18,7 +18,7 @@
                         <!-- <v-img class="img-icon" src="../assets/images/telegram.svg" width="20" height="20"/> -->
                     </div>
                 </v-row>
-                <v-row>
+                <v-row class="validator-address">
                     <span class="font-grey" v-if="detail&&detail.nodeAddress">{{detail&&detail.nodeAddress}}</span>
                     <span class="font-grey" v-else>{{detailData&&detailData.address}}</span>
                     <v-btn class="copy-btn" @click="copyAddr(detailData.address)">
@@ -448,10 +448,13 @@ export default {
     color: #868E9E ;
     font-size: 14px;
 }
-.rei-fans{
+.rei-validator{
     padding-top: 8px;
     display: flex;
     align-items: center;
+    .validator-nodename{
+      margin-right:8px;
+    }
     .fans-right{
         margin-left: 20px;
     }
@@ -459,7 +462,6 @@ export default {
         height: 18px;
         background-color: #FC9354;
         border-radius: 15px;
-        margin-left: 8px;
         padding: 0 10px;
         color: #fff;
         font-size: 14px;
