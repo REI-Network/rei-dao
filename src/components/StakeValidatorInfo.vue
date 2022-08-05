@@ -186,10 +186,10 @@ export default {
       },
      activeList:[
          {
-             address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
-             power:"657659.99",
-             commissionShare:"123179341",
-             commissionRate:20
+            //  address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
+            //  power:"657659.99",
+            //  commissionShare:"123179341",
+            //  commissionRate:20
          }
      ],
      amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
@@ -221,8 +221,8 @@ export default {
        let address = this.$route.query.id;
        let ValidatorInfo = Details.data.data
        this.detail = find(ValidatorInfo, (item) => item.nodeAddress == address);
-    //    let ValidatorData = await getCalculation();
-    //    this.activeList = ValidatorData.data.data.activeList;
+       let ValidatorData = await getCalculation();
+       this.activeList = ValidatorData.data.data.activeList;
        this.detailData = find(this.activeList, (item) => item.address == address);
     },
       handleStaking() {
