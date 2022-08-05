@@ -1212,9 +1212,6 @@ export default {
         query:{
           id:value.address,
         },
-        params:{
-          data:value,
-        }
       })
     },
     async myVoteDetails(value){

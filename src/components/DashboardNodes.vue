@@ -60,7 +60,7 @@
                 <v-col cols="12" md="9">
                     <!-- <v-img src="../assets/images/map.svg"></v-img> -->
                     <!-- <div class="map-content"> -->
-                        <div id="myCharts" ref="chart" class="dispribution" style="height:400px"></div>
+                        <div id="myCharts" ref="chart" class="dispribution" style="height:100%"></div>
                     <!-- </div> -->
                 </v-col>
             </v-row>
@@ -79,7 +79,7 @@
                     </div>
                     <div class="block">
                         <div class="font-grey">Average Block Time</div>
-                        <div class="node-number">3.10 <span class="font-grey">s</span></div>
+                        <div class="node-number">{{ stats.averageBlockTime | asset(2) }} <span class="font-grey">s</span></div>
                     </div>
                 </v-card>
             </v-col>
@@ -101,11 +101,17 @@
                     <h3>Addresses</h3>
                     <div class="block">
                         <div class="font-grey">Contract Addresses</div>
-                        <div class="node-number">9,166 <span class="font-green">+36</span></div>
+                        <div class="node-number">
+                            {{ stats.totalContract | asset(0) }}
+                            <!-- <span class="font-green">+36</span> -->
+                        </div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Wallet Addresses</div>
-                        <div class="node-number">{{ stats.totalAddress | asset(0) }}<span class="font-green">+47</span></div>
+                        <div class="node-number">
+                            {{ stats.totalAddress | asset(0) }}
+                            <!-- <span class="font-green">+47</span> -->
+                            </div>
                     </div>
                 </v-card>
             </v-col>
@@ -114,7 +120,10 @@
                     <h3>Token</h3>
                     <div class="block">
                         <div class="font-grey">Total Token Number</div>
-                        <div class="node-number">159,166 <span class="font-green">+117</span></div>
+                        <div class="node-number">
+                            {{ stats.totalToken | asset(0) }}
+                            <!-- <span class="font-green">+117</span> -->
+                        </div>
                     </div>
                 </v-card>
             </v-col>
@@ -126,7 +135,7 @@
 
 import Web3 from 'web3';
 import filters from '../filters';
-// import * as echarts from 'echarts';
+import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 export default {
 filters,
@@ -156,127 +165,126 @@ filters,
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-     myCharts(){
-      const chart = this.$refs.chart;
-      if(chart){
-        this.myChart = this.$echarts.init(chart);
-         var option = {
-                xAxis: {
-                    axisTick: {
-                        show: false
-                    },
-                    axisLine: {
-                        show:false,
-                    },
-                    axisLabel:{
-                        show:false,
-                    },
-                    splitLine: {
-                        show: false,
-                    },
-                },
-                yAxis: {
-                    data:[],
-                    axisTick: {
-                        show: false
-                    },
-                    axisLine: {
-                        show:false,
-                    },
-                    axisLabel:{
-                        show:false,
-                    },
-                    splitLine: {
-                        show: false,
-                    },
-                },
-                series: [
-                    {
+    //  myCharts(){
+    //   const chart = this.$refs.chart;
+    //   if(chart){
+    //     this.myChart = this.$echarts.init(chart);
+    //      var option = {
+    //             xAxis: {
+    //                 axisTick: {
+    //                     show: false
+    //                 },
+    //                 axisLine: {
+    //                     show:false,
+    //                 },
+    //                 axisLabel:{
+    //                     show:false,
+    //                 },
+    //                 splitLine: {
+    //                     show: false,
+    //                 },
+    //             },
+    //             yAxis: {
+    //                 data:[],
+    //                 axisTick: {
+    //                     show: false
+    //                 },
+    //                 axisLine: {
+    //                     show:false,
+    //                 },
+    //                 axisLabel:{
+    //                     show:false,
+    //                 },
+    //                 splitLine: {
+    //                     show: false,
+    //                 },
+    //             },
+    //             series: [
+    //                 {
                         
-                        type: 'effectScatter',
-                        symbolSize: 20,
-                        data: [
-                            [18.22, 6.82],
-                        ],
-                        itemStyle:{
-                                color:'#2115E5'
-                            },
-                        },
-                    {
-                        data: [
-                            [3.0, 9.04],
-                            [5.07, 6.55],
-                            [16.22, 7.58],
-                            [16.65, 6.41],
-                            [18.22, 6.82],
-                            [27.55, 7.72],
-                            [29.99, 6.45]
-                        ],
-                        itemStyle:{
-                                color:'#2135E5'
-                            },
-                        type: 'scatter',
-                    }
-                ]
+    //                     type: 'effectScatter',
+    //                     symbolSize: 20,
+    //                     data: [
+    //                         [18.22, 6.82],
+    //                     ],
+    //                     itemStyle:{
+    //                             color:'#2115E5'
+    //                         },
+    //                     },
+    //                 {
+    //                     data: [
+    //                         [3.0, 9.04],
+    //                         [5.07, 6.55],
+    //                         [16.22, 7.58],
+    //                         [16.65, 6.41],
+    //                         [18.22, 6.82],
+    //                         [27.55, 7.72],
+    //                         [29.99, 6.45]
+    //                     ],
+    //                     itemStyle:{
+    //                             color:'#2135E5'
+    //                         },
+    //                     type: 'scatter',
+    //                 }
+    //             ]
+    //         }
+    //       this.myChart.setOption(option)
+    //       window.addEventListener("resize", function() {
+    //         this.myChart.resize()
+    //       })
+    //     }
+    //   this.$on('hook:destroyed',()=>{
+    //      window.removeEventListener("resize", function() {
+    //         this.myChart.resize();
+    //     });
+    // })
+    // },
+   myCharts(){
+        var chartDom = document.getElementById('myCharts');
+        var myChart = echarts.init(chartDom);
+        var option;
+       $.get(require('../assets/images/map.svg'), function (svg) {
+        echarts.registerMap('iceland_svg', { svg: svg });
+        option = {
+            tooltip: {},
+            geo: {
+            tooltip: {
+                show: true
+            },
+            map: 'iceland_svg',
+            roam: false,
+            },
+            series: {
+            type: 'scatter',
+            coordinateSystem: 'geo',
+            geoIndex: 0,
+            symbolSize: 14,
+            itemStyle: {
+                color: '#2115E5'
+            },
+            encode: {
+                tooltip: 2
+            },
+            data: [
+                [71.053, 92.736],
+                [327.939, 99.475],
+                [367.291, 281.14],
+                [489.245, 171.008],
+                [686.313, 106.537],
+                [758.796, 284.843]
+            ]
             }
-          this.myChart.setOption(option)
-          window.addEventListener("resize", function() {
-            this.myChart.resize()
-          })
-        }
-      this.$on('hook:destroyed',()=>{
-         window.removeEventListener("resize", function() {
-            this.myChart.resize();
+        };
+        myChart.setOption(option);
+        myChart.getZr().on('click', function (params) {
+            var pixelPoint = [params.offsetX, params.offsetY];
+            var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+            console.log(dataPoint);
         });
-    })
-    },
-//    myCharts(){
-//         var chartDom = document.getElementById('myCharts');
-//         var myChart = echarts.init(chartDom);
-//         $.get('../assets/images/map.svg', function (svg) {
-//         echarts.registerMap('iceland_svg', { svg: svg });
-//         var option = {
-//             tooltip: {},
-//             geo: {
-//             tooltip: {
-//                 show: true
-//             },
-//             map: 'iceland_svg',
-//             roam: true
-//             },
-//             series: {
-//             type: 'effectScatter',
-//             coordinateSystem: 'geo',
-//             geoIndex: 0,
-//             symbolSize: function (params) {
-//                 return (params[2] / 100) * 15 + 5;
-//             },
-//             itemStyle: {
-//                 color: '#b02a02'
-//             },
-//             encode: {
-//                 tooltip: 2
-//             },
-//             data: [
-//                 [488.2358421078053, 459.70913833075736, 100],
-//                 [770.3415644319939, 757.9672194986475, 30],
-//                 [1180.0329284196291, 743.6141808346214, 80],
-//                 [894.03790632245, 1188.1985153835008, 61],
-//                 [1372.98925630313, 477.3839988649537, 70],
-//                 [1378.62251255796, 935.6708486282843, 81]
-//             ]
-//             }
-//         };
-//         myChart.setOption(option);
-//         myChart.getZr().on('click', function (params) {
-//             var pixelPoint = [params.offsetX, params.offsetY];
-//             var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
-//             console.log(dataPoint);
-//         });
-//         });
+        });
 
-// option && myChart.setOption(option);
-//    },
+option && myChart.setOption(option);
+     },
    async getBlock(){
         this.blockHeight = await web3.eth.getBlockNumber();
         let block = await web3.eth.getBlock(this.blockHeight);
@@ -285,7 +293,7 @@ filters,
         try {
             const { data } = await this.$axios.get('https://gateway.rei.network/api/reistats')
             this.stats = data.row.json;
-            console.log('this.stats',this.stats.totalAddress)
+            console.log('this.stats',this.stats)
         } catch (error) {
             console.log(error)
         }
