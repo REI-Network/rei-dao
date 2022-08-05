@@ -4,8 +4,6 @@
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">All Delegators</v-tab>
-          <v-tab key="12">My votes</v-tab>
-          <v-tab key="13">My Withdrawals</v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
