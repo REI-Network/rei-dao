@@ -541,7 +541,7 @@ import find from 'lodash/find';
 import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getCalculation } from '../service/CommonService'
+import { getValidatorList } from '../service/CommonService'
 import { getValidatorDetails } from '../service/CommonService'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -685,7 +685,7 @@ export default {
     this.connect();
     this.init();
     this.windowWidth();
-    this.getCalculation();
+    this.getValidator();
     this.Calculation();
   },
   methods: {
@@ -1193,8 +1193,8 @@ export default {
     cancelCalculation() {
       this.calculationDialog = false;
     },
-    async getCalculation(){
-        let CalculationData = await getCalculation();
+    async getValidator(){
+        let CalculationData = await getValidatorList();
         this.totalAmount  = CalculationData.data.data.totalAmount;
         this.calculationItems = CalculationData.data.data.activeList;
         this.modelItems = this.calculationItems[0]

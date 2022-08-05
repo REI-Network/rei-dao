@@ -6,11 +6,6 @@
     </div>
     <v-row>
       <v-col>
-          <DashboardNodes></DashboardNodes>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
           <DashboardTrends></DashboardTrends>
       </v-col>
     </v-row>
@@ -32,14 +27,12 @@
 import DashboardTrends from '../components/DashboardTrends';
 import DashboardPrice from '../components/DashboardPrice';
 import DashboardTokenFAQ from '../components/DashboardTokenFAQ';
-import DashboardNodes from '../components/DashboardNodes';
 
 export default {
   components:{
     DashboardTrends,
     DashboardPrice,
-    DashboardTokenFAQ,
-    DashboardNodes
+    DashboardTokenFAQ
   },
   data() {
     return {
