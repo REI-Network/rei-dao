@@ -107,7 +107,7 @@
             </div>
             <div class="pb-1 text-body-1 share-rei">
               <span class="font-color">{{ $t('stake.commonnsion_share_balance') }}</span>
-              <span style="font-weight: bold">{{ detailData.commissionShare | asset(2) }}</span>
+              <span style="font-weight: bold">{{ myCommissionShareBalance | asset(2) }}</span>
               <span class="font-color">REI</span>
             </div>
             <v-row>
@@ -176,6 +176,8 @@ export default {
      approveLoading: false,
      stakeManageInstance: '',
      stakeManagerContract: '',
+     commissionShareInstance:'',
+     myCommissionShareBalance:0,
      unstakeDelay: 0,
      receiveBalance: 0,
      approved: true,
@@ -205,80 +207,41 @@ export default {
   computed: {
     ...mapGetters({
         connection: 'connection',
-        dark: 'dark'
+        dark: 'dark',
+        apiUrl: 'apiUrl'
     })
   },
   created(){
 
   },
   mounted(){
-      this.getValidatorInfo();
-      this.init();
+    this.connect();
+    this.getValidatorInfo();
+    this.init();
   },
   methods: {
     ...mapActions({
       addTx: 'addTx'
     }),
+    connect() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+      }
+    },
     async init() {
         let contract = new web3.eth.Contract(abiConfig, config_contract);
         this.stakeManagerContract = await contract.methods.stakeManager().call();
         this.unstakeDelay = await contract.methods.unstakeDelay().call();
         let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
         this.stakeManageInstance = stake_contract;
-         const activeValidatorsLength = await this.stakeManageInstance.methods.activeValidatorsLength().call();
-      let indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call();
-      let indexedFlag = true;
-      if (indexedValidatorsLength == 0) {
-        indexedFlag = false;
-        indexedValidatorsLength = activeValidatorsLength;
-      }
-      let indexedValidatorsArr = Array.from(new Array(Number(indexedValidatorsLength)), (n, i) => i);
-
-      let indexedNodeList = await Promise.all(
-        indexedValidatorsArr.map((item) => {
-          if (indexedFlag) {
-            return stake_contract.methods.indexedValidatorsByIndex(item).call();
-          } else {
-            return stake_contract.methods.activeValidators(item).call();
-          }
-        })
-      ).then(async (data) => {
-        let validator_address = data;
-        let validator_addressMap;
-        if (indexedFlag) {
-          validator_addressMap = indexedValidatorsArr.map((item) => {
-            return stake_contract.methods.getVotingPowerByIndex(item).call();
-          });
-        } else {
-          validator_addressMap = validator_address.map((item) => {
-            return stake_contract.methods.getVotingPowerByAddress(item.validator).call();
-          });
+        if(this.$route.query.id){
+          let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
+          this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
+          let myCommissionShareBalance = await this.getBalanceOfShare();
+          this.myCommissionShareBalance = web3.utils.fromWei(web3.utils.toBN(myCommissionShareBalance.balance))
         }
-
-        let validatorMap = validator_address.map((item) => {
-          let _item = indexedFlag ? item : item.validator;
-          return stake_contract.methods.validators(_item).call();
-        });
-        let validatorPower = await Promise.all(validator_addressMap);
-        let validators = await Promise.all(validatorMap);
-        let balanceOfShareMap = validators.map((item) => {
-          return this.getBalanceOfShare(item);
-        });
-        let balanceOfShare = await Promise.all(balanceOfShareMap);
-        // let arr = [];
-        for (let i = 0; i < validator_address.length; i++) {
-          this.arr.push({
-            address: indexedFlag ? validator_address[i] : validator_address[i].validator,
-            power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
-            balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
-            commissionShare: balanceOfShare[i].commissionShare,
-            contractAddress: validators[i][1],
-            commissionRate: validators[i].commissionRate,
-            updateTimestamp: validators[i].updateTimestamp
-          });
-        }
-        return this.arr;
-      });
     },
     async getValidatorInfo(){
        let validatorDetails = await getValidatorDetails();
@@ -331,24 +294,23 @@ export default {
       }
       this.stakeLoading = false;
     },
-     async getBalanceOfShare(activeValidatorsShare) {
-      let commissionShare = new web3.eth.Contract(abiCommissionShare, activeValidatorsShare[1]);
+    async getBalanceOfShare() {
       let balance = 0;
       if (this.connection.address) {
-        balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+        balance = await this.commissionShareInstance.methods.balanceOf(this.connection.address).call();
+        console.log(balance)
       }
       return {
-        balance,
-        commissionShare
+        balance
       };
     },
-     async handleClaim() {
+    async handleClaim() {
       let address = this.$route.query.id;
-      let detail = find(this.arr, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
+
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
-      const allowance = await detail.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
+      const allowance = await this.commissionShareInstance.methods.allowance(this.connection.address, this.stakeManagerContract).call();
       if (allowance != 0) {
         this.approved = true;
       } else {
@@ -369,7 +331,7 @@ export default {
     },
      async submitApprove() {
       this.approveLoading = true;
-      await this.detailData.commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
+      await this.commissionShareInstance.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
       this.approveLoading = false;
       this.approved = true;
     },
@@ -414,7 +376,7 @@ export default {
         this.receiveBalance = web3.utils.fromWei(web3.utils.toBN(amount));
       }
     },
-     claimAll() {
+    claimAll() {
       this.claimForm.amount = this.detailData.commissionShare;
       this.calculateAmount();
     },

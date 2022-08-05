@@ -22,9 +22,7 @@
                 page.sync="page" 
                 @page-count="pageCount = $event">
                 <template v-slot:item.delegator="{ item }">
-                    <v-img :src="item.img" weight="24" height="24" />
-                    <span>{{ item.delegator }}</span>
-                    <span class="mine">mine</span>
+                    <Address :val="item.delegator"></Address>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="delegatorList.length > 0">
@@ -38,7 +36,7 @@
                     </v-pagination>
                 </div>
           </v-tab-item>
-          <v-tab-item key="12">
+          <!-- <v-tab-item key="12">
               <v-data-table 
                 :headers="myVotesHeaders" 
                 :items="myVotesList" 
@@ -98,17 +96,33 @@
                     total-visible="6">
                     </v-pagination>
                 </div>
-          </v-tab-item>
+          </v-tab-item> -->
         </v-tabs-items>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
+import Web3 from 'web3';
+import { mapActions,mapGetters } from 'vuex';
 import filters from '../filters';
+import Address from '../components/Address';
+import abiConfig from '../abis/abiConfig';
+import abiStakeManager from '../abis/abiStakeManager';
+import abiCommissionShare from '../abis/abiCommissionShare';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
+
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+let client = null;
+
 export default {
-    filters,
+  components: {
+    Address
+  },
+  filters,
   data() {
     return {
      tab1:null,
@@ -116,21 +130,15 @@ export default {
      pageCount: 0,
      itemsPerPage: 20,
      stakeListLoading: false,
+     stakeManageInstance:'',
+     commissionShareInstance:'',
+     allStakeListLoading:false,
+     allStakeList:[],
      headers:[
         { text: "Delegators", value: 'delegator' },
         { text: "Amount ($REI)", value: 'amount' },
      ],
      delegatorList:[
-         {
-            img:"../assets/images/closed.png",
-            delegator:"0xADbBf74bc8d9CFfeC78526169cd81FdcBbA35eC2",
-            amount:487.23
-         },
-          {
-            img:"../assets/images/core.png",
-            delegator:"0xADbBf74bc8d9CFfeC78526169cd81FdcBbA35eC2",
-            amount:487.23
-         }
      ],
      myVotesHeaders:[
         { text: "Time", value: 'time' },
@@ -165,12 +173,85 @@ export default {
   computed: {
     ...mapGetters({
         connection: 'connection',
-        dark: 'dark'
+        dark: 'dark',
+        apiUrl: 'apiUrl'
     })
   },
   mounted(){
+    this.connect();
+    this.init();
   },
   methods: {
+    connect() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+      }
+    },
+    async init() {
+        let contract = new web3.eth.Contract(abiConfig, config_contract);
+        this.stakeManagerContract = await contract.methods.stakeManager().call();
+        this.unstakeDelay = await contract.methods.unstakeDelay().call();
+        let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
+        this.stakeManageInstance = stake_contract;
+        if(this.$route.query.id){
+          let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
+          this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
+        }
+        
+        this.getAllStakeList()
+    },
+    async getAllStakeList() {
+      this.stakeListLoading = true;
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const getStakeinfos = gql`
+         query stakeInfos {
+            stakeInfos(first:1000, where: { validator: "${this.$route.query.id}" }) {
+                id
+                from
+                timestamp
+                validator
+            }
+        }
+        `;
+      const {
+        data: { stakeInfos }
+      } = await client.query({
+        query: getStakeinfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      let delegatorList = stakeInfos;
+      if (delegatorList.length > 0) {
+        let balanceOfShareMap = delegatorList.map((item) => {
+          return this.getBalanceOfShare(item);
+        });
+        let balanceOfShare = await Promise.all(balanceOfShareMap);
+        let arr = [];
+        for (let i = 0; i < delegatorList.length; i++) {
+          arr.push({
+            delegator: delegatorList[i].from,
+            amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance))
+          });
+        }
+        this.delegatorList = arr;
+      }
+      this.stakeListLoading = false;
+    },
+    async getBalanceOfShare(item) { 
+      let balance = 0;
+      if (item.from) {
+        balance = await this.commissionShareInstance.methods.balanceOf(item.from).call({from:this.connection.address});
+      }
+      return {
+        balance
+      };
+    },
   }
 };
 </script>
