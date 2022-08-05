@@ -33,6 +33,12 @@ const routes = [
     // component: () => import('../views/Stake.vue')
   },
   {
+    path: '/stake/validator',
+    name: 'StakeInfo',
+    component: StakeValidator,
+    // component: () => import('../views/Stake.vue')
+  },
+  {
     path: '/stakeforgas',
     name: 'StakeForGas',
     component: StakeForGas
@@ -49,7 +55,7 @@ const routes = [
   },
   {
     path: '/stakeValidator',
-    name: 'StakeValidator',
+    name: 'stake',
     component: StakeValidator
   }
 ];

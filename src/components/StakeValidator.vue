@@ -55,10 +55,7 @@ export default {
       let address = this.$route.query.id;
       let validatorInfo = validatorDetails.data.data
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
-      this.nodeName = this.detail.nodeName
-      if(!detail){
-        this.nodeName = this.$route.query.id;
-      }
+      this.nodeName = this.detail?this.detail.nodeName: this.$route.query.id
     }
   }
 };

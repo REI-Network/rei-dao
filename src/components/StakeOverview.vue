@@ -49,6 +49,7 @@ filters,
      activeList:"",
      inActiveList:"",
      circulation:"",
+     totalStakeAmount:''
     };
   },
    watch: {
