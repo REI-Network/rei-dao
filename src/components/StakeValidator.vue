@@ -1,7 +1,7 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">Voting</a></span> / <span class="rei-fans" v-if="detail&&detail.nodeName">{{detail.nodeName}}</span></div>
+      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">Voting</a></span> / <span class="rei-fans" >{{nodeName}}</span></div>
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       detail:'',
-      validatorAddress:this.$route.query.id,
+      nodeName:this.$route.query.id
     };
   },
   mounted(){
@@ -55,6 +55,10 @@ export default {
       let address = this.$route.query.id;
       let validatorInfo = validatorDetails.data.data
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
+      this.nodeName = this.detail.nodeName
+      if(!detail){
+        this.nodeName = this.$route.query.id;
+      }
     }
   }
 };

@@ -21,7 +21,7 @@
                 <v-row>
                     <span class="font-grey" v-if="detail&&detail.nodeAddress">{{detail&&detail.nodeAddress}}</span>
                     <span class="font-grey" v-else>{{detailData&&detailData.address}}</span>
-                    <v-btn class="copy-btn" @click="copyAddr(detail.nodeAddress)">
+                    <v-btn class="copy-btn" @click="copyAddr(detailData.address)">
                         <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                     </v-btn>
                 </v-row>
@@ -377,7 +377,7 @@ export default {
       }
     },
     claimAll() {
-      this.claimForm.amount = this.detailData.commissionShare;
+      this.claimForm.amount = this.myCommissionShareBalance;
       this.calculateAmount();
     },
     timeToFormat(val) {

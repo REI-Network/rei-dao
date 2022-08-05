@@ -33,6 +33,12 @@ export const getValidatorDetails = (params) => http({
     params
 });
 
+export const getReiSatistic = (params) => http({
+  method: 'GET',
+  url:'https://gateway.rei.network/api/reistats',
+  params
+});
+
 
 export const postRpcRequest = (apiurl,params) => http({
     method: 'POST',

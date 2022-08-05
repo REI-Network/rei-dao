@@ -5,7 +5,7 @@
            <v-row justify="space-between">
                 <v-col cols="12" sm="3">
                     <div class="font-grey">Total Voting Power ($REI)</div>
-                    <h2>{{ totalAmount | asset(2) }}</h2>
+                    <h2>{{ totalStakeAmount | asset(2) }}</h2>
                 </v-col>
                 <v-col cols="12" sm="3">
                     <div class="font-grey">Votes/Circulation</div>
@@ -39,7 +39,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import { getValidatorList } from '../service/CommonService';
+import { getValidatorList,getReiSatistic } from '../service/CommonService';
 import filters from '../filters';
 export default {
 filters,
@@ -69,6 +69,8 @@ filters,
   methods: {
     async getOverview(){
         let OverviewData = await getValidatorList();
+        let reistate = await getReiSatistic();
+        this.totalStakeAmount = reistate.data.row.json.totalStake;
         this.activeList = OverviewData.data.data.activeList;
         this.inActiveList = OverviewData.data.data.inActiveList;
         this.totalAmount  = OverviewData.data.data.totalAmount;
