@@ -76,27 +76,6 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <!-- <v-row class="background" style="margin-top: 0px">
-              <v-tabs v-model="tab2" hide-slider class="my-voted-validator" background-color="background" height="42">
-                <v-card outlined class="card-tab">
-                  <v-tab key="111" style="font-size: 12px">Validator</v-tab>
-                  <v-tab key="122" style="font-size: 12px">{{ $t('stake.not_active_nodelist') }}</v-tab>
-                </v-card>
-              </v-tabs>
-              <v-col class="right-outline" v-if="this.tab2 == 0">
-                <v-card outlined class="select-card">
-                  <v-select class="d-select" :items="items" item-text="state" item-value="val" outlined item-color="vote_button" dense style="margin-left: 18px" height="28" v-model="listFilter" @change="changeState"></v-select>
-                </v-card>
-                <v-card outlined class="select-card select-second">
-                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsPerPage" dense></v-select>
-                </v-card>
-              </v-col>
-              <v-col class="right-outline" v-if="this.tab2 == 1">
-                <v-card outlined class="select-card select-second vote-select">
-                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
-                </v-card>
-              </v-col>
-            </v-row> -->
             <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
@@ -168,6 +147,27 @@
                   <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                 </div>
           </v-tab-item>
+          <!-- <v-row class="background" style="margin-top: 0px">
+              <v-tabs v-model="tab2" hide-slider class="my-voted-validator" background-color="background" height="42">
+                <v-card outlined class="card-tab">
+                  <v-tab key="111" style="font-size: 12px">Validator</v-tab>
+                  <v-tab key="122" style="font-size: 12px">{{ $t('stake.not_active_nodelist') }}</v-tab>
+                </v-card>
+              </v-tabs>
+              <v-col class="right-outline" v-if="this.tab2 == 0">
+                <v-card outlined class="select-card">
+                  <v-select class="d-select" :items="items" item-text="state" item-value="val" outlined item-color="vote_button" dense style="margin-left: 18px" height="28" v-model="listFilter" @change="changeState"></v-select>
+                </v-card>
+                <v-card outlined class="select-card select-second">
+                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsPerPage" dense></v-select>
+                </v-card>
+              </v-col>
+              <v-col class="right-outline" v-if="this.tab2 == 1">
+                <v-card outlined class="select-card select-second vote-select">
+                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
+                </v-card>
+              </v-col>
+            </v-row> -->
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -913,6 +913,7 @@ export default {
       this.dialog = true;
     },
     async handleClaim(item) {
+      console.log('ite,',item)
       this.currentItem = item;
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
@@ -1215,8 +1216,14 @@ export default {
       })
     },
     async myVoteDetails(value){
-      this.validatorDialog = true;
+      // this.validatorDialog = true;
       this.detailsItem = value;
+      this.$router.push({
+        name:'StakeValidator',
+        query:{
+          id:value.address,
+        },
+      })
     },
     closeDetails(){
       this.validatorDialog = false;

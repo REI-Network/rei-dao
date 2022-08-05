@@ -35,10 +35,11 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import { getCalculation } from '../service/CommonService'
 export default {
   data() {
     return {
-     
+     totalAmount:"",
     };
   },
   computed: {
@@ -48,8 +49,14 @@ export default {
     })
   },
   mounted(){
+      this.getOverview();
   },
   methods: {
+    async getOverview(){
+        let OverviewData = await getCalculation();
+        this.totalAmount  = OverviewData.data.data.totalAmount;
+        console.log('OverviewData',OverviewData)
+    },
   }
 };
 </script>

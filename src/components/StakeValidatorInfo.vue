@@ -5,7 +5,7 @@
         <v-col class="rei-fans">
             <div>
                 <v-img v-if="detail.logo" :src="detail.logo" width="42" height="42"/>
-                <v-img v-else src="../assets/images/circle-icon.svg" width="42" height="42"/>
+                <v-img v-else src="../assets/images/rei.svg" width="42" height="42"/>
             </div>
             <div class="fans-right">
                 <v-row align="center">
@@ -148,7 +148,7 @@
 /* eslint-disable no-unused-vars */
 
 import Web3 from 'web3';
-import { mapGetters } from 'vuex';
+import { mapActions,mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util';
@@ -156,6 +156,7 @@ import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import { getCalculation,getValidatorDetails } from '../service/CommonService'
+import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 
@@ -173,11 +174,13 @@ export default {
      claimDialog: false,
      stakeLoading: false,
      claimLoading: false,
+     approveLoading: false,
      stakeManageInstance: '',
      stakeManagerContract: '',
      unstakeDelay: 0,
      receiveBalance: 0,
      approved: true,
+     arr:[],
      form: {
         amount: 0
       },
@@ -186,10 +189,10 @@ export default {
       },
      activeList:[
          {
-            //  address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
-            //  power:"657659.99",
-            //  commissionShare:"123179341",
-            //  commissionRate:20
+             address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
+             power:"657659.99",
+             commissionShare:"123179341",
+             commissionRate:20
          }
      ],
      amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
@@ -209,21 +212,78 @@ export default {
       this.init();
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     async init() {
         let contract = new web3.eth.Contract(abiConfig, config_contract);
         this.stakeManagerContract = await contract.methods.stakeManager().call();
         this.unstakeDelay = await contract.methods.unstakeDelay().call();
         let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
         this.stakeManageInstance = stake_contract;
+         const activeValidatorsLength = await this.stakeManageInstance.methods.activeValidatorsLength().call();
+      let indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call();
+      let indexedFlag = true;
+      if (indexedValidatorsLength == 0) {
+        indexedFlag = false;
+        indexedValidatorsLength = activeValidatorsLength;
+      }
+      let indexedValidatorsArr = Array.from(new Array(Number(indexedValidatorsLength)), (n, i) => i);
+
+      let indexedNodeList = await Promise.all(
+        indexedValidatorsArr.map((item) => {
+          if (indexedFlag) {
+            return stake_contract.methods.indexedValidatorsByIndex(item).call();
+          } else {
+            return stake_contract.methods.activeValidators(item).call();
+          }
+        })
+      ).then(async (data) => {
+        let validator_address = data;
+        let validator_addressMap;
+        if (indexedFlag) {
+          validator_addressMap = indexedValidatorsArr.map((item) => {
+            return stake_contract.methods.getVotingPowerByIndex(item).call();
+          });
+        } else {
+          validator_addressMap = validator_address.map((item) => {
+            return stake_contract.methods.getVotingPowerByAddress(item.validator).call();
+          });
+        }
+
+        let validatorMap = validator_address.map((item) => {
+          let _item = indexedFlag ? item : item.validator;
+          return stake_contract.methods.validators(_item).call();
+        });
+        let validatorPower = await Promise.all(validator_addressMap);
+        let validators = await Promise.all(validatorMap);
+        let balanceOfShareMap = validators.map((item) => {
+          return this.getBalanceOfShare(item);
+        });
+        let balanceOfShare = await Promise.all(balanceOfShareMap);
+        // let arr = [];
+        for (let i = 0; i < validator_address.length; i++) {
+          this.arr.push({
+            address: indexedFlag ? validator_address[i] : validator_address[i].validator,
+            power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
+            balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+            commissionShare: balanceOfShare[i].commissionShare,
+            contractAddress: validators[i][1],
+            commissionRate: validators[i].commissionRate,
+            updateTimestamp: validators[i].updateTimestamp
+          });
+        }
+        return this.arr;
+      });
     },
     async getReceive(){
        let Details = await getValidatorDetails();
        let address = this.$route.query.id;
        let ValidatorInfo = Details.data.data
-       this.detail = find(ValidatorInfo, (item) => item.nodeAddress == address);
-       let ValidatorData = await getCalculation();
-       this.activeList = ValidatorData.data.data.activeList;
-       this.detailData = find(this.activeList, (item) => item.address == address);
+       this.detail = find(ValidatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
+    //    let ValidatorData = await getCalculation();
+    //    this.activeList = ValidatorData.data.data.activeList;
+       this.detailData = find(this.activeList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
     },
       handleStaking() {
       this.$refs.stakeform && this.$refs.stakeform.reset();
@@ -262,17 +322,29 @@ export default {
       }
       this.stakeLoading = false;
     },
+     async getBalanceOfShare(activeValidatorsShare) {
+      let commissionShare = new web3.eth.Contract(abiCommissionShare, activeValidatorsShare[1]);
+      let balance = 0;
+      if (this.connection.address) {
+        balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+      }
+      return {
+        balance,
+        commissionShare
+      };
+    },
      async handleClaim() {
+      let address = this.$route.query.id;
+      let detail = find(this.arr, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
-      console.log('this.detailData',this.detailData)
-    //   const allowance = await this.detailData.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
-    //   if (allowance != 0) {
-    //     this.approved = true;
-    //   } else {
-    //     this.approved = false;
-    //   }
+      const allowance = await detail.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
+      if (allowance != 0) {
+        this.approved = true;
+      } else {
+        this.approved = false;
+      }
       this.claimDialog = true;
     },
      cancelStaking() {
@@ -286,10 +358,17 @@ export default {
     setAll(obj) {
       this[obj].amount = this.connection.balance;
     },
+     async submitApprove() {
+      this.approveLoading = true;
+      await this.detailData.commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
+      this.approveLoading = false;
+      this.approved = true;
+    },
     async submitClaim() {
       this.startUnstake();
     },
     async startUnstake() {
+        console.log('this.detailData',this.claimForm.amount)
       try {
         if (!this.$refs.claimform.validate()) return;
         this.claimLoading = true;
@@ -322,13 +401,12 @@ export default {
     },
     async calculateAmount() {
       if (util.isNumber(this.claimForm.amount) && this.claimForm.amount > 0) {
-        const amount = await this.stakeManageInstance.methods.estimateSharesToAmount(this.currentItem.address, web3.utils.toWei(this.claimForm.amount)).call();
+        const amount = await this.stakeManageInstance.methods.estimateSharesToAmount(this.detailData.address, web3.utils.toWei(this.claimForm.amount)).call();
         this.receiveBalance = web3.utils.fromWei(web3.utils.toBN(amount));
       }
     },
      claimAll() {
       this.claimForm.amount = this.detailData.commissionShare;
-      console.log('claimForm', this.claimForm.amount)
       this.calculateAmount();
     },
     timeToFormat(val) {
@@ -405,6 +483,9 @@ export default {
 }
 .ma-dialog {
   padding: 16px;
+}
+.text-center{
+    text-align: right !important;
 }
 .dialog-night {
   background-color: #595777;
