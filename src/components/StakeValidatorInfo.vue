@@ -13,7 +13,7 @@
                     <div v-if="detailData" class="active">{{status[detailData.isActive]}}</div>
                     <div class="three-img">
                         <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
-                        <a v-if="detail&&detail.website" :href="detail.website" ><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20"/></a>
+                        <a v-if="detail&&detail.website" :href="detail.website" target="_blank" ><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20"/></a>
                         
                         <!-- <v-img class="img-icon" src="../assets/images/telegram.svg" width="20" height="20"/> -->
                     </div>
