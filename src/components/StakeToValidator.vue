@@ -5,8 +5,9 @@
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">Validator List</v-tab>
           <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="13">My Voted Validators</v-tab>
         </v-tabs>
-        <div class="btn-div" v-if="this.width > 900">
+        <v-row class="btn-div" v-if="this.width > 900" style="margin-top:15px">
           <!-- <v-btn text outlined color="validator" @click="setCalculation()">
             Earnings Calculation
             <span class="iconfont">&#xe619;</span>
@@ -19,7 +20,12 @@
             {{ $t('stake.stake_to_other_node') }}
             <span class="iconfont">&#xe601;</span>
           </v-btn>
-        </div>
+          <div class="right-outline" v-if="this.tab1 == 0" style="margin-top:-14px;">
+              <v-card outlined class="select-card">
+                <v-select class="d-select" :items="items" item-text="state" outlined item-value="val" item-color="vote_button" dense style="margin-left: 18px" v-model="listFilter" @change="changeState"></v-select>
+              </v-card>
+          </div>
+        </v-row>
         <div v-else>
             <!-- <v-divider class="faq_border" />
           <v-row @click="setCalculation()" class="iphone-btn" justify="space-between" align="center">
@@ -75,35 +81,12 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-row class="background" style="margin-top: 0px">
-              <v-tabs v-model="tab2" hide-slider class="my-voted-validator" background-color="background" height="42">
-                <v-card outlined class="card-tab">
-                  <v-tab key="111" style="font-size: 12px">Validator</v-tab>
-                  <v-tab key="122" style="font-size: 12px">{{ $t('stake.not_active_nodelist') }}</v-tab>
-                </v-card>
-              </v-tabs>
-              <v-col class="right-outline" v-if="this.tab2 == 0">
-                <v-card outlined class="select-card">
-                  <v-select class="d-select" :items="items" item-text="state" item-value="val" outlined item-color="vote_button" dense style="margin-left: 18px" height="28" v-model="listFilter" @change="changeState"></v-select>
-                </v-card>
-                <v-card outlined class="select-card select-second">
-                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsPerPage" dense></v-select>
-                </v-card>
-              </v-col>
-              <v-col class="right-outline" v-if="this.tab2 == 1">
-                <v-card outlined class="select-card select-second vote-select">
-                  <v-select class="d-select number" :items="itemsPages" label="" outlined item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
-                </v-card>
-              </v-col>
-            </v-row>
-            <v-tabs-items v-model="tab2">
-              <v-tab-item key="111">
-                <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                         <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                        <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
-                        <span class="nodeName" v-else>{{ item.address | addr }}</span>
+                        <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                        <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                         <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
                   </template>
                   <template v-slot:item.power="{ item }">
@@ -129,12 +112,22 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <div class="text-center pt-2" v-if="nodeList.length > 0">
-                  <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
-                </div>
-              </v-tab-item>
-              <v-tab-item key="122">
-                <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
+                <v-row justify="end" align="center" v-if="nodeList.length > 0">
+                    <div class="text-center pt-2" >
+                      <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
+                    </div>
+                    <div class="right-outline" v-if="this.tab1 == 0" style="padding-top:16px;">
+                        <v-card outlined class="select-card select-second">
+                          <v-select class="d-select number" :items="itemsPages" label="" solo item-color="vote_button" v-model="itemsPerPage" dense></v-select>
+                        </v-card>
+                    </div>
+                </v-row>
+          </v-tab-item>
+          <v-tab-item key="12">
+            <UnstakeToValidator></UnstakeToValidator>
+          </v-tab-item>
+          <v-tab-item key="13">
+            <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
                   <template v-slot:item.address="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                     <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
@@ -162,14 +155,16 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <div class="text-center pt-2" v-if="myStakeList.length > 0">
-                  <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
-                </div>
-              </v-tab-item>
-            </v-tabs-items>
-          </v-tab-item>
-          <v-tab-item key="12">
-            <UnstakeToValidator></UnstakeToValidator>
+                <v-row justify="end" align="center" v-if="myStakeList.length > 0">
+                    <div class="text-center pt-2">
+                      <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
+                    </div>
+                    <div class="right-outline" v-if="this.tab1 == 2" style="padding-top:16px;">
+                      <v-card outlined class="select-card select-second vote-select">
+                        <v-select class="d-select number" :items="itemsPages" label="" solo item-color="vote_button" v-model="itemsMyVotedPerPage" dense></v-select>
+                      </v-card>
+                    </div>
+                </v-row>
           </v-tab-item>
         </v-tabs-items>
       </v-col>
@@ -544,7 +539,7 @@ import find from 'lodash/find';
 import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getCalculation } from '../service/CommonService'
+import { getValidatorList } from '../service/CommonService'
 import { getValidatorDetails } from '../service/CommonService'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -553,7 +548,7 @@ let client = null;
 export default {
   components: {
     Address,
-    UnstakeToValidator
+    UnstakeToValidator,
   },
   filters,
   data() {
@@ -688,7 +683,7 @@ export default {
     this.connect();
     this.init();
     this.windowWidth();
-    this.getCalculation();
+    this.getValidator();
     this.Calculation();
   },
   methods: {
@@ -916,6 +911,7 @@ export default {
       this.dialog = true;
     },
     async handleClaim(item) {
+      console.log('ite,',item)
       this.currentItem = item;
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
@@ -1195,8 +1191,8 @@ export default {
     cancelCalculation() {
       this.calculationDialog = false;
     },
-    async getCalculation(){
-        let CalculationData = await getCalculation();
+    async getValidator(){
+        let CalculationData = await getValidatorList();
         this.totalAmount  = CalculationData.data.data.totalAmount;
         this.calculationItems = CalculationData.data.data.activeList;
         this.modelItems = this.calculationItems[0]
@@ -1208,12 +1204,24 @@ export default {
         this.current = this.UserRewardsYear/(this.stake * 365)*this.days*100;
     },
     async validatorDetails(value){
-      this.validatorDialog = true;
+      // this.validatorDialog = true;
       this.detailsItem = value;
+      this.$router.push({
+        name:'StakeInfo',
+        query:{
+          id:value.address,
+        },
+      })
     },
     async myVoteDetails(value){
-      this.validatorDialog = true;
+      // this.validatorDialog = true;
       this.detailsItem = value;
+      this.$router.push({
+        name:'StakeValidator',
+        query:{
+          id:value.address,
+        },
+      })
     },
     closeDetails(){
       this.validatorDialog = false;
@@ -1356,8 +1364,9 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  margin-right:12px;
+  // padding-top:16px;
 }
-
 .theme--dark.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
   height: 42px !important;
 }
@@ -1399,6 +1408,11 @@ export default {
 }
 .nodeName{
   margin: 0 8px;
+  cursor: pointer;
+}
+.name-hover:hover{
+  color:#4856C0;
+  
 }
 .theme--dark.v-tabs-items {
   background-color: transparent;
@@ -1583,7 +1597,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-start !important;
-    // margin-top:-16px;
+    margin-top:-16px;
     padding: 0;
   }
   .get-reward {

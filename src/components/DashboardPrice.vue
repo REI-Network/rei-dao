@@ -289,7 +289,7 @@ export default {
                     xAxis: {
                         type: 'time',
                         boundaryGap:false,
-                        axisLabel: {//x轴文字的配置
+                        axisLabel: {
                             show: true,
                             textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -298,8 +298,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158,.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158,.1)', 
+                                width: '1' 
                             }
                         },
                         splitLine:{show: false}
@@ -309,7 +309,7 @@ export default {
                         splitLine: {
                             show:false,
                         },
-                        axisLabel: {//x轴文字的配置
+                        axisLabel: {
                             show: true,
                             textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -319,8 +319,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158,.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158,.1)', 
+                                width: '1' 
                             }
                         },
                     },
@@ -345,7 +345,6 @@ export default {
                                 color:'#2F86F6'
                             },
                             areaStyle: {
-                                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
                                     offset: 0,
                                     color: 'rgba(80,141,255,0.39)'
@@ -398,7 +397,7 @@ export default {
                     xAxis: {
                         type: 'time',
                         boundaryGap:false,
-                        axisLabel: {//x轴文字的配置
+                        axisLabel: {
                             show: true,
                             textStyle: {
                                 color: "rgba(134,142,158,.6)",
@@ -407,8 +406,8 @@ export default {
                         axisLine: {
                                 lineStyle: {
                                     type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                    width: '1' //坐标线的宽度
+                                    color: 'rgba(134,142,158, 0.1)', 
+                                    width: '1' 
                                 }
                             },
                             splitLine:{show: false}
@@ -436,8 +435,8 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', //坐标线的颜色
-                                width: '1' //坐标线的宽度
+                                color: 'rgba(134,142,158, 0.1)', 
+                                width: '1' 
                             }
                         },
                     },
@@ -462,7 +461,7 @@ export default {
                                 color:'rgb(253,131,53)'
                             },
                             areaStyle: {
-                                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+               
                                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
                                     offset: 0,
                                     color: 'rgba(203,131,53,0.39)'
