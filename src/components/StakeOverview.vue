@@ -35,7 +35,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import { getCalculation } from '../service/CommonService'
+import { getValidatorList } from '../service/CommonService'
 export default {
   data() {
     return {
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     async getOverview(){
-        let OverviewData = await getCalculation();
+        let OverviewData = await getValidatorList();
         this.totalAmount  = OverviewData.data.data.totalAmount;
         console.log('OverviewData',OverviewData)
     },
