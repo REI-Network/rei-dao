@@ -7,7 +7,7 @@
           <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
           <v-tab key="13">My Voted Validators</v-tab>
         </v-tabs>
-        <v-row class="btn-div" v-if="this.width > 900">
+        <v-row class="btn-div" v-if="this.width > 900" style="margin-top:15px">
           <!-- <v-btn text outlined color="validator" @click="setCalculation()">
             Earnings Calculation
             <span class="iconfont">&#xe619;</span>
@@ -85,8 +85,8 @@
                   <template v-slot:item.address="{ item }">
                         <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                         <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                        <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
-                        <span class="nodeName" v-else>{{ item.address | addr }}</span>
+                        <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                        <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                         <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
                   </template>
                   <template v-slot:item.power="{ item }">
@@ -112,8 +112,8 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <v-row justify="end" align="center">
-                    <div class="text-center pt-2" v-if="nodeList.length > 0">
+                <v-row justify="end" align="center" v-if="nodeList.length > 0">
+                    <div class="text-center pt-2" >
                       <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                     </div>
                     <div class="right-outline" v-if="this.tab1 == 0" style="padding-top:16px;">
@@ -155,8 +155,8 @@
                     <span v-if="!connection.address"> - </span>
                   </template>
                 </v-data-table>
-                <v-row justify="end" align="center">
-                    <div class="text-center pt-2" v-if="myStakeList.length > 0">
+                <v-row justify="end" align="center" v-if="myStakeList.length > 0">
+                    <div class="text-center pt-2">
                       <v-pagination v-model="pageMyVoted" :length="pageMyVotedCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
                     </div>
                     <div class="right-outline" v-if="this.tab1 == 2" style="padding-top:16px;">
@@ -1408,6 +1408,11 @@ export default {
 }
 .nodeName{
   margin: 0 8px;
+  cursor: pointer;
+}
+.name-hover:hover{
+  color:#4856C0;
+  
 }
 .theme--dark.v-tabs-items {
   background-color: transparent;
