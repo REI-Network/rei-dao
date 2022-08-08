@@ -59,9 +59,9 @@
                 </v-col>
                 <v-col cols="12" md="9">
                     <!-- <v-img src="../assets/images/map.svg"></v-img> -->
-                    <!-- <div class="map-content"> -->
-                        <div id="myCharts" ref="chart" class="dispribution" style="height:100%"></div>
-                    <!-- </div> -->
+                    <div class="map-content">
+                        <div id="myCharts" ref="chart" class="dispribution" style="width:100%;height:100%"></div>
+                    </div>
                 </v-col>
             </v-row>
         </v-card>
@@ -143,7 +143,7 @@ filters,
     return {
      blockHeight:'',
      miner:'',
-     stats:{}
+     stats:{},
     };
   },
   computed: {
@@ -165,83 +165,13 @@ filters,
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-    //  myCharts(){
-    //   const chart = this.$refs.chart;
-    //   if(chart){
-    //     this.myChart = this.$echarts.init(chart);
-    //      var option = {
-    //             xAxis: {
-    //                 axisTick: {
-    //                     show: false
-    //                 },
-    //                 axisLine: {
-    //                     show:false,
-    //                 },
-    //                 axisLabel:{
-    //                     show:false,
-    //                 },
-    //                 splitLine: {
-    //                     show: false,
-    //                 },
-    //             },
-    //             yAxis: {
-    //                 data:[],
-    //                 axisTick: {
-    //                     show: false
-    //                 },
-    //                 axisLine: {
-    //                     show:false,
-    //                 },
-    //                 axisLabel:{
-    //                     show:false,
-    //                 },
-    //                 splitLine: {
-    //                     show: false,
-    //                 },
-    //             },
-    //             series: [
-    //                 {
-                        
-    //                     type: 'effectScatter',
-    //                     symbolSize: 20,
-    //                     data: [
-    //                         [18.22, 6.82],
-    //                     ],
-    //                     itemStyle:{
-    //                             color:'#2115E5'
-    //                         },
-    //                     },
-    //                 {
-    //                     data: [
-    //                         [3.0, 9.04],
-    //                         [5.07, 6.55],
-    //                         [16.22, 7.58],
-    //                         [16.65, 6.41],
-    //                         [18.22, 6.82],
-    //                         [27.55, 7.72],
-    //                         [29.99, 6.45]
-    //                     ],
-    //                     itemStyle:{
-    //                             color:'#2135E5'
-    //                         },
-    //                     type: 'scatter',
-    //                 }
-    //             ]
-    //         }
-    //       this.myChart.setOption(option)
-    //       window.addEventListener("resize", function() {
-    //         this.myChart.resize()
-    //       })
-    //     }
-    //   this.$on('hook:destroyed',()=>{
-    //      window.removeEventListener("resize", function() {
-    //         this.myChart.resize();
-    //     });
-    // })
-    // },
    myCharts(){
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
+        var resizeMyChartContainer = function(){
+            chartDom.style.height = window.innerHeight*0.56+'px';
+            chartDom.style.width = window.innerWidth*0.56+'px';
+        }
         var option;
        $.get(require('../assets/images/map.svg'), function (svg) {
         echarts.registerMap('iceland_svg', { svg: svg });
@@ -254,36 +184,55 @@ filters,
             map: 'iceland_svg',
             roam: false,
             },
-            series: {
-            type: 'scatter',
-            coordinateSystem: 'geo',
-            geoIndex: 0,
-            symbolSize: 14,
-            itemStyle: {
-                color: '#2115E5'
-            },
-            encode: {
-                tooltip: 2
-            },
-            data: [
-                [71.053, 92.736],
-                [327.939, 99.475],
-                [367.291, 281.14],
-                [489.245, 171.008],
-                [686.313, 106.537],
-                [758.796, 284.843]
+            series: [
+                {
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    geoIndex: 0,
+                    symbolSize: 20,
+                    itemStyle: {
+                        color: '#2115E5'
+                    },
+                    encode: {
+                        tooltip: 2
+                    },
+                    data: [
+                        [367.291, 281.14]
+                    ]
+                },
+                {
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    geoIndex: 0,
+                    symbolSize:12,
+                    itemStyle: {
+                        color: '#2115E5'
+                    },
+                    encode: {
+                        tooltip: 2
+                    },
+                    data: [
+                        [71.053, 92.736],
+                        [327.939, 99.475],
+                        [367.291, 281.14],
+                        [489.245, 171.008],
+                        [686.313, 106.537],
+                        [758.796, 284.843]
+                    ]
+                }
             ]
-            }
         };
-        myChart.setOption(option);
-        myChart.getZr().on('click', function (params) {
-            var pixelPoint = [params.offsetX, params.offsetY];
-            var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
-            console.log(dataPoint);
+        myChart.setOption(option)
+         window.addEventListener("resize", function() {
+            resizeMyChartContainer();
+            myChart.resize();
+          })
         });
+            this.$on('hook:destroyed',()=>{
+            window.removeEventListener("resize", function() {
+            this.myChart.resize();
         });
-
-option && myChart.setOption(option);
+    })
      },
    async getBlock(){
         this.blockHeight = await web3.eth.getBlockNumber();
@@ -334,8 +283,9 @@ option && myChart.setOption(option);
 
 .map-content {
     height: 100%;
-    background: url('../assets/images/map.svg') no-repeat center;
-    background-size: 100% 100%!important;
+    width: 100%;
+    // background: url('../assets/images/map.svg') no-repeat center;
+    // background-size: 100% 100%!important;
 }
 .map-nodes{
     display: flex;
