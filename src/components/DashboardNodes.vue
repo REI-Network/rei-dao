@@ -19,7 +19,9 @@
                         <div class="font-grey">Current Node</div>
                         <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
-                                <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                               <div>
+                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                               </div>
                             </v-col>
                             <v-col cols="12" md="9" >
                                 <div class="miner">
@@ -155,8 +157,10 @@ filters,
   mounted(){
       this.myCharts();
       this.connect();
-      this.getBlock();
+    this.getBlock();
+      
   },
+
   methods: {   
       connect() {
         if (window.ethereum) {
@@ -168,21 +172,21 @@ filters,
    myCharts(){
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
-        var resizeMyChartContainer = function(){
-            chartDom.style.height = window.innerHeight*0.56+'px';
-            chartDom.style.width = window.innerWidth*0.56+'px';
-        }
         var option;
        $.get(require('../assets/images/map.svg'), function (svg) {
         echarts.registerMap('iceland_svg', { svg: svg });
         option = {
             tooltip: {},
             geo: {
-            tooltip: {
-                show: true
-            },
-            map: 'iceland_svg',
-            roam: false,
+                tooltip: {
+                    show: false,
+                },
+                show:false,
+                type:"map",
+                map: 'iceland_svg',
+                roam: false,
+                aspectScale:1,
+                layoutSize:['70%'],
             },
             series: [
                 {
@@ -224,7 +228,6 @@ filters,
         };
         myChart.setOption(option)
          window.addEventListener("resize", function() {
-            resizeMyChartContainer();
             myChart.resize();
           })
         });
@@ -238,11 +241,9 @@ filters,
         this.blockHeight = await web3.eth.getBlockNumber();
         let block = await web3.eth.getBlock(this.blockHeight);
         this.miner = block.miner
-        console.log('blockNumber', this.miner)
         try {
             const { data } = await this.$axios.get('https://gateway.rei.network/api/reistats')
             this.stats = data.row.json;
-            console.log('this.stats',this.stats)
         } catch (error) {
             console.log(error)
         }
@@ -286,6 +287,10 @@ filters,
     width: 100%;
     // background: url('../assets/images/map.svg') no-repeat center;
     // background-size: 100% 100%!important;
+}
+.dispribution{
+    background: url('../assets/images/map.svg') no-repeat center;
+    background-size: 100% 100%!important;
 }
 .map-nodes{
     display: flex;
