@@ -5,8 +5,8 @@
         <!-- <v-avatar class="mr-4" color="grey" size="64" rounded="true"> -->
             <v-img v-if="dark"
                 class="mr-4" 
-                max-height="54"
-                max-width="164"
+                max-height="64"
+                max-width="144"
                 src="../assets/images/REI-DAO-Night.svg"
                 ></v-img>
                 <v-img v-else

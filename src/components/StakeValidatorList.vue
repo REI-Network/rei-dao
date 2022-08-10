@@ -4,6 +4,8 @@
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">All Delegators</v-tab>
+          <v-tab key="12" class="v-tab-left">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
@@ -23,7 +25,7 @@
                     <Address :val="item.delegator"></Address>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="delegatorList.length > 0">
+                <div class="text-center pt-2" v-if="delegatorList.length > 0">
                   <v-pagination 
                     v-model="page" 
                     :length="pageCount" 
@@ -32,9 +34,10 @@
                     class="v-pagination" 
                     total-visible="6">
                     </v-pagination>
+                    <v-btn class="down">download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
                 </div>
           </v-tab-item>
-          <!-- <v-tab-item key="12">
+          <v-tab-item key="12">
               <v-data-table 
                 :headers="myVotesHeaders" 
                 :items="myVotesList" 
@@ -94,7 +97,7 @@
                     total-visible="6">
                     </v-pagination>
                 </div>
-          </v-tab-item> -->
+          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -261,6 +264,9 @@ export default {
     margin-left: 0 !important;
   }
 }
+.v-btn {
+  text-transform: none !important;
+  }
 .v-tab {
   text-transform: none !important;
 }
@@ -269,6 +275,8 @@ export default {
   justify-content: flex-end !important;
 }
 .v-application .text-center {
+  display: flex;
+  justify-content: flex-start;
   text-align: right !important;
 }
 .mine{
@@ -276,5 +284,8 @@ export default {
     padding: 1px 8px;
     color: #fff;
     border-radius: 12px;
+}
+.down{
+  margin-top: 4px;
 }
 </style>

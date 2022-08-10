@@ -13,7 +13,7 @@
                     </div>
                     <div class="block">
                         <div class="font-grey">Validators</div>
-                        <div class="node-number">21</div>
+                        <div class="node-number">{{ ValidatorList.length }}</div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Current Node</div>
@@ -40,20 +40,16 @@
                         <div class="font-grey">Nodes</div>
                         <v-row>
                             <v-col class="map-nodes">
-                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                <div class="nodes-item">
+                                    <div v-for="(item,index) in ValidatorList" :key ="index">
+                                        <div v-if="index < 4">
+                                            <v-img v-if="item.img" :src="item.img" height="36" width="36"></v-img>
+                                            <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
-                                </div>
-                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
-                                </div>
-                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
-                                </div>
-                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                    <v-icon size="42">mdi-dots-horizontal-circle</v-icon>
                                 </div>
                             </v-col>
                         </v-row>
@@ -90,7 +86,7 @@
                     <h3>Transactions</h3>
                     <div class="block">
                         <div class="font-grey">Total Txns</div>
-                        <div class="node-number">159,166 <span class="font-grey">txns</span></div>
+                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
                     </div>
                     <!-- <div class="block">
                         <div class="font-grey">Pending Transactions</div>
@@ -140,13 +136,15 @@ import filters from '../filters';
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
+import { getReiSatistic , getValidatorList } from '../service/CommonService'
 export default {
 filters,
   data() {
     return {
-     blockHeight:'',
-     miner:'',
-     stats:{},
+        blockHeight:'',
+        miner:'',
+        stats:{},
+        ValidatorList:[],
     };
   },
   computed: {
@@ -158,8 +156,11 @@ filters,
   mounted(){
       this.myCharts();
       this.connect();
-    this.getBlock();
-      
+      this.getRei()
+      this.getBlock();
+      setInterval(() => {
+          this.getBlock();
+      },3000);
   },
 
   methods: {   
@@ -244,17 +245,17 @@ filters,
         let block = await web3.eth.getBlock(this.blockHeight);
         let blockNumber = web3.utils.numberToHex(block.number);
         
-        console.log('blockNumber', block)
+        // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
         this.miner = web3.utils.toChecksumAddress(_miner)
-         
-        console.log('this.miner',this.miner)
-        try {
-            const { data } = await this.$axios.get('https://gateway.rei.network/api/reistats')
-            this.stats = data.row.json;
-        } catch (error) {
-            console.log(error)
-        }
+        // console.log('this.miner',this.miner)
+        let list = await getValidatorList();
+        this.ValidatorList = list.data.data.activeList;
+
+    },
+    async getRei(){
+        let ReiSatistic = await getReiSatistic();
+        this.stats = ReiSatistic.data.row.json;
     }
   }
 };
@@ -274,11 +275,11 @@ filters,
     font-size: 18px;
 }
 .node-number{
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bolder;
 }
 .block{
-    margin-top: 16px;
+    margin-top: 26px;
     margin-bottom: 20px;
 }
 .rei-card{
@@ -304,6 +305,12 @@ filters,
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .nodes-item{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 86%;
+    }
 }
 .miner{
     text-align: right;
