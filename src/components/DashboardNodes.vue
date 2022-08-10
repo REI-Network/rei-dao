@@ -137,6 +137,7 @@ import Web3 from 'web3';
 import filters from '../filters';
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
+import { recoverMinerAddress } from '../service/RecoverMinerAddress'
 export default {
 filters,
   data() {
@@ -158,14 +159,14 @@ filters,
       this.getBlock();
   },
   methods: {   
-      connect() {
+    connect() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum);
         } else if (window.web3) {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-   myCharts(){
+    myCharts(){
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
         var resizeMyChartContainer = function(){
@@ -223,22 +224,29 @@ filters,
             ]
         };
         myChart.setOption(option)
-         window.addEventListener("resize", function() {
+        window.addEventListener("resize", function() {
             resizeMyChartContainer();
             myChart.resize();
           })
         });
-            this.$on('hook:destroyed',()=>{
-            window.removeEventListener("resize", function() {
+        this.$on('hook:destroyed',()=>{
+          window.removeEventListener("resize", function() {
             this.myChart.resize();
-        });
-    })
+          });
+        })
      },
-   async getBlock(){
+    async getBlock(){
         this.blockHeight = await web3.eth.getBlockNumber();
         let block = await web3.eth.getBlock(this.blockHeight);
-        this.miner = block.miner
-        console.log('blockNumber', this.miner)
+        
+        let blockNumber = web3.utils.numberToHex(block.number);
+        
+        console.log('blockNumber', block)
+        let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
+        this.miner = web3.utils.toChecksumAddress(_miner)
+        
+        
+        console.log('this.miner',this.miner)
         try {
             const { data } = await this.$axios.get('https://gateway.rei.network/api/reistats')
             this.stats = data.row.json;
