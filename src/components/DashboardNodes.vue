@@ -13,7 +13,7 @@
                     </div>
                     <div class="block">
                         <div class="font-grey">Validators</div>
-                        <div class="node-number">{{ ValidatorList.length }}</div>
+                        <div class="node-number">{{ validatorList.length }}</div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Current Node</div>
@@ -41,7 +41,7 @@
                         <v-row>
                             <v-col class="map-nodes">
                                 <div class="nodes-item">
-                                    <div v-for="(item,index) in ValidatorList" :key ="index">
+                                    <div v-for="(item,index) in validatorList" :key ="index">
                                         <div v-if="index < 4">
                                             <v-img v-if="item.img" :src="item.img" height="36" width="36"></v-img>
                                             <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
@@ -137,6 +137,7 @@ import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
 import { getReiSatistic , getValidatorList } from '../service/CommonService'
+import { postRpcRequest } from '../service/CommonService'
 export default {
 filters,
   data() {
@@ -144,12 +145,13 @@ filters,
         blockHeight:'',
         miner:'',
         stats:{},
-        ValidatorList:[],
+        validatorList:[],
     };
   },
   computed: {
     ...mapGetters({
         connection: 'connection',
+        apiUrl: 'apiUrl',
         dark: 'dark'
     })
   },
@@ -239,18 +241,27 @@ filters,
             this.myChart.resize();
           });
         })
-     },
+    },
+    async getBlockNumberInfo(){
+      let apiUrl = this.apiUrl.rpc;
+      let param = {
+            method:'eth_blockNumber',
+        }
+      let res = await postRpcRequest(apiUrl,param);
+      return res;
+    },
     async getBlock(){
-        this.blockHeight = await web3.eth.getBlockNumber();
+        let { data: resBlock } = await this.getBlockNumberInfo();
+        this.blockHeight = web3.utils.hexToNumber(resBlock.result);
         let block = await web3.eth.getBlock(this.blockHeight);
-        let blockNumber = web3.utils.numberToHex(block.number);
+        let blockNumber = resBlock.result;
         
         // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
         this.miner = web3.utils.toChecksumAddress(_miner)
         // console.log('this.miner',this.miner)
         let list = await getValidatorList();
-        this.ValidatorList = list.data.data.activeList;
+        this.validatorList = list.data.data.activeList;
 
     },
     async getRei(){
