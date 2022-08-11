@@ -34,7 +34,7 @@
                     class="v-pagination" 
                     total-visible="6">
                     </v-pagination>
-                    <v-btn class="down">download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
+                    <v-btn class="down" @click="handleDownload">Download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
                 </div>
           </v-tab-item>
           <v-tab-item key="12">
@@ -47,7 +47,7 @@
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                page.sync="page" 
+                :page.sync="page" 
                 @page-count="pageCount = $event">
                 <template v-slot:item.time="{ item }">
                     <span>{{ item.time }}</span>
@@ -77,7 +77,7 @@
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                page.sync="page" 
+                :page.sync="page" 
                 @page-count="pageCount = $event">
                 <template v-slot:item.time="{ item }">
                     <v-img :src="item.img" weight="24" height="24" />
@@ -115,6 +115,7 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
+import Papa from 'papaparse';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -131,10 +132,13 @@ export default {
      pageCount: 0,
      itemsPerPage: 20,
      stakeListLoading: false,
+     voteListLoading: false,
      stakeManageInstance:'',
      commissionShareInstance:'',
      allStakeListLoading:false,
      allStakeList:[],
+     fields: ['delegator', 'amount'],
+     createCsvFile:'',
      headers:[
         { text: "Delegators", value: 'delegator' },
         { text: "Amount ($REI)", value: 'amount' },
@@ -201,7 +205,9 @@ export default {
           this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
         }
         
-        this.getAllStakeList()
+        this.getAllStakeList();
+        this.getMyVotesList();
+        this.getMyWithdrawList();
     },
     async getAllStakeList() {
       this.stakeListLoading = true;
@@ -244,6 +250,80 @@ export default {
       }
       this.stakeListLoading = false;
     },
+    async getMyVotesList(){
+      this.voteListLoading = true;
+      let url = this.apiUrl.graph;
+      let client = new ApolloClient({
+        uri: `${url}onlystakeinfoMore`,
+        cache: new InMemoryCache()
+      });
+      const getMyVoteInfos = gql`
+         query stakeInfoMores {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.id}",from: "${this.connection.address}"  }) {
+                id
+                from
+                timestamp
+                validator
+                shares
+            }
+        }
+        `;
+      const { data: { stakeInfoMores }} = await client.query({
+        query: getMyVoteInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      
+      this.myVotesList = stakeInfoMores.map((item) => {
+          return {
+            from: item.from,
+            time: item.timestamp,
+            validator: item.validator,
+            amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
+          }
+        })
+        console.log('myVoteInfos',this.myVotesList)
+      
+      this.voteListLoading = false;
+    },
+    async getMyWithdrawList(){
+      this.withdrawListLoading = true;
+      let url = this.apiUrl.graph;
+      let client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const getMyWithdrawInfos = gql`
+         query unStakeInfos {
+            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.id}" }) {
+              id
+              from
+              to
+              values
+              shares
+              validator
+              timestamp
+              state
+              amount
+            }
+          }
+        `;
+      const { data: { unStakeInfos }} = await client.query({
+        query: getMyWithdrawInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      
+      this.myWithdrawalsList = unStakeInfos.map((item) => {
+          return {
+            time: item.timestamp,
+            amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
+          }
+        })
+        console.log('unStakeInfos',this.myWithdrawalsList)
+      
+      this.withdrawListLoading = false;
+    },
     async getBalanceOfShare(item) { 
       let balance = 0;
       if (item.from) {
@@ -252,6 +332,40 @@ export default {
       return {
         balance
       };
+    },
+    handleDownload() {
+      if (!this.isSupportDownload() || !this.delegatorList.length) return;
+      try {
+        this.createCsvFile = Papa.unparse({
+            fields: this.fields,
+            data: this.delegatorList
+        });
+      } catch (err) {
+        console.error(err);
+      }
+      let csvName = `${this.$route.query.id}.csv`
+      this.funDownload(this.createCsvFile, csvName);
+    },
+    funDownload(content, filename) {
+      let eleLink = document.createElement('a');
+      eleLink.download = filename;
+      eleLink.style.display = 'none';
+      // The character content is converted to a blob address.
+      let blob = new Blob([content]);
+      eleLink.href = URL.createObjectURL(blob);
+      // trigger click
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      // remove
+      document.body.removeChild(eleLink);
+    },
+    isSupportDownload() {
+      if ('download' in document.createElement('a')) {
+        return true;
+      } else {
+        this.$dialog.notify.warning('Browser does not support');
+        return false;
+      }
     },
   }
 };
