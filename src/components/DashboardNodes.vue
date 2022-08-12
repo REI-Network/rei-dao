@@ -358,7 +358,7 @@ filters,
                     ]
             let i = Math.round(Math.random()*4)
             var lightData = data[i]
-            console.log(i,lightData)
+            // console.log(i,lightData)
             myChart.setOption(
                 option = {
                     series:[

@@ -341,7 +341,7 @@ export default {
       this.$router.push({
         name:'StakeInfo',
         query:{
-          id:value.address,
+          id:value.validator,
         },
       })
     },
