@@ -23,10 +23,13 @@
                                     <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>
-                            <v-col cols="12" md="9" >
-                                <div class="miner">
-                                   {{ miner | addr }} 
-                                </div>
+                            <v-col cols="12" md="9">
+                                <v-row justify="space-between" class="progress-miner">
+                                    <div class="miner">Miner</div>
+                                    <div class="miner">
+                                        {{ miner | addr }} 
+                                    </div>
+                                </v-row>
                                 <v-progress-linear
                                     
                                     height="10"
@@ -474,5 +477,9 @@ a:hover{
     text-align: right;
     font-size: 14px;
     font-weight: 500;
+    margin-bottom: 12px;
+}
+.progress-miner{
+    padding: 0 12px;
 }
 </style>
