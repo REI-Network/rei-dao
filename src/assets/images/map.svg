@@ -5,7 +5,7 @@
         <polygon id="path-1" points="0 0 0 4 4 4 4 0"></polygon>
         <polygon id="path-3" points="0 0 0 4 4 4 4 0"></polygon>
     </defs>
-    <g id="白" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="白" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.7">
         <g id="Dashboard-新-w" transform="translate(-582.000000, -192.000000)">
             <g id="编组-3" transform="translate(300.000000, 176.000000)">
                 <g id="map" transform="translate(282.000000, 16.000000)">

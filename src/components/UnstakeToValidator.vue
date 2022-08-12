@@ -336,8 +336,14 @@ export default {
         return str;
     },   
      async validatorDetails(value){
-      this.validatorDialog = true;
+      // this.validatorDialog = true;
       this.detailsItem = value;
+      this.$router.push({
+        name:'StakeInfo',
+        query:{
+          id:value.address,
+        },
+      })
     },
      windowWidth() {
       const that = this;

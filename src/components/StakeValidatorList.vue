@@ -4,6 +4,8 @@
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">All Delegators</v-tab>
+          <v-tab key="12" class="v-tab-left">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
@@ -21,9 +23,13 @@
                 @page-count="pageCount = $event">
                 <template v-slot:item.delegator="{ item }">
                     <Address :val="item.delegator"></Address>
+                    <span class="mine" v-if="item.delegator == connection.address">mine</span>
+                </template>
+                <template v-slot:item.amount="{ item }">
+                    <span>{{ item.amount | asset(2) }}</span>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="delegatorList.length > 0">
+                <div class="text-center pt-2" v-if="delegatorList.length > 0">
                   <v-pagination 
                     v-model="page" 
                     :length="pageCount" 
@@ -32,22 +38,23 @@
                     class="v-pagination" 
                     total-visible="6">
                     </v-pagination>
+                    <v-btn class="down" @click="handleDownload">Download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
                 </div>
           </v-tab-item>
-          <!-- <v-tab-item key="12">
+          <v-tab-item key="12">
               <v-data-table 
                 :headers="myVotesHeaders" 
                 :items="myVotesList" 
                 class="elevation-0" 
                 hide-default-footer 
-                :items-per-page="itemsPerPage" 
+                :items-per-page="votePerPage" 
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                page.sync="page" 
-                @page-count="pageCount = $event">
+                :page.sync="votePage" 
+                @page-count="votePageCount = $event">
                 <template v-slot:item.time="{ item }">
-                    <span>{{ item.time }}</span>
+                    <span>{{ item.time*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
                 </template>
                 <template v-slot:item.amount="{ item }">
                     <span>+{{ item.amount | asset(2) }}</span>
@@ -55,8 +62,8 @@
               </v-data-table>
               <div class="text-center pt-2" v-if="myVotesList.length > 0">
                   <v-pagination 
-                    v-model="page" 
-                    :length="pageCount" 
+                    v-model="votePage" 
+                    :length="votePageCount" 
                     color="vote_button" 
                     background-color="start_unstake" 
                     class="v-pagination" 
@@ -70,31 +77,31 @@
                 :items="myWithdrawalsList" 
                 class="elevation-0" 
                 hide-default-footer 
-                :items-per-page="itemsPerPage" 
+                :items-per-page="withdrawalsPerPage" 
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                page.sync="page" 
-                @page-count="pageCount = $event">
+                :page.sync="withdrawalsPage" 
+                @page-count="withdrawalsPageCount = $event">
                 <template v-slot:item.time="{ item }">
                     <v-img :src="item.img" weight="24" height="24" />
-                    <span>{{ item.time }}</span>
+                    <span>{{ item.time*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</span>
                 </template>
                  <template v-slot:item.amount="{ item }">
-                    - <span>{{ item.amount }}</span>
+                    - <span>{{ item.amount | asset(2) }}</span>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="myWithdrawalsList.length > 0">
                   <v-pagination 
-                    v-model="page" 
-                    :length="pageCount" 
+                    v-model="withdrawalsPage" 
+                    :length="withdrawalsPageCount" 
                     color="vote_button" 
                     background-color="start_unstake" 
                     class="v-pagination" 
                     total-visible="6">
                     </v-pagination>
                 </div>
-          </v-tab-item> -->
+          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -112,6 +119,7 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
+import Papa from 'papaparse';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -127,11 +135,21 @@ export default {
      page: 1,
      pageCount: 0,
      itemsPerPage: 20,
+     votePage: 1,
+     votePageCount: 0,
+     votePerPage: 20,
+     withdrawalsPage: 1,
+     withdrawalsPageCount: 0,
+     withdrawalsPerPage: 20,
      stakeListLoading: false,
+     voteListLoading: false,
      stakeManageInstance:'',
      commissionShareInstance:'',
      allStakeListLoading:false,
      allStakeList:[],
+     delegator:"",
+     fields: ['delegator', 'amount'],
+     createCsvFile:'',
      headers:[
         { text: "Delegators", value: 'delegator' },
         { text: "Amount ($REI)", value: 'amount' },
@@ -143,14 +161,6 @@ export default {
         { text: "Amount ($REI)", value: 'amount' },
      ],
      myVotesList:[
-         {
-            time:"2022-12-19 12:30",
-            amount:121545.00
-         },
-          {
-            time:"2022-12-19 12:30",
-            amount:121545.00
-         }
      ],
      myWithHeaders:[
         { text: "Time", value: 'time' },
@@ -198,7 +208,9 @@ export default {
           this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
         }
         
-        this.getAllStakeList()
+        this.getAllStakeList();
+        this.getMyVotesList();
+        this.getMyWithdrawList();
     },
     async getAllStakeList() {
       this.stakeListLoading = true;
@@ -233,13 +245,93 @@ export default {
         let arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
           arr.push({
-            delegator: delegatorList[i].from,
+            delegator: web3.utils.toChecksumAddress(delegatorList[i].from),
             amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance))
           });
         }
         this.delegatorList = arr;
+        this.delegatorList.map((item,index) => {
+          // this.delegator = web3.utils.toChecksumAddress(item.delegator)
+          if(item.delegator  == this.connection.address){
+            this.delegatorList.unshift(this.delegatorList.splice(index , 1)[0]);
+          }
+        })
       }
       this.stakeListLoading = false;
+    },
+    async getMyVotesList(){
+      this.voteListLoading = true;
+      let url = this.apiUrl.graph;
+      let client = new ApolloClient({
+        uri: `${url}onlystakeinfoMore`,
+        cache: new InMemoryCache()
+      });
+      const getMyVoteInfos = gql`
+         query stakeInfoMores {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.id}",from: "${this.connection.address}"  }) {
+                id
+                from
+                timestamp
+                validator
+                shares
+            }
+        }
+        `;
+      const { data: { stakeInfoMores }} = await client.query({
+        query: getMyVoteInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      
+      this.myVotesList = stakeInfoMores.map((item) => {
+          return {
+            from: item.from,
+            time: item.timestamp,
+            validator: item.validator,
+            amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
+          }
+        })
+        console.log('myVoteInfos',this.myVotesList)
+      
+      this.voteListLoading = false;
+    },
+    async getMyWithdrawList(){
+      this.withdrawListLoading = true;
+      let url = this.apiUrl.graph;
+      let client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const getMyWithdrawInfos = gql`
+         query unStakeInfos {
+            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.id}" }) {
+              id
+              from
+              to
+              values
+              shares
+              validator
+              timestamp
+              state
+              amount
+            }
+          }
+        `;
+      const { data: { unStakeInfos }} = await client.query({
+        query: getMyWithdrawInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      
+      this.myWithdrawalsList = unStakeInfos.map((item) => {
+          return {
+            time: item.timestamp,
+            amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
+          }
+        })
+        console.log('unStakeInfos',this.myWithdrawalsList)
+      
+      this.withdrawListLoading = false;
     },
     async getBalanceOfShare(item) { 
       let balance = 0;
@@ -249,6 +341,40 @@ export default {
       return {
         balance
       };
+    },
+    handleDownload() {
+      if (!this.isSupportDownload() || !this.delegatorList.length) return;
+      try {
+        this.createCsvFile = Papa.unparse({
+            fields: this.fields,
+            data: this.delegatorList
+        });
+      } catch (err) {
+        console.error(err);
+      }
+      let csvName = `${this.$route.query.id}.csv`
+      this.funDownload(this.createCsvFile, csvName);
+    },
+    funDownload(content, filename) {
+      let eleLink = document.createElement('a');
+      eleLink.download = filename;
+      eleLink.style.display = 'none';
+      // The character content is converted to a blob address.
+      let blob = new Blob([content]);
+      eleLink.href = URL.createObjectURL(blob);
+      // trigger click
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      // remove
+      document.body.removeChild(eleLink);
+    },
+    isSupportDownload() {
+      if ('download' in document.createElement('a')) {
+        return true;
+      } else {
+        this.$dialog.notify.warning('Browser does not support');
+        return false;
+      }
     },
   }
 };
@@ -261,6 +387,9 @@ export default {
     margin-left: 0 !important;
   }
 }
+.v-btn {
+  text-transform: none !important;
+  }
 .v-tab {
   text-transform: none !important;
 }
@@ -269,6 +398,8 @@ export default {
   justify-content: flex-end !important;
 }
 .v-application .text-center {
+  display: flex;
+  justify-content: flex-start;
   text-align: right !important;
 }
 .mine{
@@ -276,5 +407,8 @@ export default {
     padding: 1px 8px;
     color: #fff;
     border-radius: 12px;
+}
+.down{
+  margin-top: 4px;
 }
 </style>
