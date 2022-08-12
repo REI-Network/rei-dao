@@ -24,6 +24,9 @@
                 <template v-slot:item.delegator="{ item }">
                     <Address :val="item.delegator"></Address>
                 </template>
+                <template v-slot:item.amount="{ item }">
+                    <span>{{ item.amount | asset(2) }}</span>
+                </template>
               </v-data-table>
                 <div class="text-center pt-2" v-if="delegatorList.length > 0">
                   <v-pagination 
@@ -43,14 +46,14 @@
                 :items="myVotesList" 
                 class="elevation-0" 
                 hide-default-footer 
-                :items-per-page="itemsPerPage" 
+                :items-per-page="votePerPage" 
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                :page.sync="page" 
-                @page-count="pageCount = $event">
+                :page.sync="votePage" 
+                @page-count="votePageCount = $event">
                 <template v-slot:item.time="{ item }">
-                    <span>{{ item.time }}</span>
+                    <span>{{ item.time*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
                 </template>
                 <template v-slot:item.amount="{ item }">
                     <span>+{{ item.amount | asset(2) }}</span>
@@ -58,8 +61,8 @@
               </v-data-table>
               <div class="text-center pt-2" v-if="myVotesList.length > 0">
                   <v-pagination 
-                    v-model="page" 
-                    :length="pageCount" 
+                    v-model="votePage" 
+                    :length="votePageCount" 
                     color="vote_button" 
                     background-color="start_unstake" 
                     class="v-pagination" 
@@ -73,24 +76,24 @@
                 :items="myWithdrawalsList" 
                 class="elevation-0" 
                 hide-default-footer 
-                :items-per-page="itemsPerPage" 
+                :items-per-page="withdrawalsPerPage" 
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
-                :page.sync="page" 
-                @page-count="pageCount = $event">
+                :page.sync="withdrawalsPage" 
+                @page-count="withdrawalsPageCount = $event">
                 <template v-slot:item.time="{ item }">
                     <v-img :src="item.img" weight="24" height="24" />
-                    <span>{{ item.time }}</span>
+                    <span>{{ item.time*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</span>
                 </template>
                  <template v-slot:item.amount="{ item }">
-                    - <span>{{ item.amount }}</span>
+                    - <span>{{ item.amount | asset(2) }}</span>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="myWithdrawalsList.length > 0">
                   <v-pagination 
-                    v-model="page" 
-                    :length="pageCount" 
+                    v-model="withdrawalsPage" 
+                    :length="withdrawalsPageCount" 
                     color="vote_button" 
                     background-color="start_unstake" 
                     class="v-pagination" 
@@ -131,6 +134,12 @@ export default {
      page: 1,
      pageCount: 0,
      itemsPerPage: 20,
+     votePage: 1,
+     votePageCount: 0,
+     votePerPage: 20,
+     withdrawalsPage: 1,
+     withdrawalsPageCount: 0,
+     withdrawalsPerPage: 20,
      stakeListLoading: false,
      voteListLoading: false,
      stakeManageInstance:'',
@@ -150,14 +159,6 @@ export default {
         { text: "Amount ($REI)", value: 'amount' },
      ],
      myVotesList:[
-         {
-            time:"2022-12-19 12:30",
-            amount:121545.00
-         },
-          {
-            time:"2022-12-19 12:30",
-            amount:121545.00
-         }
      ],
      myWithHeaders:[
         { text: "Time", value: 'time' },

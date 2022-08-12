@@ -37,6 +37,10 @@
                         </v-row>
                     </div>
                     <div class="block">
+                        <div class="font-grey">Total Txns</div>
+                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
+                    </div>
+                    <!-- <div class="block">
                         <div class="font-grey">Nodes</div>
                         <v-row>
                             <v-col class="map-nodes">
@@ -53,10 +57,10 @@
                                 </div>
                             </v-col>
                         </v-row>
-                    </div>
+                    </div> -->
                 </v-col>
                 <v-col cols="12" md="9">
-                    <!-- <v-img src="../assets/images/map.svg"></v-img> -->
+
                     <div class="map-content">
                         <div id="myCharts" ref="chart" class="dispribution" style="width:100%;height:100%"></div>
                     </div>
@@ -232,15 +236,46 @@ filters,
         };
         myChart.setOption(option)
         window.addEventListener("resize", function() {
-            resizeMyChartContainer();
             myChart.resize();
           })
         });
         this.$on('hook:destroyed',()=>{
           window.removeEventListener("resize", function() {
-            this.myChart.resize();
+            myChart.resize();
           });
         })
+        setInterval(() => {
+            let data = [
+                        [71.053, 92.736],
+                        [327.939, 99.475],
+                        [367.291, 281.14],
+                        [489.245, 171.008],
+                        [686.313, 106.537],
+                        [758.796, 284.843]
+                    ]
+                    let i = Math.round(Math.random()*5)
+                    var lightData = data[i]
+                    // console.log(i,lightData)
+            myChart.setOption(
+                option = {
+                    series:[
+                        {
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            geoIndex: 0,
+                            symbolSize: 20,
+                            itemStyle: {
+                                color: '#2115E5'
+                            },
+                            encode: {
+                                tooltip: 2
+                            },
+                            data:[ lightData]
+                        },
+                    ]
+                
+            })
+        }, 3000);
     },
     async getBlockNumberInfo(){
       let apiUrl = this.apiUrl.rpc;
