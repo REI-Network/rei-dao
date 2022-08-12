@@ -23,6 +23,7 @@
                 @page-count="pageCount = $event">
                 <template v-slot:item.delegator="{ item }">
                     <Address :val="item.delegator"></Address>
+                    <span class="mine" v-if="item.delegator == connection.address">mine</span>
                 </template>
                 <template v-slot:item.amount="{ item }">
                     <span>{{ item.amount | asset(2) }}</span>
@@ -146,6 +147,7 @@ export default {
      commissionShareInstance:'',
      allStakeListLoading:false,
      allStakeList:[],
+     delegator:"",
      fields: ['delegator', 'amount'],
      createCsvFile:'',
      headers:[
@@ -243,11 +245,17 @@ export default {
         let arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
           arr.push({
-            delegator: delegatorList[i].from,
+            delegator: web3.utils.toChecksumAddress(delegatorList[i].from),
             amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance))
           });
         }
         this.delegatorList = arr;
+        this.delegatorList.map((item,index) => {
+          // this.delegator = web3.utils.toChecksumAddress(item.delegator)
+          if(item.delegator  == this.connection.address){
+            this.delegatorList.unshift(this.delegatorList.splice(index , 1)[0]);
+          }
+        })
       }
       this.stakeListLoading = false;
     },

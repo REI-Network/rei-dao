@@ -9,7 +9,7 @@
                 <v-col cols="12" md="3">
                     <div class="block">
                         <div class="font-grey">Block Height</div>
-                        <div class="node-number">{{ blockHeight | asset(0)}}</div>
+                        <div class="node-number" style="font-size:40px">{{ blockHeight | asset(0)}}</div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Validators</div>
@@ -28,18 +28,19 @@
                                    {{ miner | addr }} 
                                 </div>
                                 <v-progress-linear
-                                    indeterminate
+                                    
                                     height="10"
                                     color="#2115E5"
                                     striped
+                                    :value="value"
                                 ></v-progress-linear>
                             </v-col>
                         </v-row>
                     </div>
-                    <div class="block">
+                    <!-- <div class="block">
                         <div class="font-grey">Total Txns</div>
                         <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
-                    </div>
+                    </div> -->
                     <!-- <div class="block">
                         <div class="font-grey">Nodes</div>
                         <v-row>
@@ -73,7 +74,7 @@
                     <h3>REI Network</h3>
                     <div class="block">
                         <div class="font-grey">Issue Date</div>
-                        <div class="node-number">01/01/2022</div>
+                        <div class="node-number">30/12/2021 <span class="font-grey">12:00 UTC</span></div>
                     </div>
                     <div class="block">
                         <div class="font-grey">Consensus</div>
@@ -89,8 +90,25 @@
                 <v-card class="rei-card">
                     <h3>Transactions</h3>
                     <div class="block">
-                        <div class="font-grey">Total Txns</div>
-                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
+                        <div class="font-grey">
+                                Total Txns
+                                <v-tooltip right color="start_unstake">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon
+                                            color="right_icon"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            dense
+                                            size="14"
+                                            style="margin-left:4px"
+                                        >
+                                         mdi-alert-circle-outline
+                                        </v-icon>
+                                    </template>
+                                    <span>Total transactions on the REI Network</span>
+                                </v-tooltip>
+                            </div>
+                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">Txns</span></div>
                     </div>
                     <!-- <div class="block">
                         <div class="font-grey">Pending Transactions</div>
@@ -102,14 +120,48 @@
                 <v-card class="rei-card">
                     <h3>Addresses</h3>
                     <div class="block">
-                        <div class="font-grey">Contract Addresses</div>
+                        <div class="font-grey">
+                            Contract Addresses
+                            <v-tooltip right color="start_unstake">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon
+                                            color="right_icon"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            dense
+                                            size="14"
+                                            style="margin-left:4px"
+                                        >
+                                         mdi-alert-circle-outline
+                                        </v-icon>
+                                    </template>
+                                    <span>The number of smart contracts on REI Network</span>
+                                </v-tooltip>
+                        </div>
                         <div class="node-number">
                             {{ stats.totalContract | asset(0) }}
                             <!-- <span class="font-green">+36</span> -->
                         </div>
                     </div>
                     <div class="block">
-                        <div class="font-grey">Wallet Addresses</div>
+                        <div class="font-grey">
+                            Wallet Addresses
+                            <!-- <v-tooltip right color="start_unstake">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-icon
+                                            color="right_icon"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            dense
+                                            size="14"
+                                            style="margin-left:4px"
+                                        >
+                                         mdi-alert-circle-outline
+                                        </v-icon>
+                                    </template>
+                                    <span>The number of addresses holding the native token <br/>of this blockchain and The number of addresses that <br/>have interacted with this blockchain. </span>
+                                </v-tooltip> -->
+                        </div>
                         <div class="node-number">
                             {{ stats.totalAddress | asset(0) }}
                             <!-- <span class="font-green">+47</span> -->
@@ -123,7 +175,7 @@
                     <div class="block">
                         <div class="font-grey">Total Token Number</div>
                         <div class="node-number">
-                            {{ stats.totalToken | asset(0) }}
+                            <a :class="dark?'dark-link':'light-link'" href="https://scan.rei.network/tokens" target="_blank">{{ stats.totalToken | asset(0) }}</a>
                             <!-- <span class="font-green">+117</span> -->
                         </div>
                     </div>
@@ -150,6 +202,9 @@ filters,
         miner:'',
         stats:{},
         validatorList:[],
+        interval: {},
+        value: 0,
+
     };
   },
   computed: {
@@ -159,15 +214,16 @@ filters,
         dark: 'dark'
     })
   },
+  beforeDestroy () {
+      clearInterval(this.interval)
+    },
   mounted(){
       this.myCharts();
       this.connect();
       this.getRei()
       this.getBlock();
-      setInterval(() => {
-          this.getBlock();
-      },3000);
-  },
+      this.getInterval();
+    },
 
   methods: {   
     connect() {
@@ -177,17 +233,30 @@ filters,
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+    getInterval(){
+         this.interval = setInterval(() => {
+        if (this.value === 100) {
+          return (this.value = 0)
+        }
+        this.value += 5
+      }, 150)
+    },
     myCharts(){
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
         var option;
-       $.get(require('../assets/images/map.svg'), function (svg) {
+        $.get(require('../assets/images/map.svg'), function (svg) {
         echarts.registerMap('iceland_svg', { svg: svg });
         option = {
             tooltip: {},
             geo: {
                 tooltip: {
-                    show: false,
+                    show: true,
+                    trigger:'item',
+                    formatter:function(params){
+                        return `${params.data.name}`
+                    }
+                   
                 },
                 show:false,
                 type:"map",
@@ -209,7 +278,10 @@ filters,
                         tooltip: 2
                     },
                     data: [
-                        [367.291, 281.14]
+                        {
+                            name: "United States", 
+                            value: [52.939, 112.475]
+                        },
                     ]
                 },
                 {
@@ -224,12 +296,27 @@ filters,
                         tooltip: 2
                     },
                     data: [
-                        [71.053, 92.736],
-                        [327.939, 99.475],
-                        [367.291, 281.14],
-                        [489.245, 171.008],
-                        [686.313, 106.537],
-                        [758.796, 284.843]
+                        {
+                            name: "Canada", 
+                            value: [31.053, 32.736]
+                        },
+                        {   
+                            name: "United States", 
+                            value: [52.939, 112.475]
+                        },
+                        { 
+                            name: "United Kingdom",
+                            value: [312.939, 49.475] 
+                        },
+                        { 
+                            name: "Singapore", 
+                            value: [666.313, 226.537] 
+                        },
+                        { 
+                            name: "Australia", 
+                            value:  [748.796, 334.843]
+                        },
+
                     ]
                 }
             ]
@@ -245,17 +332,33 @@ filters,
           });
         })
         setInterval(() => {
+            this.getBlock();
             let data = [
-                        [71.053, 92.736],
-                        [327.939, 99.475],
-                        [367.291, 281.14],
-                        [489.245, 171.008],
-                        [686.313, 106.537],
-                        [758.796, 284.843]
+                        {
+                            name: "Canada", 
+                            value: [31.053, 32.736]
+                        },
+                        {   
+                            name: "United States", 
+                            value: [52.939, 112.475]
+                        },
+                        { 
+                            name: "United Kingdom",
+                            value: [312.939, 49.475] 
+                        },
+                        { 
+                            name: "Singapore", 
+                            value: [666.313, 226.537] 
+                        },
+                        { 
+                            name: "Australia", 
+                            value:  [748.796, 334.843]
+                        },
+
                     ]
-                    let i = Math.round(Math.random()*5)
-                    var lightData = data[i]
-                    // console.log(i,lightData)
+            let i = Math.round(Math.random()*4)
+            var lightData = data[i]
+            console.log(i,lightData)
             myChart.setOption(
                 option = {
                     series:[
@@ -270,7 +373,7 @@ filters,
                             encode: {
                                 tooltip: 2
                             },
-                            data:[ lightData]
+                            data:[ lightData ]
                         },
                     ]
                 
@@ -295,13 +398,12 @@ filters,
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
         this.miner = web3.utils.toChecksumAddress(_miner)
         // console.log('this.miner',this.miner)
-        let list = await getValidatorList();
-        this.validatorList = list.data.data.activeList;
-
     },
     async getRei(){
         let ReiSatistic = await getReiSatistic();
         this.stats = ReiSatistic.data.row.json;
+        let list = await getValidatorList();
+        this.validatorList = list.data.data.activeList;
     }
   }
 };
@@ -323,6 +425,16 @@ filters,
 .node-number{
     font-size: 24px;
     font-weight: bolder;
+}
+.light-link{
+    color: #000;
+}
+.dark-link{
+    color: #FFF;
+ }
+a:hover{
+    color:#6979f8;
+    text-decoration: underline;
 }
 .block{
     margin-top: 26px;
@@ -361,5 +473,6 @@ filters,
 .miner{
     text-align: right;
     font-size: 14px;
+    font-weight: 500;
 }
 </style>

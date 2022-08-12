@@ -1217,7 +1217,7 @@ export default {
       // this.validatorDialog = true;
       this.detailsItem = value;
       this.$router.push({
-        name:'StakeValidator',
+        name:'StakeInfo',
         query:{
           id:value.address,
         },
