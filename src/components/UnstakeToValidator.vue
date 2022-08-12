@@ -44,8 +44,8 @@
                 <template v-slot:item.validator="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                     <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                    <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
-                    <span class="nodeName" v-else>{{ item.validator | addr }}</span>
+                    <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                    <span class="nodeName name-hover" v-else>{{ item.validator | addr }}</span>
                     <!-- <Address :val="item.validator"></Address> -->
                 </template>
                 <template v-slot:item.timestamp="{ item }">
@@ -341,7 +341,7 @@ export default {
       this.$router.push({
         name:'StakeInfo',
         query:{
-          id:value.address,
+          id:value.validator,
         },
       })
     },
@@ -452,6 +452,7 @@ export default {
 }
 .nodeName{
   margin: 0 8px;
+  cursor: pointer;
 }
 .theme--dark.validator-info{
     padding: 20px;
@@ -479,6 +480,9 @@ export default {
   .title-info{
     margin:10px 0 0 1px;
   }
+  .name-hover:hover{
+  color:#4856C0;
+}
 @media screen and (max-width: 900px){
   .warn-tip{
   margin-top:30px;

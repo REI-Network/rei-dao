@@ -131,8 +131,8 @@
                   <template v-slot:item.address="{ item }">
                     <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
                     <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                    <span class="nodeName" v-if="item.nodeName">{{ item.nodeName }}</span>
-                    <span class="nodeName" v-else>{{ item.address | addr }}</span>
+                    <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                    <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                     <!-- <Address :val="item.address"></Address> -->
                   </template>
                   <template v-slot:item.power="{ item }">
