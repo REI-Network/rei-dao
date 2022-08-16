@@ -49,5 +49,6 @@ export default {
 }
 .theme--light.v-app-bar.v-toolbar.v-sheet{
   background: #FFFFFF;
+  box-shadow: 0 0 20px #ddd !important;
 }
 </style>
