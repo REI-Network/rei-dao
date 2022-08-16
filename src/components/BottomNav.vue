@@ -1,7 +1,7 @@
 <template>
   <v-bottom-navigation app class="d-md-none" color="primary" background-color="background" v-model="value">
       <template v-for="link in links">
-        <v-btn  @click="go($event, link.link)" :key="link.text" v-if="link.show" :value="link.name">
+        <v-btn  @click="go($event, link.link)" :key="link.text" :value="link.name">
                <!-- <span>{{ $t(link.text) }}</span> -->
         <span class="iconfont" v-html="link.icon"></span>
         </v-btn>
@@ -68,7 +68,7 @@ export default {
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'Gas Stake',
-          show: false
+          show: true
         },
         {
           icon: '&#xe615;',
@@ -94,13 +94,6 @@ export default {
     })
   },
   watch: {
-    '$store.state.connection': function() {
-        if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-            let item = this.items[0]
-            item.show = true;
-            this.$set(this.items, 0, item)
-        }
-    }
   },
   mounted(){
    this.getRoute()

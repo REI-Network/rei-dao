@@ -12,8 +12,8 @@
           <v-tab-item key="11">
               <v-data-table 
                 :headers="headers" 
-                :items="delegatorList" 
-                class="elevation-0" 
+                :items="delegatorList"
+                class="elevation-0"
                 hide-default-footer 
                 :items-per-page="itemsPerPage" 
                 :loading="stakeListLoading" 
@@ -51,6 +51,8 @@
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
+                :sort-by.sync="sortByVote"
+                :sort-desc.sync="sortDescVote"
                 :page.sync="votePage" 
                 @page-count="votePageCount = $event">
                 <template v-slot:item.time="{ item }">
@@ -81,6 +83,8 @@
                 :loading="stakeListLoading" 
                 :no-data-text="$t('msg.nodatatext')" 
                 :loading-text="$t('msg.loading')"
+                :sort-by.sync="sortByWithdrawals"
+                :sort-desc.sync="sortDescWithdrawals"
                 :page.sync="withdrawalsPage" 
                 @page-count="withdrawalsPageCount = $event">
                 <template v-slot:item.time="{ item }">
@@ -160,12 +164,16 @@ export default {
         { text: "Time", value: 'time' },
         { text: "Amount ($REI)", value: 'amount' },
      ],
+     sortByVote:'time',
+     sortDescVote:true,
      myVotesList:[
      ],
      myWithHeaders:[
         { text: "Time", value: 'time' },
         { text: "Amount ($REI)", value: 'amount' },
      ],
+     sortByWithdrawals:'time',
+     sortDescWithdrawals:true,
      myWithdrawalsList:[
          {
             time:"2022-12-19 12:30",
@@ -242,7 +250,7 @@ export default {
           return this.getBalanceOfShare(item);
         });
         let balanceOfShare = await Promise.all(balanceOfShareMap);
-        let arr = [];
+        var arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
           arr.push({
             delegator: web3.utils.toChecksumAddress(delegatorList[i].from),
@@ -250,13 +258,18 @@ export default {
           });
         }
         this.delegatorList = arr;
+      }
+       function sortArr(attr){
+          return function(a,b){
+            return b[attr]-a[attr]
+          }
+        }
+      this.delegatorList = this.delegatorList.sort(sortArr('amount'));
         this.delegatorList.map((item,index) => {
-          // this.delegator = web3.utils.toChecksumAddress(item.delegator)
           if(item.delegator  == this.connection.address){
             this.delegatorList.unshift(this.delegatorList.splice(index , 1)[0]);
           }
         })
-      }
       this.stakeListLoading = false;
     },
     async getMyVotesList(){
