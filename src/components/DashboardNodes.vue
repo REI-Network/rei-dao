@@ -25,13 +25,12 @@
                             </v-col>
                             <v-col cols="12" md="9">
                                 <v-row justify="space-between" class="progress-miner">
-                                    <div class="miner">Miner</div>
+                                    <div class="font-name">{{ currentNode.nodeName |addr}}</div>
                                     <div class="miner">
                                         {{ miner | addr }} 
                                     </div>
                                 </v-row>
-                                <v-progress-linear
-                                    
+                                <v-progress-linear   
                                     height="10"
                                     color="#2115E5"
                                     striped
@@ -195,8 +194,9 @@ import filters from '../filters';
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
-import { getReiSatistic , getValidatorList } from '../service/CommonService'
+import { getReiSatistic , getValidatorList, getValidatorDetails } from '../service/CommonService'
 import { postRpcRequest } from '../service/CommonService'
+import find from 'lodash/find';
 export default {
 filters,
   data() {
@@ -207,6 +207,7 @@ filters,
         validatorList:[],
         interval: {},
         value: 0,
+        currentNode:'',
 
     };
   },
@@ -247,7 +248,36 @@ filters,
     myCharts(){
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
+        let self = this;
         var option;
+        var data = [
+                        {
+                            name: "Canada", 
+                            value: [31.053, 32.736],
+                            address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
+                        },
+                        {   
+                            name: "United States", 
+                            value: [52.939, 112.475],
+                            address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
+                        },
+                        { 
+                            name: "United Kingdom",
+                            value: [312.939, 49.475],
+                            address:"0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a"
+                        },
+                        { 
+                            name: "Singapore", 
+                            value: [666.313, 226.537],
+                            address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
+                        },
+                        { 
+                            name: "Australia", 
+                            value:  [748.796, 334.843],
+                            address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
+                        },
+
+                    ]
         $.get(require('../assets/images/map.svg'), function (svg) {
         echarts.registerMap('iceland_svg', { svg: svg });
         option = {
@@ -256,8 +286,20 @@ filters,
                 tooltip: {
                     show: true,
                     trigger:'item',
+                    enterable: true,
+                    backgroundColor: 'rgb(255,255,255)', 
+                    extraCssText: 'box-shadow: 0 0 20px #ddd;',
+                    padding: 12,
+                    textStyle: {
+                        color: '#000',
+                        fontStyle: 'normal',
+                        fontWeight: 'normal',
+                        fontFamily: 'sans-serif',
+                        fontSize: 14,
+                    },
                     formatter:function(params){
-                        return `${params.data.name}`
+                        let str = `${self.miner}`+'<br/>'+`${params.data.value}`+'<br/>'
+                        return str
                     }
                    
                 },
@@ -298,29 +340,7 @@ filters,
                     encode: {
                         tooltip: 2
                     },
-                    data: [
-                        {
-                            name: "Canada", 
-                            value: [31.053, 32.736]
-                        },
-                        {   
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                        { 
-                            name: "United Kingdom",
-                            value: [312.939, 49.475] 
-                        },
-                        { 
-                            name: "Singapore", 
-                            value: [666.313, 226.537] 
-                        },
-                        { 
-                            name: "Australia", 
-                            value:  [748.796, 334.843]
-                        },
-
-                    ]
+                    data: data,
                 }
             ]
         };
@@ -336,29 +356,6 @@ filters,
         })
         setInterval(() => {
             this.getBlock();
-            let data = [
-                        {
-                            name: "Canada", 
-                            value: [31.053, 32.736]
-                        },
-                        {   
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                        { 
-                            name: "United Kingdom",
-                            value: [312.939, 49.475] 
-                        },
-                        { 
-                            name: "Singapore", 
-                            value: [666.313, 226.537] 
-                        },
-                        { 
-                            name: "Australia", 
-                            value:  [748.796, 334.843]
-                        },
-
-                    ]
             let i = Math.round(Math.random()*4)
             var lightData = data[i]
             // console.log(i,lightData)
@@ -400,6 +397,9 @@ filters,
         // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
         this.miner = web3.utils.toChecksumAddress(_miner)
+        let  validatorDetails = await getValidatorDetails();
+        let detailsList = validatorDetails.data.data;
+        this.currentNode = find(detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
         // console.log('this.miner',this.miner)
     },
     async getRei(){
@@ -478,6 +478,11 @@ a:hover{
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 12px;
+}
+.font-name{
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
 }
 .progress-miner{
     padding: 0 12px;
