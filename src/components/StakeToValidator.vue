@@ -87,14 +87,14 @@
                         <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                         <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                         <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
-                        <span :class="status[item.isActive] == 'Active' ? 'active' : 'not-active'">{{ status[item.isActive] }}</span>
+                        <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
                   </template>
                   <template v-slot:item.power="{ item }">
                     {{ item.power | asset(2) }}
                   </template>
                   <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template>
-                  <template v-slot:item.balannceOfShare="{ item }">
-                    {{ item.balannceOfShare | asset(2) }}
+                  <template v-slot:item.balanceOfShare="{ item }">
+                    {{ item.balanceOfShare | asset(2) }}
                   </template>
                   <!-- <template v-slot:item.isActive="{ item }">
                                     {{ status[item.isActive] }}
@@ -138,8 +138,8 @@
                   <template v-slot:item.power="{ item }">
                     {{ item.power | asset(2) }}
                   </template>
-                  <template v-slot:item.balannceOfShare="{ item }">
-                    {{ item.balannceOfShare | asset(2) }}
+                  <template v-slot:item.balanceOfShare="{ item }">
+                    {{ item.balanceOfShare | asset(2) }}
                   </template>
                   <!-- <template v-slot:item.apy="{ item }">
                     {{ item.apy | asset(2) }}
@@ -270,7 +270,7 @@
             </div>
             <div class="pb-1 text-body-1 share-rei">
               <span class="font-color">{{ $t('stake.commonnsion_share_balance') }}</span>
-              <span style="font-weight: bold">{{ currentItem.balannceOfShare | asset(2) }}</span>
+              <span style="font-weight: bold">{{ currentItem.balanceOfShare | asset(2) }}</span>
               <span class="font-color">REI</span>
             </div>
             <v-row>
@@ -573,6 +573,7 @@ export default {
       calculationDialog: false,
       validatorDialog:false,
       myStakeList: [],
+      myStakeListRawData: [],
       width: '',
       stake: 0,
       days: 0,
@@ -598,7 +599,7 @@ export default {
         },
         { text: this.$t('stake.voting_power'), value: 'power' },
         { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
-        { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+        { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
         // { text: this.$t('stake.status'), value: 'isActive' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
@@ -613,7 +614,7 @@ export default {
           text: this.$t('stake.voting_power'),
           value: 'power'
         },
-        { text: this.$t('stake.share_balance'), value: 'balannceOfShare' },
+        { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
         // { text: 'Apy', value: 'apy' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
@@ -697,8 +698,7 @@ export default {
         window.web3 = new Web3(window.web3.currentProvider);
       }
     },
-
-    async init() {
+    async init(){
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
@@ -711,96 +711,85 @@ export default {
 
       this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
 
-      let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
-      this.stakeManageInstance = stake_contract;
-      const activeValidatorsLength = await this.stakeManageInstance.methods.activeValidatorsLength().call();
-      let indexedValidatorsLength = await this.stakeManageInstance.methods.indexedValidatorsLength().call();
-      let indexedFlag = true;
-      if (indexedValidatorsLength == 0) {
-        indexedFlag = false;
-        indexedValidatorsLength = activeValidatorsLength;
-      }
-      let indexedValidatorsArr = Array.from(new Array(Number(indexedValidatorsLength)), (n, i) => i);
+      this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
 
-      let activeValidatorsArr = Array.from(new Array(Number(activeValidatorsLength)), (n, i) => i);
-
-      let activeValidateList = await Promise.all(
-        activeValidatorsArr.map((item) => {
-          return stake_contract.methods.activeValidators(item).call();
-        })
-      );
-      let indexedNodeList = await Promise.all(
-        indexedValidatorsArr.map((item) => {
-          if (indexedFlag) {
-            return stake_contract.methods.indexedValidatorsByIndex(item).call();
-          } else {
-            return stake_contract.methods.activeValidators(item).call();
-          }
-        })
-      ).then(async (data) => {
-        let validator_address = data;
-        let validator_addressMap;
-        if (indexedFlag) {
-          validator_addressMap = indexedValidatorsArr.map((item) => {
-            return stake_contract.methods.getVotingPowerByIndex(item).call();
-          });
-        } else {
-          validator_addressMap = validator_address.map((item) => {
-            return stake_contract.methods.getVotingPowerByAddress(item.validator).call();
-          });
-        }
-
-        let validatorMap = validator_address.map((item) => {
-          let _item = indexedFlag ? item : item.validator;
-          return stake_contract.methods.validators(_item).call();
-        });
-        let validatorPower = await Promise.all(validator_addressMap);
-        let validators = await Promise.all(validatorMap);
-        let balanceOfShareMap = validators.map((item) => {
-          return this.getBalanceOfShare(item);
-        });
-        let balanceOfShare = await Promise.all(balanceOfShareMap);
-        let arr = [];
-        for (let i = 0; i < validator_address.length; i++) {
-          arr.push({
-            address: indexedFlag ? validator_address[i] : validator_address[i].validator,
-            power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
-            balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
-            commissionShare: balanceOfShare[i].commissionShare,
-            contractAddress: validators[i][1],
-            commissionRate: validators[i].commissionRate,
-            updateTimestamp: validators[i].updateTimestamp
-          });
-        }
-        return arr;
+      let blockHeight = await web3.eth.getBlockNumber();
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
       });
+      const getValidatorsInfos = gql`
+         query validators($blockHeight: String) {
+            validators(where:{id:${blockHeight}}){
+              id,
+              Validator(orderBy:votingPower,orderDirection:desc){
+                id
+                address
+                votingPower
+                commissionRate
+                commissionAddress
+                active
+              }
+            }
+          }
+        `;
+
+      const { data: { validators }} = await client.query({
+        query: getValidatorsInfos,
+        variables: {
+          blockHeight: blockHeight
+        },
+        fetchPolicy: 'cache-first'
+      });
+
+      await this.getMyStakeListData();
+
+      let validatorList = validators[0].Validator;
+      let validatorArr = [];
+
       let activeList = [];
       let notActiveList = [];
-      for (let i = 0; i < indexedNodeList.length; i++) {
-        let validate = find(activeValidateList, (item) => item[0] == indexedNodeList[i].address);
-        if (validate) {
-          let obj = {
-            isActive: 'true'
-          };
-          let _obj = Object.assign(obj, indexedNodeList[i]);
-          activeList.push(_obj);
+    
+      for (let i = 0; i < validatorList.length; i++) {
+        let _validator = {
+          address: validatorList[i].address,
+          power: web3.utils.fromWei(web3.utils.toBN(validatorList[i].votingPower)),
+          balanceOfShare: 0,
+          commissionShare: null,
+          commissionAddress: validatorList[i].commissionAddress,
+          commissionRate: validatorList[i].commissionRate,
+          active: validatorList[i].active
+        };
+
+        let _stakedValidator = find(this.myStakeListRawData, (item) => item.validator == validatorList[i].address);
+        if(_stakedValidator){
+          let _balanceOfShare = await this.getBalanceOfShare(validatorList[i].commissionAddress);
+          _validator.balanceOfShare = web3.utils.fromWei(web3.utils.toBN(_balanceOfShare.balance));
+          _validator.commissionShare = _balanceOfShare.commissionShare;
+        }
+
+        if(validatorList[i].address == this.connection.address){
+          let validatorInfo = await this.stakeManageInstance.methods.validators(validatorList[i].address).call();
+          _validator.updateTimestamp = validatorInfo.updateTimestamp
+        }
+
+        validatorArr.push(_validator);
+        if(_validator.active){
+          activeList.push(_validator);
         } else {
-          let obj = {
-            isActive: 'false'
-          };
-          let _obj = Object.assign(obj, indexedNodeList[i]);
-          notActiveList.push(_obj);
+          notActiveList.push(_validator);
         }
       }
 
-      let validate_node = this.connection.address != null ? find(indexedNodeList, (item) => item.address == this.connection.address) : false;
+      let validate_node = this.connection.address != null ? find(validatorArr, (item) => item.address == this.connection.address) : false;
       if (validate_node) {
         this.isNode = true;
       } else {
         this.isNode = false;
       }
       this.activeList = activeList;
-      this.indexedNodeList = indexedNodeList;
+      this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
       this.stakeListLoading = false;
@@ -823,9 +812,9 @@ export default {
         }
       });
       this.getMyStakeList();
+
     },
-    async getMyStakeList() {
-      this.myStakeListLoading = true;
+    async getMyStakeListData() {
       let url = this.apiUrl.graph;
       client = new ApolloClient({
         uri: `${url}chainmonitor`,
@@ -848,7 +837,11 @@ export default {
         variables: {},
         fetchPolicy: 'cache-first'
       });
-      let myStakeList = stakeInfos;
+      this.myStakeListRawData = stakeInfos;
+    },
+    async getMyStakeList() {
+      this.myStakeListLoading = true;
+      let myStakeList = this.myStakeListRawData;
       if (myStakeList.length > 0) {
         let validatorPowerMap = myStakeList.map((item) => {
           return this.stakeManageInstance.methods.getVotingPowerByAddress(item.validator).call();
@@ -861,7 +854,7 @@ export default {
         let validators = await Promise.all(validatorMap);
 
         let balanceOfShareMap = validators.map((item) => {
-          return this.getBalanceOfShare(item);
+          return this.getBalanceOfShare(item[1]);
         });
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         let arr = [];
@@ -869,7 +862,7 @@ export default {
           arr.push({
             address: myStakeList[i].validator,
             power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
-            balannceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+            balanceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
             commissionShare: balanceOfShare[i].commissionShare
           });
         }
@@ -894,7 +887,7 @@ export default {
       this.myStakeListLoading = false;
     },
     async getBalanceOfShare(activeValidatorsShare) {
-      let commissionShare = new web3.eth.Contract(abiCommissionShare, activeValidatorsShare[1]);
+      let commissionShare = new web3.eth.Contract(abiCommissionShare, activeValidatorsShare);
       let balance = 0;
       if (this.connection.address) {
         balance = await commissionShare.methods.balanceOf(this.connection.address).call();
@@ -916,7 +909,11 @@ export default {
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
-      const allowance = await this.currentItem.commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
+      let commissionShare = this.currentItem.commissionShare;
+      if(!this.currentItem.commissionShare){
+        commissionShare = new web3.eth.Contract(abiCommissionShare, item.commissionAddress);
+      }
+      const allowance = await commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
       if (allowance != 0) {
         this.approved = true;
       } else {
@@ -928,7 +925,7 @@ export default {
       this[obj].amount = this.connection.balance;
     },
     claimAll() {
-      this.claimForm.amount = this.currentItem.balannceOfShare;
+      this.claimForm.amount = this.currentItem.balanceOfShare;
       this.calculateAmount();
     },
     setAllReward() {
@@ -976,7 +973,11 @@ export default {
     },
     async submitApprove() {
       this.approveLoading = true;
-      await this.currentItem.commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
+      let commissionShare = this.currentItem.commissionShare;
+      if(!this.currentItem.commissionShare){
+        commissionShare = new web3.eth.Contract(abiCommissionShare, this.currentItem.commissionAddress);
+      }
+      await commissionShare.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
       this.approveLoading = false;
       this.approved = true;
     },
