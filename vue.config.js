@@ -15,9 +15,9 @@ module.exports = {
     node: {
       module: 'empty'
     },
-    // optimization: {
-    //   minimize: false
-    // },
+    optimization: {
+      minimize: true
+    },
     resolve: {
       alias: {
         'webworkify-webpack': path.resolve(__dirname, 'src/polyfills/webworkify')
