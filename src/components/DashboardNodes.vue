@@ -20,12 +20,13 @@
                         <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                    <v-img v-if="currentNode.logo" :src="currentNode.logo" height="36" width="36"></v-img>
+                                    <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>
                             <v-col cols="12" md="9">
                                 <v-row justify="space-between" class="progress-miner">
-                                    <div class="font-name">{{ currentNode.nodeName |addr}}</div>
+                                    <div class="font-name">{{ currentNode.nodeName }}</div>
                                     <div class="miner">
                                         {{ miner | addr }} 
                                     </div>
@@ -39,28 +40,6 @@
                             </v-col>
                         </v-row>
                     </div>
-                    <!-- <div class="block">
-                        <div class="font-grey">Total Txns</div>
-                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
-                    </div> -->
-                    <!-- <div class="block">
-                        <div class="font-grey">Nodes</div>
-                        <v-row>
-                            <v-col class="map-nodes">
-                                <div class="nodes-item">
-                                    <div v-for="(item,index) in validatorList" :key ="index">
-                                        <div v-if="index < 4">
-                                            <v-img v-if="item.img" :src="item.img" height="36" width="36"></v-img>
-                                            <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <v-icon size="42">mdi-dots-horizontal-circle</v-icon>
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </div> -->
                 </v-col>
                 <v-col cols="12" md="9">
 
@@ -196,9 +175,11 @@ import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
 import { getReiSatistic , getValidatorList, getValidatorDetails } from '../service/CommonService'
 import { postRpcRequest } from '../service/CommonService'
+import Address from '../components/Address';
 import find from 'lodash/find';
 export default {
 filters,
+Address,
   data() {
     return {
         blockHeight:'',
@@ -208,7 +189,7 @@ filters,
         interval: {},
         value: 0,
         currentNode:'',
-
+        detailsList:[]
     };
   },
   computed: {
@@ -224,7 +205,7 @@ filters,
   mounted(){
       this.myCharts();
       this.connect();
-      this.getRei()
+      this.getRei();
       this.getBlock();
       this.getInterval();
     },
@@ -245,10 +226,16 @@ filters,
         this.value += 5
       }, 150)
     },
-    myCharts(){
+    // async getValidator(){
+    //     let validatorDetails = await getValidatorDetails();
+    //     this.detailsList = validatorDetails.data.data;
+    // },
+   async myCharts(){
+        let validatorDetails = await getValidatorDetails();
+        this.detailsList = validatorDetails.data.data;
+        console.log('detailsList',this.detailsList)
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
-        let self = this;
         var option;
         var data = [
                         {
@@ -278,6 +265,14 @@ filters,
                         },
 
                     ]
+        data = data.map((item) => {
+            var detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+            return{
+                ...item,
+                nodeDesc:detail.nodeDesc,
+                nodeName:detail.nodeName,
+            }
+        })
         $.get(require('../assets/images/map.svg'), function (svg) {
         echarts.registerMap('iceland_svg', { svg: svg });
         option = {
@@ -294,11 +289,13 @@ filters,
                         color: '#000',
                         fontStyle: 'normal',
                         fontWeight: 'normal',
-                        fontFamily: 'sans-serif',
                         fontSize: 14,
                     },
                     formatter:function(params){
-                        let str = `${self.miner}`+'<br/>'+`${params.data.value}`+'<br/>'
+                        let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'+'<br/>'+
+                        '<span style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</span>'
+                        +'<br/>'+'<span>'+`${params.data.address}`+'</span>'+
+                        '<br/>'+`${params.data.name}`
                         return str
                     }
                    
@@ -356,9 +353,9 @@ filters,
         })
         setInterval(() => {
             this.getBlock();
-            let i = Math.round(Math.random()*4)
-            var lightData = data[i]
-            // console.log(i,lightData)
+            var current = find(data, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
+            var lightData = current
+            // console.log('detail',lightData)
             myChart.setOption(
                 option = {
                     series:[
@@ -397,9 +394,7 @@ filters,
         // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
         this.miner = web3.utils.toChecksumAddress(_miner)
-        let  validatorDetails = await getValidatorDetails();
-        let detailsList = validatorDetails.data.data;
-        this.currentNode = find(detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
+        this.currentNode = find(this.detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
         // console.log('this.miner',this.miner)
     },
     async getRei(){
@@ -418,7 +413,7 @@ filters,
     padding: 20px;
 }
 .font-grey{
-    color: #868E9E ;
+    color: #868E9E;
     font-size: 14px;
 }
 .font-green{

@@ -98,9 +98,8 @@ filters,
         this.totalAmount  = OverviewData.data.data.totalAmount;
         let chartInfoData = this.assetInfo.circulating_supply;
         let totalStakeAmountNumber = this.totalStakeAmount.replaceAll(',' ,'');
-        this.circulation = (totalStakeAmountNumber/chartInfoData)*100;
-        let ReiSatistic = await getReiSatistic();
-        this.stats = ReiSatistic.data.row.json;
+        this.circulation = (totalStakeAmountNumber/chartInfoData)*10;
+        this.stats = reistate.data.row.json;
         
         function sortArr(attr){
           return function(a,b){
@@ -138,11 +137,9 @@ filters,
     padding: 0 12px;
     margin-top: 0px;
 }
-.progress-miner{
-    padding: 0 12px;
-}
 .v-progress-linear{
     border-radius: 8px;
+    margin-top: 10px;
 }
 .miner{
     text-align: right;
