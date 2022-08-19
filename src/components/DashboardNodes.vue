@@ -170,6 +170,7 @@
 
 import Web3 from 'web3';
 import filters from '../filters';
+import util from '../utils/util'
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
@@ -189,7 +190,7 @@ Address,
         interval: {},
         value: 0,
         currentNode:'',
-        detailsList:[]
+        detailsList:[],
     };
   },
   computed: {
@@ -233,34 +234,33 @@ Address,
    async myCharts(){
         let validatorDetails = await getValidatorDetails();
         this.detailsList = validatorDetails.data.data;
-        console.log('detailsList',this.detailsList)
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
         var option;
         var data = [
-                        {
-                            name: "Canada", 
-                            value: [31.053, 32.736],
-                            address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
-                        },
                         {   
-                            name: "United States", 
-                            value: [52.939, 112.475],
+                            name: "Los Angeles", 
+                            value: [71.08632903954668, 111.63273737229947],
                             address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
                         },
                         { 
-                            name: "United Kingdom",
-                            value: [312.939, 49.475],
+                            name: "London",
+                            value: [329.9218395539227, 46.52687276438894],
                             address:"0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a"
                         },
                         { 
                             name: "Singapore", 
-                            value: [666.313, 226.537],
+                            value: [680.8583292697332, 221.20114366366113],
                             address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
                         },
+                        {
+                            name: "Hong kong", 
+                            value: [717.3811313668538, 154.50733113848446],
+                            address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
+                        },
                         { 
-                            name: "Australia", 
-                            value:  [748.796, 334.843],
+                            name: "Sydney", 
+                            value:  [820.597745989151, 365.7044041348772],
                             address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
                         },
 
@@ -292,10 +292,12 @@ Address,
                         fontSize: 14,
                     },
                     formatter:function(params){
-                        let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'+'<br/>'+
-                        '<span style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</span>'
-                        +'<br/>'+'<span>'+`${params.data.address}`+'</span>'+
-                        '<br/>'+`${params.data.name}`
+                        let nodeAddress = util.addr(params.data.address)
+                        let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
+                        +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
+                        +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
+                        +'<i data-v-8e64a00a aria-hidden="true" style="color: #868E9E;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
+                        +'<span style="color: #868E9E;">'+`${params.data.name}`+'</span>'
                         return str
                     }
                    
@@ -342,9 +344,11 @@ Address,
             ]
         };
         myChart.setOption(option)
-        window.addEventListener("resize", function() {
-            myChart.resize();
-          })
+        myChart.getZr().on('click', function (params) {
+    var pixelPoint = [params.offsetX, params.offsetY];
+    var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+    console.log(dataPoint);
+  });
         });
         this.$on('hook:destroyed',()=>{
           window.removeEventListener("resize", function() {
