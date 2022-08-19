@@ -100,16 +100,18 @@
                                     {{ status[item.isActive] }}
                                 </template> -->
                   <template v-slot:item.actions="{ item }">
-                    <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" @click.stop="handleStaking(item)" height="32">
-                      {{ $t('stake.staking') }}
-                    </v-btn>
-                    <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
-                      {{ $t('stake.claim') }}
-                    </v-btn>
-                    <v-btn v-if="item.address == connection.address" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
-                      {{ $t('stake.get_reward') }}
-                    </v-btn>
-                    <span v-if="!connection.address"> - </span>
+                    <div class="text-right">
+                      <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-show="inDefaultList(item)" v-if="connection.address" @click.stop="handleStaking(item)" height="32">
+                        {{ $t('stake.staking') }}
+                      </v-btn>
+                      <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
+                        {{ $t('stake.claim') }}
+                      </v-btn>
+                      <v-btn v-if="item.address == connection.address" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
+                        {{ $t('stake.get_reward') }}
+                      </v-btn>
+                      <span v-if="!connection.address"> - </span>
+                    </div>
                   </template>
                 </v-data-table>
                 <v-row justify="end" align="center" v-if="nodeList.length > 0">
@@ -145,14 +147,16 @@
                     {{ item.apy | asset(2) }}
                   </template> -->
 
-                  <template v-slot:item.actions="{ item }">
-                    <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" style="color: #fff" @click.stop="handleStaking(item)" height="32">
-                      {{ $t('stake.staking') }}
-                    </v-btn>
-                    <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
-                      {{ $t('stake.claim') }}
-                    </v-btn>
-                    <span v-if="!connection.address"> - </span>
+                  <template v-slot:item.actions="{ item }" >
+                    <div class="text-right">
+                      <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" v-show="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                        {{ $t('stake.staking') }}
+                      </v-btn>
+                      <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
+                        {{ $t('stake.claim') }}
+                      </v-btn>
+                      <span v-if="!connection.address"> - </span>
+                    </div>
                   </template>
                 </v-data-table>
                 <v-row justify="end" align="center" v-if="myStakeList.length > 0">
@@ -665,7 +669,14 @@ export default {
       approved: true,
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
-      addressRules: [(v) => !!v || this.$t('msg.please_input_address')]
+      addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
+      defaultValidatorList:[
+        '0x0efe0da2b918412f1009337FE86321d88De091fb',
+        '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D',
+        '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4',
+        '0xaA714ecc110735B4E114C8B35F035fc8706fF930',
+        '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a'
+      ]
     };
   },
   watch: {
@@ -703,14 +714,6 @@ export default {
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
       this.stakeManagerContract = await contract.methods.stakeManager().call();
-      this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
-      this.unstakeDelay = await contract.methods.unstakeDelay().call();
-      let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
-      this.minIndexVotingPower = web3.utils.fromWei(web3.utils.toBN(minIndexVotingPower));
-      let validatorRewardPool = await contract.methods.validatorRewardPool().call();
-
-      this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
-
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
 
       let blockHeight = await web3.eth.getBlockNumber();
@@ -721,7 +724,7 @@ export default {
       });
       const getValidatorsInfos = gql`
          query validators($blockHeight: String) {
-            validators(where:{id:${blockHeight}}){
+            validators(where:{id:$blockHeight}){
               id,
               Validator(orderBy:votingPower,orderDirection:desc){
                 id
@@ -734,14 +737,25 @@ export default {
             }
           }
         `;
-
-      const { data: { validators }} = await client.query({
-        query: getValidatorsInfos,
-        variables: {
-          blockHeight: blockHeight
-        },
-        fetchPolicy: 'cache-first'
-      });
+      let getValidatorList = async function(blockHeight){
+        let getData = async function(blockHeight){
+          const { data: { validators }} = await client.query({
+            query: getValidatorsInfos,
+            variables: {
+              blockHeight: String(blockHeight)
+            },
+            fetchPolicy: 'cache-first'
+          });
+          return validators;
+        }
+        let _validator = await getData(blockHeight);
+        if(!_validator.length){
+          _validator = await getValidatorList(blockHeight-1);
+        }
+        return _validator
+      }
+      
+      let validators = await getValidatorList(blockHeight);
 
       await this.getMyStakeListData();
 
@@ -811,8 +825,15 @@ export default {
           nodeDesc:nodeDesc
         }
       });
-      this.getMyStakeList();
 
+      this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
+      this.unstakeDelay = await contract.methods.unstakeDelay().call();
+      let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
+      this.minIndexVotingPower = web3.utils.fromWei(web3.utils.toBN(minIndexVotingPower));
+      let validatorRewardPool = await contract.methods.validatorRewardPool().call();
+      this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
+
+      this.getMyStakeList();
     },
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
@@ -904,7 +925,6 @@ export default {
       this.dialog = true;
     },
     async handleClaim(item) {
-      console.log('ite,',item)
       this.currentItem = item;
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
@@ -1227,7 +1247,7 @@ export default {
     closeDetails(){
       this.validatorDialog = false;
     },
-     copyToClipboard(str) {
+    copyToClipboard(str) {
       const el = document.createElement('textarea');
       el.value = str;
       el.setAttribute('readonly', '');
@@ -1243,11 +1263,11 @@ export default {
         document.getSelection().addRange(selected);
       }
     },
-     sleep(timestamp) {
+    sleep(timestamp) {
       return new Promise((resolve) => {
         setTimeout(resolve, timestamp);
       })
-      },
+    },
     async copyAddr(addr) {
       try {
         window.navigator.clipboard.writeText(addr);
@@ -1260,6 +1280,9 @@ export default {
         this.addrCopying = false;
       }
     },
+    inDefaultList(item){
+      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
+    }
    
   },
   computed: {
