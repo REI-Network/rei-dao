@@ -6,27 +6,15 @@
     </div>
     <v-row>
       <v-col cols="12" md="12" sm="12">
-        <v-card class="flex-column mt-2">
+        <!-- <v-card class="flex-column mt-2"> -->
           <StakeOverview></StakeOverview>
-        </v-card>
+        <!-- </v-card> -->
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
-            <!-- <v-tabs v-model="tabNav" centered>
-                <v-tab key="1">{{$t('stake.staking')}}</v-tab>
-                <v-tab key="2">{{$t('unstake.title')}}</v-tab> 
-            </v-tabs>
-            <v-divider /> -->
-            <!-- <v-tabs-items v-model="tabNav">
-                <v-tab-item key="1"> -->
-                  <StakeToValidator></StakeToValidator>
-                <!-- </v-tab-item>
-                <v-tab-item key="2"> -->
-                  <!-- <UnstakeToValidator></UnstakeToValidator> -->
-                <!-- </v-tab-item>
-          </v-tabs-items> -->
+            <StakeToValidator></StakeToValidator>
         </v-card>
       </v-col>
     </v-row>
