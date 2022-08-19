@@ -106,6 +106,7 @@ filters,
             return b[attr]-a[attr]
           }
         }
+        this.inactiveTotalPower = 0;
         let list = this.inActiveList.sort(sortArr('power'));
         for (let i = 0; i < list.length; i++) {
             if(i < 21){
