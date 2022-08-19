@@ -28,7 +28,7 @@
             </div>
         </v-col>
         <v-col class="vote-btn">
-            <v-btn small color="vote_button" class="mr-4 font-btn" height="32" @click="handleStaking()">
+            <v-btn small color="vote_button" v-if="inDefaultList()" class="mr-4 font-btn" height="32" @click="handleStaking()">
                 {{ $t('stake.staking') }}
             </v-btn>
             <v-btn small color="start_unstake" class="mr-4 unstake_btn" height="32" @click="handleClaim()" style="margin-right:0 !important;">
@@ -202,6 +202,13 @@ export default {
          }
      ],
      amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
+     defaultValidatorList:[
+        '0x0efe0da2b918412f1009337FE86321d88De091fb',
+        '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D',
+        '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4',
+        '0xaA714ecc110735B4E114C8B35F035fc8706fF930',
+        '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a'
+      ]
     };
   },
   computed: {
@@ -425,6 +432,9 @@ export default {
         this.addrCopying = false;
       }
     },
+    inDefaultList(){
+      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(this.$route.query.id));
+    }
   }
 };
 </script>

@@ -101,7 +101,7 @@
                                 </template> -->
                   <template v-slot:item.actions="{ item }">
                     <div class="text-right">
-                      <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-show="inDefaultList(item)" v-if="connection.address" @click.stop="handleStaking(item)" height="32">
+                      <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address&&inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
                         {{ $t('stake.staking') }}
                       </v-btn>
                       <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
@@ -149,7 +149,7 @@
 
                   <template v-slot:item.actions="{ item }" >
                     <div class="text-right">
-                      <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" v-show="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                      <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" v-if="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
                         {{ $t('stake.staking') }}
                       </v-btn>
                       <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
