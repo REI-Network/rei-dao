@@ -20,18 +20,18 @@
                         <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
                                <div>
-                                    <v-img src="../assets/images/rei.svg" height="36" width="36"></v-img>
+                                    <v-img v-if="currentNode.logo" :src="currentNode.logo" height="36" width="36"></v-img>
+                                    <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>
-                            <v-col cols="12" md="9">
+                            <v-col cols="12" md="9" style="padding-left:0;">
                                 <v-row justify="space-between" class="progress-miner">
-                                    <div class="miner">Miner</div>
+                                    <div class="font-name">{{ currentNode.nodeName }}</div>
                                     <div class="miner">
                                         {{ miner | addr }} 
                                     </div>
                                 </v-row>
-                                <v-progress-linear
-                                    
+                                <v-progress-linear   
                                     height="10"
                                     color="#2115E5"
                                     striped
@@ -40,28 +40,6 @@
                             </v-col>
                         </v-row>
                     </div>
-                    <!-- <div class="block">
-                        <div class="font-grey">Total Txns</div>
-                        <div class="node-number">{{ stats.totalTransaction | asset(2) }} <span class="font-grey">txns</span></div>
-                    </div> -->
-                    <!-- <div class="block">
-                        <div class="font-grey">Nodes</div>
-                        <v-row>
-                            <v-col class="map-nodes">
-                                <div class="nodes-item">
-                                    <div v-for="(item,index) in validatorList" :key ="index">
-                                        <div v-if="index < 4">
-                                            <v-img v-if="item.img" :src="item.img" height="36" width="36"></v-img>
-                                            <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <v-icon size="42">mdi-dots-horizontal-circle</v-icon>
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </div> -->
                 </v-col>
                 <v-col cols="12" md="9">
 
@@ -192,13 +170,17 @@
 
 import Web3 from 'web3';
 import filters from '../filters';
+import util from '../utils/util'
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
-import { getReiSatistic , getValidatorList } from '../service/CommonService'
+import { getReiSatistic , getValidatorList, getValidatorDetails } from '../service/CommonService'
 import { postRpcRequest } from '../service/CommonService'
+import Address from '../components/Address';
+import find from 'lodash/find';
 export default {
 filters,
+Address,
   data() {
     return {
         blockHeight:'',
@@ -207,7 +189,10 @@ filters,
         validatorList:[],
         interval: {},
         value: 0,
-
+        currentNode:'',
+        detailsList:[],
+        locationData:[],
+        myChart:null
     };
   },
   computed: {
@@ -223,9 +208,8 @@ filters,
   mounted(){
       this.myCharts();
       this.connect();
-      this.getRei()
+      this.getRei();
       this.getBlock();
-      this.getInterval();
     },
 
   methods: {   
@@ -244,31 +228,148 @@ filters,
         this.value += 5
       }, 150)
     },
-    myCharts(){
+    // async getValidator(){
+    //     let validatorDetails = await getValidatorDetails();
+    //     this.detailsList = validatorDetails.data.data;
+    // },
+   async myCharts(){
+        let validatorDetails = await getValidatorDetails();
+        this.detailsList = validatorDetails.data.data;
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
+        this.myChart = myChart;
         var option;
+        var data = [
+                        {   
+                            name: "Los Angeles", 
+                            value: [-44.0398, 122.7483],
+                            address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
+                        },
+                        { 
+                            name: "London",
+                            value: [329.9218, 46.5268],
+                            address:"0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a"
+                        },
+                        { 
+                            name: "Singapore", 
+                            value: [680.8583, 221.2011],
+                            address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
+                        },
+                        {
+                            name: "Hong kong", 
+                            value: [717.3811, 154.5073],
+                            address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
+                        },
+                        { 
+                            name: "Sydney", 
+                            value:  [837.2711, 349.8249],
+                            address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
+                        },
+
+                    ]
+        data = data.map((item) => {
+            var detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+            return{
+                ...item,
+                nodeDesc:detail.nodeDesc,
+                nodeName:detail.nodeName,
+            }
+        })
+        this.locationData = data;
         $.get(require('../assets/images/map.svg'), function (svg) {
-        echarts.registerMap('iceland_svg', { svg: svg });
-        option = {
-            tooltip: {},
-            geo: {
-                tooltip: {
-                    show: true,
-                    trigger:'item',
-                    formatter:function(params){
-                        return `${params.data.name}`
-                    }
-                   
-                },
-                show:false,
-                type:"map",
-                map: 'iceland_svg',
-                roam: false,
-                aspectScale:1,
-                layoutSize:['70%'],
-            },
-            series: [
+          echarts.registerMap('iceland_svg', { svg: svg });
+          option = {
+              tooltip: {},
+              geo: {
+                  tooltip: {
+                      show: true,
+                      trigger:'item',
+                      enterable: true,
+                      backgroundColor: 'rgb(255,255,255)', 
+                      extraCssText: 'box-shadow: 0 0 20px #ddd;',
+                      padding: 12,
+                      textStyle: {
+                          color: '#000',
+                          fontStyle: 'normal',
+                          fontWeight: 'normal',
+                          fontSize: 14,
+                      },
+                      formatter:function(params){
+                          let nodeAddress = util.addr(params.data.address)
+                          let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
+                          +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
+                          +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
+                          +'<i data-v-8e64a00a aria-hidden="true" style="font-size:16px;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
+                          +'<span style="color: #868E9E;margin-left:8px;">'+ `${params.data.name}`+'</span>'
+                          return str
+                      }
+                    
+                  },
+                  show:false,
+                  type:"map",
+                  map: 'iceland_svg',
+                  roam: false,
+                  aspectScale:1,
+                  layoutSize:['70%'],
+              },
+              series: [
+                  {
+                      type: 'effectScatter',
+                      coordinateSystem: 'geo',
+                      geoIndex: 0,
+                      symbolSize: 20,
+                      itemStyle: {
+                          color: '#2115E5'
+                      },
+                      encode: {
+                          tooltip: 2
+                      },
+                      data: [
+                      ]
+                  },
+                  {
+                      type: 'scatter',
+                      coordinateSystem: 'geo',
+                      geoIndex: 0,
+                      symbolSize:12,
+                      itemStyle: {
+                          color: '#2115E5'
+                      },
+                      encode: {
+                          tooltip: 2
+                      },
+                      data: data,
+                  }
+              ]
+          };
+          myChart.setOption(option);
+          // myChart.getZr().on('click', function (params) {
+          //   var pixelPoint = [params.offsetX, params.offsetY];
+          //   var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+          //   console.log(dataPoint);
+          //   });
+        });
+        this.$on('hook:destroyed',()=>{
+          window.removeEventListener("resize", function() {
+            myChart.resize();
+          });
+        })
+        this.getInterval();
+        this.getCurrentNodeInfo();
+        setInterval(() => {
+            this.getCurrentNodeInfo()
+        }, 3000);
+    },
+    async getCurrentNodeInfo(){
+      let blockInfo = await this.getBlock();
+      this.blockHeight = blockInfo.blockHeight;
+      this.miner = blockInfo.miner;
+      this.currentNode = find(this.detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
+      let lightData = find(this.locationData, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
+      // console.log('detail',lightData)
+      this.myChart.setOption(
+         {
+            series:[
                 {
                     type: 'effectScatter',
                     coordinateSystem: 'geo',
@@ -280,108 +381,10 @@ filters,
                     encode: {
                         tooltip: 2
                     },
-                    data: [
-                        {
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                    ]
+                    data:[ lightData ]
                 },
-                {
-                    type: 'scatter',
-                    coordinateSystem: 'geo',
-                    geoIndex: 0,
-                    symbolSize:12,
-                    itemStyle: {
-                        color: '#2115E5'
-                    },
-                    encode: {
-                        tooltip: 2
-                    },
-                    data: [
-                        {
-                            name: "Canada", 
-                            value: [31.053, 32.736]
-                        },
-                        {   
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                        { 
-                            name: "United Kingdom",
-                            value: [312.939, 49.475] 
-                        },
-                        { 
-                            name: "Singapore", 
-                            value: [666.313, 226.537] 
-                        },
-                        { 
-                            name: "Australia", 
-                            value:  [748.796, 334.843]
-                        },
-
-                    ]
-                }
             ]
-        };
-        myChart.setOption(option)
-        window.addEventListener("resize", function() {
-            myChart.resize();
-          })
-        });
-        this.$on('hook:destroyed',()=>{
-          window.removeEventListener("resize", function() {
-            myChart.resize();
-          });
-        })
-        setInterval(() => {
-            this.getBlock();
-            let data = [
-                        {
-                            name: "Canada", 
-                            value: [31.053, 32.736]
-                        },
-                        {   
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                        { 
-                            name: "United Kingdom",
-                            value: [312.939, 49.475] 
-                        },
-                        { 
-                            name: "Singapore", 
-                            value: [666.313, 226.537] 
-                        },
-                        { 
-                            name: "Australia", 
-                            value:  [748.796, 334.843]
-                        },
-
-                    ]
-            let i = Math.round(Math.random()*4)
-            var lightData = data[i]
-            // console.log(i,lightData)
-            myChart.setOption(
-                option = {
-                    series:[
-                        {
-                            type: 'effectScatter',
-                            coordinateSystem: 'geo',
-                            geoIndex: 0,
-                            symbolSize: 20,
-                            itemStyle: {
-                                color: '#2115E5'
-                            },
-                            encode: {
-                                tooltip: 2
-                            },
-                            data:[ lightData ]
-                        },
-                    ]
-                
-            })
-        }, 3000);
+      })
     },
     async getBlockNumberInfo(){
       let apiUrl = this.apiUrl.rpc;
@@ -393,13 +396,18 @@ filters,
     },
     async getBlock(){
         let { data: resBlock } = await this.getBlockNumberInfo();
-        this.blockHeight = web3.utils.hexToNumber(resBlock.result);
-        let block = await web3.eth.getBlock(this.blockHeight);
+        let blockHeight = web3.utils.hexToNumber(resBlock.result);
+        let block = await web3.eth.getBlock(blockHeight);
         let blockNumber = resBlock.result;
         
         // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
-        this.miner = web3.utils.toChecksumAddress(_miner)
+        let miner = web3.utils.toChecksumAddress(_miner)
+        return {
+          blockHeight,
+          miner
+        }
+        
         // console.log('this.miner',this.miner)
     },
     async getRei(){
@@ -418,7 +426,7 @@ filters,
     padding: 20px;
 }
 .font-grey{
-    color: #868E9E ;
+    color: #868E9E;
     font-size: 14px;
 }
 .font-green{
@@ -478,6 +486,11 @@ a:hover{
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 12px;
+}
+.font-name{
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
 }
 .progress-miner{
     padding: 0 12px;
