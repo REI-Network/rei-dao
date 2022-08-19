@@ -191,6 +191,8 @@ Address,
         value: 0,
         currentNode:'',
         detailsList:[],
+        locationData:[],
+        myChart:null
     };
   },
   computed: {
@@ -208,7 +210,6 @@ Address,
       this.connect();
       this.getRei();
       this.getBlock();
-      this.getInterval();
     },
 
   methods: {   
@@ -236,31 +237,32 @@ Address,
         this.detailsList = validatorDetails.data.data;
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
+        this.myChart = myChart;
         var option;
         var data = [
                         {   
                             name: "Los Angeles", 
-                            value: [71.08632903954668, 111.63273737229947],
+                            value: [-44.0398, 122.7483],
                             address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
                         },
                         { 
                             name: "London",
-                            value: [329.9218395539227, 46.52687276438894],
+                            value: [329.9218, 46.5268],
                             address:"0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a"
                         },
                         { 
                             name: "Singapore", 
-                            value: [680.8583292697332, 221.20114366366113],
+                            value: [680.8583, 221.2011],
                             address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
                         },
                         {
                             name: "Hong kong", 
-                            value: [717.3811313668538, 154.50733113848446],
+                            value: [717.3811, 154.5073],
                             address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
                         },
                         { 
                             name: "Sydney", 
-                            value:  [820.597745989151, 365.7044041348772],
+                            value:  [837.2711, 349.8249],
                             address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
                         },
 
@@ -273,43 +275,101 @@ Address,
                 nodeName:detail.nodeName,
             }
         })
+        this.locationData = data;
         $.get(require('../assets/images/map.svg'), function (svg) {
-        echarts.registerMap('iceland_svg', { svg: svg });
-        option = {
-            tooltip: {},
-            geo: {
-                tooltip: {
-                    show: true,
-                    trigger:'item',
-                    enterable: true,
-                    backgroundColor: 'rgb(255,255,255)', 
-                    extraCssText: 'box-shadow: 0 0 20px #ddd;',
-                    padding: 12,
-                    textStyle: {
-                        color: '#000',
-                        fontStyle: 'normal',
-                        fontWeight: 'normal',
-                        fontSize: 14,
-                    },
-                    formatter:function(params){
-                        let nodeAddress = util.addr(params.data.address)
-                        let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
-                        +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
-                        +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
-                        +'<i data-v-8e64a00a aria-hidden="true" style="color: #868E9E;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
-                        +'<span style="color: #868E9E;">'+`${params.data.name}`+'</span>'
-                        return str
-                    }
-                   
-                },
-                show:false,
-                type:"map",
-                map: 'iceland_svg',
-                roam: false,
-                aspectScale:1,
-                layoutSize:['70%'],
-            },
-            series: [
+          echarts.registerMap('iceland_svg', { svg: svg });
+          option = {
+              tooltip: {},
+              geo: {
+                  tooltip: {
+                      show: true,
+                      trigger:'item',
+                      enterable: true,
+                      backgroundColor: 'rgb(255,255,255)', 
+                      extraCssText: 'box-shadow: 0 0 20px #ddd;',
+                      padding: 12,
+                      textStyle: {
+                          color: '#000',
+                          fontStyle: 'normal',
+                          fontWeight: 'normal',
+                          fontSize: 14,
+                      },
+                      formatter:function(params){
+                          let nodeAddress = util.addr(params.data.address)
+                          let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
+                          +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
+                          +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
+                          +'<i data-v-8e64a00a aria-hidden="true" style="color: #868E9E;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
+                          +'<span style="color: #868E9E;">'+`${params.data.name}`+'</span>'
+                          return str
+                      }
+                    
+                  },
+                  show:false,
+                  type:"map",
+                  map: 'iceland_svg',
+                  roam: false,
+                  aspectScale:1,
+                  layoutSize:['70%'],
+              },
+              series: [
+                  {
+                      type: 'effectScatter',
+                      coordinateSystem: 'geo',
+                      geoIndex: 0,
+                      symbolSize: 20,
+                      itemStyle: {
+                          color: '#2115E5'
+                      },
+                      encode: {
+                          tooltip: 2
+                      },
+                      data: [
+                      ]
+                  },
+                  {
+                      type: 'scatter',
+                      coordinateSystem: 'geo',
+                      geoIndex: 0,
+                      symbolSize:12,
+                      itemStyle: {
+                          color: '#2115E5'
+                      },
+                      encode: {
+                          tooltip: 2
+                      },
+                      data: data,
+                  }
+              ]
+          };
+          myChart.setOption(option);
+          // myChart.getZr().on('click', function (params) {
+          //   var pixelPoint = [params.offsetX, params.offsetY];
+          //   var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+          //   console.log(dataPoint);
+          //   });
+        });
+        this.$on('hook:destroyed',()=>{
+          window.removeEventListener("resize", function() {
+            myChart.resize();
+          });
+        })
+        this.getInterval();
+        this.getCurrentNodeInfo();
+        setInterval(() => {
+            this.getCurrentNodeInfo()
+        }, 3000);
+    },
+    async getCurrentNodeInfo(){
+      let blockInfo = await this.getBlock();
+      this.blockHeight = blockInfo.blockHeight;
+      this.miner = blockInfo.miner;
+      this.currentNode = find(this.detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
+      let lightData = find(this.locationData, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
+      // console.log('detail',lightData)
+      this.myChart.setOption(
+         {
+            series:[
                 {
                     type: 'effectScatter',
                     coordinateSystem: 'geo',
@@ -321,65 +381,10 @@ Address,
                     encode: {
                         tooltip: 2
                     },
-                    data: [
-                        {
-                            name: "United States", 
-                            value: [52.939, 112.475]
-                        },
-                    ]
+                    data:[ lightData ]
                 },
-                {
-                    type: 'scatter',
-                    coordinateSystem: 'geo',
-                    geoIndex: 0,
-                    symbolSize:12,
-                    itemStyle: {
-                        color: '#2115E5'
-                    },
-                    encode: {
-                        tooltip: 2
-                    },
-                    data: data,
-                }
             ]
-        };
-        myChart.setOption(option)
-        myChart.getZr().on('click', function (params) {
-    var pixelPoint = [params.offsetX, params.offsetY];
-    var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
-    console.log(dataPoint);
-  });
-        });
-        this.$on('hook:destroyed',()=>{
-          window.removeEventListener("resize", function() {
-            myChart.resize();
-          });
-        })
-        setInterval(() => {
-            this.getBlock();
-            var current = find(data, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
-            var lightData = current
-            // console.log('detail',lightData)
-            myChart.setOption(
-                option = {
-                    series:[
-                        {
-                            type: 'effectScatter',
-                            coordinateSystem: 'geo',
-                            geoIndex: 0,
-                            symbolSize: 20,
-                            itemStyle: {
-                                color: '#2115E5'
-                            },
-                            encode: {
-                                tooltip: 2
-                            },
-                            data:[ lightData ]
-                        },
-                    ]
-                
-            })
-        }, 3000);
+      })
     },
     async getBlockNumberInfo(){
       let apiUrl = this.apiUrl.rpc;
@@ -391,14 +396,18 @@ Address,
     },
     async getBlock(){
         let { data: resBlock } = await this.getBlockNumberInfo();
-        this.blockHeight = web3.utils.hexToNumber(resBlock.result);
-        let block = await web3.eth.getBlock(this.blockHeight);
+        let blockHeight = web3.utils.hexToNumber(resBlock.result);
+        let block = await web3.eth.getBlock(blockHeight);
         let blockNumber = resBlock.result;
         
         // console.log('blockNumber', block)
         let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
-        this.miner = web3.utils.toChecksumAddress(_miner)
-        this.currentNode = find(this.detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
+        let miner = web3.utils.toChecksumAddress(_miner)
+        return {
+          blockHeight,
+          miner
+        }
+        
         // console.log('this.miner',this.miner)
     },
     async getRei(){
