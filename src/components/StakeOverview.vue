@@ -48,7 +48,7 @@
                                     striped
                                     :value="value"
                                 ></v-progress-linear>
-                                <div class="font-grey" :style="{marginLeft:value+'%'}">{{ value | asset(3) }}%</div>
+                                <div class="font-grey" :style="{marginLeft:value+'%'}">{{ value | asset(2) }}%</div>
                         </v-col>
                     </v-row>
             </v-card>
@@ -98,7 +98,7 @@ filters,
         this.totalAmount  = OverviewData.data.data.totalAmount;
         let chartInfoData = this.assetInfo.circulating_supply;
         let totalStakeAmountNumber = this.totalStakeAmount.replaceAll(',' ,'');
-        this.circulation = (totalStakeAmountNumber/chartInfoData)*10;
+        this.circulation = (totalStakeAmountNumber/chartInfoData)*100;
         this.stats = reistate.data.row.json;
         
         function sortArr(attr){
@@ -106,6 +106,7 @@ filters,
             return b[attr]-a[attr]
           }
         }
+        this.inactiveTotalPower = 0;
         let list = this.inActiveList.sort(sortArr('power'));
         for (let i = 0; i < list.length; i++) {
             if(i < 21){

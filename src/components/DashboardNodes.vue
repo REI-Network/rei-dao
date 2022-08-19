@@ -24,7 +24,7 @@
                                     <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>
-                            <v-col cols="12" md="9">
+                            <v-col cols="12" md="9" style="padding-left:0;">
                                 <v-row justify="space-between" class="progress-miner">
                                     <div class="font-name">{{ currentNode.nodeName }}</div>
                                     <div class="miner">
@@ -299,8 +299,8 @@ Address,
                           let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
                           +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
                           +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
-                          +'<i data-v-8e64a00a aria-hidden="true" style="color: #868E9E;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
-                          +'<span style="color: #868E9E;">'+`${params.data.name}`+'</span>'
+                          +'<i data-v-8e64a00a aria-hidden="true" style="font-size:16px;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
+                          +'<span style="color: #868E9E;margin-left:8px;">'+ `${params.data.name}`+'</span>'
                           return str
                       }
                     
