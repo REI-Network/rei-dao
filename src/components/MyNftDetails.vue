@@ -1,45 +1,6 @@
 <template>
   <v-container class="badges-nft">
     <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
-    <v-card>
-      <!-- <v-subheader>
-        <h3 class="sub-title">My Badge NFTs</h3>
-        <v-tooltip right color="start_unstake">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
-          </template>
-          <span>Get badges through participation and contributions in governance</span>
-        </v-tooltip>
-      </v-subheader> -->
-      <v-row justify="space-between" class="nft-header">
-        <v-col>
-          <span class="title">My NFTs</span>
-          <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
-        </v-col>
-        <v-col style="text-align: right">
-          <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-          <span class="font-grey">Submit a token support here</span>
-        </v-col>
-      </v-row>
-      <v-row justify="start" no-gutters style="padding: 0 4px">
-        <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
-          <template v-slot:item="{ item }">
-            <v-col cols="6" md="4" class="rei-genesis">
-              <v-card outlined class="nftList" @click="openProposal()">
-                <video controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
-                <div class="nft-text">
-                  <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
-                  <div style="font-size: 18px">{{ item.name }}</div>
-                </div>
-              </v-card>
-            </v-col>
-          </template>
-        </v-data-iterator>
-      </v-row>
-      <div class="pagination" v-if="this.badgeNFTBalance != 0">
-        <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
-      </div>
-      <v-dialog v-model="badgeNFTDialog" width="1000">
         <v-card class="nft-dialog">
           <v-row>
             <v-col cols="12" sm="6">
@@ -94,8 +55,6 @@
             </v-col>
           </v-row>
         </v-card>
-      </v-dialog>
-    </v-card>
   </v-container>
 </template>
 <script>
@@ -181,19 +140,6 @@ export default {
       }
       this.loading = false;
     },
-
-    openProposal() {
-      this.badgeNFTDialog = true;
-       this.$router.push({
-        name:'NftDetails',
-        // query:{
-        //   id:value.address,
-        // },
-      })
-    },
-    cancelProposal() {
-      this.badgeNFTDialog = false;
-    }
   }
 };
 </script>
