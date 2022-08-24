@@ -47,7 +47,7 @@
               <v-data-table :headers="headers" :items="folderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center">
-                    <div>
+                    <div class="asset-logo">
                       <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
                     </div>
                     <div>{{ item.assets }}</div>
@@ -158,6 +158,7 @@ export default {
 <style scoped lang="scss">
 .v-tab {
   text-transform: none !important;
+  
 }
 .daytime {
   background-color: #f3f4fa;
@@ -217,6 +218,9 @@ export default {
   .wallet-icon {
     margin: 0 8px;
   }
+}
+.asset-logo{
+    margin: 0 12px;
 }
 @media screen and (max-width: 900px) {
   .myAccount {

@@ -1,6 +1,8 @@
 <template>
   <v-container class="badges-nft">
-    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+    <div class="header-title">
+      <div class="title-detailed"><span><a class="back-voting" @click="routeLink()">NFTs</a></span> / <span class="rei-fans" >Genesis Proposal NFT #16</span></div>
+    </div>
         <v-card class="nft-dialog">
           <v-row>
             <v-col cols="12" sm="6">
@@ -10,7 +12,6 @@
             <v-col cols="12" sm="6">
               <v-row no-gutters justify="space-between">
                 <div>REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
-                <v-icon size="22" @click="cancelProposal()">mdi-close</v-icon>
               </v-row>
               <div class="genesis">{{ this.nftName }}</div>
               <v-row>
@@ -55,6 +56,30 @@
             </v-col>
           </v-row>
         </v-card>
+        <v-card class="wallet-table">
+              <v-row justify="space-between">
+                <v-col>
+                  <span class="title">All Holders</span>
+                  <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
+                </v-col>
+              </v-row>
+              <v-data-table :headers="headers" :items="folderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                <template v-slot:item.assets="{ item }">
+                  <v-row align="center">
+                    <div class="asset-logo">
+                      <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
+                    </div>
+                    <div>{{ item.assets }}</div>
+                  </v-row>
+                </template>
+                <template v-slot:item.price="{ item }">
+                  <span>${{ item.amount | asset(2) }}</span>
+                </template>
+              </v-data-table>
+              <div class="text-center pt-2" v-if="folderList.length > 0">
+                <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+              </div>
+            </v-card>
   </v-container>
 </template>
 <script>
@@ -90,7 +115,24 @@ export default {
       totalSupply: 0,
       nftList: [],
       imageShow: true,
-      url: ''
+      url: '',
+      stakeListLoading: false,
+      headers: [
+        { text: 'Assets', value: 'assets' },
+        { text: 'Amount', value: 'amount' },
+      ],
+      folderList: [
+        {
+          logo: '../assets/images/rei.svg',
+          assets: 'REI',
+          amount: 1
+        },
+        {
+          logo: '../assets/images/rei.svg',
+          assets: 'REI',
+          amount: 4
+        }
+      ]
     };
   },
   watch: {
@@ -140,6 +182,9 @@ export default {
       }
       this.loading = false;
     },
+    routeLink(){
+      this.$router.back()
+    },
   }
 };
 </script>
@@ -168,19 +213,18 @@ export default {
   font-size: 14px;
   color: #868e9e;
 }
-.data-nft {
-  display: flex;
-  width: 99%;
-  justify-content: center;
-  flex-wrap: wrap;
-  color: #868e9e;
-  margin-bottom: 28px;
+.header-title{
+    margin: 1.5rem 2.2rem;
+    .title-detailed{
+      font-size: 24px;
+    }
+    .rei-fans{
+        font-weight: bolder;
+    }
 }
-.data-list {
-  display: flex;
-  width: 100%;
-  // justify-content: space-between;
-  flex-wrap: wrap;
+.back-voting{
+  color: #868E9E !important;
+  font-size: 16px;
 }
 .theme--light.nftList {
   // width: 31%;
@@ -217,31 +261,20 @@ a:hover {
   color: #289eff;
 }
 .nft-dialog {
-  padding: 25px;
+  padding: 40px;
+  margin: 40px;
   .genesis {
     font-size: 26px;
     font-weight: bold;
   }
   .video-play {
-    width: 460px;
+    width: 440px;
   }
   .owners {
     display: flex;
     align-items: center;
     margin: 20px 20px 20px 10px;
     color: #868e9e;
-  }
-  .theme--light.about-genesis {
-    background-color: #f7f8ff;
-    border: none;
-    border-radius: 6px;
-    padding: 15px 20px;
-  }
-  .theme--dark.about-genesis {
-    background-color: #4c4a68;
-    border: none;
-    border-radius: 6px;
-    padding: 15px 20px;
   }
   .title {
     font-size: 20px;
@@ -264,6 +297,19 @@ a:hover {
     font-size: 14px;
     // color: #000;
   }
+}
+.wallet-table {
+  padding: 40px;
+  margin:40px;
+  .title {
+    font-weight: 500;
+  }
+  .wallet-icon {
+    margin: 0 8px;
+  }
+}
+.asset-logo{
+    margin: 0 12px;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {
