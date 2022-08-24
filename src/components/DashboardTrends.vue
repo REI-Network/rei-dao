@@ -162,10 +162,8 @@ export default {
         '$store.state.connection': function() {
             if(this.connection && this.connection.network){
                 this.getdata();
-                if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-                    this.getGasSaveData();
-                    this.getGasSaveDataSeven();
-                }
+                this.getGasSaveData();
+                this.getGasSaveDataSeven();
             }
         },
     },
@@ -173,10 +171,8 @@ export default {
       setTimeout(() => {
             this.trendsCharts(); 
             this.getdata();
-            if(this.connection.network == 'REI Testnet'||this.connection.network == 'REI Devnet'){
-                this.getGasSaveData();
-                this.getGasSaveDataSeven();
-            }
+            this.getGasSaveData();
+            this.getGasSaveDataSeven();  
         }, 200);
   },
   methods: {
@@ -468,6 +464,8 @@ export default {
     async getGasSaveDataSeven(){
         this.resFeeUsageData = [];
         this.resFeeUsageSumData = [];
+        this.resFeeUsageDataSeven = [];
+        this.resFeeUsageSumDataSeven = [];
         const endTimestamp = dayjs().unix();
         const startTimestamp = endTimestamp-ONE_DAY_UNIX*7;
         const gasSaves = gql`
