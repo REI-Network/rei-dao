@@ -34,7 +34,7 @@
                         >
                         <v-tab key="1">
                             <v-radio
-                                label="Price"
+                                label="Price and Market Cap"
                                 value="1"
                                 class="trends-radio"
                             >
@@ -118,7 +118,7 @@ export default {
         folders: [],
         marketData: [],
         priceData: [],
-        tags:['24H'],
+        tags:['30D'],
         model:0,
     };
   },
@@ -148,9 +148,7 @@ export default {
     })
   },
   mounted() {
-    setTimeout(() => {
-                this.myCharts(); 
-            }, 1000);
+    this.myCharts(); 
     this.getAssetInfo();
     this.getPriceChart();
   },
@@ -218,18 +216,14 @@ export default {
     async getPriceChart(){
         this.myChart.showLoading();
         let apiUrl = this.apiUrl.chart;
-        let chartData = await getAssetPrice(apiUrl);
+        let chartData = await getAssetPrice(apiUrl,{day:30});
         
-        // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
-        //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
-       
-
         this.chartData = chartData.data.data;
         let priceData = this.chartData.prices.map((item,index)=>{
             if(index < this.chartData.prices.length-1){
                 return {
                     "value": [
-                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
+                        dayjs(item[0]).format('YYYY-MM-DD'),
                         item[1]
                     ]
                 }
@@ -240,8 +234,10 @@ export default {
             if(index < this.chartData.market_caps.length-1){
                 return {
                     "value": [
-                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
-                        item[1]
+                        dayjs(item[0]).format('YYYY-MM-DD'),
+                        item[1]/10**9,
+                        item[1],
+                        
                     ]
                 }
             }
@@ -249,532 +245,134 @@ export default {
         })
         this.priceData = priceData;
         this.marketData = marketData;
-        console.log('priceData',priceData)
-        console.log('marketData',marketData)
         this.myChart.hideLoading();
-        // this.myChart.setOption({
-        //     series: [
-        //       {
-        //         data: priceData
-        //       },
-        //       {
-        //         data: marketData
-        //       },
-        //     ]
-        // });
+        this.myChart.setOption({
+            series: [
+              {
+                data: priceData
+              },
+              {
+                data: marketData
+              },
+            ]
+        });
         // console.log('folders',this.folders)
     },
     myCharts(){
             const chartPrice = this.$refs.chartPrice;
             if(chartPrice){
                 this.myChart = this.$echarts.init(chartPrice);
-                // var option = {
-                //     tooltip:{
-                //         trigger:'axis',
-                //         formatter(params) {
-                //             var relVal = params[0].value[0]+'<br>';
-                //             for (var i = 0, l = params.length; i < l; i++) {
-                //                 var yValue = Number(params[i].value[1]).toFixed(5);
-                //                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
-                //             }
-                //             return relVal;
-                //         },
-                //     },
-                //     xAxis: {
-                //         type: 'time',
-                //         boundaryGap:false,
-                //         axisLabel: {
-                //             show: true,
-                //             textStyle: {
-                //                 color: "rgba(134,142,158)",
-                //               }
-                //             },
-                //         axisLine: {
-                //             lineStyle: {
-                //                 type: 'solid',
-                //                 color: 'rgba(134,142,158)', 
-                //                 width: '1' 
-                //             }
-                //         },
-                //         data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                //         splitLine:{show: false}
-                //     },
-                //     yAxis:[
-                //       {
-                //           position: 'right',
-                //           name:'price',
-                //           type: 'value',
-                //           splitLine: {
-                //               show:false,
-                //           },
-                //           axisLabel: {
-                //             formatter: '${value}',
-                //             textStyle: {
-                //                 color: "rgba(134,142,158,.6)",
-                //             },
-                //           },
-                //           axisLine: {
-                //             show:true,
-                //               lineStyle: {
-                //                   type: 'solid',
-                //                   color: 'rgba(134,142,158,.1)', 
-                //                   width: '1' 
-                //               }
-                //           },
-                //       },
-                //       {
-                //           position: 'left',
-                //           name: 'marketcap',
-                //           type: 'value',
-                //           axisLabel:{
-                //               formatter: '${value}'
-                //           },
-                //           axisLine: {
-                //               lineStyle: {
-                //                   type: 'solid',
-                //                   color: 'rgba(134,142,158, 0.1)', 
-                //                   width: '1' 
-                //               }
-                //           },
-                //       }
-                //     ], 
-                //     series: [
-                //         {
-                //             name:'price',
-                //             data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-                //             type: 'line',
-                //             symbol: "none",
-                //             itemStyle:{
-                //                 color:'#2F86F6'
-                //             },
-                            
-                //         },
-                //         {
-                //             name:'marketcap',
-                //             data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2],
-                //             type: 'line',
-                //             symbol: "none",
-                //             itemStyle:{
-                //                 color:'rgb(253,131,53)'
-                //             }
-                //         }
-                //     ],
-                // }
-                const colors = ['#5470C6', '#91CC75', '#EE6666'];
-                let option = {
-                  color: colors,
-                  tooltip: {
-                    trigger: 'axis',
-                    formatter(params) {
+                var option = {
+                    tooltip:{
+                        trigger:'axis',
+                        formatter(params) {
                             var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
-                              var yValue = Number(params[i].value[1]).toFixed(5);
-                              if(params[i].seriesName == 'marketcap'){
-                                yValue = Number(params[i].value[2]).toFixed(5);
-                              }
-                                
-                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                                var yValue = Number(params[i].value[1]).toFixed(5);
+                                if(params[i].seriesName == 'Market Cap'){
+                                  yValue = Number(params[i].value[2]).toFixed(0);
+                                }
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue+'<br>';
                             }
                             return relVal;
                         },
-                    axisPointer: {
-                      type: 'cross'
-                    }
-                  },
-                  grid: {
-                    right: '20%'
-                  },
-                  legend: {
-                    data: ['price', 'marketcap']
-                  },
-                  xAxis: [
-                    {
-                      type: 'time',
-                      axisTick: {
-                        alignWithLabel: true
-                      },
-                      // prettier-ignore
-                      // data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                    }
-                  ],
-                  yAxis: [
-                    {
-                      type: 'value',
-                      name: 'price',
-                      position: 'left',
-                      alignTicks: true,
-                      axisLine: {
-                        show: true,
-                        lineStyle: {
-                          color: colors[0]
-                        }
-                      },
-                      axisLabel: {
-                        formatter: '{value}'
-                      }
                     },
-                    {
-                      type: 'value',
-                      name: '温度',
-                      position: 'right',
-                      alignTicks: false,
-                      axisLine: {
-                        show: true,
-                        lineStyle: {
-                          color: colors[2]
-                        }
-                      },
-                      axisLabel: {
-                        show:true,
-                      }
-                    }
-                  ],
-                  series: [
-                    {
-                      name: 'price',
-                      type: 'line',
-                      data: [
-    {
-        "value": [
-            "2022-08-23 00:00",
-            "0.036285468047869"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 01:00",
-            "0.036449631528134"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 02:00",
-            "0.036157027159372"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 03:00",
-            "0.035852906669757"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 04:00",
-            "0.035949727954392"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 05:00",
-            "0.036248146346933"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 06:00",
-            "0.036238885970094"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 07:00",
-            "0.036162312215211"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 08:00",
-            "0.036436655032834"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 09:00",
-            "0.036279753641945"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 10:00",
-            "0.036414531392927"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 11:00",
-            "0.036395055809282"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 12:00",
-            "0.036144784933474"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 13:00",
-            "0.036212100840928"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 14:00",
-            "0.035642018489813"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 15:00",
-            "0.035615413148266"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 16:00",
-            "0.036197083278299"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 17:00",
-            "0.036525599219562"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 18:00",
-            "0.036717566607263"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 19:00",
-            "0.036567426545945"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 20:00",
-            "0.036551835761686"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 21:00",
-            "0.036475325051139"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 22:00",
-            "0.036867618311171"
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 23:00",
-            "0.036933898789927"
-        ]
-    }
-]
+                    xAxis: {
+                        type: 'time',
+                        boundaryGap:false,
+                        axisLabel: {
+                            show: true,
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                              }
+                            },
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color: 'rgba(134,142,158,.6)', 
+                                width: '1' 
+                            }
+                        },
+                        splitLine:{show: false}
                     },
-                    {
-                      name: 'marketcap',
-                      type: 'line',
-                      data: [
-    {
-        "value": [
-            "2022-08-23 00:00",
-            0.0346,
-            34692091.79564028,
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 01:00",
-            0.0348,
-            34822944.504281774
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 02:00",
-            0.0345,
-            34582433.6890437
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 03:00",
-            0.0342,
-            34294540.69750997
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 04:00",
-            0.0343,
-            34389850.12494004
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 05:00",
-            0.0347,
-            34734139.65717202
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 06:00",
-            0.0346,
-            34606564.45212001
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 07:00",
-            0.0345,
-            34578802.03311309
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 08:00",
-            0.0348,
-            34815026.41292196
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 09:00",
-            0.0348,
-            34839047.821307085
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 10:00",
-            0.0347,
-            34798006.389450416
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 11:00",
-            0.0348,
-            34845872.98094326
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 12:00",
-            0.0348,
-            34810714.34901686
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 13:00",
-            0.0346,
-            34634169.507754266
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 14:00",
-            0.0340,
-            34027035.430603504
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 15:00",
-            0.0341,
-            34104173.57046509
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 16:00",
-            0.0346,
-            34664460.978460506
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 17:00",
-            0.0350,
-            35041936.06123904
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 18:00",
-            0.0351,
-            35178039.87873727
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 19:00",
-            0.0349,
-            34937538.98856331
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 20:00",
-            0.0348,
-            34877001.30121278
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 21:00",
-            0.0348,
-            34885953.24964613
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 22:00",
-            0.0350,
-            35066001.127835125
-        ]
-    },
-    {
-        "value": [
-            "2022-08-23 23:00",
-            0.0353,
-            35393615.59372673
-        ]
-    }
-]
-                    }
-                  ]
-                };
+                    yAxis:[
+                      {
+                          position: 'left',
+                          type: 'value',
+                          splitLine: {
+                              show:false,
+                          },
+                          axisLabel: {
+                            formatter: '${value}',
+                            textStyle: {
+                                color: "rgba(134,142,158,.6)",
+                            },
+                          },
+                          axisLine: {
+                            show:true,
+                              lineStyle: {
+                                  type: 'solid',
+                                  color: 'rgba(134,142,158,.1)', 
+                                  width: '1' 
+                              }
+                          },
+                      },
+                      {
+                          position: 'right',
+                          type: 'value',
+                          axisLabel:{
+                              formatter: '${value}'
+                          },
+                          axisLine: {
+                              lineStyle: {
+                                  type: 'solid',
+                                  color: 'rgba(134,142,158, 0.1)', 
+                                  width: '1' 
+                              }
+                          },
+                      }
+                    ], 
+                    series: [
+                        {
+                            name:'Price',
+                            data: [],
+                            type: 'line',
+                            symbol: "none",
+                            itemStyle:{
+                                color:'#2F86F6'
+                            },
+                            
+                        },
+                        {
+                            name:'Market Cap',
+                            data: [],
+                            type: 'line',
+                            symbol: "none",
+                            itemStyle:{
+                                color:'rgb(253,131,53)'
+                            }
+                        }
+                    ],
+                }
             
                 
                 this.myChart.setOption(option);
-                // this.myChart.setOption({
-                //     series: [
-                //         {
-                //           data: this.priceData
-                //         },
-                //         {
-                //           data: this.marketData
-                //         }
-                //     ]
-                // });
-                window.addEventListener("resize", function() {
+                this.myChart.setOption({
+                    series: [
+                        {
+                          data: this.priceData
+                        },
+                        {
+                          data: this.marketData
+                        }
+                    ]
+                });
+                window.addEventListener("resize", ()=> {
                     this.myChart.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
+                window.removeEventListener("resize", ()=> {
                     this.myChart.resize();
                 });
             })
