@@ -180,6 +180,9 @@ a{
     height: 8px !important;
     border-radius: 10px;
 }
+.tab-dark .v-slide-group__content{
+  background-color: #100D22 !important;
+}
 @media screen and (max-width: 900px) {
     .v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:last-child, .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:last-child{
       padding-bottom: 20px;

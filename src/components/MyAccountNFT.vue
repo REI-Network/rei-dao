@@ -186,9 +186,9 @@ export default {
       this.badgeNFTDialog = true;
        this.$router.push({
         name:'NftDetails',
-        // query:{
-        //   id:value.address,
-        // },
+        query:{
+          id:this.nftName,
+        },
       })
     },
     cancelProposal() {

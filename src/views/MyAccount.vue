@@ -4,12 +4,13 @@
       <h1>My Account</h1>
       <div class="title-detailed">Details about your account, balances, and voting</div>
     </div> -->
-    <v-card :class="dark ? 'night account-header' : 'daytime account-header'">
+    <v-card :class="dark ? 'night account-header' : 'daytime account-header header-back'">
       <v-row>
         <v-col cols="12" md="7">
           <div class="left-address">
             <div>
-              <v-img src="../assets/images/rei.svg" width="80" height="80"></v-img>
+              <!-- <v-img src="../assets/images/rei.svg" width="80" height="80"></v-img> -->
+              <jazzicon class="identicon" :address="connection.address" :diameter="60"></jazzicon>
             </div>
             <div class="my-address">{{ this.connection.address }}</div>
             <v-icon size="16">mdi-content-copy</v-icon>
@@ -23,12 +24,12 @@
           <h2>$756,841.69</h2>
         </v-col>
       </v-row>
-      <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
+    </v-card>
+    <v-tabs v-model="tab1" align-with-title :class="dark ? 'tab-dark' : 'tab-light'" background-color="background">
         <v-tab key="11">Portfolio</v-tab>
         <v-tab key="12">NFTs</v-tab>
         <v-tab key="13">DAOs</v-tab>
       </v-tabs>
-    </v-card>
     <v-tabs-items v-model="tab1">
       <v-row :class="dark ? 'night' : 'daytime'">
         <v-col class="myAccount">
@@ -37,7 +38,13 @@
               <v-row justify="space-between">
                 <v-col>
                   <span class="title">Wallet</span>
-                  <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
+                  <v-tooltip right color="start_unstake">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon class="wallet-icon" v-bind="attrs" v-on="on" dense size="16" style="margin-bottom: 6px"> mdi-help-circle-outline </v-icon>
+                    </template>
+                    <span>Stake $REI to earn Crude as Gas</span>
+                  </v-tooltip>
+                  <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
                 <v-col style="text-align: right">
                   <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
@@ -81,45 +88,32 @@
                 <MyAccountBalance></MyAccountBalance>
               </v-col>
             </v-row>
-            <v-row>
+            <!-- <v-row>
               <v-col>
                 <MyAccountCrude></MyAccountCrude>
               </v-col>
-            </v-row>
+            </v-row> -->
           </v-tab-item>
         </v-col>
       </v-row>
     </v-tabs-items>
-    <!-- <v-row>
-      <v-col>
-          <MyAccountBalance></MyAccountBalance>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <MyAccountCrude></MyAccountCrude>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <MyAccountNFT></MyAccountNFT>
-      </v-col>
-    </v-row> -->
   </v-container>
 </template>
 <script>
 import MyAccountBalance from '../components/MyAccountBalance';
-import MyAccountCrude from '../components/MyAccountCrude';
+// import MyAccountCrude from '../components/MyAccountCrude';
 import MyAccountNFT from '../components/MyAccountNFT';
 import { mapGetters } from 'vuex';
+import Jazzicon from 'vue-jazzicon';
 // import MyAccountProposals from '../components/MyAccountProposals';
 
 import filters from '../filters';
 export default {
   components: {
     MyAccountBalance,
-    MyAccountCrude,
-    MyAccountNFT
+    // MyAccountCrude,
+    MyAccountNFT,
+    [Jazzicon.name]: Jazzicon
   },
   filters,
   data() {
@@ -143,7 +137,7 @@ export default {
           balance: 100000000,
           value: 100000000
         }
-      ]
+      ],
     };
   },
   computed: {
@@ -156,9 +150,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.v-tabs {
+  // margin-top: 20px;
+}
 .v-tab {
   text-transform: none !important;
-  
 }
 .daytime {
   background-color: #f3f4fa;
@@ -169,9 +165,8 @@ export default {
 .theme--light.v-slide-group__content {
   background-color: #f3f4fa !important;
 }
-.v-application--is-ltr .v-tabs--align-with-title > .v-tabs-bar:not(.v-tabs-bar--show-arrows):not(.v-slide-group--is-overflowing) > .v-slide-group__wrapper > .v-tabs-bar__content > .v-tab:first-child,
-.v-application--is-ltr .v-tabs--align-with-title > .v-tabs-bar:not(.v-tabs-bar--show-arrows):not(.v-slide-group--is-overflowing) > .v-slide-group__wrapper > .v-tabs-bar__content > .v-tabs-slider-wrapper + .v-tab {
-  margin-left: 0 !important;
+.header-back{
+  background: linear-gradient(180deg, #D6E3FF 0%, #FFFFFF 100%);
 }
 .header-title {
   margin: 1.5rem 0;
@@ -186,6 +181,7 @@ export default {
 .account-header {
   padding-top: 60px;
   padding-left: 40px;
+  padding-bottom: 20px;
   .left-address {
     display: flex;
     justify-content: flex-start;
@@ -199,6 +195,7 @@ export default {
     padding: 26px;
     color: #fff;
     background-color: #6979f8;
+    border-radius: 6px;
     .title {
       display: flex;
       justify-content: space-between;
@@ -219,8 +216,8 @@ export default {
     margin: 0 8px;
   }
 }
-.asset-logo{
-    margin: 0 12px;
+.asset-logo {
+  margin: 0 12px;
 }
 @media screen and (max-width: 900px) {
   .myAccount {

@@ -3,7 +3,7 @@
   <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-row>
       <v-col class="accout-item"> 
-        <div class="balance-card">
+        <!-- <div class="balance-card">
           <v-card
             class="mx-auto secend-card"
             rounded="4"
@@ -35,27 +35,20 @@
           <v-subheader v-if='connection.address' style="height:16px">
             <div class="add-price" style="margin-top:12px;">
                <div>${{assetToCurrency(connection.balance,assetInfo.current_price) | asset(2)}}</div>
-               <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
+               <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div>
             </div>
-            <div class="time-price" style="margin-left:12px">
-               <!-- <div>24H</div> -->
-               <!-- <div class="update-time">
-                <v-icon
-                    color="right_icon"
-                    size="12"
-                  >
-                    mdi-clock-time-ten-outline
-                </v-icon>
-                    1h Ago
-            </div> -->
-            </div>
+ 
           </v-subheader>
           <div v-if='!connection.address' class="not-connection">
               -
            </div>
           <div id="myCharts" ref="chart" style="height:280px"></div>
           </v-card>          
+        </div> -->
+        <div class="voting-card">
+          <MyAccountCrude></MyAccountCrude>
         </div>
+                
         <div class="voting-card">
           <v-card
             class="secend-card"     
@@ -213,6 +206,7 @@ import filters from '../filters';
 import dayjs from 'dayjs';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
 import util from '../utils/util';
+import MyAccountCrude from '../components/MyAccountCrude';
 
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -220,6 +214,9 @@ let client = null;
 
 export default {
   filters,
+  components:{
+    MyAccountCrude
+  },
   data() {
     return {
         myTotalStake: 0,
@@ -498,10 +495,10 @@ export default {
   justify-content: space-between;
   padding: 0;
   .balance-card{
-    width: 48.5%;
+    // width: 48.5%;
   }
   .voting-card{
-    width: 48%;
+    width: 49%;
   }
   .secend-card{
     height: 380px;
