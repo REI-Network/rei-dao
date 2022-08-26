@@ -530,6 +530,8 @@ export default {
         }
     },
     async getGasSaveDataSeven(){
+        this.resFeeUsageData = [];
+        this.resFeeUsageSumData = [];
         this.resFeeUsageDataSeven = [];
         this.resFeeUsageSumDataSeven = [];
         this.resFeeUsageDataThirty = [];
@@ -837,6 +839,7 @@ export default {
                     }
                 ]
             };
+            console.log('option4',option4)
             if(dataGasSaved.length==0 && dataGasSavedSum.length==0){
                 option4.title = title;
             }
