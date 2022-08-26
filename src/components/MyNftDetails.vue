@@ -12,7 +12,7 @@
           <video controls preload="meta" class="video-play" :src="this.badgeNFTImg" :poster="poster"></video>
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="12" sm="6" style="padding-left:0;">
         <v-row no-gutters justify="space-between">
           <div>REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
         </v-row>
@@ -92,6 +92,7 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
+import find from 'lodash/find';
 
 const nft_contract_test = '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d';
 const nft_contract_prod = '0x4035374c2c157F46effeA16e71A62b8992F2AD1b';
@@ -176,12 +177,13 @@ export default {
         this.url = await contract.methods.uri(0).call();
         this.totalSupply = await contract.methods.totalSupply(0).call();
         const { data } = await this.$axios.get(this.url);
-        this.nftName = data.name;
-        this.badgeNFTImg = data.image;
-        this.description = data.description;
         this.nftList = [];
         this.nftList.push(data);
-        console.log('data',data)
+        let detail = find(this.nftList, (item) => item.name == this.nftName);
+        this.nftName = detail.name;
+        this.badgeNFTImg = detail.image;
+        this.description = detail.description;
+        console.log('detail',detail)
       }
       this.loading = false;
     },
@@ -266,8 +268,9 @@ a:hover {
   color: #289eff;
 }
 .nft-dialog {
-  padding: 24px;
-  margin:0 40px;
+  padding:20px 28px;
+  margin-left: 40px;
+  margin-right: 20px;
   }
   .about-genesis{
     padding: 20px;
@@ -278,7 +281,7 @@ a:hover {
     font-weight: bold;
   }
   .video-play {
-    width: 450px;
+    width: 460px;
   }
   .owners {
     display: flex;
