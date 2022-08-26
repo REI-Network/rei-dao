@@ -940,12 +940,12 @@ export default {
                     ]
                 };
                 this.myChart.setOption(option);
-                window.addEventListener("resize", function() {
+                window.addEventListener("resize", () => {
                     this.myChart.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-            window.removeEventListener("resize", function() {
+            window.removeEventListener("resize", () => {
                 this.myChart.resize();
             });
             })
@@ -1034,12 +1034,12 @@ export default {
                     ]
                 };
                 this.myChart2.setOption(option2)
-                window.addEventListener("resize", function() {
+                window.addEventListener("resize", () =>  {
                     this.myChart2.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
+                window.removeEventListener("resize", () =>  {
                     this.myChart2.resize();
                 });
             })
@@ -1126,12 +1126,12 @@ export default {
                     ]
                 };
                 this.myChart3.setOption(option3)
-                window.addEventListener("resize", function() {
+                window.addEventListener("resize", () =>  {
                     this.myChart3.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
+                window.removeEventListener("resize", () =>  {
                     this.myChart3.resize();
                 });
             })
@@ -1232,12 +1232,12 @@ export default {
                     ]
                 };
                 this.myChart4.setOption(option4)
-                window.addEventListener("resize", function() {
+                window.addEventListener("resize", () =>  {
                     this.myChart4.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
+                window.removeEventListener("resize", () =>  {
                     this.myChart4.resize();
                 });
             })
