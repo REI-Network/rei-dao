@@ -34,29 +34,18 @@
                         >
                         <v-tab key="1">
                             <v-radio
-                                label="Price"
+                                label="Price and Market Cap"
                                 value="1"
                                 class="trends-radio"
                             >
                             </v-radio>
                         </v-tab>
-                        <v-tab key="2">
-                            <v-radio
-                            label="Market Cap"
-                            value="2"
-                            >
-                            </v-radio>
-                        </v-tab>   
                     </v-radio-group>
                 </v-tabs>
                </div>
-                <v-tabs-items v-model="tab">
-                    <v-tab-item key="1">
-                        <div ref="chartPrice"  style="height:376px"></div> 
-                    </v-tab-item>
-                    <v-tab-item key="2">
-                        <div ref="chartPrice2"  style="height:376px"></div>
-                    </v-tab-item>
+                
+                    <div ref="chartPrice"  style="height:376px"></div> 
+                    
                     <!-- <div class="update-time" style="margin-top:-20px">
                         <v-icon
                             color="primary"
@@ -66,7 +55,7 @@
                             </v-icon>
                                 1h Ago
                         </div> -->
-                </v-tabs-items>
+               
           </v-card>          
         </div>
         <div class="faq-get" style="width:38%">
@@ -113,7 +102,6 @@
     </v-container>
 </template>
 <script>
-import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { getAssetPrice } from '../service/CommonService'
 import dayjs from 'dayjs'
@@ -130,7 +118,7 @@ export default {
         folders: [],
         marketData: [],
         priceData: [],
-        tags:['24H'],
+        tags:['30D'],
         model:0,
     };
   },
@@ -160,7 +148,7 @@ export default {
     })
   },
   mounted() {
-    this.myCharts()
+    this.myCharts(); 
     this.getAssetInfo();
     this.getPriceChart();
   },
@@ -228,18 +216,14 @@ export default {
     async getPriceChart(){
         this.myChart.showLoading();
         let apiUrl = this.apiUrl.chart;
-        let chartData = await getAssetPrice(apiUrl);
+        let chartData = await getAssetPrice(apiUrl,{day:30});
         
-        // let needObject = ['current_price','market_cap','total_volume','total_supply','high_24h','low_24h','price_change_percentage_24h','circulating_supply']
-        //  let needObject = [this.$t('dashborad.current_price'),this.$t('dashborad.market_cap'),this.$t('dashborad.total_volume'),this.$t('dashborad.total_supply'),this.$t('dashborad.high'),this.$t('dashborad.low'),this.$t('dashborad.price_change'),this.$t('dashborad.circulating_supply')]
-       
-
         this.chartData = chartData.data.data;
         let priceData = this.chartData.prices.map((item,index)=>{
             if(index < this.chartData.prices.length-1){
                 return {
                     "value": [
-                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
+                        dayjs(item[0]).format('YYYY-MM-DD'),
                         item[1]
                     ]
                 }
@@ -250,8 +234,10 @@ export default {
             if(index < this.chartData.market_caps.length-1){
                 return {
                     "value": [
-                        dayjs(item[0]).format('YYYY-MM-DD HH:00'),
-                        item[1]
+                        dayjs(item[0]).format('YYYY-MM-DD'),
+                        item[1]/10**9,
+                        item[1],
+                        
                     ]
                 }
             }
@@ -264,13 +250,15 @@ export default {
             series: [
               {
                 data: priceData
-              }
+              },
+              {
+                data: marketData
+              },
             ]
         });
         // console.log('folders',this.folders)
     },
     myCharts(){
-        if(this.tab===0){
             const chartPrice = this.$refs.chartPrice;
             if(chartPrice){
                 this.myChart = this.$echarts.init(chartPrice);
@@ -281,7 +269,10 @@ export default {
                             var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5);
-                                relVal +=params[i].marker + params[i].seriesName +':'+yValue;
+                                if(params[i].seriesName == 'Market Cap'){
+                                  yValue = Number(params[i].value[2]).toFixed(0);
+                                }
+                                relVal +=params[i].marker + params[i].seriesName +':'+yValue+'<br>';
                             }
                             return relVal;
                         },
@@ -298,63 +289,67 @@ export default {
                         axisLine: {
                             lineStyle: {
                                 type: 'solid',
-                                color: 'rgba(134,142,158,.1)', 
+                                color: 'rgba(134,142,158,.6)', 
                                 width: '1' 
                             }
                         },
                         splitLine:{show: false}
                     },
-                    yAxis: {
-                        type: 'value',
-                        splitLine: {
-                            show:false,
-                        },
-                        axisLabel: {
-                            show: true,
+                    yAxis:[
+                      {
+                          position: 'left',
+                          type: 'value',
+                          splitLine: {
+                              show:false,
+                          },
+                          axisLabel: {
+                            formatter: '${value}',
                             textStyle: {
                                 color: "rgba(134,142,158,.6)",
                             },
-                            formatter: '${value}'
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color: 'rgba(134,142,158,.1)', 
-                                width: '1' 
-                            }
-                        },
-                    },
-
-                    legend: {
-                        selectedMode: false,
-                        itemWidth: 16,
-                        itemHeight: 16,
-                        top: 'bottom',
-                        textStyle: {
-                            fontSize: 16,
-                            color:'rgba(134,142,158,.6)'
-                        },
-                    },
+                          },
+                          axisLine: {
+                            show:true,
+                              lineStyle: {
+                                  type: 'solid',
+                                  color: 'rgba(134,142,158,.1)', 
+                                  width: '1' 
+                              }
+                          },
+                      },
+                      {
+                          position: 'right',
+                          type: 'value',
+                          axisLabel:{
+                              formatter: '${value}'
+                          },
+                          axisLine: {
+                              lineStyle: {
+                                  type: 'solid',
+                                  color: 'rgba(134,142,158, 0.1)', 
+                                  width: '1' 
+                              }
+                          },
+                      }
+                    ], 
                     series: [
                         {
-                            name:'USD',
+                            name:'Price',
                             data: [],
                             type: 'line',
                             symbol: "none",
                             itemStyle:{
                                 color:'#2F86F6'
                             },
-                            areaStyle: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-                                    offset: 0,
-                                    color: 'rgba(80,141,255,0.39)'
-                                }, {
-                                    offset: .34,
-                                    color: 'rgba(56,155,255,0.25)'
-                                },{
-                                    offset: 1,
-                                    color: 'rgba(38,197,254,0.00)'
-                                }])
+                            
+                        },
+                        {
+                            name:'Market Cap',
+                            data: [],
+                            type: 'line',
+                            symbol: "none",
+                            itemStyle:{
+                                color:'rgb(253,131,53)'
                             }
                         }
                     ],
@@ -365,136 +360,23 @@ export default {
                 this.myChart.setOption({
                     series: [
                         {
-                            data: this.priceData
-                        }]
+                          data: this.priceData
+                        },
+                        {
+                          data: this.marketData
+                        }
+                    ]
                 });
-                window.addEventListener("resize", function() {
+                window.addEventListener("resize", ()=> {
                     this.myChart.resize()
                 })
             }
             this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
+                window.removeEventListener("resize", ()=> {
                     this.myChart.resize();
                 });
             })
             
-        } else {
-            const chartPrice2 = this.$refs.chartPrice2;
-            if(chartPrice2){
-                this.myChart2= this.$echarts.init(chartPrice2) 
-                var option2 = {
-                    tooltip:{
-                        trigger:'axis',
-                        formatter(params) {
-                        var relVal = params[0].value[0]+'<br>';
-                        for (var i = 0, l = params.length; i < l; i++) {
-                        var yValue = Number(params[i].value[1]).toFixed(5)
-                            relVal +=params[i].marker + params[i].seriesName +':'+yValue;
-                        }
-                        return relVal;
-                    }
-                    },
-                    xAxis: {
-                        type: 'time',
-                        boundaryGap:false,
-                        axisLabel: {
-                            show: true,
-                            textStyle: {
-                                color: "rgba(134,142,158,.6)",
-                              }
-                            },
-                        axisLine: {
-                                lineStyle: {
-                                    type: 'solid',
-                                    color: 'rgba(134,142,158, 0.1)', 
-                                    width: '1' 
-                                }
-                            },
-                            splitLine:{show: false}
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLabel:{
-                            show: true,
-                            textStyle: {
-                                color: "rgba(134,142,158,.6)",
-                            },
-                            formatter:function(value){
-                                var txt=[];
-                                if(value>=10*6){
-                                    txt.push(value/(10**6)+'M');
-                                }else{
-                                    txt.push(value);
-                                }
-                                return txt;
-                            }
-                        },
-                        splitLine: {
-                            show:false,
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color: 'rgba(134,142,158, 0.1)', 
-                                width: '1' 
-                            }
-                        },
-                    },
-
-                    legend: {
-                        selectedMode: false,
-                        itemWidth: 16,
-                        itemHeight: 16,
-                        top: 'bottom',
-                        textStyle: {
-                            fontSize: 16,
-                            color:'rgba(134,142,158,.6)'
-                        },
-                    },
-                    series: [
-                        {
-                            name:'USD',
-                            data: [],
-                            type: 'line',
-                            symbol: "none",
-                            itemStyle:{
-                                color:'rgb(253,131,53)'
-                            },
-                            areaStyle: {
-               
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-                                    offset: 0,
-                                    color: 'rgba(203,131,53,0.39)'
-                                }, {
-                                    offset: .34,
-                                    color: 'rgba(160,131,53,0.25)'
-                                },{
-                                    offset: 1,
-                                    color: 'rgba(120,131,53,0.00)'
-                                }])
-                            }
-                        }
-                    ],
-                }
-                
-                this.myChart2.setOption(option2)
-                this.myChart2.setOption({
-                    series: [
-                    {
-                        data: this.marketData
-                    }
-                    ]
-                });
-                window.addEventListener("resize", function() {
-                this.myChart2.resize()
-                })
-            }
-            this.$on('hook:destroyed',()=>{
-                window.removeEventListener("resize", function() {
-                this.myChart2.resize();
-                });
-            })
-        }
     }
   }
 };
