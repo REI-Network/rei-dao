@@ -839,7 +839,6 @@ export default {
                     }
                 ]
             };
-            console.log('option4',option4)
             if(dataGasSaved.length==0 && dataGasSavedSum.length==0){
                 option4.title = title;
             }
@@ -861,7 +860,7 @@ export default {
                         formatter(params) {
                             var relVal = params[0].value[0];
                             for (var i = 0, l = params.length; i < l; i++) {
-                                var yValue = Number(params[i].value[1]).toFixed(5);
+                                var yValue = util.numFormat(Number(params[i].value[1]).toFixed(0));
                                 relVal = relVal+'<br>'+ params[i].marker + params[i].seriesName +':'+yValue;
                             }
                             return relVal;
@@ -962,7 +961,7 @@ export default {
                         formatter(params) {
                             var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
-                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                var yValue = util.numFormat(Number(params[i].value[1]).toFixed(0))
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
                             }
                             return relVal;
@@ -1056,7 +1055,7 @@ export default {
                         formatter(params) {
                             var relVal = params[0].value[0]+'<br>';
                             for (var i = 0, l = params.length; i < l; i++) {
-                                var yValue = Number(params[i].value[1]).toFixed(5)
+                                var yValue = util.numFormat(Number(params[i].value[1]).toFixed(0))
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue;
                             }
                             return relVal;
