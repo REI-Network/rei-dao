@@ -315,12 +315,12 @@ export default {
                         }
                     ]
                 })
-          window.addEventListener("resize", function() {
+          window.addEventListener("resize", ()=> {
            this.myChart.resize()
           })
         }
         this.$on('hook:destroyed',()=>{
-         window.removeEventListener("resize", function() {
+         window.removeEventListener("resize", ()=> {
             this.myChart.resize();
         });
       })

@@ -270,7 +270,7 @@ export default {
                             for (var i = 0, l = params.length; i < l; i++) {
                                 var yValue = Number(params[i].value[1]).toFixed(5);
                                 if(params[i].seriesName == 'Market Cap'){
-                                  yValue = Number(params[i].value[2]).toFixed(0);
+                                  yValue = util.numFormat(Number(params[i].value[2]).toFixed(0));
                                 }
                                 relVal +=params[i].marker + params[i].seriesName +':'+yValue+'<br>';
                             }
