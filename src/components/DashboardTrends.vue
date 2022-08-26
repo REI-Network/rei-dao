@@ -632,7 +632,6 @@ export default {
             }
             let _totalSaved = totalSavedSeven.concat(totalDataSeven).reverse();
             let _totalSavedThirty = totalSavedThirty.concat(charData.gasSaves).reverse();
-            console.log('_totalSaved',_totalSaved)
             let firstData = dayjs.unix(_totalSaved[0].timestamp).startOf('hour');
             let beforeDayFirstData = '';
             if(!dayjs(sevenDayBefore).isSame(dayjs(firstData))){
@@ -841,7 +840,6 @@ export default {
             if(dataGasSaved.length==0 && dataGasSavedSum.length==0){
                 option4.title = title;
             }
-            console.log('option4',option4)
             this.myChart4.setOption(option4);
         }
         
