@@ -176,6 +176,7 @@ import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress'
 import { getReiSatistic , getValidatorList, getValidatorDetails } from '../service/CommonService'
 import { postRpcRequest } from '../service/CommonService'
+import locationData from '../service/location/locationData'
 import Address from '../components/Address';
 import find from 'lodash/find';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
@@ -210,8 +211,8 @@ Address,
     },
   mounted(){
       this.connect();
-      this.myCharts();
       this.getRei();
+      this.myCharts();
       this.getBlock();
     },
 
@@ -272,59 +273,52 @@ Address,
         return _validator
       }
       
-      let validators = await getValidatorList(blockHeight);
-      console.log(validators);
+      let _validators = await getValidatorList(blockHeight);
+      let validators = _validators[0].Validator;
+      let activeList = [];
+      for(let i = 0; i < validators.length; i++){
+        if(validators[i].active){
+          activeList.push(validators[i])
+        }
+      }
 
-      return validators;
+      return activeList;
       } catch(e){
         console.log(e)
       }
     },
     async myCharts(){
-        //await this.getValidator();
+        let activeValidator = await this.getValidator();
         let validatorDetails = await getValidatorDetails();
         this.detailsList = validatorDetails.data.data;
         var chartDom = document.getElementById('myCharts');
         var myChart = echarts.init(chartDom);
         this.myChart = myChart;
         var option;
-        var data = [
-                        {   
-                            name: "Los Angeles", 
-                            value: [-60.0398, 122.7483],
-                            address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
-                        },
-                        { 
-                            name: "London",
-                            value: [329.9218, 46.5268],
-                            address:"0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a"
-                        },
-                        { 
-                            name: "Singapore", 
-                            value: [683.8583, 221.2011],
-                            address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
-                        },
-                        {
-                            name: "Hong kong", 
-                            value: [717.3811, 154.5073],
-                            address:"0x0efe0da2b918412f1009337FE86321d88De091fb"
-                        },
-                        { 
-                            name: "Sydney", 
-                            value:  [844.1343, 349.8249],
-                            address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
-                        },
 
-                    ]
-        data = data.map((item) => {
-            var detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
-            return{
-                ...item,
+        let _activeValidator = activeValidator.map((item)=>{
+          let detail = find(this.detailsList, (_items) => web3.utils.toChecksumAddress(_items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+          let location = find(locationData, (_items) => web3.utils.toChecksumAddress(_items.address) == web3.utils.toChecksumAddress(item.address));
+          if(!detail){
+            detail = {
+              nodeDesc: '',
+              nodeName: 'Validator'
+            }
+          }
+          if(!location){
+            location = {
+              address:item.address,
+              name: "Hong kong", 
+              value: [717.3811, 154.5073]
+            }
+          }
+          return{
+                ...location,
                 nodeDesc:detail.nodeDesc,
                 nodeName:detail.nodeName,
             }
         })
-        this.locationData = data;
+        this.locationData = _activeValidator;
         $.get(require('../assets/images/map.svg'), function (svg) {
           echarts.registerMap('iceland_svg', { svg: svg });
           option = {
@@ -387,16 +381,16 @@ Address,
                       encode: {
                           tooltip: 2
                       },
-                      data: data,
+                      data: _activeValidator,
                   }
               ]
           };
           myChart.setOption(option);
-          myChart.getZr().on('click', function (params) {
-            var pixelPoint = [params.offsetX, params.offsetY];
-            var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
-            console.log(dataPoint);
-            });
+          //myChart.getZr().on('click', function (params) {
+          // var pixelPoint = [params.offsetX, params.offsetY];
+          // var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+          // console.log(dataPoint);
+          // });
         });
         window.addEventListener("resize", () =>  {
             this.myChart.resize();
