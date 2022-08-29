@@ -178,6 +178,9 @@ import { getReiSatistic , getValidatorList, getValidatorDetails } from '../servi
 import { postRpcRequest } from '../service/CommonService'
 import Address from '../components/Address';
 import find from 'lodash/find';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
+let client = null;
+
 export default {
 filters,
 Address,
@@ -206,8 +209,8 @@ Address,
       clearInterval(this.interval)
     },
   mounted(){
-      this.myCharts();
       this.connect();
+      this.myCharts();
       this.getRei();
       this.getBlock();
     },
@@ -228,11 +231,57 @@ Address,
         this.value += 5
       }, 150)
     },
-    // async getValidator(){
-    //     let validatorDetails = await getValidatorDetails();
-    //     this.detailsList = validatorDetails.data.data;
-    // },
-   async myCharts(){
+    async getValidator(){
+      try{
+      let blockHeight = await web3.eth.getBlockNumber();
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const getValidatorsInfos = gql`
+         query validators($blockHeight: String) {
+            validators(where:{id:$blockHeight}){
+              id,
+              Validator(orderBy:votingPower,orderDirection:desc){
+                id
+                address
+                votingPower
+                commissionRate
+                commissionAddress
+                active
+              }
+            }
+          }
+        `;
+      let getValidatorList = async function(blockHeight){
+        let getData = async function(blockHeight){
+          const { data: { validators }} = await client.query({
+            query: getValidatorsInfos,
+            variables: {
+              blockHeight: String(blockHeight)
+            },
+            fetchPolicy: 'cache-first'
+          });
+          return validators;
+        }
+        let _validator = await getData(blockHeight);
+        if(!_validator.length){
+          _validator = await getValidatorList(blockHeight-1);
+        }
+        return _validator
+      }
+      
+      let validators = await getValidatorList(blockHeight);
+      console.log(validators);
+
+      return validators;
+      } catch(e){
+        console.log(e)
+      }
+    },
+    async myCharts(){
+        //await this.getValidator();
         let validatorDetails = await getValidatorDetails();
         this.detailsList = validatorDetails.data.data;
         var chartDom = document.getElementById('myCharts');
