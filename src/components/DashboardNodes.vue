@@ -349,8 +349,11 @@ Address,
           //   console.log(dataPoint);
           //   });
         });
+        window.addEventListener("resize", () =>  {
+            this.myChart.resize();
+        })
         this.$on('hook:destroyed',()=>{
-          window.removeEventListener("resize", function() {
+          window.removeEventListener("resize", ()=> {
             myChart.resize();
           });
         })
