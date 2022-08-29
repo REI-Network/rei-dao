@@ -242,7 +242,7 @@ Address,
         var data = [
                         {   
                             name: "Los Angeles", 
-                            value: [-44.0398, 122.7483],
+                            value: [-60.0398, 122.7483],
                             address:"0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4"
                         },
                         { 
@@ -252,7 +252,7 @@ Address,
                         },
                         { 
                             name: "Singapore", 
-                            value: [680.8583, 221.2011],
+                            value: [683.8583, 221.2011],
                             address:"0x1b0885d33B43A696CD5517244A4Fcb20B929F79D"
                         },
                         {
@@ -262,7 +262,7 @@ Address,
                         },
                         { 
                             name: "Sydney", 
-                            value:  [837.2711, 349.8249],
+                            value:  [844.1343, 349.8249],
                             address:"0xaA714ecc110735B4E114C8B35F035fc8706fF930"
                         },
 
@@ -343,11 +343,11 @@ Address,
               ]
           };
           myChart.setOption(option);
-          // myChart.getZr().on('click', function (params) {
-          //   var pixelPoint = [params.offsetX, params.offsetY];
-          //   var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
-          //   console.log(dataPoint);
-          //   });
+          myChart.getZr().on('click', function (params) {
+            var pixelPoint = [params.offsetX, params.offsetY];
+            var dataPoint = myChart.convertFromPixel({ geoIndex: 0 }, pixelPoint);
+            console.log(dataPoint);
+            });
         });
         window.addEventListener("resize", () =>  {
             this.myChart.resize();
