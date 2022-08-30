@@ -2,56 +2,63 @@
   <v-container>
     <h3>Validator Info</h3>
     <v-row class="mt-5 mb-5">
-        <v-col class="rei-validator">
-            <div>
-                <v-img v-if="detail&&detail.logo" :src="detail.logo" width="42" height="42"/>
-                <v-img v-else src="../assets/images/rei.svg" width="42" height="42"/>
+      <v-col class="rei-validator">
+        <div>
+          <v-img v-if="detail && detail.logo" :src="detail.logo" width="42" height="42" />
+          <v-img v-else src="../assets/images/rei.svg" width="42" height="42" />
+        </div>
+        <div class="fans-right">
+          <v-row align="center">
+            <h3 class="validator-nodename" v-if="detail && detail.nodeName">{{ detail.nodeName }}</h3>
+            <div v-if="detailData" class="active">{{ status[detailData.isActive] }}</div>
+            <div class="three-img">
+              <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
+              <a v-if="detail && detail.website" :href="detail.website" target="_blank"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20" /></a>
+
+              <!-- <v-img class="img-icon" src="../assets/images/telegram.svg" width="20" height="20"/> -->
             </div>
-            <div class="fans-right">
-                <v-row align="center">
-                    <h3 class="validator-nodename" v-if="detail&&detail.nodeName">{{detail.nodeName}}</h3>
-                    <div v-if="detailData" class="active">{{status[detailData.isActive]}}</div>
-                    <div class="three-img">
-                        <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
-                        <a v-if="detail&&detail.website" :href="detail.website" target="_blank" ><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20"/></a>
-                        
-                        <!-- <v-img class="img-icon" src="../assets/images/telegram.svg" width="20" height="20"/> -->
-                    </div>
-                </v-row>
-                <v-row class="validator-address">
-                    <span class="font-grey" v-if="detail&&detail.nodeAddress">{{detail&&detail.nodeAddress}}</span>
-                    <span class="font-grey" v-else>{{detailData&&detailData.address}}</span>
-                    <v-btn class="copy-btn" @click="copyAddr(detailData.address)">
-                        <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
-                    </v-btn>
-                </v-row>
-            </div>
-        </v-col>
-        <v-col class="vote-btn">
-            <v-btn small color="vote_button" v-if="inDefaultList()" class="mr-4 font-btn" height="32" @click="handleStaking()">
-                {{ $t('stake.staking') }}
+          </v-row>
+          <v-row class="validator-address">
+            <span class="font-grey" v-if="detail && detail.nodeAddress">{{ detail && detail.nodeAddress }}</span>
+            <span class="font-grey" v-else>{{ detailData && detailData.address }}</span>
+            <v-btn class="copy-btn" @click="copyAddr(detailData.address)">
+              <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
             </v-btn>
-            <v-btn small color="start_unstake" class="mr-4 unstake_btn" height="32" @click="handleClaim()" style="margin-right:0 !important;">
-                {{ $t('stake.claim') }}
-            </v-btn>
-        </v-col>
+          </v-row>
+        </div>
+      </v-col>
+      <v-col class="vote-btn">
+        <div>
+          <v-btn small color="vote_button" v-if="inDefaultList()" class="mr-4 font-btn" height="32" @click="handleStaking()">
+            {{ $t('stake.staking') }}
+          </v-btn>
+          <v-btn small color="start_unstake" class="mr-4 unstake_btn" height="32" @click="handleClaim()" style="margin-right: 0 !important">
+            {{ $t('stake.claim') }}
+          </v-btn>
+        </div>
+        <div>
+          <v-btn small outlined color="validator" class="calculate-btn" height="32" @click="setCalculation()">
+            <span class="iconfont">&#xe619;</span><span style="font-size:14px;">Calculate Rewards</span>
+          </v-btn>
+        </div>
+      </v-col>
     </v-row>
-    <div class="font-grey fans-content" v-if="detail&&detail.nodeDesc">
-        {{detail.nodeDesc}}
+    <div class="font-grey fans-content" v-if="detail && detail.nodeDesc">
+      {{ detail.nodeDesc }}
     </div>
     <v-card outlined class="vote-number">
-        <v-row justify="space-between">
-            <v-col cols="12" sm="3">
-                <div class="font-grey">Voting Power ($REI)</div>
-                <h2>{{ detailData.power | asset(2) }}</h2>
-            </v-col>
-             <v-col cols="12" sm="3">
-                <div class="font-grey">Commission Rate</div>
-                <h2>{{ detailData.commissionRate }}%</h2>
-            </v-col>
-        </v-row>
+      <v-row justify="space-between">
+        <v-col cols="12" sm="3">
+          <div class="font-grey">Voting Power ($REI)</div>
+          <h2>{{ detailData.power | asset(2) }}</h2>
+        </v-col>
+        <v-col cols="12" sm="3">
+          <div class="font-grey">Commission Rate</div>
+          <h2>{{ detailData.commissionRate }}%</h2>
+        </v-col>
+      </v-row>
     </v-card>
-      <v-dialog v-model="dialog" width="500" class="dialog-card">
+    <v-dialog v-model="dialog" width="500" class="dialog-card">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
           <v-card-title class="dialog-title">{{ $t('stake.staking_info') }}</v-card-title>
@@ -93,7 +100,7 @@
         </v-list>
       </v-card>
     </v-dialog>
-      <v-dialog v-model="claimDialog" width="500" class="dialog-card">
+    <v-dialog v-model="claimDialog" width="500" class="dialog-card">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
           <v-card-title class="dialog-title">{{ $t('stake.claim_info') }}</v-card-title>
@@ -140,6 +147,74 @@
         </v-list>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="calculationDialog" width="580">
+      <v-card class="calculation-card">
+        <v-row justify="space-between">
+          <v-col cols="12" md="10">
+            <h3><span class="iconfont">&#xe619;&nbsp;&nbsp;</span>Calculate Voting Rewards</h3>
+          </v-col>
+          <v-col cols="12" md="1" @click="cancelCalculation()" class="close-dialog">
+            <v-icon>mdi-close</v-icon>
+          </v-col>
+        </v-row> 
+        <v-row>
+          <v-col>
+            <v-card outlined :class="dark ? 'dark-nodes node-details' : 'light-nodes node-details'">
+              <v-row align="center" class="node-name">
+                <h3 v-if="detail && detail.nodeName">{{ detail.nodeName }}&nbsp;&nbsp;</h3>
+                <div v-if="detail.active" class="active">Active</div>
+                <div v-else class="not-active">Inactive</div>
+                <div>&nbsp;&nbsp;Commission Rate: {{ detailData.commissionRate }}%</div>
+              </v-row>
+              <v-row>
+                <div class="calculate-address">{{ detail.nodeAddress  }}</div>
+                <v-btn @click="copyAddr(detail.address)">
+                  <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
+                </v-btn>
+              </v-row>
+            </v-card>
+            <v-row class="" justify="space-between">
+              <v-col class="text-left">
+                <span class="subheading mr-1 font-grey">You stake</span>
+                <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span>
+                <span class="subheading mr-1 font-grey"> REI</span>
+              </v-col>
+            </v-row>
+            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
+            <v-row justify="space-between" class="slider-num font-grey">
+              <v-col>0</v-col>
+              <v-col style="text-align: right">10M</v-col>
+            </v-row>
+            <v-row class="" justify="space-between">
+              <v-col class="text-left">
+                <span class="subheading mr-1 font-grey">Locking $REI for</span>
+                <span :class="dark ? 'dark-amount' : 'light-amount'">{{ this.days }}</span>
+                <span class="subheading mr-1 font-grey"> days</span>
+              </v-col>
+            </v-row>
+            <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" always-dirty min="0" max="365" tick-size="8"> </v-slider>
+            <v-row justify="space-between" class="slider-num font-grey">
+              <v-col>0 D</v-col>
+              <v-col style="text-align: right">365D</v-col>
+            </v-row>
+            <v-row justify="space-between">
+              <v-col class="font-grey">
+                <div>Your estimated rewards</div>
+                <div>
+                  <span class="font-blue">{{ UserRewardsYear | asset(2) }}</span> REI
+                </div>
+              </v-col>
+              <v-col class="font-grey" style="text-align: right">
+                <div>Current APR</div>
+                <div>
+                  <span class="font-blue">{{ current | asset(2) }}</span> %
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -147,84 +222,94 @@
 /* eslint-disable no-unused-vars */
 
 import Web3 from 'web3';
-import { mapActions,mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util';
 import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
-import { getValidatorList,getValidatorDetails } from '../service/CommonService'
+import { getValidatorList, getValidatorDetails } from '../service/CommonService';
 import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 
 export default {
   components: {
-    Address,
+    Address
   },
   filters,
   data() {
     return {
-     detail: '',
-     validatorAddress:this.$route.query.id,
-     detailData:'',
-     dialog: false,
-     claimDialog: false,
-     stakeLoading: false,
-     claimLoading: false,
-     approveLoading: false,
-     stakeManageInstance: '',
-     stakeManagerContract: '',
-     commissionShareInstance:'',
-     myCommissionShareBalance:0,
-     unstakeDelay: 0,
-     receiveBalance: 0,
-     approved: true,
-     addrCopying: false,
-     arr:[],
-     status: {
+      detail: '',
+      validatorAddress: this.$route.query.id,
+      detailData: '',
+      dialog: false,
+      claimDialog: false,
+      stakeLoading: false,
+      claimLoading: false,
+      approveLoading: false,
+      stakeManageInstance: '',
+      stakeManagerContract: '',
+      commissionShareInstance: '',
+      myCommissionShareBalance: 0,
+      unstakeDelay: 0,
+      receiveBalance: 0,
+      approved: true,
+      addrCopying: false,
+      calculationDialog: false,
+      stake: 0,
+      days: 0,
+      UserRewardsYear: 0,
+      current: 0,
+      totalAmount: 0,
+      arr: [],
+      status: {
         true: this.$t('stake.isActive'),
         false: this.$t('stake.notActive')
       },
-     form: {
+      form: {
         amount: 0
       },
       claimForm: {
         amount: 0
       },
-     activeList:[
-         {
-             address:"0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
-             power:"657659.99",
-             commissionShare:"123179341",
-             commissionRate:20
-         }
-     ],
-     amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
-     defaultValidatorList:[
-        '0x0efe0da2b918412f1009337FE86321d88De091fb',
-        '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D',
-        '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4',
-        '0xaA714ecc110735B4E114C8B35F035fc8706fF930',
-        '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a'
-      ]
+      activeList: [
+        {
+          address: '0x116F46EB05D5e42b4CD10E70B1b49706942f5948',
+          power: '657659.99',
+          commissionShare: '123179341',
+          commissionRate: 20
+        }
+      ],
+      amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
+      defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a']
     };
   },
   computed: {
     ...mapGetters({
-        connection: 'connection',
-        dark: 'dark',
-        apiUrl: 'apiUrl'
-    })
+      connection: 'connection',
+      dark: 'dark',
+      apiUrl: 'apiUrl'
+    }),
+    listenChange() {
+      const { stake, days } = this;
+      return {
+        stake,
+        days
+      };
+    }
   },
-  created(){
-
-  },
-  mounted(){
+  created() {},
+  mounted() {
     this.connect();
     this.getValidatorInfo();
     this.init();
+  },
+  watch:{
+    listenChange(stake, days) {
+      this.Calculation();
+    },
   },
   methods: {
     ...mapActions({
@@ -238,31 +323,31 @@ export default {
       }
     },
     async init() {
-        let contract = new web3.eth.Contract(abiConfig, config_contract);
-        this.stakeManagerContract = await contract.methods.stakeManager().call();
-        this.unstakeDelay = await contract.methods.unstakeDelay().call();
-        let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
-        this.stakeManageInstance = stake_contract;
-        if(this.$route.query.id){
-          let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
-          this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
-          let myCommissionShareBalance = await this.getBalanceOfShare();
-          this.myCommissionShareBalance = web3.utils.fromWei(web3.utils.toBN(myCommissionShareBalance.balance))
-        }
+      let contract = new web3.eth.Contract(abiConfig, config_contract);
+      this.stakeManagerContract = await contract.methods.stakeManager().call();
+      this.unstakeDelay = await contract.methods.unstakeDelay().call();
+      let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
+      this.stakeManageInstance = stake_contract;
+      if (this.$route.query.id) {
+        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
+        this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
+        let myCommissionShareBalance = await this.getBalanceOfShare();
+        this.myCommissionShareBalance = web3.utils.fromWei(web3.utils.toBN(myCommissionShareBalance.balance));
+      }
     },
-    async getValidatorInfo(){
-       let validatorDetails = await getValidatorDetails();
-       let address = this.$route.query.id;
-       let validatorInfo = validatorDetails.data.data
-       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
-       let validatorData = await getValidatorList();
-       console.log('validatorData',validatorData)
-       let allValidatorList = [].concat(validatorData.data.data.activeList).concat(validatorData.data.data.inActiveList);
-       this.activeList = validatorData.data.data.activeList;
-       this.detailData = find(allValidatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
-       
-       console.log('this.detailData',this.detailData)
-       console.log('this.detail',this.detail)
+    async getValidatorInfo() {
+      let validatorDetails = await getValidatorDetails();
+      let address = this.$route.query.id;
+      let validatorInfo = validatorDetails.data.data;
+      this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
+      let validatorData = await getValidatorList();
+      console.log('validatorData', validatorData);
+      let allValidatorList = [].concat(validatorData.data.data.activeList).concat(validatorData.data.data.inActiveList);
+      this.activeList = validatorData.data.data.activeList;
+      this.detailData = find(allValidatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
+
+      console.log('this.detailData', this.detailData);
+      console.log('this.detail', this.detail);
     },
     handleStaking() {
       this.$refs.stakeform && this.$refs.stakeform.reset();
@@ -305,7 +390,7 @@ export default {
       let balance = 0;
       if (this.connection.address) {
         balance = await this.commissionShareInstance.methods.balanceOf(this.connection.address).call();
-        console.log(balance)
+        console.log(balance);
       }
       return {
         balance
@@ -325,7 +410,7 @@ export default {
       }
       this.claimDialog = true;
     },
-     cancelStaking() {
+    cancelStaking() {
       this.$refs.stakeform && this.$refs.stakeform.reset();
       this.dialog = false;
     },
@@ -336,7 +421,7 @@ export default {
     setAll(obj) {
       this[obj].amount = this.connection.balance;
     },
-     async submitApprove() {
+    async submitApprove() {
       this.approveLoading = true;
       await this.commissionShareInstance.methods.approve(this.stakeManagerContract, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send({ from: this.connection.address });
       this.approveLoading = false;
@@ -346,7 +431,7 @@ export default {
       this.startUnstake();
     },
     async startUnstake() {
-        console.log('this.detailData',this.claimForm.amount)
+      console.log('this.detailData', this.claimForm.amount);
       try {
         if (!this.$refs.claimform.validate()) return;
         this.claimLoading = true;
@@ -415,11 +500,11 @@ export default {
         document.getSelection().addRange(selected);
       }
     },
-     sleep(timestamp) {
+    sleep(timestamp) {
       return new Promise((resolve) => {
         setTimeout(resolve, timestamp);
-      })
-      },
+      });
+    },
     async copyAddr(addr) {
       try {
         window.navigator.clipboard.writeText(addr);
@@ -432,8 +517,21 @@ export default {
         this.addrCopying = false;
       }
     },
-    inDefaultList(){
+    inDefaultList() {
       return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(this.$route.query.id));
+    },
+    setCalculation() {
+      this.calculationDialog = true;
+    },
+    async Calculation() {
+      let CalculationData = await getValidatorList();
+      this.totalAmount = CalculationData.data.data.totalAmount;
+      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.power) + this.stake + this.totalAmount) / this.totalAmount) * (this.detailData.commissionRate / 100);
+      this.UserRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.power) + this.stake) / 365) * this.days;
+      this.current = (this.UserRewardsYear / (this.stake * 365)) * this.days * 100;
+    },
+    cancelCalculation() {
+      this.calculationDialog = false;
     }
   }
 };
@@ -443,6 +541,7 @@ export default {
 .font-btn.v-btn.v-btn--has-bg {
   color: #fff;
   background: #6979f8;
+  font-size: 12px;
 }
 .unstake_btn.theme--dark.v-btn.v-btn--has-bg {
   background: #595777;
@@ -450,99 +549,99 @@ export default {
 .v-btn {
   text-transform: none !important;
 }
-.v-sheet--outlined{
-    border: none;
-    border-radius: 6px;
+.v-sheet--outlined {
+  border: none;
+  border-radius: 6px;
 }
-.font-grey{
-    color: #868E9E ;
+.font-grey {
+  color: #868e9e;
+  font-size: 14px;
+}
+.rei-validator {
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  .validator-nodename {
+    margin-right: 8px;
+  }
+  .fans-right {
+    margin-left: 20px;
+  }
+  .active {
+    height: 18px;
+    background-color: #fc9354;
+    border-radius: 15px;
+    padding: 0 10px;
+    color: #fff;
     font-size: 14px;
-}
-.rei-validator{
-    padding-top: 8px;
+  }
+  .three-img {
     display: flex;
-    align-items: center;
-    .validator-nodename{
-      margin-right:8px;
+    .img-icon {
+      margin: 0 4px;
     }
-    .fans-right{
-        margin-left: 20px;
-    }
-    .active {
-        height: 18px;
-        background-color: #FC9354;
-        border-radius: 15px;
-        padding: 0 10px;
-        color: #fff;
-        font-size: 14px;
-    }
-    .three-img{
-        display:flex;
-        .img-icon{
-            margin: 0 4px;
-        }
-    }
+  }
 }
-.vote-btn{
-    text-align: right;
+.vote-btn {
+  text-align: right;
 }
-.fans-content{
-    margin: 28px 0;
+.fans-content {
+  margin: 28px 0;
 }
-.theme--light.vote-number{
-    background-color: #F7F7F7;
-    padding: 12px 20px;
+.theme--light.vote-number {
+  background-color: #f7f7f7;
+  padding: 12px 20px;
 }
-.theme--dark.vote-number{
-    background-color: #13112B;
-    padding: 12px 20px;
+.theme--dark.vote-number {
+  background-color: #13112b;
+  padding: 12px 20px;
 }
 .ma-dialog {
   padding: 16px;
 }
-.text-center{
-    text-align: right !important;
+.text-center {
+  text-align: right !important;
 }
 .dialog-night {
   background-color: #595777;
-  padding:20px 0;
+  padding: 20px 0;
 }
 .dialog-daytime {
   background-color: #fff;
-  padding:20px 0;
+  padding: 20px 0;
 }
- .dialog-validator {
-     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 12px;
-    .v-card__subtitle,
-    .v-card__text,
-    .v-card__title {
-        padding: 0;
-    }
-    .v-card__title {
-        font-size: 1rem;
-    }
-    .close-btn {
-        margin-right: 16px;
-        padding: 0;
-        background-color: transparent;
-        cursor: pointer;
+.dialog-validator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 12px;
+  .v-card__subtitle,
+  .v-card__text,
+  .v-card__title {
+    padding: 0;
   }
+  .v-card__title {
+    font-size: 1rem;
   }
-  .from-voting {
-    display: flex;
-    flex-direction: column;
-    .input-title {
-      margin-top: 0;
-      height: 24px;
-    }
+  .close-btn {
+    margin-right: 16px;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
   }
-  .from-amount {
-    margin-top: -32px;
+}
+.from-voting {
+  display: flex;
+  flex-direction: column;
+  .input-title {
+    margin-top: 0;
+    height: 24px;
   }
-  .font-color {
+}
+.from-amount {
+  margin-top: -32px;
+}
+.font-color {
   color: #868e9e;
 }
 .text-bod {
@@ -570,8 +669,79 @@ export default {
   text-align: right;
   margin: 12px 0;
 }
-.copy-btn.v-btn.v-btn--has-bg{
-    background-color: transparent !important;
-    margin-top:-8px;
+.copy-btn.v-btn.v-btn--has-bg {
+  background-color: transparent !important;
+  margin-top: -8px;
+}
+.calculate-btn{
+  margin-top:12px;
+}
+.calculation-card {
+  padding: 40px;
+}
+.calculation-card.theme--dark.v-sheet {
+  background-color: #595777;
+}
+.close-dialog {
+  cursor: pointer;
+}
+.active {
+  line-height: 20px;
+  background-color: #43c06d;
+  border-radius: 15px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  color: #fff;
+}
+.not-active {
+  line-height: 20px;
+  background-color: #5f82ad;
+  border-radius: 15px;
+  margin-left: 2px;
+  padding: 2px 10px;
+  color: #fff;
+}
+.light-amount {
+  color: #2116e5;
+  font-weight: bolder !important;
+  font-size: 22px;
+}
+.dark-amount {
+  color: #fff;
+  font-weight: bolder !important;
+  font-size: 22px;
+}
+.light-nodes{
+  background-color: #F5F9FD;
+}
+.dark-nodes{
+  background-color: #595277;
+  // opacity: 0.5;
+}
+.node-details{
+  padding-top: 12px;
+  border-radius: 8px;
+  border:none;
+  .node-name{
+    margin-top: 10px;
+    margin-left:20px
+  }
+  .calculate-address{
+    margin-top: 12px;
+    margin-left:34px;
+    margin-bottom:24px
+  }
+  .theme--dark.v-btn.v-btn--has-bg{
+    background-color: transparent;
+  }
+}
+.slider-num {
+  padding: 0 12px;
+  margin-top: -40px;
+}
+.font-blue {
+  font-size: 24px;
+  font-weight: bolder;
+  color: #2116e5;
 }
 </style>
