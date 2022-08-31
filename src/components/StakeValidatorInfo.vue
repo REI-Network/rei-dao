@@ -10,7 +10,7 @@
         <div class="fans-right">
           <v-row align="center">
             <h3 class="validator-nodename" v-if="detail && detail.nodeName">{{ detail.nodeName }}</h3>
-            <div v-if="detailData" class="active">{{ status[detailData.isActive] }}</div>
+            <div v-if="detailData" :class="detailData.isActive=='true'?'active':'not-active'">{{ status[detailData.isActive] }}</div>
             <div class="three-img">
               <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
               <a v-if="detail && detail.website" :href="detail.website" target="_blank"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20" /></a>
@@ -36,7 +36,7 @@
             {{ $t('stake.claim') }}
           </v-btn>
         </div>
-        <div>
+        <div v-if="detailData.isActive=='true'">
           <v-btn small outlined color="validator" class="calculate-btn" height="32" @click="setCalculation()">
             <span class="iconfont">&#xe619;</span><span style="font-size:14px;">Calculate Rewards</span>
           </v-btn>
@@ -162,8 +162,7 @@
             <v-card outlined :class="dark ? 'dark-nodes node-details' : 'light-nodes node-details'">
               <v-row align="center" class="node-name">
                 <h3 v-if="detail && detail.nodeName">{{ detail.nodeName }}&nbsp;&nbsp;</h3>
-                <div v-if="detail.active" class="active">Active</div>
-                <div v-else class="not-active">Inactive</div>
+                <div class="active">Active</div>
                 <div>&nbsp;&nbsp;Commission Rate: {{ detailData.commissionRate }}%</div>
               </v-row>
               <v-row>
@@ -173,12 +172,11 @@
                 </v-btn>
               </v-row>
             </v-card>
-            <v-row class="" justify="space-between">
-              <v-col class="text-left">
+            <v-row class="calculate-input" style="margin-top:30px;">
                 <span class="subheading mr-1 font-grey">You stake</span>
-                <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span>
+                <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
+                <div style="width:200px;"><v-text-field :value="stake | asset(2)" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
                 <span class="subheading mr-1 font-grey"> REI</span>
-              </v-col>
             </v-row>
             <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
             <v-row justify="space-between" class="slider-num font-grey">
@@ -187,9 +185,9 @@
             </v-row>
             <v-row class="" justify="space-between">
               <v-col class="text-left">
-                <span class="subheading mr-1 font-grey">Locking $REI for</span>
+                <span class=" mr-1 font-grey">Locking $REI for</span>
                 <span :class="dark ? 'dark-amount' : 'light-amount'">{{ this.days }}</span>
-                <span class="subheading mr-1 font-grey"> days</span>
+                <span class=" mr-1 font-grey"> days</span>
               </v-col>
             </v-row>
             <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" always-dirty min="0" max="365" tick-size="8"> </v-slider>
@@ -201,7 +199,7 @@
               <v-col class="font-grey">
                 <div>Your estimated rewards</div>
                 <div>
-                  <span class="font-blue">{{ UserRewardsYear | asset(2) }}</span> REI
+                  <span class="font-blue">{{ userRewardsYear | asset(2) }}</span> REI
                 </div>
               </v-col>
               <v-col class="font-grey" style="text-align: right">
@@ -229,10 +227,12 @@ import util from '../utils/util';
 import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import { getValidatorList, getValidatorDetails } from '../service/CommonService';
 import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+let client = null;
 
 export default {
   components: {
@@ -260,7 +260,7 @@ export default {
       calculationDialog: false,
       stake: 0,
       days: 0,
-      UserRewardsYear: 0,
+      userRewardsYear: 0,
       current: 0,
       totalAmount: 0,
       arr: [],
@@ -274,6 +274,7 @@ export default {
       claimForm: {
         amount: 0
       },
+      activeInfoList:[],
       activeList: [
         {
           address: '0x116F46EB05D5e42b4CD10E70B1b49706942f5948',
@@ -334,6 +335,55 @@ export default {
         let myCommissionShareBalance = await this.getBalanceOfShare();
         this.myCommissionShareBalance = web3.utils.fromWei(web3.utils.toBN(myCommissionShareBalance.balance));
       }
+      let blockHeight = await web3.eth.getBlockNumber();
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const getValidatorsInfos = gql`
+        query validators($blockHeight: String) {
+          validators(where: { id: $blockHeight }) {
+            id
+            Validator(orderBy: votingPower, orderDirection: desc) {
+              id
+              address
+              votingPower
+              commissionRate
+              commissionAddress
+              active
+            }
+          }
+        }
+      `;
+      let getValidatorList = async function (blockHeight) {
+        let getData = async function (blockHeight) {
+          const {
+            data: { validators }
+          } = await client.query({
+            query: getValidatorsInfos,
+            variables: {
+              blockHeight: String(blockHeight)
+            },
+            fetchPolicy: 'cache-first'
+          });
+          return validators;
+        };
+        let _validator = await getData(blockHeight);
+        if (!_validator.length) {
+          _validator = await getValidatorList(blockHeight - 1);
+        }
+        return _validator;
+      };
+
+      let validators = await getValidatorList(blockHeight);
+
+      let validatorList = validators[0].Validator;
+      for (let i = 0; i < validatorList.length; i++) {
+        if(validatorList[i].active){
+          this.activeInfoList.push(validatorList[i])
+        }  
+      }
     },
     async getValidatorInfo() {
       let validatorDetails = await getValidatorDetails();
@@ -341,13 +391,10 @@ export default {
       let validatorInfo = validatorDetails.data.data;
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       let validatorData = await getValidatorList();
-      console.log('validatorData', validatorData);
       let allValidatorList = [].concat(validatorData.data.data.activeList).concat(validatorData.data.data.inActiveList);
       this.activeList = validatorData.data.data.activeList;
       this.detailData = find(allValidatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
-
-      console.log('this.detailData', this.detailData);
-      console.log('this.detail', this.detail);
+      console.log('detailData',this.detailData)
     },
     handleStaking() {
       this.$refs.stakeform && this.$refs.stakeform.reset();
@@ -431,7 +478,6 @@ export default {
       this.startUnstake();
     },
     async startUnstake() {
-      console.log('this.detailData', this.claimForm.amount);
       try {
         if (!this.$refs.claimform.validate()) return;
         this.claimLoading = true;
@@ -524,11 +570,13 @@ export default {
       this.calculationDialog = true;
     },
     async Calculation() {
-      let CalculationData = await getValidatorList();
-      this.totalAmount = CalculationData.data.data.totalAmount;
-      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.power) + this.stake + this.totalAmount) / this.totalAmount) * (this.detailData.commissionRate / 100);
-      this.UserRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.power) + this.stake) / 365) * this.days;
-      this.current = (this.UserRewardsYear / (this.stake * 365)) * this.days * 100;
+      for (let i = 0; i < this.activeInfoList.length; i++) {
+         this.totalAmount += parseFloat(this.activeList[i].power);
+         
+      }
+      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.detailData.commissionRate/ 100);
+      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.power) + this.stake) / 365) * this.days;
+      this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
     },
     cancelCalculation() {
       this.calculationDialog = false;
@@ -678,6 +726,10 @@ export default {
 }
 .calculation-card {
   padding: 40px;
+}
+.subheading{
+  height:30px;
+  margin-top:20px
 }
 .calculation-card.theme--dark.v-sheet {
   background-color: #595777;
