@@ -100,18 +100,19 @@
   </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+
+import Web3 from 'web3';
+import abiERC20 from '../abis/abiERC20';
 import MyAccountBalance from '../components/MyAccountBalance';
-// import MyAccountCrude from '../components/MyAccountCrude';
 import MyAccountNFT from '../components/MyAccountNFT';
 import { mapGetters } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
-// import MyAccountProposals from '../components/MyAccountProposals';
 
 import filters from '../filters';
 export default {
   components: {
     MyAccountBalance,
-    // MyAccountCrude,
     MyAccountNFT,
     [Jazzicon.name]: Jazzicon
   },
@@ -134,10 +135,48 @@ export default {
           logo: '../assets/images/rei.svg',
           assets: 'REI',
           price: 1,
-          balance: 100000000,
-          value: 100000000
+          balance: 0,
+          value: 0
         }
       ],
+      tokenInfoList:[
+        {
+          decimals: "8",
+          erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+          name:"Wrapped BTC",
+          symbol:"WBTC"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+          name:"Tether USD",
+          symbol:"USDT"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+          name:"USD Coin",
+          symbol:"USDC"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+          name:"Wrapped Ether",
+          symbol:"WETH"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+          name:"Dai Stablecoin",
+          symbol:"DAI"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+          name:"Binance USD",
+          symbol:"BUSD"
+        }
+      ]
     };
   },
   computed: {
@@ -145,6 +184,28 @@ export default {
       connection: 'connection',
       dark: 'dark'
     })
+  },
+  mounted() {
+    this.connect();
+    this.getBalance();
+  },
+  methods: {
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    async getBalance(){
+      let reiBalance = await web3.eth.getBalance(this.connection.address);
+
+      console.log(web3.utils.fromWei(web3.utils.toBN(reiBalance)));
+
+      let contract = new web3.eth.Contract(abiERC20, contractAddress);
+
+
+    }
   }
 };
 </script>
