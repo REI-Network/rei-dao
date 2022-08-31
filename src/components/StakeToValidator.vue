@@ -88,9 +88,12 @@
                 <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                 <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                 <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
-                <v-btn text outlined color="validator" @click.stop="setCalculation(item)">
+                <v-btn v-if="item.active" text outlined color="validator" @click.stop="setCalculation(item)">
                   <span class="iconfont">&#xe619;</span>
                 </v-btn>
+              </template>
+              <template v-slot:item.apr="{ item }">
+                {{ item.apr | asset(2) }}%
               </template>
               <template v-slot:item.power="{ item }">
                 {{ item.power | asset(2) }}
@@ -398,7 +401,17 @@
       <v-card class="calculation-card">
         <v-row justify="space-between">
           <v-col cols="12" md="10">
-            <h3><span class="iconfont">&#xe619;&nbsp;&nbsp;</span>Calculate Voting Rewards</h3>
+            <h3>
+              <span class="iconfont">&#xe619;&nbsp;&nbsp;</span>Calculate Voting Rewards
+              <v-tooltip right color="start_unstake">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="16" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+                </template>
+                <span>This calculation of earnings is for reference only<br />
+                  and does not represent the final earnings, please<br />
+                  refer to the actual results.</span>
+              </v-tooltip>
+            </h3>
           </v-col>
           <v-col cols="12" md="1" @click="cancelCalculation()" class="close-dialog">
             <v-icon>mdi-close</v-icon>
@@ -406,51 +419,36 @@
         </v-row>
         <v-row>
           <v-col>
-            <!-- <v-select class="select-rate" :items="calculationItems" dense outlined append-icon="mdi-menu-down" v-model="modelItems" return-object item-color="white" background-color="input_other">
-              <template slot="selection" slot-scope="data">
-                <v-row justify="space-between">
-                  <v-col>{{ data.item.address | addr }}</v-col>
-                  <v-col class="font-grey">Commission Rate:{{ data.item.commissionRate }}%</v-col>
-                </v-row>
-              </template>
-              <template #item="{ item }">
-                <v-row justify="space-between" class="item-list">
-                  <v-col>{{ item.address | addr }}</v-col>
-                  <v-col class="font-grey">Commission Rate:{{ item.commissionRate }}%</v-col>
-                </v-row>
-              </template>
-            </v-select> -->
-            <v-card outlined :class="dark?'dark-nodes node-details':'light-nodes node-details'">
+            <v-card outlined :class="dark ? 'dark-nodes node-details' : 'light-nodes node-details'">
               <v-row align="center" class="node-name">
-                <h3>{{ calculateList.nodeName }}</h3>
-                <div v-if="calculateList.active " class="active">Active</div>
+                <h3>{{ nodeInfoList.nodeName }}</h3>
+                <div v-if="nodeInfoList.active" class="active">Active</div>
                 <div v-else class="not-active">Inactive</div>
-                <div>&nbsp;&nbsp;Commission Rate: {{ calculateList.commissionRate }}%</div>
+                <div>&nbsp;&nbsp;Commission Rate: {{ nodeInfoList.commissionRate }}%</div>
               </v-row>
               <v-row>
-                <div class="calculate-address">{{ calculateList.address }}</div>
-                <v-btn @click="copyAddr(calculateList.address)">
+                <div class="calculate-address">{{ nodeInfoList.address }}</div>
+                <v-btn @click="copyAddr(nodeInfoList.address)">
                   <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </v-row>
             </v-card>
-            <v-row class="" justify="space-between">
-              <v-col class="text-left">
-                <span class="subheading font-weight-light mr-1 font-grey">You stake</span>
-                <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span>
-                <span class="subheading font-weight-light mr-1 font-grey"> REI</span>
-              </v-col>
+            <v-row class="calculate-input" style="margin-top:30px;">
+                <span class="subheading mr-1 font-grey" style="margin-left:20px">You stake</span>
+                <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
+                  <div style="width:200px;"><v-text-field :value="stake | asset(2)" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
+                <span class="subheading mr-1 font-grey"> REI</span>
             </v-row>
-            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="1000000"> </v-slider>
+            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
             <v-row justify="space-between" class="slider-num font-grey">
               <v-col>0</v-col>
-              <v-col style="text-align: right">1M</v-col>
+              <v-col style="text-align: right">10M</v-col>
             </v-row>
             <v-row class="" justify="space-between">
               <v-col class="text-left">
-                <span class="subheading font-weight-light mr-1 font-grey">Locking $REI for</span>
+                <span class=" mr-1 font-grey">Locking $REI for</span>
                 <span :class="dark ? 'dark-amount' : 'light-amount'">{{ this.days }}</span>
-                <span class="subheading font-weight-light mr-1 font-grey"> days</span>
+                <span class=" mr-1 font-grey"> days</span>
               </v-col>
             </v-row>
             <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" always-dirty min="0" max="365" tick-size="8"> </v-slider>
@@ -462,7 +460,7 @@
               <v-col class="font-grey">
                 <div>Your estimated rewards</div>
                 <div>
-                  <span class="font-blue">{{ UserRewardsYear | asset(2) }}</span> REI
+                  <span class="font-blue">{{ userRewardsYear | asset(2) }}</span> REI
                 </div>
               </v-col>
               <v-col class="font-grey" style="text-align: right">
@@ -494,7 +492,6 @@ import find from 'lodash/find';
 import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getValidatorList } from '../service/CommonService';
 import { getValidatorDetails } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -534,12 +531,11 @@ export default {
       days: 0,
       interval: null,
       isPlaying: false,
-      UserRewardsYear: 0,
+      userRewardsYear: 0,
       current: 0,
       totalAmount: 0,
       calculationItems: [],
-      calculateList:[],
-      modelItems: '',
+      nodeInfoList: [],
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -553,6 +549,7 @@ export default {
           sortable: false,
           value: 'address'
         },
+        { text: 'APR', value: 'apr' },
         { text: this.$t('stake.voting_power'), value: 'power' },
         { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
         { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
@@ -630,19 +627,13 @@ export default {
       this.init();
     },
     listenChange(stake, days) {
-      // console.log('listenChange',stake,days)
       this.Calculation();
     },
-    modelItems: function (newVal, oldVal) {
-      this.Calculation();
-    }
   },
   mounted() {
     this.connect();
     this.init();
     this.windowWidth();
-    this.getValidator();
-    this.Calculation();
   },
   methods: {
     ...mapActions({
@@ -712,7 +703,6 @@ export default {
 
       let activeList = [];
       let notActiveList = [];
-
       for (let i = 0; i < validatorList.length; i++) {
         let _validator = {
           address: validatorList[i].address,
@@ -721,7 +711,7 @@ export default {
           commissionShare: null,
           commissionAddress: validatorList[i].commissionAddress,
           commissionRate: validatorList[i].commissionRate,
-          active: validatorList[i].active
+          active: validatorList[i].active,
         };
 
         let _stakedValidator = find(this.myStakeListRawData, (item) => item.validator == validatorList[i].address);
@@ -765,15 +755,23 @@ export default {
           var website = detail.website;
           var nodeDesc = detail.nodeDesc;
         }
+        var apr = 0;
+        if(item.active){
+          this.totalAmount += parseFloat(item.power);
+          apr = (100000000 / this.totalAmount)*0.1* (item.commissionShare/100)*100
+          console.log()
+        }else(
+          apr = 0
+        )
         return {
           ...item,
           nodeName: nodeName,
           logo: logo,
           website: website,
-          nodeDesc: nodeDesc
+          nodeDesc: nodeDesc,
+          apr:apr
         };
       });
-
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -782,6 +780,7 @@ export default {
       this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
 
       this.getMyStakeList();
+      this.Calculation();
     },
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
@@ -1155,9 +1154,12 @@ export default {
       that.width = window.innerWidth;
     },
     setCalculation(item) {
+      this.stake = 0;
+      this.days = 0;
+      this.userRewardsYear = 0;
+      this.current = 0;
       this.calculationDialog = true;
-      this.calculateList = item;
-      console.log('calculateList',this.calculateList)
+      this.nodeInfoList = item;
     },
     cancelCalculation() {
       this.calculationDialog = false;
@@ -1172,17 +1174,14 @@ export default {
         }
       });
     },
-    async getValidator() {
-      let CalculationData = await getValidatorList();
-      this.totalAmount = CalculationData.data.data.totalAmount;
-      this.calculationItems = CalculationData.data.data.activeList;
-      this.modelItems = this.calculationItems[0];
-      // console.log('modelItems',this.modelItems)
-    },
+
     Calculation() {
-      let votingRewardsYear = 10000000 * ((parseFloat(this.calculateList.power) + this.stake + this.totalAmount) / this.totalAmount) * (this.calculateList.commissionRate / 100);
-      this.UserRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.calculateList.power) + this.stake) / 365) * this.days;
-      this.current = (this.UserRewardsYear / (this.stake * 365)) * this.days * 100;
+      for (let i = 0; i < this.activeList.length; i++) {
+         this.totalAmount += parseFloat(this.activeList[i].power);
+      }
+      let votingRewardsYear = 10000000 * ((parseFloat(this.nodeInfoList.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.nodeInfoList.commissionRate/ 100);
+      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.nodeInfoList.power) + this.stake) / 365) * this.days;
+      this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
     },
     async validatorDetails(value) {
       // this.validatorDialog = true;
@@ -1407,6 +1406,13 @@ export default {
     cursor: pointer;
   }
 }
+.subheading{
+  height:30px;
+  margin-top:20px
+}
+.theme--light.v-input input, .theme--light.v-input textarea{
+  color:#2116E5 !important;
+}
 .from-voting {
   display: flex;
   justify-content: space-between;
@@ -1534,27 +1540,27 @@ export default {
 .title-info {
   margin: 10px 0 0 1px;
 }
-.light-nodes{
-  background-color: #F5F9FD;
+.light-nodes {
+  background-color: #f5f9fd;
 }
-.dark-nodes{
+.dark-nodes {
   background-color: #595277;
   // opacity: 0.5;
 }
-.node-details{
+.node-details {
   padding-top: 12px;
   border-radius: 8px;
-  border:none;
-  .node-name{
+  border: none;
+  .node-name {
     margin-top: 10px;
-    margin-left:20px
+    margin-left: 20px;
   }
-  .calculate-address{
+  .calculate-address {
     margin-top: 12px;
-    margin-left:34px;
-    margin-bottom:24px
+    margin-left: 34px;
+    margin-bottom: 24px;
   }
-  .theme--dark.v-btn.v-btn--has-bg{
+  .theme--dark.v-btn.v-btn--has-bg {
     background-color: transparent;
   }
 }
