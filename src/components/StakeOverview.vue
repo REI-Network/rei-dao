@@ -23,36 +23,6 @@
                     </v-row>
             </v-card>
        </v-card>
-       <v-card class="flex-column mt-8 overview">
-            <h3>Voting Progress</h3>
-            <v-card outlined class="overview-card">
-                <v-row justify="start">
-                        <v-col cols="12" md="4">
-                            <div class="font-grey">Top 21 Inactive Nodes Voting Power($REI)</div>
-                            <h2>{{ inactiveTotalPower | asset(2) }}</h2>
-                        </v-col>
-                        <v-col cols="12" sm="2">
-                            <div class="font-grey">Inactive Nodes</div>
-                            <h2>{{ inActiveList.length }}</h2>
-                        </v-col>
-                        <v-col cols="12" sm="6">
-                             <v-row justify="space-between" class="progress-miner">
-                                    <div class="miner">Top 21 Inactive Nodes Voting Power:{{ inactiveTotalPower | asset(2) }}</div>
-                                    <div class="miner">
-                                        100 Million
-                                    </div>
-                                </v-row>
-                                <v-progress-linear    
-                                    height="10"
-                                    color="#2115E5"
-                                    striped
-                                    :value="value"
-                                ></v-progress-linear>
-                                <div class="font-grey" :style="{marginLeft:value+'%'}">{{ value | asset(2) }}%</div>
-                        </v-col>
-                    </v-row>
-            </v-card>
-       </v-card>
     </v-container>
 </template>
 <script>
