@@ -10,7 +10,7 @@
         <div class="fans-right">
           <v-row align="center">
             <h3 class="validator-nodename" v-if="detail && detail.nodeName">{{ detail.nodeName }}</h3>
-            <div v-if="detailData" :class="detailData.isActive=='true'?'active':'not-active'">{{ status[detailData.isActive] }}</div>
+            <div v-if="detailData" :class="detailData.active?'active':'not-active'">{{ status[detailData.active] }}</div>
             <div class="three-img">
               <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
               <a v-if="detail && detail.website" :href="detail.website" target="_blank"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20" /></a>
@@ -36,7 +36,7 @@
             {{ $t('stake.claim') }}
           </v-btn>
         </div>
-        <div v-if="detailData.isActive=='true'">
+        <div v-if="detailData.active">
           <v-btn small outlined color="validator" class="calculate-btn" height="32" @click="setCalculation()">
             <span class="iconfont">&#xe619;</span><span style="font-size:14px;">Calculate Rewards</span>
           </v-btn>
@@ -50,11 +50,16 @@
       <v-row justify="space-between">
         <v-col cols="12" sm="3">
           <div class="font-grey">Voting Power ($REI)</div>
-          <h2>{{ detailData.power | asset(2) }}</h2>
+          <h2>{{ votingPower | asset(2) }}</h2>
+        </v-col>
+        <v-col cols="12" sm="3">
+          <div class="font-grey">APR</div>
+          <h2>{{ apr | asset(2) }}%</h2>
         </v-col>
         <v-col cols="12" sm="3">
           <div class="font-grey">Commission Rate</div>
-          <h2>{{ detailData.commissionRate }}%</h2>
+          <h2 v-if="detailData.commissionRate">{{ detailData.commissionRate }}%</h2>
+          <h2 v-else>0%</h2>
         </v-col>
       </v-row>
     </v-card>
@@ -173,9 +178,9 @@
               </v-row>
             </v-card>
             <v-row class="calculate-input" style="margin-top:30px;">
-                <span class="subheading mr-1 font-grey">You stake</span>
+                <span class="subheading mr-1 font-grey">Vote</span>
                 <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
-                <div style="width:200px;"><v-text-field :value="stake | asset(2)" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
+                <div style="width:200px;"><v-text-field v-model="stake" :rules="calculateRules" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>               
                 <span class="subheading mr-1 font-grey"> REI</span>
             </v-row>
             <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
@@ -197,7 +202,7 @@
             </v-row>
             <v-row justify="space-between">
               <v-col class="font-grey">
-                <div>Your estimated rewards</div>
+                <div>Estimated rewards</div>
                 <div>
                   <span class="font-blue">{{ userRewardsYear | asset(2) }}</span> REI
                 </div>
@@ -263,7 +268,9 @@ export default {
       userRewardsYear: 0,
       current: 0,
       totalAmount: 0,
+      apr:0,
       arr: [],
+      votingPower:0,
       status: {
         true: this.$t('stake.isActive'),
         false: this.$t('stake.notActive')
@@ -275,14 +282,9 @@ export default {
         amount: 0
       },
       activeInfoList:[],
-      activeList: [
-        {
-          address: '0x116F46EB05D5e42b4CD10E70B1b49706942f5948',
-          power: '657659.99',
-          commissionShare: '123179341',
-          commissionRate: 20
-        }
-      ],
+      validatorList:[],
+      activeList: [],
+      calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
       defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a']
     };
@@ -304,7 +306,6 @@ export default {
   created() {},
   mounted() {
     this.connect();
-    this.getValidatorInfo();
     this.init();
   },
   watch:{
@@ -378,23 +379,31 @@ export default {
 
       let validators = await getValidatorList(blockHeight);
 
-      let validatorList = validators[0].Validator;
-      for (let i = 0; i < validatorList.length; i++) {
-        if(validatorList[i].active){
-          this.activeInfoList.push(validatorList[i])
+      this.validatorList = validators[0].Validator;
+      for (let i = 0; i < this.validatorList.length; i++) {
+        if(this.validatorList[i].active){
+          this.activeInfoList.push(this.validatorList[i])
         }  
       }
+      this.getValidatorInfo();
     },
     async getValidatorInfo() {
       let validatorDetails = await getValidatorDetails();
       let address = this.$route.query.id;
       let validatorInfo = validatorDetails.data.data;
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
-      let validatorData = await getValidatorList();
-      let allValidatorList = [].concat(validatorData.data.data.activeList).concat(validatorData.data.data.inActiveList);
-      this.activeList = validatorData.data.data.activeList;
-      this.detailData = find(allValidatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
-      console.log('detailData',this.detailData)
+      this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
+      this.votingPower =  web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower));
+      // console.log('detailData',this.detailData)
+      for (let i = 0; i < this.activeInfoList.length; i++) {
+        let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
+        this.totalAmount += parseFloat(power); 
+      }
+        if(this.detailData.active){
+          this.apr = (100000000 / this.totalAmount)*0.1* (this.detailData.commissionRate/100)*100
+        }else{
+          this.apr = 0
+        }
     },
     handleStaking() {
       this.$refs.stakeform && this.$refs.stakeform.reset();
@@ -571,8 +580,8 @@ export default {
     },
     async Calculation() {
       for (let i = 0; i < this.activeInfoList.length; i++) {
-         this.totalAmount += parseFloat(this.activeList[i].power);
-         
+        let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
+        this.totalAmount += parseFloat(power);  
       }
       let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.detailData.commissionRate/ 100);
       this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.power) + this.stake) / 365) * this.days;

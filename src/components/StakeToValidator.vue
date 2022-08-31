@@ -434,9 +434,9 @@
               </v-row>
             </v-card>
             <v-row class="calculate-input" style="margin-top:30px;">
-                <span class="subheading mr-1 font-grey" style="margin-left:20px">You stake</span>
+                <span class="subheading mr-1 font-grey" style="margin-left:20px">Vote</span>
                 <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
-                  <div style="width:200px;"><v-text-field :value="stake | asset(2)" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
+                  <div style="width:200px;"><v-text-field v-model="stake" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
                 <span class="subheading mr-1 font-grey"> REI</span>
             </v-row>
             <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
@@ -458,7 +458,7 @@
             </v-row>
             <v-row justify="space-between">
               <v-col class="font-grey">
-                <div>Your estimated rewards</div>
+                <div>Estimated rewards</div>
                 <div>
                   <span class="font-blue">{{ userRewardsYear | asset(2) }}</span> REI
                 </div>
@@ -616,6 +616,7 @@ export default {
       minIndexVotingPower: 0,
       unstakeDelay: 0,
       approved: true,
+      calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
@@ -758,11 +759,10 @@ export default {
         var apr = 0;
         if(item.active){
           this.totalAmount += parseFloat(item.power);
-          apr = (100000000 / this.totalAmount)*0.1* (item.commissionShare/100)*100
-          console.log()
-        }else(
+          apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100
+        }else{
           apr = 0
-        )
+        }
         return {
           ...item,
           nodeName: nodeName,
@@ -772,6 +772,7 @@ export default {
           apr:apr
         };
       });
+      console.log('this.nodeList',this.nodeList)
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
