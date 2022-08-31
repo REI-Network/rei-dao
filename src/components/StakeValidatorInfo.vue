@@ -37,8 +37,8 @@
           </v-btn>
         </div>
         <div v-if="detailData.active">
-          <v-btn small outlined color="validator" class="calculate-btn" height="32" @click="setCalculation()">
-            <span class="iconfont">&#xe619;</span><span style="font-size:14px;">Calculate Rewards</span>
+          <v-btn width="196" small color="start_unstake" class="calculate-btn unstake_btn" height="32" @click="setCalculation()">
+            <span class="iconfont">&#xe619;</span><span style="font-size:12px;">Calculate Rewards</span>
           </v-btn>
         </div>
       </v-col>
@@ -53,13 +53,13 @@
           <h2>{{ votingPower | asset(2) }}</h2>
         </v-col>
         <v-col cols="12" sm="3">
-          <div class="font-grey">APR</div>
-          <h2>{{ apr | asset(2) }}%</h2>
-        </v-col>
-        <v-col cols="12" sm="3">
           <div class="font-grey">Commission Rate</div>
           <h2 v-if="detailData.commissionRate">{{ detailData.commissionRate }}%</h2>
           <h2 v-else>0%</h2>
+        </v-col>
+        <v-col cols="12" sm="3">
+          <div class="font-grey">APR</div>
+          <h2>{{ apr | asset(2) }}%</h2>
         </v-col>
       </v-row>
     </v-card>
@@ -156,7 +156,14 @@
       <v-card class="calculation-card">
         <v-row justify="space-between">
           <v-col cols="12" md="10">
-            <h3><span class="iconfont">&#xe619;&nbsp;&nbsp;</span>Calculate Voting Rewards</h3>
+            <h3><span class="iconfont">&#xe619;&nbsp;&nbsp;</span>Calculate Voting Rewards<v-tooltip right color="start_unstake">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="16" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+                </template>
+                <span>This calculation of earnings is for reference only<br />
+                  and does not represent the final earnings, please<br />
+                  refer to the actual results.</span>
+              </v-tooltip></h3>
           </v-col>
           <v-col cols="12" md="1" @click="cancelCalculation()" class="close-dialog">
             <v-icon>mdi-close</v-icon>
@@ -168,11 +175,11 @@
               <v-row align="center" class="node-name">
                 <h3 v-if="detail && detail.nodeName">{{ detail.nodeName }}&nbsp;&nbsp;</h3>
                 <div class="active">Active</div>
-                <div>&nbsp;&nbsp;Commission Rate: {{ detailData.commissionRate }}%</div>
+                <div class="font-grey">&nbsp;&nbsp;Commission Rate: {{ detailData.commissionRate }}%</div>
               </v-row>
               <v-row>
                 <div class="calculate-address">{{ detail.nodeAddress  }}</div>
-                <v-btn @click="copyAddr(detail.address)">
+                <v-btn @click="copyAddr(detail.address)" style="margin-top:8px;">
                   <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </v-row>
@@ -183,10 +190,10 @@
                 <div style="width:200px;"><v-text-field v-model="stake" :rules="calculateRules" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>               
                 <span class="subheading mr-1 font-grey"> REI</span>
             </v-row>
-            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
+            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="2000000"> </v-slider>
             <v-row justify="space-between" class="slider-num font-grey">
               <v-col>0</v-col>
-              <v-col style="text-align: right">10M</v-col>
+              <v-col style="text-align: right">2M</v-col>
             </v-row>
             <v-row class="" justify="space-between">
               <v-col class="text-left">
@@ -738,7 +745,8 @@ export default {
 }
 .subheading{
   height:30px;
-  margin-top:20px
+  margin-top:20px;
+  margin-left:12px
 }
 .calculation-card.theme--dark.v-sheet {
   background-color: #595777;

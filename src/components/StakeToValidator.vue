@@ -424,25 +424,25 @@
                 <h3>{{ nodeInfoList.nodeName }}</h3>
                 <div v-if="nodeInfoList.active" class="active">Active</div>
                 <div v-else class="not-active">Inactive</div>
-                <div>&nbsp;&nbsp;Commission Rate: {{ nodeInfoList.commissionRate }}%</div>
+                <div class="font-grey">&nbsp;&nbsp;Commission Rate: {{ nodeInfoList.commissionRate }}%</div>
               </v-row>
               <v-row>
                 <div class="calculate-address">{{ nodeInfoList.address }}</div>
-                <v-btn @click="copyAddr(nodeInfoList.address)">
+                <v-btn @click="copyAddr(nodeInfoList.address)" style="margin-top:8px;">
                   <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </v-row>
             </v-card>
             <v-row class="calculate-input" style="margin-top:30px;">
-                <span class="subheading mr-1 font-grey" style="margin-left:20px">Vote</span>
+                <span class="subheading mr-1 font-grey" style="margin-left:12px">Vote</span>
                 <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
                   <div style="width:200px;"><v-text-field v-model="stake" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
                 <span class="subheading mr-1 font-grey"> REI</span>
             </v-row>
-            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="10000000"> </v-slider>
+            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="2000000"> </v-slider>
             <v-row justify="space-between" class="slider-num font-grey">
               <v-col>0</v-col>
-              <v-col style="text-align: right">10M</v-col>
+              <v-col style="text-align: right">2M</v-col>
             </v-row>
             <v-row class="" justify="space-between">
               <v-col class="text-left">
@@ -772,7 +772,6 @@ export default {
           apr:apr
         };
       });
-      console.log('this.nodeList',this.nodeList)
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -1409,7 +1408,8 @@ export default {
 }
 .subheading{
   height:30px;
-  margin-top:20px
+  margin-top:20px;
+  // margin-left:8px;
 }
 .theme--light.v-input input, .theme--light.v-input textarea{
   color:#2116E5 !important;
@@ -1474,8 +1474,8 @@ export default {
 .calculation-card.theme--dark.v-sheet {
   background-color: #595777;
 }
-.theme--light.font-grey {
-  // font-size: 14px;
+.font-grey {
+  font-size: 14px;
   color: #7e7e7e;
 }
 .stake-text {
