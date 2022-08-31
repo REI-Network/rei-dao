@@ -341,10 +341,10 @@ Address,
                           let nodeAddress = util.addr(params.data.address)
                           let str = '<span style="font-weight:bold;">'+`${params.data.nodeName}`+'</span>'
                           +'<br/>'+'<span>'+ nodeAddress +'</span>'+'<br/>'
-                          +'<div style="color: #868E9E;">'+`${params.data.nodeDesc}`+'</div>'
+                          +'<div style="color: #868E9E;max-width:30rem;text-overflow:ellipsis;overflow:hidden;-webkit-line-clamp:2;">'+`${params.data.nodeDesc}`+'</div>'
                           +'<i data-v-8e64a00a aria-hidden="true" style="font-size:16px;" class="v-icon notranslate mdi mdi-map-marker theme--light"></i>'
                           +'<span style="color: #868E9E;margin-left:8px;">'+ `${params.data.name}`+'</span>'
-                          return str
+                          return `<div style="max-width:30rem;">${str}</div>`
                       }
                     
                   },
