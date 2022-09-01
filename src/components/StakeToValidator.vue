@@ -278,7 +278,7 @@
             <div class="pb-1 text-body-1 share-rei">
               <span class="font-color">{{ $t('stake.commonnsion_share_balance') }}</span>
               <span style="font-weight: bold">{{ currentItem.balanceOfShare | asset(2) }}</span>
-              <span class="font-color">REI</span>
+              <span class="font-color"></span>
             </div>
             <v-row>
               <v-col class="from-voting">
@@ -293,7 +293,7 @@
               </v-col>
             </v-row>
 
-            <!-- <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div> -->
+            
             <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
 
             <div class="text-center">
@@ -307,6 +307,7 @@
                 {{ $t('stake.btn_submit') }}
               </v-btn>
             </div>
+            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
             <div :class="dark ? 'pb-3 text-day' : 'pb-3 text-caption'">
               <strong>{{ $t('stake.tips_claim_info', { unstakeDelay: timeToFormat(unstakeDelay) }) }}</strong>
             </div>
@@ -748,6 +749,12 @@ export default {
       this.stakeListLoading = false;
       let Details = await getValidatorDetails();
       this.detailsList = Details.data.data;
+      this.totalAmount = 0;
+      for(let i=0; i<this.activeList.length; i++){
+        let item = this.activeList[i];
+        this.totalAmount += parseFloat(item.power);
+      }
+
       this.nodeList = this.nodeList.map((item) => {
         let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
         if (detail) {
@@ -758,11 +765,11 @@ export default {
         }
         var apr = 0;
         if(item.active){
-          this.totalAmount += parseFloat(item.power);
           apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100
         }else{
           apr = 0
         }
+        
         return {
           ...item,
           nodeName: nodeName,
@@ -1176,9 +1183,6 @@ export default {
     },
 
     Calculation() {
-      for (let i = 0; i < this.activeList.length; i++) {
-         this.totalAmount += parseFloat(this.activeList[i].power);
-      }
       let votingRewardsYear = 10000000 * ((parseFloat(this.nodeInfoList.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.nodeInfoList.commissionRate/ 100);
       this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.nodeInfoList.power) + this.stake) / 365) * this.days;
       this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;

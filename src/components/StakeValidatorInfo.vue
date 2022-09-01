@@ -400,8 +400,10 @@ export default {
       let validatorInfo = validatorDetails.data.data;
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
+
       this.votingPower =  web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower));
-      // console.log('detailData',this.detailData)
+      
+      this.totalAmount = 0;
       for (let i = 0; i < this.activeInfoList.length; i++) {
         let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
         this.totalAmount += parseFloat(power); 
@@ -586,12 +588,8 @@ export default {
       this.calculationDialog = true;
     },
     async Calculation() {
-      for (let i = 0; i < this.activeInfoList.length; i++) {
-        let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
-        this.totalAmount += parseFloat(power);  
-      }
-      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.detailData.commissionRate/ 100);
-      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.power) + this.stake) / 365) * this.days;
+      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.votingPower) + this.stake ) / (this.totalAmount + this.stake)) * (this.detailData.commissionRate/ 100);
+      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.votingPower) + this.stake) / 365) * this.days;
       this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
     },
     cancelCalculation() {
