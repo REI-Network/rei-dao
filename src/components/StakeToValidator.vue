@@ -278,7 +278,7 @@
             <div class="pb-1 text-body-1 share-rei">
               <span class="font-color">{{ $t('stake.commonnsion_share_balance') }}</span>
               <span style="font-weight: bold">{{ currentItem.balanceOfShare | asset(2) }}</span>
-              <span class="font-color">REI</span>
+              <span class="font-color"></span>
             </div>
             <v-row>
               <v-col class="from-voting">
@@ -293,7 +293,7 @@
               </v-col>
             </v-row>
 
-            <!-- <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div> -->
+            
             <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
 
             <div class="text-center">
@@ -307,6 +307,7 @@
                 {{ $t('stake.btn_submit') }}
               </v-btn>
             </div>
+            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
             <div :class="dark ? 'pb-3 text-day' : 'pb-3 text-caption'">
               <strong>{{ $t('stake.tips_claim_info', { unstakeDelay: timeToFormat(unstakeDelay) }) }}</strong>
             </div>
