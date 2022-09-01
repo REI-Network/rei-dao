@@ -748,6 +748,12 @@ export default {
       this.stakeListLoading = false;
       let Details = await getValidatorDetails();
       this.detailsList = Details.data.data;
+      this.totalAmount = 0;
+      for(let i=0; i<this.activeList.length; i++){
+        let item = this.activeList[i];
+        this.totalAmount += parseFloat(item.power);
+      }
+
       this.nodeList = this.nodeList.map((item) => {
         let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
         if (detail) {
@@ -758,11 +764,11 @@ export default {
         }
         var apr = 0;
         if(item.active){
-          this.totalAmount += parseFloat(item.power);
           apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100
         }else{
           apr = 0
         }
+        
         return {
           ...item,
           nodeName: nodeName,
@@ -1176,9 +1182,6 @@ export default {
     },
 
     Calculation() {
-      for (let i = 0; i < this.activeList.length; i++) {
-         this.totalAmount += parseFloat(this.activeList[i].power);
-      }
       let votingRewardsYear = 10000000 * ((parseFloat(this.nodeInfoList.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.nodeInfoList.commissionRate/ 100);
       this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.nodeInfoList.power) + this.stake) / 365) * this.days;
       this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
