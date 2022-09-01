@@ -110,7 +110,7 @@
                   <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
                     {{ $t('stake.claim') }}
                   </v-btn>
-                  <v-btn v-if="item.address == connection.address" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
+                  <v-btn v-if="checkRewardState(item.address)" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
                     {{ $t('stake.get_reward') }}
                   </v-btn>
                   <span v-if="!connection.address"> - </span>
@@ -715,14 +715,14 @@ export default {
           active: validatorList[i].active,
         };
 
-        let _stakedValidator = find(this.myStakeListRawData, (item) => item.validator == validatorList[i].address);
+        let _stakedValidator = find(this.myStakeListRawData, (item) => web3.utils.toChecksumAddress(item.validator) == web3.utils.toChecksumAddress(validatorList[i].address));
         if (_stakedValidator) {
           let _balanceOfShare = await this.getBalanceOfShare(validatorList[i].commissionAddress);
           _validator.balanceOfShare = web3.utils.fromWei(web3.utils.toBN(_balanceOfShare.balance));
           _validator.commissionShare = _balanceOfShare.commissionShare;
         }
 
-        if (validatorList[i].address == this.connection.address) {
+        if (web3.utils.toChecksumAddress(validatorList[i].address) == web3.utils.toChecksumAddress(this.connection.address)) {
           let validatorInfo = await this.stakeManageInstance.methods.validators(validatorList[i].address).call();
           _validator.updateTimestamp = validatorInfo.updateTimestamp;
         }
@@ -735,7 +735,7 @@ export default {
         }
       }
 
-      let validate_node = this.connection.address != null ? find(validatorArr, (item) => item.address == this.connection.address) : false;
+      let validate_node = this.connection.address != null ? find(validatorArr, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.connection.address)) : false;
       if (validate_node) {
         this.isNode = true;
       } else {
@@ -1067,7 +1067,7 @@ export default {
     },
     setRate() {
       for (let i = 0; i < this.indexedNodeList.length; i++) {
-        if (this.indexedNodeList[i].address == this.connection.address) {
+        if (web3.utils.toChecksumAddress(this.indexedNodeList[i].address) == web3.utils.toChecksumAddress(this.connection.address)) {
           this.currentAddress = this.indexedNodeList[i];
           break;
         }
@@ -1232,6 +1232,9 @@ export default {
     },
     inDefaultList(item) {
       return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
+    },
+    checkRewardState(address){
+      return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address)
     }
   },
   computed: {
