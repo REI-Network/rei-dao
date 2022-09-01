@@ -5,16 +5,16 @@
         <span><a class="back-voting" @click="routeLink()">NFTs</a></span> / <span class="rei-fans">{{ nftName }}</span>
       </div>
     </div>
-    <v-row>
-      <v-col cols="12" sm="6">
+    <v-row justify="space-between">
+      <v-col cols="12" sm="4">
         <v-card class="nft-dialog">
-          <!-- <v-img  :src="this.badgeNFTImg"/> -->
-          <video controls preload="meta" class="video-play" :src="this.badgeNFTImg" :poster="poster"></video>
+          <video v-if="!imageShow" controls preload="meta" class="video-play" :src="this.badgeNFTImg" :poster="poster"></video>
+          <v-img v-else :src="this.badgeNFTImg" />
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6" style="padding-left:0;">
+      <v-col cols="12" sm="8" class="right-content">
         <v-row no-gutters justify="space-between">
-          <div>REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
+          <div class="rei-dao">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
         </v-row>
         <div class="genesis">{{ nftName }}</div>
         <v-row>
@@ -27,33 +27,39 @@
             <span> &nbsp;&nbsp;{{ totalSupply }} total</span>
           </div>
         </v-row>
-        <v-card class="about-genesis" style="margin-top:20px;">
+        <v-card class="about-genesis" style="margin-top: 10px">
           <div class="title">About Genesis Proposal Badges NFT</div>
           <div class="content">{{ this.description }}</div>
         </v-card>
         <v-card class="about-genesis" background-color="" style="margin-top: 20px">
           <div class="title">Details</div>
-          <v-row justify="space-between" no-gutters class="detail">
+          <v-row>
+            <v-col cols="12" sm="6">
+              <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Contract address</div>
             <a :href="`https://scan.rei.network/address/${nftConfig}`" target="_blank">
               <div class="right-content">{{ nftConfig | addr }}</div></a
             >
           </v-row>
-          <!-- <v-row justify="space-between" no-gutters class="detail">
-                                <div class="font-grey">Token ID</div>
-                                <div class="right-content">436133...3123</div>
-                            </v-row> -->
+          <v-row justify="space-between" no-gutters class="detail">
+            <div class="font-grey">Token ID</div>
+            <div class="right-content">16</div>
+          </v-row>
           <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Token standard</div>
             <div class="right-content">ERC-1155</div>
           </v-row>
-          <v-row justify="space-between" no-gutters class="detail">
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Metadate</div>
             <a :href="url" target="_blank"><div class="right-content">IPFS</div></a>
           </v-row>
           <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">BlockChain</div>
             <div class="right-content">REI Network</div>
+          </v-row>
+            </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -65,20 +71,20 @@
           <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
         </v-col>
       </v-row>
-      <v-data-table :headers="headers" :items="folderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+      <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
         <template v-slot:item.assets="{ item }">
           <v-row align="center">
             <div class="asset-logo">
               <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
             </div>
-            <div>{{ item.assets }}</div>
+            <Address :val="item.address"></Address>
           </v-row>
         </template>
-        <template v-slot:item.price="{ item }">
-          <span>${{ item.amount | asset(2) }}</span>
+        <template v-slot:item.amount="{ item }">
+          <span>{{ item.value }}</span>
         </template>
       </v-data-table>
-      <div class="text-center pt-2" v-if="folderList.length > 0">
+      <div class="text-center pt-2" v-if="holderList.length > 0">
         <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
       </div>
     </v-card>
@@ -93,18 +99,19 @@ import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
-
-const nft_contract_test = '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d';
-const nft_contract_prod = '0x4035374c2c157F46effeA16e71A62b8992F2AD1b';
+import Address from '../components/Address';
 
 export default {
+  components: {
+    Address
+  },
   filters,
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
       page: 1,
       pageCount: 1,
-      itemsPerPage: 6,
+      itemsPerPage:20,
       pageSize: 6,
       loading: false,
       badgeNFTDialog: false,
@@ -113,29 +120,18 @@ export default {
       pageVisible: 7,
       totalPage: 0,
       description: '',
-      nftName: this.$route.query.id,
-      nftConfig: '',
+      nftConfig: this.$route.query.id,
       totalSupply: 0,
       nftList: [],
+      nftName: '',
       imageShow: true,
       url: '',
       stakeListLoading: false,
       headers: [
-        { text: 'Assets', value: 'assets' },
+        { text: 'Address', value: 'assets' },
         { text: 'Amount', value: 'amount' }
       ],
-      folderList: [
-        {
-          logo: '../assets/images/rei.svg',
-          assets: 'REI',
-          amount: 1
-        },
-        {
-          logo: '../assets/images/rei.svg',
-          assets: 'REI',
-          amount: 4
-        }
-      ]
+      holderList: []
     };
   },
   watch: {
@@ -166,26 +162,27 @@ export default {
     },
     async init() {
       this.loading = true;
-      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
-        this.nftConfig = nft_contract_test;
-      } else {
-        this.nftConfig = nft_contract_prod;
-      }
       let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
       this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
       if (this.badgeNFTBalance > 0) {
         this.url = await contract.methods.uri(0).call();
         this.totalSupply = await contract.methods.totalSupply(0).call();
         const { data } = await this.$axios.get(this.url);
-        this.nftList = [];
-        this.nftList.push(data);
-        let detail = find(this.nftList, (item) => item.name == this.nftName);
-        this.nftName = detail.name;
-        this.badgeNFTImg = detail.image;
-        this.description = detail.description;
-        console.log('detail',detail)
+        this.nftName = data.name;
+        this.badgeNFTImg = data.image;
+        this.description = data.description;
+        if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(this.badgeNFTImg)) {
+          this.imageShow = true;
+        } else {
+          this.imageShow = false;
+        }
       }
+      this.getHolderList();
       this.loading = false;
+    },
+    async getHolderList() {
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.nftConfig}`);
+      this.holderList = data.result;
     },
     routeLink() {
       this.$router.back();
@@ -199,7 +196,7 @@ export default {
   padding: 28px 0 28px 0;
   margin-bottom: 28px;
   margin-top: -28px;
-  background: linear-gradient(180deg, #D6E3FF 0%, #FFFFFF 50%);
+  background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
 }
 .theme--light.sub-title {
   color: #000;
@@ -268,48 +265,54 @@ a:hover {
   color: #289eff;
 }
 .nft-dialog {
-  padding:20px 28px;
+  padding: 20px 28px;
   margin-left: 40px;
   margin-right: 20px;
-  }
-  .about-genesis{
-    padding: 20px;
-    margin: 40px 40px 0 0;
-  }
-  .genesis {
-    font-size: 26px;
-    font-weight: bold;
-  }
+  width: 100%;
   .video-play {
-    width: 460px;
+    width: 100%;
   }
-  .owners {
-    display: flex;
-    align-items: center;
-    margin: 20px 20px 20px 10px;
+}
+.right-content{
+  padding-left:60px;
+  .rei-dao{
     color: #868e9e;
   }
-  .title {
-    font-size: 20px;
-    // color: #121C32;
-  }
-  .content {
-    color: #858ea0;
-    font-size: 14px;
-    line-height: 20px;
-    margin-top: 10px;
-  }
-  .detail {
-    margin: 8px 0;
-  }
-  .font-grey {
-    color: #858ea0;
-    font-size: 14px;
-  }
-  .right-content {
-    font-size: 14px;
-    // color: #000;
-  }
+}
+.about-genesis {
+  padding: 12px 20px;
+  margin: 40px 40px 0 0;
+}
+.genesis {
+  font-size: 26px;
+  font-weight: bold;
+}
+.owners {
+  display: flex;
+  align-items: center;
+  margin: 15px 20px 20px 10px;
+  color: #868e9e;
+}
+.title {
+  font-size: 20px;
+  // color: #121C32;
+}
+.content {
+  color: #858ea0;
+  font-size: 14px;
+  line-height: 26px;
+}
+.detail {
+  margin: 5px 0;
+}
+.font-grey {
+  color: #858ea0;
+  font-size: 14px;
+}
+.right-content {
+  font-size: 14px;
+  // color: #000;
+}
 .wallet-table {
   padding: 40px;
   margin: 40px;

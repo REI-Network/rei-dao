@@ -25,7 +25,7 @@
         <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
-              <v-card outlined class="nftList" @click="openProposal()">
+              <v-card outlined class="nftList" @click="openNftInfo(item)">
                 <video controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
                 <div class="nft-text">
                   <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
@@ -39,62 +39,6 @@
       <div class="pagination" v-if="this.badgeNFTBalance != 0">
         <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
       </div>
-      <v-dialog v-model="badgeNFTDialog" width="1000">
-        <v-card class="nft-dialog">
-          <v-row>
-            <v-col cols="12" sm="6">
-              <!-- <v-img  :src="this.badgeNFTImg"/> -->
-              <video controls preload="meta" class="video-play" :src="this.badgeNFTImg" :poster="poster"></video>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-row no-gutters justify="space-between">
-                <div>REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
-                <v-icon size="22" @click="cancelProposal()">mdi-close</v-icon>
-              </v-row>
-              <div class="genesis">{{ this.nftName }}</div>
-              <v-row>
-                <!-- <div class="owners">
-                                <v-img src="../assets/images/owners.png" width="17" height="17" />
-                                <span> 150 owners</span>
-                            </div> -->
-                <div class="owners">
-                  <v-img src="../assets/images/total.png" width="17" height="17" />
-                  <span> &nbsp;&nbsp;{{ totalSupply }} total</span>
-                </div>
-              </v-row>
-              <v-card outlined class="about-genesis">
-                <div class="title">About Genesis Proposal Badges NFT</div>
-                <div class="content">{{ this.description }}</div>
-              </v-card>
-              <v-card outlined class="about-genesis" background-color="" style="margin-top: 20px">
-                <div class="title">Details</div>
-                <v-row justify="space-between" no-gutters class="detail">
-                  <div class="font-grey">Contract address</div>
-                  <a :href="`https://scan.rei.network/address/${nftConfig}`" target="_blank">
-                    <div class="right-content">{{ nftConfig | addr }}</div></a
-                  >
-                </v-row>
-                <!-- <v-row justify="space-between" no-gutters class="detail">
-                                <div class="font-grey">Token ID</div>
-                                <div class="right-content">436133...3123</div>
-                            </v-row> -->
-                <v-row justify="space-between" no-gutters class="detail">
-                  <div class="font-grey">Token standard</div>
-                  <div class="right-content">ERC-1155</div>
-                </v-row>
-                <v-row justify="space-between" no-gutters class="detail">
-                  <div class="font-grey">Metadate</div>
-                  <a :href="url" target="_blank"><div class="right-content">IPFS</div></a>
-                </v-row>
-                <v-row justify="space-between" no-gutters class="detail">
-                  <div class="font-grey">BlockChain</div>
-                  <div class="right-content">REI Network</div>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-dialog>
     </v-card>
   </v-container>
 </template>
@@ -131,7 +75,32 @@ export default {
       totalSupply: 0,
       nftList: [],
       imageShow: true,
-      url: ''
+      url: '',
+      testConfigList: [
+        {
+          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+        },
+        {
+          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+        },
+        {
+          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+        },
+        {
+          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+        }
+      ],
+      prodConfigList: [
+        {
+          address: '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d'
+        },
+        {
+          address: '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B'
+        },
+        {
+          address: '0x4035374c2c157F46effeA16e71A62b8992F2AD1b'
+        },
+      ]
     };
   },
   watch: {
@@ -162,38 +131,46 @@ export default {
     },
     async init() {
       this.loading = true;
-      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
-        this.nftConfig = nft_contract_test;
+      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Network') {
+        this.nftConfig = this.testConfigList;
       } else {
-        this.nftConfig = nft_contract_prod;
+        this.nftConfig = this.prodConfigList;
       }
-      let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
-      this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
-      if (this.badgeNFTBalance > 0) {
-        this.url = await contract.methods.uri(0).call();
-        this.totalSupply = await contract.methods.totalSupply(0).call();
-        const { data } = await this.$axios.get(this.url);
-        this.nftName = data.name;
-        this.badgeNFTImg = data.image;
-        this.description = data.description;
-        this.nftList = [];
-        this.nftList.push(data);
+      this.nftList = [];
+      for (let i = 0; i < this.nftConfig.length; i++) {
+        var contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
+        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
+        if (this.badgeNFTBalance > 0) {
+          // for (let i = 0; i < this.badgeNFTBalance; i++) {
+          //   let tokenId = await contract.methods.tokenOfOwnerByIndex(this.connection.address, i);
+          //   console.log('tokenId', tokenId);
+          // }
+          this.url = await contract.methods.uri(0).call();
+          this.totalSupply = await contract.methods.totalSupply(0).call();
+          const { data } = await this.$axios.get(this.url);
+          this.nftList.push(data);
+          this.nftList = this.nftList.map((item)=>{
+            let address = this.nftConfig[i].address
+            return{
+              ...item,
+              address:address
+            }
+          })
+        }
+        // console.log('nftList', this.nftList);
       }
       this.loading = false;
     },
 
-    openProposal() {
-      this.badgeNFTDialog = true;
-       this.$router.push({
-        name:'NftDetails',
-        query:{
-          id:this.nftName,
-        },
-      })
+    openNftInfo(item) {
+      // this.badgeNFTDialog = true;
+      this.$router.push({
+        name: 'NftDetails',
+        query: {
+          id: item.address
+        }
+      });
     },
-    cancelProposal() {
-      this.badgeNFTDialog = false;
-    }
   }
 };
 </script>
