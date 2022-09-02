@@ -26,7 +26,8 @@
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList" @click="openNftInfo(item)">
-                <video controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
+                <video v-if="!imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
+                <v-img v-else :src="item.image" />
                 <div class="nft-text">
                   <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 18px">{{ item.name }}</div>
@@ -80,15 +81,6 @@ export default {
         {
           address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
         },
-        {
-          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
-        },
-        {
-          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
-        },
-        {
-          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
-        }
       ],
       prodConfigList: [
         {
@@ -140,24 +132,29 @@ export default {
       for (let i = 0; i < this.nftConfig.length; i++) {
         var contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
         this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
+        this.url = await contract.methods.uri(0).call();
+        this.totalSupply = await contract.methods.totalSupply(0).call();
+        const { data } = await this.$axios.get(this.url);
         if (this.badgeNFTBalance > 0) {
-          // for (let i = 0; i < this.badgeNFTBalance; i++) {
-          //   let tokenId = await contract.methods.tokenOfOwnerByIndex(this.connection.address, i);
-          //   console.log('tokenId', tokenId);
-          // }
-          this.url = await contract.methods.uri(0).call();
-          this.totalSupply = await contract.methods.totalSupply(0).call();
-          const { data } = await this.$axios.get(this.url);
-          this.nftList.push(data);
+          for (let index = 0; index < this.badgeNFTBalance; index++) {
+            this.nftList.push(data);
+          }
           this.nftList = this.nftList.map((item)=>{
-            let address = this.nftConfig[i].address
+          let address = this.nftConfig[i].address;
+          if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(item.image)) {
+            this.imageShow = true;
+          } else {
+            this.imageShow = false;
+          }
             return{
               ...item,
-              address:address
+              address:address,
+              url:this.url,
+              totalSupply:this.totalSupply,
             }
           })
         }
-        // console.log('nftList', this.nftList);
+        console.log('nftList', this.nftList);
       }
       this.loading = false;
     },

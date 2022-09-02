@@ -34,16 +34,12 @@
         <v-card class="about-genesis" background-color="" style="margin-top: 20px">
           <div class="title">Details</div>
           <v-row>
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="6" class="details-right">
               <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Contract address</div>
             <a :href="`https://scan.rei.network/address/${nftConfig}`" target="_blank">
               <div class="right-content">{{ nftConfig | addr }}</div></a
             >
-          </v-row>
-          <v-row justify="space-between" no-gutters class="detail">
-            <div class="font-grey">Token ID</div>
-            <div class="right-content">16</div>
           </v-row>
           <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Token standard</div>
@@ -68,7 +64,6 @@
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
-          <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
         </v-col>
       </v-row>
       <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
@@ -98,7 +93,6 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
-import find from 'lodash/find';
 import Address from '../components/Address';
 
 export default {
@@ -164,9 +158,9 @@ export default {
       this.loading = true;
       let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
       this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
-      if (this.badgeNFTBalance > 0) {
-        this.url = await contract.methods.uri(0).call();
+      this.url = await contract.methods.uri(0).call();
         this.totalSupply = await contract.methods.totalSupply(0).call();
+      if (this.badgeNFTBalance > 0) {
         const { data } = await this.$axios.get(this.url);
         this.nftName = data.name;
         this.badgeNFTImg = data.image;
@@ -192,11 +186,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.badges-nft {
+.theme--light.badges-nft {
   padding: 28px 0 28px 0;
   margin-bottom: 28px;
   margin-top: -28px;
   background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
+}
+.theme--dark.badges-nft {
+  padding: 28px 0 28px 0;
+  margin-bottom: 28px;
+  margin-top: -28px;
 }
 .theme--light.sub-title {
   color: #000;
@@ -303,7 +302,10 @@ a:hover {
   line-height: 26px;
 }
 .detail {
-  margin: 5px 0;
+  margin: 10px 0;
+}
+.details-right{
+  // border-right: 1px #858ea0 solid;
 }
 .font-grey {
   color: #858ea0;
