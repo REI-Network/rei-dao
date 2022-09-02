@@ -44,12 +44,12 @@
               <v-row justify="space-between">
                 <v-col>
                   <span class="title">Wallet</span>
-                  <v-tooltip right color="start_unstake">
+                  <!-- <v-tooltip right color="start_unstake">
                     <template v-slot:activator="{ on, attrs }">
                       <v-icon class="wallet-icon" v-bind="attrs" v-on="on" dense size="16" style="margin-bottom: 6px"> mdi-help-circle-outline </v-icon>
                     </template>
                     <span>Stake $REI to earn Crude as Gas</span>
-                  </v-tooltip>
+                  </v-tooltip> -->
                   <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
                 <!-- <v-col style="text-align: right">
