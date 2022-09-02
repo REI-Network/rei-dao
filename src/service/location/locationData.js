@@ -108,6 +108,16 @@ const locationData = [
       name: "Hong kong", 
       value: [717.3811, 154.5073],
       address:"0xf06313d8B2aCc5C5090dDD9B2F0D7bf66Ea4Fa85"
+  },
+  {
+    name: "Hong kong", 
+    value: [717.3811, 154.5073],
+    address:"0xD3636F748530c82a5331a5617E8aAe8D6e8a5dB5"
+  },
+  {
+    name: "Washington", 
+      value: [87.7597, 95.7532],
+      address:"0xedde95394b1f79025dc31f338bf0b8449d4d01ba"
   }
 ];
 
