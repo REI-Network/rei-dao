@@ -123,7 +123,7 @@ export default {
     },
     async init() {
       this.loading = true;
-      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Network') {
+      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
         this.nftConfig = this.testConfigList;
       } else {
         this.nftConfig = this.prodConfigList;
@@ -154,7 +154,7 @@ export default {
             }
           })
         }
-        console.log('nftList', this.nftList);
+        // console.log('nftList', this.nftList);
       }
       this.loading = false;
     },
