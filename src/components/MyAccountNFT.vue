@@ -14,7 +14,7 @@
       <v-row justify="space-between" class="nft-header">
         <v-col>
           <span class="title">My NFTs</span>
-          <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
+          <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
         </v-col>
         <!-- <v-col style="text-align: right">
           <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
