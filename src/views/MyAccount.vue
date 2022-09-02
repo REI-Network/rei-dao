@@ -12,16 +12,22 @@
               <!-- <v-img src="../assets/images/rei.svg" width="80" height="80"></v-img> -->
               <jazzicon class="identicon" :address="connection.address" :diameter="60"></jazzicon>
             </div>
-            <div class="my-address">{{ this.connection.address }}</div>
+            <div class="my-address">{{ this.connection.address | addr }}</div>
             <v-icon size="16">mdi-content-copy</v-icon>
           </div>
         </v-col>
         <v-col cols="12" md="4" class="balance">
           <div class="title">
-            <div>balance</div>
-            <v-icon color="#FFF">mdi-sync</v-icon>
+            <div>Balance</div>
+            <v-btn
+              icon
+              @click="getBalance()"
+              color="#FFF"
+            >
+              <v-icon>mdi-sync</v-icon>
+            </v-btn>
           </div>
-          <h2>$756,841.69</h2>
+          <h2>${{totalAmount | asset(5)}}</h2>
         </v-col>
       </v-row>
     </v-card>
@@ -51,26 +57,26 @@
                   <span class="font-grey">Submit a token support here</span>
                 </v-col>
               </v-row>
-              <v-data-table :headers="headers" :items="folderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center">
                     <div class="asset-logo">
-                      <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
+                      <v-img :src="item.logo" width="30" height="30"></v-img>
                     </div>
-                    <div>{{ item.assets }}</div>
+                    <div>{{ item.symbol }}</div>
                   </v-row>
                 </template>
                 <template v-slot:item.price="{ item }">
-                  <span>${{ item.price | asset(2) }}</span>
+                  <span>${{ item.price | asset(5) }}</span>
                 </template>
                 <template v-slot:item.balance="{ item }">
-                  <span>{{ item.balance | asset(2) }}</span>
+                  <span>{{ item.balance | asset(4) }}</span>
                 </template>
                 <template v-slot:item.value="{ item }">
-                  <span>${{ item.value | asset(2) }}</span>
+                  <span>${{ item.value | asset(5) }}</span>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="folderList.length > 0">
+              <div class="text-center pt-2" v-if="assetList.length > 10">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
             </v-card>
@@ -100,18 +106,21 @@
   </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+
+import Web3 from 'web3';
+import abiERC20 from '../abis/abiERC20';
 import MyAccountBalance from '../components/MyAccountBalance';
-// import MyAccountCrude from '../components/MyAccountCrude';
 import MyAccountNFT from '../components/MyAccountNFT';
+import { getPrice } from '../service/CommonService'
 import { mapGetters } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
-// import MyAccountProposals from '../components/MyAccountProposals';
+import find from 'lodash/find';
 
 import filters from '../filters';
 export default {
   components: {
     MyAccountBalance,
-    // MyAccountCrude,
     MyAccountNFT,
     [Jazzicon.name]: Jazzicon
   },
@@ -122,29 +131,151 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 6,
-      stakeListLoading: false,
+      getListLoading: false,
+      totalAmount:0,
       headers: [
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
         { text: 'Balance', value: 'balance' },
         { text: 'Value', value: 'value' }
       ],
-      folderList: [
+      assetList: [
         {
           logo: '../assets/images/rei.svg',
-          assets: 'REI',
+          symbol: 'REI',
           price: 1,
-          balance: 100000000,
-          value: 100000000
+          balance: 0,
+          value: 0
         }
       ],
+      tokenInfoList:[
+        {
+          decimals: "8",
+          erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
+          logo: "https://static.rei.network/imgs/WBTC.png",
+          name:"Wrapped BTC",
+          symbol:"WBTC"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
+          logo: "https://static.rei.network/imgs/USDT.png",
+          name:"Tether USD",
+          symbol:"USDT"
+        },
+        {
+          decimals: "6",
+          erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
+          logo: "https://static.rei.network/imgs/USDC.png",
+          name:"USD Coin",
+          symbol:"USDC"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
+          logo: "https://static.rei.network/imgs/WETH.png",
+          name:"Wrapped Ether",
+          symbol:"WETH"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
+          logo: "https://static.rei.network/imgs/DAI.png",
+          name:"Dai Stablecoin",
+          symbol:"DAI"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
+          logo: "https://static.rei.network/imgs/BUSD.png",
+          name:"Binance USD",
+          symbol:"BUSD"
+        }
+      ]
     };
+  },
+  watch: {
+    '$store.state.connection': function() {
+      if(this.connection && this.connection.network){
+          this.connect();
+          this.getBalance();
+      }
+    },
   },
   computed: {
     ...mapGetters({
       connection: 'connection',
       dark: 'dark'
-    })
+    }),
+    
+  },
+  mounted() {
+    this.connect();
+    this.getBalance();
+  },
+  methods: {
+    connect() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+        } else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider);
+        }
+    },
+    async getBalance(){
+      let asset = [], assetArr = ['REI']
+      if(!this.connection.address) return;
+      this.getListLoading = true;
+      let reiBalance = await web3.eth.getBalance(this.connection.address);
+      asset.push({
+        symbol: 'REI',
+        logo: 'https://static.rei.network/media/currency_logo.png',
+        balance: web3.utils.fromWei(web3.utils.toBN(reiBalance)),
+        price: 0,
+        value: 0
+      })
+
+
+      for(let i = 0; i < this.tokenInfoList.length; i++){
+        let token = this.tokenInfoList[i];
+        let contract = new web3.eth.Contract(abiERC20, token.erc20Address);
+        let balance = await contract.methods.balanceOf(this.connection.address).call();
+        let decimals = token.decimals;
+
+        let _balance = balance/10**decimals;
+        if(_balance !=0){
+          asset.push({
+            symbol: token.symbol,
+            logo: token.logo,
+            balance: _balance,
+            price: 0,
+            value: 0
+          })
+          assetArr.push(token.symbol);
+        }
+        
+      }
+      let { data: priceList} = await getPrice({symbols:assetArr.join()});
+      let totalAmount = 0;
+      console.log(priceList.data)
+      let assetList = asset.map(item=>{
+        let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
+        let value = _asset.current_price*item.balance;
+        totalAmount += value;
+        return {
+          symbol: item.symbol,
+          logo: item.logo,
+          balance: item.balance,
+          price: _asset.current_price,
+          value
+        }
+      })
+
+      this.assetList = assetList;
+      this.totalAmount = totalAmount
+      this.getListLoading = false;
+
+
+    }
   }
 };
 </script>
@@ -219,6 +350,7 @@ export default {
 .asset-logo {
   margin: 0 12px;
 }
+
 @media screen and (max-width: 900px) {
   .myAccount {
     padding-left: 20px;
