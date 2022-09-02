@@ -16,10 +16,10 @@
           <span class="title">My NFTs</span>
           <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon>
         </v-col>
-        <v-col style="text-align: right">
+        <!-- <v-col style="text-align: right">
           <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
           <span class="font-grey">Submit a token support here</span>
-        </v-col>
+        </v-col> -->
       </v-row>
       <v-row justify="start" no-gutters style="padding: 0 4px">
         <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
@@ -107,12 +107,14 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
-      apiUrl: 'apiUrl'
+      apiUrl: 'apiUrl',
+      nftInfo: 'nftInfo'
     })
   },
   methods: {
     ...mapActions({
-      addTx: 'addTx'
+      addTx: 'addTx',
+      setNftInfo: 'setNftInfo'
     }),
     connect() {
       if (window.ethereum) {
@@ -136,7 +138,6 @@ export default {
         let totalSupply = await contract.methods.totalSupply(0).call();
         if (badgeNFTBalance > 0) {
           const { data } = await this.$axios.get(url);
-          console.log(data)
           for (let index = 0; index < badgeNFTBalance; index++) {
             this.nftList.push(data);
           }
@@ -155,7 +156,7 @@ export default {
             }
           })
         }
-        console.log('nftList', this.nftList);
+        this.setNftInfo({nftInfo: this.nftList})
       }
       this.loading = false;
     },

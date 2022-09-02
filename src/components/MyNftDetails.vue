@@ -94,6 +94,7 @@ import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import Address from '../components/Address';
+import find from 'lodash/find';
 
 export default {
   components: {
@@ -140,7 +141,8 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
-      apiUrl: 'apiUrl'
+      apiUrl: 'apiUrl',
+      nftInfo: 'nftInfo'
     })
   },
   methods: {
@@ -156,26 +158,37 @@ export default {
     },
     async init() {
       this.loading = true;
-      let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
-      this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
-      this.url = await contract.methods.uri(0).call();
-        this.totalSupply = await contract.methods.totalSupply(0).call();
-      if (this.badgeNFTBalance > 0) {
-        const { data } = await this.$axios.get(this.url);
-        this.nftName = data.name;
-        this.badgeNFTImg = data.image;
-        this.description = data.description;
-        if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(this.badgeNFTImg)) {
-          this.imageShow = true;
-        } else {
-          this.imageShow = false;
+      if(this.nftInfo.length>0){
+        let info = find(this.nftInfo,(item)=> web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig))
+        this.url = info.url;
+        this.totalSupply = info.totalSupply;
+        this.nftName = info.name;
+        this.badgeNFTImg = info.image;
+        this.imageShow = info.imageShow;
+        this.description = info.description;
+        this.loading = false;
+      } else {
+        let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
+        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
+        this.url = await contract.methods.uri(0).call();
+          this.totalSupply = await contract.methods.totalSupply(0).call();
+        if (this.badgeNFTBalance > 0) {
+          const { data } = await this.$axios.get(this.url);
+          this.nftName = data.name;
+          this.badgeNFTImg = data.image;
+          this.description = data.description;
+          if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(this.badgeNFTImg)) {
+            this.imageShow = true;
+          } else {
+            this.imageShow = false;
+          }
         }
-      }
-      this.getHolderList();
-      this.loading = false;
+        this.loading = false;
+       }
+        this.getHolderList();
     },
     async getHolderList() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.nftConfig}`);
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&page=1&offset=1000&contractaddress=${this.$route.query.id}`);
       this.holderList = data.result;
     },
     routeLink() {

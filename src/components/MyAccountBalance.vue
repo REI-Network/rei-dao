@@ -266,11 +266,11 @@ export default {
         this.stakeManageInstance = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
         this.getMyStakeInfo();
         this.getMyUnstakeInfo();
-        this.getBalanceList();
+        //this.getBalanceList();
     },
     async getBalanceList() {
         if(!this.connection.address)return;
-        this.myChart.showLoading();
+        //this.myChart.showLoading();
         let blockNumber = await web3.eth.getBlockNumber()
         let arr = [];
         let now = Date.now();

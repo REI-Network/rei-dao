@@ -52,10 +52,10 @@
                   </v-tooltip>
                   <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
-                <v-col style="text-align: right">
+                <!-- <v-col style="text-align: right">
                   <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
                   <span class="font-grey">Submit a token support here</span>
-                </v-col>
+                </v-col> -->
               </v-row>
               <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
@@ -140,13 +140,6 @@ export default {
         { text: 'Value', value: 'value' }
       ],
       assetList: [
-        {
-          logo: '../assets/images/rei.svg',
-          symbol: 'REI',
-          price: 1,
-          balance: 0,
-          value: 0
-        }
       ],
       tokenInfoList:[
         {
@@ -256,7 +249,6 @@ export default {
       }
       let { data: priceList} = await getPrice({symbols:assetArr.join()});
       let totalAmount = 0;
-      console.log(priceList.data)
       let assetList = asset.map(item=>{
         let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
         let value = _asset.current_price*item.balance;
