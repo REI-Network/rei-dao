@@ -131,31 +131,46 @@ export default {
         this.nftConfig = this.prodConfigList;
       }
       this.nftList = [];
+      if(this.nftInfo.length>0){
+        this.nftList = this.nftInfo;
+        this.loading = false;
+        return;
+      }
       for (let i = 0; i < this.nftConfig.length; i++) {
         let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
-        let badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
-        let url = await contract.methods.uri(0).call();
-        let totalSupply = await contract.methods.totalSupply(0).call();
-        if (badgeNFTBalance > 0) {
-          const { data } = await this.$axios.get(url);
-          for (let index = 0; index < badgeNFTBalance; index++) {
-            this.nftList.push(data);
-          }
-          this.nftList = this.nftList.map((item)=>{
-          let address = this.nftConfig[i].address;
-          let imageShow = false;
-          if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(item.image)) {
-            imageShow = true;
-          } 
-            return{
-              ...item,
-              address,
-              url,
-              totalSupply,
-              imageShow
+        let addr = this.connection.address;
+        for (let j = 0; ;j++){
+          let flag = await contract.methods.exists(j).call();
+          if(flag){
+            let badgeNFTBalance = await contract.methods.balanceOf(addr, j).call();
+            let url = await contract.methods.uri(j).call();
+            let totalSupply = await contract.methods.totalSupply(j).call();
+            if (badgeNFTBalance > 0) {
+              let imageShow = false;
+              const { data } = await this.$axios.get(url);
+              const imgdata  = await this.$axios.get(data.image);
+              if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+                imageShow = true;
+              }
+              let address = this.nftConfig[i].address;
+              let nftDetail = {
+                ...data,
+                address,
+                url,
+                totalSupply,
+                imageShow,
+                tokenId:j
+              }
+
+              for (let index = 0; index < badgeNFTBalance; index++) {
+                this.nftList.push(nftDetail);
+              }
             }
-          })
+          } else {
+            break
+          }
         }
+        
         this.setNftInfo({nftInfo: this.nftList})
       }
       this.loading = false;
@@ -166,7 +181,8 @@ export default {
       this.$router.push({
         name: 'NftDetails',
         query: {
-          id: item.address
+          id: item.address,
+          tokenid: item.tokenId
         }
       });
     },

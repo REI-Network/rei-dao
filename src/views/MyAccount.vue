@@ -13,7 +13,7 @@
               <jazzicon class="identicon" :address="connection.address" :diameter="60"></jazzicon>
             </div>
             <div class="my-address">{{ this.connection.address | addr }}</div>
-            <v-icon size="16">mdi-content-copy</v-icon>
+            <!-- <v-icon size="16">mdi-content-copy</v-icon> -->
           </div>
         </v-col>
         <v-col cols="12" md="4" class="balance">

@@ -28,7 +28,7 @@
           </div>
         </v-row>
         <v-card class="about-genesis" style="margin-top: 10px">
-          <div class="title">About Genesis Proposal Badges NFT</div>
+          <div class="title">{{nftName}}</div>
           <div class="content">{{ this.description }}</div>
         </v-card>
         <v-card class="about-genesis" background-color="" style="margin-top: 20px">
@@ -60,7 +60,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-card class="wallet-table">
+    <!-- <v-card class="wallet-table">
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
@@ -82,7 +82,7 @@
       <div class="text-center pt-2" v-if="holderList.length > 0">
         <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
       </div>
-    </v-card>
+    </v-card> -->
   </v-container>
 </template>
 <script>
@@ -93,13 +93,10 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
-import Address from '../components/Address';
+//import Address from '../components/Address';
 import find from 'lodash/find';
 
 export default {
-  components: {
-    Address
-  },
   filters,
   data() {
     return {
@@ -116,6 +113,7 @@ export default {
       totalPage: 0,
       description: '',
       nftConfig: this.$route.query.id,
+      tokenId: this.$route.query.tokenid,
       totalSupply: 0,
       nftList: [],
       nftName: '',
@@ -159,7 +157,10 @@ export default {
     async init() {
       this.loading = true;
       if(this.nftInfo.length>0){
-        let info = find(this.nftInfo,(item)=> web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig))
+        let info = find(this.nftInfo,(item)=> 
+          web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig) && item.tokenId == this.tokenId
+          
+          )
         this.url = info.url;
         this.totalSupply = info.totalSupply;
         this.nftName = info.name;
@@ -169,19 +170,19 @@ export default {
         this.loading = false;
       } else {
         let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
-        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, 0).call();
-        this.url = await contract.methods.uri(0).call();
-          this.totalSupply = await contract.methods.totalSupply(0).call();
+        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
+        this.url = await contract.methods.uri(this.tokenId).call();
+        this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
         if (this.badgeNFTBalance > 0) {
           const { data } = await this.$axios.get(this.url);
+          const imgdata  = await this.$axios.get(data.image);
+          this.imageShow = false;
+          if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+            this.imageShow = true;
+          }
           this.nftName = data.name;
           this.badgeNFTImg = data.image;
           this.description = data.description;
-          if (/\.(jpg|jpeg|png|GIF|JPG|PNG)$/.test(this.badgeNFTImg)) {
-            this.imageShow = true;
-          } else {
-            this.imageShow = false;
-          }
         }
         this.loading = false;
        }
