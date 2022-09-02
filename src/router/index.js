@@ -7,6 +7,7 @@ import StakeForGas from '../views/StakeForGas.vue';
 import Governance from '../views/Governance.vue';
 import Bridge from '../views/Bridge.vue';
 import StakeValidator from '../components/StakeValidator.vue';
+import MyNftDetails from '../components/MyNftDetails.vue';
 
 
 const routes = [
@@ -57,6 +58,11 @@ const routes = [
     path: '/stakeValidator',
     name: 'stake',
     component: StakeValidator
+  },
+  {
+    path: '/myAccount/details',
+    name: 'NftDetails',
+    component: MyNftDetails
   }
 ];
 

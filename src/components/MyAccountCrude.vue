@@ -3,7 +3,7 @@
   <!-- 为 ECharts 准备一个定义了宽高的 DOM --> 
        <v-row>
             <v-col class="accout-item">
-              <v-card color="background">
+              <v-card color="background" style="width:97%;">
                 <v-subheader class="sub-title"><h3>Gas stake</h3></v-subheader>
                 <v-card class="balance-card" outlined color="background">
                      <v-card
@@ -22,16 +22,6 @@
                                     <!-- <div :class="assetChange(assetInfo.price_change_percentage_24h)">{{assetInfo.price_change_percentage_24h|asset(2) }}%</div> -->
                                 </div>
                                 <div class="time-price" style="margin-left:12px">
-                                    <!-- <div>24H</div> -->
-                                    <!-- <div class="update-time">
-                                        <v-icon
-                                            color="right_icon"
-                                            size="12"
-                                        >
-                                        mdi-clock-time-ten-outline
-                                    </v-icon>
-                                        1h Ago
-                                    </div> -->
                                 </div>
                             </v-subheader>
                              <div v-if='!connection.address' class="not-connection">
@@ -214,12 +204,12 @@ export default {
 <style scoped lang="scss">
 .accout-item{
   padding:0;
-  margin-top:12px;
+  // margin-top:12px;
   margin-bottom:28px;
   .balance-card{
-    width: 100%;
-    display: inline-flex;
-    justify-content: space-between;
+    // width: 50%;
+    // display: inline-flex;
+    // justify-content: space-between;
     border:none;
   }
   .total-rei{
@@ -238,7 +228,7 @@ export default {
     color: red;
   }
   .voting-stake{
-    width: 47%;
+    width: 93%;
     height:150px;
     display: inline-flex;
     justify-content: space-between !important;
