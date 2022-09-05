@@ -1,5 +1,5 @@
 <template>
-  <v-container class="badges-nft">
+  <v-container :class="dark?'badges-nft':'badges-nft back-linear'">
     <div class="header-title">
       <div class="title-detailed">
         <span><a class="back-voting" @click="routeLink()">NFTs</a></span> / <span class="rei-fans">{{ nftName }}</span>
@@ -140,6 +140,7 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
+      dark: 'dark',
       nftInfo: 'nftInfo'
     })
   },
@@ -200,16 +201,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.theme--light.badges-nft {
+.badges-nft {
   padding: 28px 0 28px 0;
   margin-bottom: 28px;
   margin-top: -28px;
-  background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
+  max-width: 100% !important;
 }
-.theme--dark.badges-nft {
-  padding: 28px 0 28px 0;
-  margin-bottom: 28px;
-  margin-top: -28px;
+.back-linear{
+  background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
 }
 .theme--light.sub-title {
   color: #000;
@@ -349,6 +348,16 @@ a:hover {
   .rei-genesis {
     flex: 0 0 auto !important;
     max-width: 100% !important;
+  }
+  .nft-dialog{
+    margin-left: 10px;
+    width:94% !important;
+  }
+  .right-content{
+    padding-left: 24px;
+  }
+  .about-genesis{
+    margin-right:12px !important;
   }
   .video-play {
     width: 100% !important;

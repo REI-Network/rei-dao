@@ -2,9 +2,9 @@
    <v-container class="stake_background">
   <!-- 为 ECharts 准备一个定义了宽高的 DOM --> 
        <v-row>
-            <v-col class="accout-item">
+            <v-col class="accout-item" style="padding-right:0;">
               <v-card color="background" style="width:97%;">
-                <v-subheader class="sub-title"><h3>Gas stake</h3></v-subheader>
+                <v-subheader class="sub-title title">Gas stake</v-subheader>
                 <v-card class="balance-card" outlined color="background">
                      <v-card
                         class="voting-stake"
@@ -226,6 +226,9 @@ export default {
   }
   .drop{
     color: red;
+  }
+  .title{
+    font-weight: 500;
   }
   .voting-stake{
     width: 93%;

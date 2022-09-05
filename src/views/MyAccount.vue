@@ -1,22 +1,21 @@
 <template>
-  <v-container class="stake_background" style="padding: 0">
+  <v-container class="stake_background" style="padding: 0;">
     <!-- <div class="header-title">
       <h1>My Account</h1>
       <div class="title-detailed">Details about your account, balances, and voting</div>
     </div> -->
     <v-card :class="dark ? 'night account-header' : 'daytime account-header header-back'">
-      <v-row>
-        <v-col cols="12" md="7">
+      <v-row justify="space-between">
+        <div>
           <div class="left-address">
             <div>
               <!-- <v-img src="../assets/images/rei.svg" width="80" height="80"></v-img> -->
               <jazzicon class="identicon" :address="connection.address" :diameter="60"></jazzicon>
             </div>
-            <div class="my-address">{{ this.connection.address | addr }}</div>
-            <!-- <v-icon size="16">mdi-content-copy</v-icon> -->
+            <Address class="my-address" :val="this.connection.address"></Address>
           </div>
-        </v-col>
-        <v-col cols="12" md="4" class="balance">
+        </div>
+        <div class="balance">
           <div class="title">
             <div>Balance</div>
             <v-btn
@@ -28,7 +27,7 @@
             </v-btn>
           </div>
           <h2>${{totalAmount | asset(5)}}</h2>
-        </v-col>
+        </div>
       </v-row>
     </v-card>
     <v-tabs v-model="tab1" align-with-title :class="dark ? 'tab-dark' : 'tab-light'" background-color="background">
@@ -44,12 +43,12 @@
               <v-row justify="space-between">
                 <v-col>
                   <span class="title">Wallet</span>
-                  <!-- <v-tooltip right color="start_unstake">
+                  <v-tooltip right color="start_unstake">
                     <template v-slot:activator="{ on, attrs }">
                       <v-icon class="wallet-icon" v-bind="attrs" v-on="on" dense size="16" style="margin-bottom: 6px"> mdi-help-circle-outline </v-icon>
                     </template>
-                    <span>Stake $REI to earn Crude as Gas</span>
-                  </v-tooltip> -->
+                    <span>Wallet supports REI, WBTC, USDT, USDC, WETH,<br/> DAI, BUSD and other assets on REI Network</span>
+                  </v-tooltip>
                   <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
                 <!-- <v-col style="text-align: right">
@@ -113,6 +112,7 @@ import abiERC20 from '../abis/abiERC20';
 import MyAccountBalance from '../components/MyAccountBalance';
 import MyAccountNFT from '../components/MyAccountNFT';
 import { getPrice } from '../service/CommonService'
+import Address from '../components/Address';
 import { mapGetters } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
 import find from 'lodash/find';
@@ -120,6 +120,7 @@ import find from 'lodash/find';
 import filters from '../filters';
 export default {
   components: {
+    Address,
     MyAccountBalance,
     MyAccountNFT,
     [Jazzicon.name]: Jazzicon
@@ -273,6 +274,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container{
+  max-width:100% !important;
+}
 .v-tabs {
   // margin-top: 20px;
 }
@@ -303,7 +307,7 @@ export default {
 }
 .account-header {
   padding-top: 60px;
-  padding-left: 40px;
+  padding-left: 50px;
   padding-bottom: 20px;
   .left-address {
     display: flex;
@@ -315,10 +319,12 @@ export default {
     }
   }
   .balance {
+    margin-right: 60px;
     padding: 26px;
     color: #fff;
     background-color: #6979f8;
     border-radius: 6px;
+    width:30%;
     .title {
       display: flex;
       justify-content: space-between;
@@ -347,6 +353,11 @@ export default {
   .myAccount {
     padding-left: 20px;
     padding-right: 20px;
+  }
+  .balance {
+     margin-top:20px;
+     margin-right: 40px !important;
+     width: 100%;
   }
 }
 </style>
