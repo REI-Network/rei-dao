@@ -12,7 +12,7 @@
         </v-tooltip>
       </v-subheader> -->
       <v-row justify="space-between" class="nft-header">
-        <v-col>
+        <v-col class="nft-title">
           <span class="title">My NFTs</span>
           <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
         </v-col>
@@ -37,7 +37,7 @@
           </template>
         </v-data-iterator>
       </v-row>
-      <div class="pagination" v-if="nftList.length != 0">
+      <div class="pagination" v-if="nftList.length > 6">
         <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
       </div>
     </v-card>
@@ -191,9 +191,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container{
+ max-width:100% !important;
+}
 .badges-nft {
   padding: 0 0 28px 0;
-  margin-bottom: 28px;
+  margin-bottom:28px;
+  margin-top:-20px;
 }
 .theme--light.sub-title {
   color: #000;
@@ -202,7 +206,7 @@ export default {
   color: #fff;
 }
 .nft-header {
-  margin: 20px;
+  margin:20px 20px 0 20px;
   .title {
     font-weight: 500;
   }
@@ -261,6 +265,10 @@ export default {
 a:hover {
   text-decoration: underline;
   color: #289eff;
+}
+.nft-title{
+  padding-left:0;
+  padding-bottom:0;
 }
 .nft-dialog {
   padding: 25px;
