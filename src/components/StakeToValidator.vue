@@ -435,39 +435,39 @@
               </v-row>
             </v-card>
             <v-row class="calculate-input" style="margin-top:30px;">
-                <span class="subheading mr-1 font-grey" style="margin-left:12px">Vote</span>
+                <span class="subheading mr-1" style="margin-left:12px">Vote</span>
                 <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
-                  <div style="width:200px;"><v-text-field v-model="stake" color="#2116E5" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
-                <span class="subheading mr-1 font-grey"> REI</span>
+                  <div style="width:200px;"><v-text-field v-model="stake" color="#6979F8" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
+                <span class="subheading mr-1"> REI</span>
             </v-row>
-            <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" tick-size="10" loader-height="10" always-dirty min="0" max="2000000"> </v-slider>
-            <v-row justify="space-between" class="slider-num font-grey">
+            <!-- <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#6979F8" thumb-color="#6979F8" tick-size="10" loader-height="10" always-dirty min="0" max="2000000"> </v-slider> -->
+            <!-- <v-row justify="space-between" class="slider-num font-grey">
               <v-col>0</v-col>
               <v-col style="text-align: right">2M</v-col>
-            </v-row>
+            </v-row> -->
             <v-row class="" justify="space-between">
               <v-col class="text-left">
-                <span class=" mr-1 font-grey">Locking $REI for</span>
+                <span class=" mr-1">Locking $REI for</span>
                 <span :class="dark ? 'dark-amount' : 'light-amount'">{{ this.days }}</span>
-                <span class=" mr-1 font-grey"> days</span>
+                <span class=" mr-1"> days</span>
               </v-col>
             </v-row>
-            <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#2116E5" thumb-color="#2116E5" always-dirty min="0" max="365" tick-size="8"> </v-slider>
-            <v-row justify="space-between" class="slider-num font-grey">
+            <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#6979F8" thumb-color="#6979F8" always-dirty min="0" max="365" tick-size="8"> </v-slider>
+            <v-row justify="space-between" class="slider-num">
               <v-col>0 D</v-col>
               <v-col style="text-align: right">365D</v-col>
             </v-row>
             <v-row justify="space-between">
-              <v-col class="font-grey">
+              <v-col>
                 <div>Estimated rewards</div>
                 <div>
-                  <span class="font-blue">{{ userRewardsYear | asset(2) }}</span> REI
+                  <span :class="dark ? 'dark-amount' : 'light-amount'">{{ userRewardsYear | asset(2) }}</span> REI
                 </div>
               </v-col>
-              <v-col class="font-grey" style="text-align: right">
+              <v-col style="text-align: right">
                 <div>Current APR</div>
                 <div>
-                  <span class="font-blue">{{ current | asset(2) }}</span> %
+                  <span :class="dark ? 'dark-amount' : 'light-amount'">{{ current | asset(2) }}</span> %
                 </div>
               </v-col>
             </v-row>
@@ -1419,7 +1419,7 @@ export default {
   // margin-left:8px;
 }
 .theme--light.v-input input, .theme--light.v-input textarea{
-  color:#2116E5 !important;
+  color:#6979F8 !important;
 }
 .from-voting {
   display: flex;
@@ -1495,7 +1495,7 @@ export default {
   }
 }
 .light-amount {
-  color: #2116e5;
+  color: #6979F8;
   font-weight: bolder !important;
   font-size: 22px;
 }
@@ -1552,7 +1552,7 @@ export default {
   background-color: #f5f9fd;
 }
 .dark-nodes {
-  background-color: #595277;
+  background-color:#4C4A68;
   // opacity: 0.5;
 }
 .node-details {

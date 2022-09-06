@@ -182,7 +182,7 @@ a{
 }
 
 .calculate-input .theme--light.v-input input, .theme--light.v-input textarea{
-  color:#2116E5 !important;
+  color:#6979F8 !important;
 }
 .tab-dark .v-slide-group__content{
   background-color: #100D22 !important;
