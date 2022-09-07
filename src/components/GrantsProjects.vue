@@ -1,0 +1,138 @@
+<template>
+  <v-container style="padding: 0">
+    <v-card class="flex-column mt-2 overview">
+      <h3>Projects have been supported</h3>
+      <v-data-iterator :items="List" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')">
+        <template v-slot:item="{ item }">
+          <v-card :class="dark ? 'chip-dark projects' : 'chip-light projects elevation-0'" @click="openGrants(item)">
+            <v-row justify="space-between">
+              <v-col cols="12" md="11" class="left-content">
+                <div class="image">
+                  <v-img :src="item.img" width="120" />
+                </div>
+                <div class="supported">
+                  <div><span class="name">Pokemon battle</span><span class="game-active">Gamefi</span></div>
+                  <div class="font-grey detail">Pokemon 是一款在REI Network的对战休闲游戏，为用户提供休闲的游戏体验和丰富的赚钱方式</div>
+                  <v-row justify="space-between">
+                    <v-col cols="12" md="3">
+                      <h2>PB</h2>
+                      <div class="font-grey">Token</div>
+                    </v-col>
+                    <v-col cols="12" md="5">
+                      <h2>06/07/2022</h2>
+                      <div class="font-grey">Went live on</div>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <h2>100,000 <span class="font-grey">REI</span></h2>
+                      <div class="font-grey">Sponsored</div>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-col>
+              <v-col cols="12" md="1" class="right-icon" align-self="center">
+                <v-icon size="22"> mdi-arrow-right-circle-outline </v-icon>
+              </v-col>
+            </v-row>
+          </v-card>
+        </template>
+      </v-data-iterator>
+      <div class="pagination">
+        <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
+      </div>
+    </v-card>
+  </v-container>
+</template>
+<script>
+import { mapGetters } from 'vuex';
+import filters from '../filters';
+
+export default {
+  filters,
+  data() {
+    return {
+      page: 1,
+      pageCount: 1,
+      itemsPerPage: 6,
+      pageSize: 6,
+      loading:false,
+      List: [
+        {
+          name: 123,
+          img: require('../assets/images/Genesis.png')
+        },
+        {
+          name: 123,
+          img: require('../assets/images/Genesis.png')
+        }
+      ]
+    };
+  },
+  watch: {},
+  computed: {
+    ...mapGetters({
+      connection: 'connection',
+      dark: 'dark',
+      assetInfo: 'assetInfo'
+    })
+  },
+  mounted() {},
+  methods: {
+      openGrants() {
+      this.$router.push({
+        name: 'GrantsDetails',
+      });
+    },
+  }
+};
+</script>
+
+<style scoped lang="scss">
+.overview {
+  padding: 20px;
+}
+.chip-dark {
+  background-color: #13112b;
+}
+.chip-light {
+  background-color: #f5f5f7;
+}
+.font-grey {
+  color: #868e9e;
+  font-size: 14px;
+  font-weight: normal;
+}
+.projects {
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+  .left-content {
+    display: flex;
+    justify-content: flex-start;
+    .image {
+      padding: 0;
+      border-radius: 5px;
+    }
+    .supported {
+      margin-left: 20px;
+      .name {
+        font-weight: 500;
+      }
+      .detail{
+          margin-top:8px;
+          margin-bottom: 12px;
+      }
+      .game-active {
+        padding: 2px 12px;
+        background: #54bbfc;
+        border-radius: 20px;
+        color: #fff;
+        margin-left: 12px;
+      }
+    }
+  }
+  .right-icon{
+      text-align:right;
+      vertical-align: middle;
+  }
+}
+</style>

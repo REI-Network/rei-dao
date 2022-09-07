@@ -6,6 +6,8 @@ import Stake from '../views/Stake.vue';
 import StakeForGas from '../views/StakeForGas.vue';
 import Governance from '../views/Governance.vue';
 import Bridge from '../views/Bridge.vue';
+import Grants from '../views/Grants.vue';
+import GrantsDetails from '../components/GrantsDetails.vue';
 import StakeValidator from '../components/StakeValidator.vue';
 import MyNftDetails from '../components/MyNftDetails.vue';
 
@@ -53,6 +55,16 @@ const routes = [
     path: '/bridge',
     name: 'Bridge',
     component: Bridge
+  },
+  {
+    path: '/grants',
+    name: 'Grants',
+    component: Grants
+  },
+  {
+    path: '/grants/details',
+    name: 'GrantsDetails',
+    component: GrantsDetails
   },
   {
     path: '/stakeValidator',
