@@ -46,6 +46,12 @@ export const getReiSatistic = (params) => http({
   params
 });
 
+export const getNftHolder = (params) => http({
+  method: 'GET',
+  url:'https://gateway.rei.network/api/nft/holder',
+  params
+});
+
 
 export const postRpcRequest = (apiurl,params) => http({
     method: 'POST',

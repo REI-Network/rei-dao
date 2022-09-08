@@ -16,10 +16,12 @@
           <span class="title">My NFTs</span>
           <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
         </v-col>
-        <!-- <v-col style="text-align: right">
-          <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-          <span class="font-grey">Submit a token support here</span>
-        </v-col> -->
+        <v-col style="text-align: right">
+          <span >
+            <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
+            <a class="font-grey" href="https://github.com/REI-Network/rei-token-profile" target="_blank">Submit a token support here</a>
+          </span>
+        </v-col>
       </v-row>
       <v-row justify="start" no-gutters style="padding: 0 4px">
         <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
