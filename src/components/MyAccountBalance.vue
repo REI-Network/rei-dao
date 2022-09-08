@@ -44,18 +44,14 @@
            </div>
           <div id="myCharts" ref="chart" style="height:280px"></div>
           </v-card>          
-        </div> -->
-        <div class="voting-card">
-          <MyAccountCrude></MyAccountCrude>
-        </div>
-                
+        </div> -->         
         <div class="voting-card">
           <v-card
             class="secend-card"     
             rounded="4"
             color="background"
           >
-          <v-subheader class="sub-title"><h3>Voting</h3></v-subheader>
+          <v-subheader class="sub-title title">Voting</v-subheader>
           <div class="chips-tow">
             <v-card
             class="voting-stake"
@@ -89,7 +85,7 @@
                     -
                 </div>
               <v-subheader>
-                  Validator Voting Staked
+                  Validator voting staked
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -154,7 +150,7 @@
                     -
                 </div>
               <v-subheader>
-                  Pending Unstaked
+                  Pending unstaked
                   <v-tooltip right color="start_unstake">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon
@@ -189,8 +185,11 @@
           </div>   
         </v-card>
         </div>
+        <div class="voting-card">
+       <MyAccountCrude></MyAccountCrude>
+    </div>  
       </v-col>
-    </v-row>   
+    </v-row> 
     </v-container>
 </template>
 <script>
@@ -556,10 +555,13 @@ export default {
       height: 32px;
     }
     .time-price{
-        width: 44%;
+      width: 44%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+    }
+    .title {
+      font-weight: 500;
     }
   .update-time{
     display: flex;

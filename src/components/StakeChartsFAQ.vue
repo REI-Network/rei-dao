@@ -94,12 +94,12 @@ export default {
         tags:['7D'],
         faqList:[
           {
-            title:'How to become a node validator?',
+            title:'How to become a validator?',
             content:'A validator is a participant in the network who runs validator nodes to run and secure the network.',
             url:'https://docs.rei.network/rei-dao/guides/become-a-validator'
           },
           {
-            title:'How to vote for a node validator?',
+            title:'How to vote for a validator?',
             content:'Once you login you will find this on the Validator of the Staking Dashboard. Here you will see an Unstake button for each of the validators.',
             url:'https://docs.rei.network/rei-dao/guides/voting-for-a-validator'
           },
