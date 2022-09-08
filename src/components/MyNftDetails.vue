@@ -60,14 +60,14 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- <v-card class="wallet-table">
+    <v-card class="wallet-table">
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
         </v-col>
       </v-row>
-      <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
-        <template v-slot:item.assets="{ item }">
+      <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+        <template v-slot:item.address="{ item }">
           <v-row align="center">
             <div class="asset-logo">
               <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
@@ -75,14 +75,14 @@
             <Address :val="item.address"></Address>
           </v-row>
         </template>
-        <template v-slot:item.amount="{ item }">
-          <span>{{ item.value }}</span>
+        <template v-slot:item.balance="{ item }">
+          <span>{{ item.balance }}</span>
         </template>
       </v-data-table>
       <div class="text-center pt-2" v-if="holderList.length > 0">
         <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
       </div>
-    </v-card> -->
+    </v-card>
   </v-container>
 </template>
 <script>
@@ -93,10 +93,14 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
-//import Address from '../components/Address';
+import Address from '../components/Address';
+import { getNftHolder } from '../service/CommonService'
 import find from 'lodash/find';
 
 export default {
+  components: {
+    Address
+  },
   filters,
   data() {
     return {
@@ -119,10 +123,10 @@ export default {
       nftName: '',
       imageShow: true,
       url: '',
-      stakeListLoading: false,
+      getListLoading: false,
       headers: [
-        { text: 'Address', value: 'assets' },
-        { text: 'Amount', value: 'amount' }
+        { text: 'Address', value: 'address' },
+        { text: 'Amount', value: 'balance' }
       ],
       holderList: []
     };
@@ -190,8 +194,14 @@ export default {
         this.getHolderList();
     },
     async getHolderList() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&page=1&offset=1000&contractaddress=${this.$route.query.id}`);
-      this.holderList = data.result;
+      let params = {
+        contract: this.$route.query.id,
+        tokenId: this.$route.query.tokenid,
+      }
+      this.getListLoading = true;
+      const { data: holderList } = await getNftHolder(params);
+      this.holderList = holderList;
+      this.getListLoading = false;
     },
     routeLink() {
       this.$router.back();

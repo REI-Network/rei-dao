@@ -51,10 +51,16 @@
                   </v-tooltip>
                   <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
-                <!-- <v-col style="text-align: right">
-                  <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-                  <span class="font-grey">Submit a token support here</span>
-                </v-col> -->
+                <v-col style="text-align: right">
+                  <span class="font-grey hideButton" @click="handleHideAsset">
+                    <v-icon size="16" :color="checkStatusColor" class="wallet-icon">mdi-checkbox-marked-circle</v-icon>
+                     <span>Hide 0 balance</span>
+                  </span>
+                  <span >
+                    <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
+                    <a class="font-grey" href="https://github.com/REI-Network/rei-token-profile" target="_blank">Submit a token support here</a>
+                  </span>
+                </v-col>
               </v-row>
               <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
@@ -131,9 +137,10 @@ export default {
       tab1: null,
       page: 1,
       pageCount: 0,
-      itemsPerPage: 6,
+      itemsPerPage: 10,
       getListLoading: false,
       totalAmount:0,
+      checkStatus: false,
       headers: [
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
@@ -142,7 +149,14 @@ export default {
       ],
       assetList: [
       ],
+      assetNotZeroList:[],
+      assetZeroList:[],
       tokenInfoList:[
+        {
+          decimals: "18",
+          logo: "https://static.rei.network/media/currency_logo.png",
+          symbol:"REI"
+        },
         {
           decimals: "8",
           erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
@@ -201,9 +215,16 @@ export default {
       connection: 'connection',
       dark: 'dark'
     }),
-    
+    checkStatusColor() {
+      if(this.checkStatus){
+        return 'green'
+      } else {
+        return 'gray'
+      }
+    }
   },
   mounted() {
+    this.init();
     this.connect();
     this.getBalance();
   },
@@ -215,55 +236,96 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
+    init(){
+
+    },
+    handleHideAsset(){
+      if(this.checkStatus == false){
+        localStorage.setItem('hideAsset',true);
+        this.checkStatus = true;
+        this.assetList = this.assetNotZeroList;
+      } else {
+        localStorage.setItem('hideAsset','');
+        this.checkStatus = false;
+        this.assetList = this.assetNotZeroList.concat(this.assetZeroList);
+      }
+      
+    },
     async getBalance(){
-      let asset = [], assetArr = ['REI']
+      let asset = [], assetAllArr = [], assetZeroArr = [], assetArr = [];
       if(!this.connection.address) return;
       this.getListLoading = true;
-      let reiBalance = await web3.eth.getBalance(this.connection.address);
-      asset.push({
-        symbol: 'REI',
-        logo: 'https://static.rei.network/media/currency_logo.png',
-        balance: web3.utils.fromWei(web3.utils.toBN(reiBalance)),
-        price: 0,
-        value: 0
-      })
-
-
+      let _assetObj = {};
+      
       for(let i = 0; i < this.tokenInfoList.length; i++){
         let token = this.tokenInfoList[i];
-        let contract = new web3.eth.Contract(abiERC20, token.erc20Address);
-        let balance = await contract.methods.balanceOf(this.connection.address).call();
-        let decimals = token.decimals;
+        if(token.symbol == 'REI'){
+          let reiBalance = await web3.eth.getBalance(this.connection.address);
+          _assetObj = {
+            symbol: 'REI',
+            logo: 'https://static.rei.network/media/currency_logo.png',
+            balance: web3.utils.fromWei(web3.utils.toBN(reiBalance)),
+            price: 0,
+            value: 0
+          }
+        } else {
+          let contract = new web3.eth.Contract(abiERC20, token.erc20Address);
+          let balance = await contract.methods.balanceOf(this.connection.address).call();
+          let decimals = token.decimals;
 
-        let _balance = balance/10**decimals;
-        if(_balance !=0){
-          asset.push({
+          let _balance = balance/10**decimals;
+          _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
             balance: _balance,
             price: 0,
             value: 0
-          })
-          assetArr.push(token.symbol);
+          }
         }
+        assetAllArr.push(token.symbol);
+        asset.push(_assetObj);
+        
         
       }
-      let { data: priceList} = await getPrice({symbols:assetArr.join()});
+      let { data: priceList} = await getPrice({symbols:assetAllArr.join()});
       let totalAmount = 0;
-      let assetList = asset.map(item=>{
+
+      for(let i = 0; i < asset.length; i++){
+        let item = asset[i];
         let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
         let value = _asset.current_price*item.balance;
         totalAmount += value;
-        return {
-          symbol: item.symbol,
-          logo: item.logo,
-          balance: item.balance,
-          price: _asset.current_price,
-          value
+        if(item.balance>0){
+          assetArr.push({
+            symbol: item.symbol,
+            logo: item.logo,
+            balance: item.balance,
+            price: _asset.current_price,
+            value
+          })
+        } else {
+          assetZeroArr.push({
+            symbol: item.symbol,
+            logo: item.logo,
+            balance: item.balance,
+            price: _asset.current_price,
+            value
+          })
         }
-      })
+      }
 
-      this.assetList = assetList;
+      
+      if(!localStorage.getItem('hideAsset')){
+        this.assetList = assetArr.concat(assetZeroArr);
+        this.checkStatus = false;
+      } else {
+         this.assetList = assetArr;
+         this.checkStatus = true;
+      }
+
+      this.assetNotZeroList = assetArr;
+      this.assetZeroList = assetZeroArr;
+
       this.totalAmount = totalAmount
       this.getListLoading = false;
 
@@ -335,6 +397,9 @@ export default {
 .font-grey {
   font-size: 14px;
   color: #868e9e;
+}
+.hideButton{
+  cursor: pointer;
 }
 .wallet-table {
   padding: 40px;

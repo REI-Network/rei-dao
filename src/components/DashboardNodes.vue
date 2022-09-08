@@ -224,13 +224,14 @@ Address,
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-    getInterval(){
-         this.interval = setInterval(() => {
-        if (this.value === 100) {
+    getInterval(averageBlockTime){
+        let intervalTime = averageBlockTime/20*1000;
+        this.interval = setInterval(() => {
+        if (this.value >= 100) {
           return (this.value = 0)
         }
         this.value += 5
-      }, 150)
+      }, intervalTime)
     },
     async getValidator(){
       try{
@@ -301,8 +302,10 @@ Address,
           let location = find(locationData, (_items) => web3.utils.toChecksumAddress(_items.address) == web3.utils.toChecksumAddress(item.address));
           if(!detail){
             detail = {
+              nodeAddress: item.address,
               nodeDesc: '',
-              nodeName: 'Validator'
+              nodeName: 'Validator',
+              logo: 'https://static.rei.network/media/currency_logo.png'
             }
           }
           if(!location){
@@ -400,17 +403,26 @@ Address,
             myChart.resize();
           });
         })
-        this.getInterval();
+        let averageBlockTime = this.stats.averageBlockTime || 3;
+        this.getInterval(averageBlockTime);
         this.getCurrentNodeInfo();
         setInterval(() => {
             this.getCurrentNodeInfo()
-        }, 3000);
+        }, averageBlockTime*1000);
     },
     async getCurrentNodeInfo(){
       let blockInfo = await this.getBlock();
       this.blockHeight = blockInfo.blockHeight;
       this.miner = blockInfo.miner;
       this.currentNode = find(this.detailsList, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(this.miner));
+      if(!this.currentNode){
+        this.currentNode = {
+          nodeAddress: this.miner,
+          nodeDesc: '',
+          nodeName: 'Validator',
+          logo: 'https://static.rei.network/media/currency_logo.png'
+        }
+      }
       let lightData = find(this.locationData, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
       // console.log('detail',lightData)
       this.myChart.setOption(
@@ -434,27 +446,23 @@ Address,
     },
     async getBlockNumberInfo(){
       let apiUrl = this.apiUrl.rpc;
-      let param = {
-            method:'eth_blockNumber',
-        }
-      let res = await postRpcRequest(apiUrl,param);
+      let res = await postRpcRequest(apiUrl,{
+        method:'eth_getBlockByNumber',
+        params:["latest",true]
+      });
       return res;
     },
     async getBlock(){
         let { data: resBlock } = await this.getBlockNumberInfo();
-        let blockHeight = web3.utils.hexToNumber(resBlock.result);
-        let block = await web3.eth.getBlock(blockHeight);
-        let blockNumber = resBlock.result;
+        let blockHeight = web3.utils.hexToNumber(resBlock.result.number);
+        let block = resBlock.result;
         
-        // console.log('blockNumber', block)
-        let _miner = recoverMinerAddress(blockNumber,block.hash,block.extraData);
+        let _miner = recoverMinerAddress(blockHeight,block.hash,block.extraData);
         let miner = web3.utils.toChecksumAddress(_miner)
         return {
           blockHeight,
           miner
         }
-        
-        // console.log('this.miner',this.miner)
     },
     async getRei(){
         let ReiSatistic = await getReiSatistic();
