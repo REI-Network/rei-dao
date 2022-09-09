@@ -44,6 +44,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container{
+    width: 100%;
+}
 .daytime {
   //   background-color: #f3f4fa;
   background: linear-gradient(180deg, #d6e3ff 0%, rgba(255, 255, 255, 0) 50%);

@@ -36,8 +36,8 @@
     </v-card>
     <v-card class="payment">
       <v-row justify="space-between">
-        <v-col>
-          <span class="title">Payment Detail</span>
+        <v-col style="margin-bottom:20px">
+          <h3>Payment Detail</h3>
         </v-col>
       </v-row>
       <v-data-table :headers="headers" :items="paymentList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="paymentListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
