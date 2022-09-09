@@ -104,7 +104,7 @@
               </template>
               <template v-slot:item.actions="{ item }">
                 <div class="text-right">
-                  <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address && inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
+                  <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
                     {{ $t('stake.staking') }}
                   </v-btn>
                   <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
@@ -146,13 +146,13 @@
               <template v-slot:item.balanceOfShare="{ item }">
                 {{ item.balanceOfShare | asset(2) }}
               </template>
-              <!-- <template v-slot:item.apy="{ item }">
-                    {{ item.apy | asset(2) }}
-                  </template> -->
+              <template v-slot:item.rewards="{ item }">
+                {{ item.rewards | asset(5) }}
+              </template>
 
               <template v-slot:item.actions="{ item }">
                 <div class="text-right">
-                  <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" v-if="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                  <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
                     {{ $t('stake.staking') }}
                   </v-btn>
                   <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
@@ -569,7 +569,7 @@ export default {
           value: 'power'
         },
         { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
-        // { text: 'Apy', value: 'apy' },
+        { text: 'Estimate Reward', value: 'rewards' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
       status: {
@@ -814,8 +814,41 @@ export default {
       });
       this.myStakeListRawData = stakeInfos;
     },
+    async getMyStakeRewardList(){
+      let url = this.apiUrl.graph;
+      let client = new ApolloClient({
+        uri: `${url}voteReward`,
+        cache: new InMemoryCache()
+      });
+      const getVoterInfos = gql`
+        query voterInfos($arrId: [String]){
+          voterInfos(where:{id_in:$arrId}){
+          id
+          cost
+          timestamp
+          commissionAddress
+          }
+        }
+        `;
+      let arrId = [];
+      for(let i = 0; i<this.myStakeListRawData.length;i++){
+        let _item = this.myStakeListRawData[i];
+        arrId.push(_item.id);
+      }
+      const {
+        data: { voterInfos }
+      } = await client.query({
+        query: getVoterInfos,
+        variables: {
+          arrId
+        },
+        fetchPolicy: 'cache-first'
+      });
+      return voterInfos;
+    },
     async getMyStakeList() {
       this.myStakeListLoading = true;
+      let voterInfos = await this.getMyStakeRewardList();
       let myStakeList = this.myStakeListRawData;
       if (myStakeList.length > 0) {
         let validatorPowerMap = myStakeList.map((item) => {
@@ -834,11 +867,14 @@ export default {
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         let arr = [];
         for (let i = 0; i < myStakeList.length; i++) {
+          let rewardInfo = await this.stakeManageInstance.methods.estimateSharesToAmount(myStakeList[i].validator, balanceOfShare[i].balance).call();
+          let reward = web3.utils.toBN(rewardInfo).sub(web3.utils.toBN(voterInfos[i].cost));
           arr.push({
             address: myStakeList[i].validator,
             power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
             balanceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
-            commissionShare: balanceOfShare[i].commissionShare
+            commissionShare: balanceOfShare[i].commissionShare,
+            rewards: web3.utils.fromWei(reward)
           });
         }
         this.myStakeList = arr;
@@ -965,7 +1001,6 @@ export default {
         const claimRes = await this.stakeManageInstance.methods.startUnstake(this.currentItem.address, this.connection.address, web3.utils.toWei(this.claimForm.amount)).send({
           from: this.connection.address
         });
-        console.log(claimRes);
         if (claimRes.transactionHash) {
           this.addTx({
             tx: {
@@ -1235,7 +1270,7 @@ export default {
       }
     },
     inDefaultList(item) {
-      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
+      return this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
     },
     checkRewardState(address){
       return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address)
@@ -1554,6 +1589,10 @@ export default {
 .dark-nodes {
   background-color:#4C4A68;
   // opacity: 0.5;
+}
+.btn-opacity {
+  opacity: 0;
+  cursor: default;
 }
 .node-details {
   padding-top: 12px;
