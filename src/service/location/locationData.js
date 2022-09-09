@@ -116,8 +116,13 @@ const locationData = [
   },
   {
     name: "Washington", 
-      value: [87.7597, 95.7532],
-      address:"0xedde95394b1f79025dc31f338bf0b8449d4d01ba"
+    value: [87.7597, 95.7532],
+    address:"0xedde95394b1f79025dc31f338bf0b8449d4d01ba"
+  },
+  {
+    name: "California", 
+    value: [-44.0398, 122.7483],
+    address:"0x66F6F8F219e84DF774D34414c86658Ce2deE617d"
   }
 ];
 
