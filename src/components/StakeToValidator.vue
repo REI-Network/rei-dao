@@ -103,18 +103,16 @@
                 {{ item.balanceOfShare | asset(2) }}
               </template>
               <template v-slot:item.actions="{ item }">
-                <div class="text-right">
-                  <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
-                    {{ $t('stake.staking') }}
-                  </v-btn>
-                  <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
-                    {{ $t('stake.claim') }}
-                  </v-btn>
-                  <v-btn v-if="checkRewardState(item.address)" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
-                    {{ $t('stake.get_reward') }}
-                  </v-btn>
-                  <span v-if="!connection.address"> - </span>
-                </div>
+                <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
+                  {{ $t('stake.staking') }}
+                </v-btn>
+                <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
+                  {{ $t('stake.claim') }}
+                </v-btn>
+                <v-btn v-if="checkRewardState(item.address)" small class="mr-4 get-reward" @click.stop="handleReward(item)" height="32">
+                  {{ $t('stake.get_reward') }}
+                </v-btn>
+                <span v-if="!connection.address"> - </span>
               </template>
             </v-data-table>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
@@ -151,15 +149,13 @@
               </template>
 
               <template v-slot:item.actions="{ item }">
-                <div class="text-right">
-                  <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
-                    {{ $t('stake.staking') }}
-                  </v-btn>
-                  <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
-                    {{ $t('stake.claim') }}
-                  </v-btn>
-                  <span v-if="!connection.address"> - </span>
-                </div>
+                <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                  {{ $t('stake.staking') }}
+                </v-btn>
+                <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
+                  {{ $t('stake.claim') }}
+                </v-btn>
+                <span v-if="!connection.address"> - </span>
               </template>
             </v-data-table>
             <v-row justify="end" align="center" v-if="myStakeList.length > 0">
