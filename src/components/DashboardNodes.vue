@@ -44,7 +44,7 @@
                 <v-col cols="12" md="9">
 
                     <div class="map-content">
-                        <div id="myCharts" ref="chart" class="dispribution" style="width:100%;height:100%"></div>
+                        <div id="myValidatorCharts" ref="myValidatorCharts" class="dispribution" style="width:100%;height:100%"></div>
                     </div>
                 </v-col>
             </v-row>
@@ -196,7 +196,8 @@ Address,
         currentNode:'',
         detailsList:[],
         locationData:[],
-        myChart:null
+        myChart:null,
+        intervalNode: null
     };
   },
   computed: {
@@ -207,7 +208,8 @@ Address,
     })
   },
   beforeDestroy () {
-      clearInterval(this.interval)
+      clearInterval(this.interval);
+      clearInterval(this.intervalNode);
     },
   mounted(){
       this.connect();
@@ -292,10 +294,10 @@ Address,
         let activeValidator = await this.getValidator();
         let validatorDetails = await getValidatorDetails();
         this.detailsList = validatorDetails.data.data;
-        var chartDom = document.getElementById('myCharts');
-        var myChart = echarts.init(chartDom);
+        const chartDom = this.$refs.myValidatorCharts;
+        let myChart =  this.$echarts.init(chartDom);
         this.myChart = myChart;
-        var option;
+        let option;
 
         let _activeValidator = activeValidator.map((item)=>{
           let detail = find(this.detailsList, (_items) => web3.utils.toChecksumAddress(_items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
@@ -406,7 +408,7 @@ Address,
         let averageBlockTime = this.stats.averageBlockTime || 3;
         this.getInterval(averageBlockTime);
         this.getCurrentNodeInfo();
-        setInterval(() => {
+        this.intervalNode = setInterval(() => {
             this.getCurrentNodeInfo()
         }, averageBlockTime*1000);
     },
