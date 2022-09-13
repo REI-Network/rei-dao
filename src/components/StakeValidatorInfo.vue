@@ -588,8 +588,8 @@ export default {
       this.calculationDialog = true;
     },
     async Calculation() {
-      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.votingPower) + this.stake ) / (this.totalAmount + this.stake)) * (this.detailData.commissionRate/ 100);
-      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.votingPower) + this.stake) / 365) * this.days;
+      let votingRewardsYear = 10000000 * ((parseFloat(this.detailData.votingPower) + this.stake*1 ) / (this.totalAmount*1 + this.stake*1)) * (this.detailData.commissionRate/ 100);
+      this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.detailData.votingPower) + this.stake*1) / 365) * this.days;
       this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
     },
     cancelCalculation() {
