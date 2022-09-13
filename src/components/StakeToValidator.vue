@@ -863,14 +863,20 @@ export default {
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         let arr = [];
         for (let i = 0; i < myStakeList.length; i++) {
-          let rewardInfo = await this.stakeManageInstance.methods.estimateSharesToAmount(myStakeList[i].validator, balanceOfShare[i].balance).call();
-          let reward = web3.utils.toBN(rewardInfo).sub(web3.utils.toBN(voterInfos[i].cost));
+          let rewardInfo = {},reward = 0;
+          if(balanceOfShare[i].balance>0){
+            rewardInfo = await this.stakeManageInstance.methods.estimateSharesToAmount(myStakeList[i].validator, balanceOfShare[i].balance).call();
+            reward = web3.utils.fromWei(web3.utils.toBN(rewardInfo).sub(web3.utils.toBN(voterInfos[i].cost)));
+          } else {
+            reward = 0;
+          }
+          
           arr.push({
             address: myStakeList[i].validator,
             power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
             balanceOfShare: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
             commissionShare: balanceOfShare[i].commissionShare,
-            rewards: web3.utils.fromWei(reward)
+            rewards: reward
           });
         }
         this.myStakeList = arr;
