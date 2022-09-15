@@ -3,15 +3,15 @@
     <v-card class="grants-detail">
       <v-row>
         <v-col cols="12" md="2">
-          <v-img src="../assets/images/Genesis.png" />
+          <v-img :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`"  />
         </v-col>
         <v-col cols="12" md="5">
           <h3>{{ projectDetails.project_name}}</h3>
           <div class="gameFi">
             <span class="game-active">{{ projectDetails.categories}}</span>
-            <a target="_blank" href=""><v-img class="img-icon" src="../assets/images/twitter.svg" width="24" height="24"/></a>
-            <a target="_blank"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="24" height="24" /></a>
-            <a target="_blank"><v-img class="img-icon" src="../assets/images/telegram.svg" width="24" height="24"/></a>
+            <a target="_blank" :href="projectDetails.links.twitter"><v-img class="img-icon" src="../assets/images/twitter.svg" width="24" height="24"/></a>
+            <a target="_blank" :href="projectDetails.links.discord"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="24" height="24" /></a>
+            <a target="_blank" :href="projectDetails.links.telegram"><v-img class="img-icon" src="../assets/images/telegram.svg" width="24" height="24"/></a>
           </div>
           <div class="font-grey describe">{{ projectDetails.project_desc}}</div>
           <v-btn width="120"> Go </v-btn>
@@ -32,7 +32,7 @@
           <div class="font-grey">Went live on</div>
         </v-col>
         <v-col cols="12" sm="4">
-          <h2>{{ projectDetails.sponsored_amount | asset(0) }}&nbsp;&nbsp;<span class="font-grey">REI</span></h2>
+          <h2>{{ sponsored | asset(2) }}&nbsp;<span class="font-grey">REI</span></h2>
           <div class="font-grey">Sponsored</div>
         </v-col>
       </v-row>
@@ -47,23 +47,29 @@
         <template v-slot:item.hash="{ item }">
           <v-row align="center">
             <div>{{ item.hash | addr }}</div>
-
           </v-row>
         </template>
-        <!-- <template v-slot:item.state="{ item }">
-          <span style="color:orange">{{ item.state }}</span>
-        </template> -->
+        <template v-slot:item.time="{ item }">
+          <span>{{ item.timeStamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</span>
+        </template>
       </v-data-table>
       <div class="text-center pt-2" v-if="paymentList.length > 0">
         <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
       </div>
+    </v-card>
+    <v-card class="evaluation-card">
+      <h3>Evaluation Details</h3>
+      <div class="font-grey evaluation">{{ projectDetails.project_comments}}</div>
     </v-card>
   </v-container>
 </template>
 <script>
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 
+import Web3 from 'web3';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
@@ -81,6 +87,7 @@ export default {
       itemsPerPage: 20,
       paymentListLoading:false,
       projectDetails:"",
+      sponsored:0,
       headers: [
         { text: 'Rounds', value: 'rounds' },
         { text: 'Txn Hash', value: 'hash' },
@@ -119,10 +126,25 @@ export default {
      async getProjects(){
       let list = projectsList.list;
       let detail = find(list, (item) => item.id == this.$route.query.id);
-      this.projectDetails = detail
-       console.log('list',list)
-      console.log('id',this.$route.query.id)
-      console.log('details',detail)
+      this.projectDetails = detail;
+      let transferList = this.projectDetails.transfer_record;
+      this.paymentList =[];
+      for (let i = 0; i < transferList.length; i++) {
+        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=transaction&action=gettxinfo&txhash=${transferList[i].tx_id}`);
+        let result = data.result;
+        result.rounds = transferList[i].name,
+        this.paymentList.push(result);
+        this.sponsored = 0,
+        this.paymentList = this.paymentList.map((item) => {
+          let amount = web3.utils.fromWei(web3.utils.toBN(item.value))
+          this.sponsored += Number(amount)
+          // console.log('sponsored',this.sponsored)
+          return{
+            ...item,
+            amount:amount
+          }
+      })
+      }
     },
   }
 };
@@ -170,6 +192,14 @@ export default {
     .title{
         margin-bottom:20px;
     }
+}
+.evaluation-card {
+  padding: 20px;
+  margin-top: 40px;
+}
+.evaluation{
+   margin-top: 20px; 
+   line-height: 28px;
 }
 @media screen and (max-width: 900px) {
 }

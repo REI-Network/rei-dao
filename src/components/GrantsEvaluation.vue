@@ -1,11 +1,5 @@
 <template>
   <v-container style="padding-top: 0">
-    <v-card class="Evaluation-card">
-      <h3>Evaluation Details</h3>
-      <div class="font-grey evaluation">1.DeFi Kingdoms is a game, a DEX, a liquidity pool opportunity, a market of rare utility driven NFTs, and it all plays out seamlessly in the incredibly badass form of fantasy pixel art. We’re excited to release the DeFi Kingdoms universe to the world. Come join our lovely community!</div>
-      <div class="font-grey evaluation">2.DeFi Kingdoms is a game, a DEX, a liquidity pool opportunity, a market of rare utility driven NFTs, and it all plays out seamlessly in the incredibly badass form of fantasy pixel art. We’re excited to release the DeFi Kingdoms universe to the world. Come join our lovely community!</div>
-      <div class="font-grey evaluation">3.DeFi Kingdoms is a game, a DEX, a liquidity pool opportunity, a market of rare utility driven NFTs, and it all plays out seamlessly in the incredibly badass form of fantasy pixel art. We’re excited to release the DeFi Kingdoms universe to the world. Come join our lovely community!</div>
-    </v-card>
     <v-row class="distribution">
       <v-col cols="12" md="4">
         <h2>Distribution principles of Grants</h2>
@@ -85,13 +79,12 @@ export default {
 .font-grey {
   color: #868e9e;
   font-size: 14px;
-  line-height: 28px;
 }
 .evaluation{
    margin-top: 20px; 
 }
 .distribution {
-  margin-top: 40px;
+  // margin-top: 40px;
 }
 .step-card {
   margin-top: 20px;

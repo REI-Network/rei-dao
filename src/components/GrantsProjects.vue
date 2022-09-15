@@ -14,7 +14,7 @@
             <v-row justify="space-between">
               <v-col cols="12" md="11" class="left-content">
                 <div class="image">
-                  <v-img src="../assets/images/Genesis.png" width="120" />
+                  <v-img :src="`https://ipfs.io/ipfs/${item.project_logo}`" width="120" />
                 </div>
                 <div class="supported">
                   <div><span class="name">{{item.project_name}}</span><span class="game-active">{{item.categories}}</span></div>
@@ -29,7 +29,7 @@
                       <div class="font-grey">Went live on</div>
                     </v-col>
                     <v-col cols="12" md="4">
-                      <h2>{{ item.sponsored_amount | asset(0) }}&nbsp;&nbsp;<span class="font-grey">REI</span></h2>
+                      <h2>{{ item.sponsored_amount | asset(0) }}&nbsp;<span class="font-grey">REI</span></h2>
                       <div class="font-grey">Sponsored</div>
                     </v-col>
                   </v-row>
