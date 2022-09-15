@@ -14,22 +14,22 @@
             <v-row justify="space-between">
               <v-col cols="12" md="11" class="left-content">
                 <div class="image">
-                  <v-img :src="item.img" width="120" />
+                  <v-img src="../assets/images/Genesis.png" width="120" />
                 </div>
                 <div class="supported">
-                  <div><span class="name">Pokemon battle</span><span class="game-active">Gamefi</span></div>
-                  <div class="font-grey detail">Pokemon 是一款在REI Network的对战休闲游戏，为用户提供休闲的游戏体验和丰富的赚钱方式</div>
+                  <div><span class="name">{{item.project_name}}</span><span class="game-active">{{item.categories}}</span></div>
+                  <div class="font-grey detail">{{item.project_desc}}</div>
                   <v-row justify="space-between">
                     <v-col cols="12" md="3">
                       <h2>PB</h2>
                       <div class="font-grey">Token</div>
                     </v-col>
                     <v-col cols="12" md="5">
-                      <h2>06/07/2022</h2>
+                      <h2>{{item.published_on}}</h2>
                       <div class="font-grey">Went live on</div>
                     </v-col>
                     <v-col cols="12" md="4">
-                      <h2>100,000 <span class="font-grey">REI</span></h2>
+                      <h2>{{ item.sponsored_amount | asset(0) }}&nbsp;&nbsp;<span class="font-grey">REI</span></h2>
                       <div class="font-grey">Sponsored</div>
                     </v-col>
                   </v-row>
@@ -52,6 +52,8 @@
 import { mapGetters } from 'vuex';
 import filters from '../filters';
 
+const projectsList = require('../../src/grantsInfo/projectList.json')
+
 export default {
   filters,
   data() {
@@ -63,11 +65,9 @@ export default {
       loading: false,
       list: [
         {
-          name: 123,
           img: require('../assets/images/Genesis.png')
         },
         {
-          name: 123,
           img: require('../assets/images/Genesis.png')
         }
       ]
@@ -81,13 +81,21 @@ export default {
       assetInfo: 'assetInfo'
     })
   },
-  mounted() {},
+  mounted() {
+    this.getProjects();
+  },
   methods: {
-    openGrants() {
+    openGrants(value) {
       this.$router.push({
-        name: 'GrantsDetails'
+        name: 'GrantsDetails',
+        query:{
+          id:value.id,
+        }
       });
-    }
+    },
+    async getProjects(){
+      this.list = projectsList.list;
+    },
   }
 };
 </script>
