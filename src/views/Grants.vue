@@ -49,7 +49,7 @@ export default {
 }
 .daytime {
   //   background-color: #f3f4fa;
-  background: linear-gradient(180deg, #d6e3ff 0%, rgba(255, 255, 255, 0) 50%);
+  // background: linear-gradient(180deg, #d6e3ff 0%, rgba(255, 255, 255, 0) 50%);
 }
 .night {
   background-color: #100d22;

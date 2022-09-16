@@ -5,7 +5,7 @@
         <h3>Projects have been supported</h3>
         <v-col style="text-align: right">
           <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-          <span class="font-grey"><a target="_blank" href="https://form.typeform.com/to/q7cU4ewA?typeform-source=rei.network" class="font-grey">Apply for grants</a></span>
+          <span class="font-grey"><a target="_blank" href="https://form.typeform.com/to/q7cU4ewA?typeform-source=rei.network" class="font-grey"> Apply for grants</a></span>
         </v-col>
       </v-row>
       <v-data-iterator :items="list" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')">
@@ -14,20 +14,21 @@
             <v-row justify="space-between">
               <v-col cols="12" md="11" class="left-content">
                 <div class="image">
-                  <v-img :src="`https://ipfs.io/ipfs/${item.project_logo}`"
-                  lazy-src="../assets/images/logo_bg.png"
-                  width="120" />
+                  <v-img class="image" :src="`https://ipfs.io/ipfs/${item.project_logo}`" lazy-src="../assets/images/logo_bg.png" width="120" />
                 </div>
                 <div class="supported">
-                  <div><span class="name">{{item.project_name}}</span><span class="game-active">{{item.categories}}</span></div>
-                  <div class="font-grey detail">{{item.project_desc}}</div>
+                  <div>
+                    <span class="name">{{ item.project_name }}</span
+                    ><span class="game-active">{{ item.categories }}</span>
+                  </div>
+                  <div class="font-grey detail">{{ item.project_desc }}</div>
                   <v-row justify="space-between">
                     <v-col cols="12" md="3">
-                      <h2 v-if="item.project_token && item.project_token.symbol">{{item.project_token.symbol }}</h2>
+                      <h2 v-if="item.project_token && item.project_token.symbol">{{ item.project_token.symbol }}</h2>
                       <div class="font-grey">Token</div>
                     </v-col>
                     <v-col cols="12" md="5">
-                      <h2>{{item.published_on}}</h2>
+                      <h2>{{ item.published_on }}</h2>
                       <div class="font-grey">Went live on</div>
                     </v-col>
                     <v-col cols="12" md="4">
@@ -44,7 +45,7 @@
           </v-card>
         </template>
       </v-data-iterator>
-      <div class="pagination" v-if="list.length>6">
+      <div class="pagination" v-if="list.length > 6">
         <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
       </div>
     </v-card>
@@ -54,7 +55,7 @@
 import { mapGetters } from 'vuex';
 import filters from '../filters';
 
-const projectsList = require('../../src/grantsInfo/projectList.json')
+const projectsList = require('../../src/grantsInfo/projectList.json');
 
 export default {
   filters,
@@ -90,14 +91,14 @@ export default {
     openGrants(value) {
       this.$router.push({
         name: 'GrantsDetails',
-        query:{
-          id:value.id,
+        query: {
+          id: value.id
         }
       });
     },
-    async getProjects(){
+    async getProjects() {
       this.list = projectsList.list;
-    },
+    }
   }
 };
 </script>
@@ -105,8 +106,8 @@ export default {
 <style scoped lang="scss">
 .overview {
   padding: 20px;
-  h3{
-      margin-left:12px;
+  h3 {
+    margin-left: 12px;
   }
 }
 .chip-dark {
@@ -120,6 +121,10 @@ export default {
   font-size: 14px;
   font-weight: normal;
 }
+  a:hover {
+    color: #6979f8;
+    text-decoration: underline;
+  }
 .projects {
   padding: 20px;
   margin-top: 20px;
@@ -148,6 +153,9 @@ export default {
         margin-left: 12px;
       }
     }
+  }
+  .image {
+    border-radius: 4px;
   }
   .right-icon {
     text-align: right;

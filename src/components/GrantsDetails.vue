@@ -9,7 +9,7 @@
         <v-card class="grants-detail">
           <v-row>
             <v-col cols="12" md="2">
-              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`" 
+              <v-img class="image" :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`" 
               lazy-src="../assets/images/logo_bg.png"
               aspect-ratio="1"
               />
@@ -31,7 +31,7 @@
               <v-btn width="120" target="_blank" v-if="projectDetails.links && projectDetails.links.website" :href="projectDetails.links.website"> Go </v-btn>
             </v-col>
             <v-col cols="12" md="5">
-              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.screenshot}`" height="250" 
+              <v-img class="image" :src="`https://ipfs.io/ipfs/${projectDetails.screenshot}`" height="250" 
               lazy-src="../assets/images/Detail_bg.png"
               />
             </v-col>
@@ -42,10 +42,16 @@
             <v-col cols="12" sm="4">
               <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
-                  <v-img src="../assets/images/grants-token.png" height="50" width="50px"></v-img>
+                  <v-img src="../assets/images/grants-token.png" height="40" width="40"></v-img>
                 </v-col>
                 <v-col>
-                  <h2 v-if="projectDetails.project_token && projectDetails.project_token.symbol">{{ projectDetails.project_token.symbol }}</h2>
+                  <a 
+                  v-if="projectDetails.project_token && projectDetails.project_token.contract_address"
+                  :class="dark?'dark-token':'light-token'"
+                  target="_blank"
+                  :href="`https://scan.rei.network/address/${projectDetails.project_token.contract_address}`">
+                    <h2 v-if="projectDetails.project_token && projectDetails.project_token.symbol">{{ projectDetails.project_token.symbol }}</h2>
+                  </a>
                   <div class="font-grey">Token</div>
                 </v-col>
               </v-row>
@@ -53,7 +59,7 @@
             <v-col cols="12" sm="4">
               <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
-                  <v-img src="../assets/images/grants-went.png" height="50" width="50px"></v-img>
+                  <v-img src="../assets/images/grants-went.png" height="40" width="40"></v-img>
                 </v-col>
                 <v-col>
                   <h2>{{ projectDetails.published_on }}</h2>
@@ -64,7 +70,7 @@
             <v-col cols="12" sm="4">
               <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
-                  <v-img src="../assets/images/grants-sponsored.png" height="50" width="50px"></v-img>
+                  <v-img src="../assets/images/grants-sponsored.png" height="40" width="40"></v-img>
                 </v-col>
                 <v-col>
                   <h2>{{ sponsored | asset(2) }}&nbsp;<span class="font-grey">REI</span></h2>
@@ -83,7 +89,9 @@
           <v-data-table :headers="headers" :items="paymentList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="paymentListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
             <template v-slot:item.hash="{ item }">
               <v-row align="center">
-                <div>{{ item.hash | addr }}</div>
+                <a target="_blank" :class="dark?'dark-token':'light-token'" :href="`https://scan.rei.network/tx/${item.hash}`">
+                  <div>{{ item.hash | addr }}</div>
+                </a>
               </v-row>
             </template>
             <template v-slot:item.time="{ item }">
@@ -169,7 +177,7 @@ export default {
           (this.paymentList = this.paymentList.map((item) => {
             let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
             this.sponsored += Number(amount);
-            // console.log('sponsored',this.sponsored)
+            // console.log('paymentList',this.paymentList)
             return {
               ...item,
               amount: amount
@@ -183,7 +191,7 @@ export default {
 
 <style scoped lang="scss">
 .daytime {
-  background: linear-gradient(180deg, #d6e3ff 0%, rgba(255, 255, 255, 0) 50%);
+  // background: linear-gradient(180deg, #d6e3ff 0%, rgba(255, 255, 255, 0) 50%);
 }
 .night {
   background-color: #100d22;
@@ -195,6 +203,16 @@ export default {
 }
 .pointer {
   cursor: pointer;
+}
+.dark-token{
+  color: #fff;
+}
+.light-token{
+  color:#000;
+}
+a:hover{
+  color: #6979f8;
+  text-decoration: underline;
 }
 .pointer:hover {
   color: #6979f8;
@@ -227,9 +245,12 @@ export default {
       margin-left: 8px;
     }
   }
-  .describe {
-    line-height: 24px;
+  .image{
+    border-radius: 4px;
   }
+  // .describe {
+  //   line-height: 24px;
+  // }
   .game-active {
     padding: 2px 12px;
     background: #54bbfc;
