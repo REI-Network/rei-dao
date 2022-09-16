@@ -5,7 +5,7 @@
         <h3>Projects have been supported</h3>
         <v-col style="text-align: right">
           <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-          <span class="font-grey">Apply for grants</span>
+          <span class="font-grey"><a target="_blank" href="https://form.typeform.com/to/q7cU4ewA?typeform-source=rei.network" class="font-grey">Apply for grants</a></span>
         </v-col>
       </v-row>
       <v-data-iterator :items="list" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')">

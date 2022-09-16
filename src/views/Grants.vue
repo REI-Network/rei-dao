@@ -2,7 +2,7 @@
   <v-container :class="dark ? 'night stake' : 'daytime stake'">
     <div class="header-title">
       <h1>Grants</h1>
-      <a class="title-detailed">What are Grants?</a>
+      <a class="title-detailed" target="_blank" href="https://medium.com/gxchain-project/rei-reicosystem-started-150-million-rei-growth-fund-for-ecosystem-building-bcb78658e506">What are Grants?</a>
     </div>
     <v-row>
       <v-col>
