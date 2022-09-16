@@ -17,7 +17,7 @@
                         </v-col>
                         <v-col cols="12" sm="6">
                             <div class="number-color">{{ projectNumber }} <span class="font-grey">REI</span></div>
-                            <div class="font-grey">Ecosystem partners have been sponsored</div>
+                            <div class="font-grey">Partners have been sponsored</div>
                         </v-col>
                     </v-row>
                 </v-card>

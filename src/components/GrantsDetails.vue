@@ -9,7 +9,15 @@
         <v-card class="grants-detail">
           <v-row>
             <v-col cols="12" md="2">
-              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`" />
+              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`" 
+              lazy-src="../assets/images/logo_bg.png"
+              aspect-ratio="1"
+              />
+              <template v-slot:placeholder>
+                <v-row class="fill-height" align="center" justify="center">
+                  <v-progress-circular indeterminate></v-progress-circular>
+                </v-row>
+              </template>
             </v-col>
             <v-col cols="12" md="5">
               <h3>{{ projectDetails.project_name }}</h3>
@@ -20,26 +28,49 @@
                 <a target="_blank" v-if="projectDetails.links && projectDetails.links.telegram" :href="projectDetails.links.telegram"><v-img class="img-icon" src="../assets/images/telegram.svg" width="24" height="24" /></a>
               </div>
               <div class="font-grey describe">{{ projectDetails.project_desc }}</div>
-              <v-btn width="120" target="_blank" href="https://rei.network/"> Go </v-btn>
+              <v-btn width="120" target="_blank" v-if="projectDetails.links && projectDetails.links.website" :href="projectDetails.links.website"> Go </v-btn>
             </v-col>
             <v-col cols="12" md="5">
-              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.screenshot}`" height="250" />
+              <v-img :src="`https://ipfs.io/ipfs/${projectDetails.screenshot}`" height="250" 
+              lazy-src="../assets/images/Detail_bg.png"
+              />
             </v-col>
           </v-row>
         </v-card>
         <v-card class="data-card">
           <v-row>
             <v-col cols="12" sm="4">
-              <h2 v-if="projectDetails.project_token && projectDetails.project_token.symbol ">{{ projectDetails.project_token.symbol }}</h2>
-              <div class="font-grey">Token</div>
+              <v-row justify="flex-start" align="center">
+                <v-col cols="12" md="2" style="padding-right: 0">
+                  <v-img src="../assets/images/grants-token.png" height="50" width="50px"></v-img>
+                </v-col>
+                <v-col>
+                  <h2 v-if="projectDetails.project_token && projectDetails.project_token.symbol">{{ projectDetails.project_token.symbol }}</h2>
+                  <div class="font-grey">Token</div>
+                </v-col>
+              </v-row>
             </v-col>
             <v-col cols="12" sm="4">
-              <h2>{{ projectDetails.published_on }}</h2>
-              <div class="font-grey">Went live on</div>
+              <v-row justify="flex-start" align="center">
+                <v-col cols="12" md="2" style="padding-right: 0">
+                  <v-img src="../assets/images/grants-went.png" height="50" width="50px"></v-img>
+                </v-col>
+                <v-col>
+                  <h2>{{ projectDetails.published_on }}</h2>
+                  <div class="font-grey">Went live on</div>
+                </v-col>
+              </v-row>
             </v-col>
             <v-col cols="12" sm="4">
-              <h2>{{ sponsored | asset(2) }}&nbsp;<span class="font-grey">REI</span></h2>
-              <div class="font-grey">Sponsored</div>
+              <v-row justify="flex-start" align="center">
+                <v-col cols="12" md="2" style="padding-right: 0">
+                  <v-img src="../assets/images/grants-sponsored.png" height="50" width="50px"></v-img>
+                </v-col>
+                <v-col>
+                  <h2>{{ sponsored | asset(2) }}&nbsp;<span class="font-grey">REI</span></h2>
+                  <div class="font-grey">Sponsored</div>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-card>
@@ -59,12 +90,12 @@
               <span>{{ (item.timeStamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
             </template>
           </v-data-table>
-          <div class="text-center pt-2" v-if="paymentList.length > 0">
+          <div class="text-center pt-2" v-if="paymentList.length > 6">
             <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
           </div>
         </v-card>
         <v-card class="evaluation-card">
-          <h3>Evaluation Details</h3>
+          <h3>Assessment</h3>
           <div class="font-grey evaluation">{{ projectDetails.project_comments }}</div>
         </v-card>
       </v-col>
@@ -162,10 +193,10 @@ export default {
   color: #868e9e;
   font-weight: normal;
 }
-.pointer{
+.pointer {
   cursor: pointer;
 }
-.pointer:hover{
+.pointer:hover {
   color: #6979f8;
   text-decoration: underline;
 }
