@@ -6,12 +6,14 @@
         <v-col cols="12" sm="6">
           <v-card :class="dark ? 'chip-dark grants-chart' : 'chip-light elevation-0 grants-chart'">
             <div id="myGranntsCharts" ref="grantChart" style="height: 348px" class="dispribution"></div>
-            <!-- <v-tooltip absolute color="start_unstake" class="support-icon">
+            <div class="support-icon">
+              <v-tooltip left color="start_unstake">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+                <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="16" style="margin-left: 4px"> mdi-help-circle-outline </v-icon>
               </template>
-              <span>Stake $REI to earn Crude as Gas</span>
-            </v-tooltip> -->
+              <span>$REI used to support validators will not back to <br/> market circulation but be gradually reclaimed by <br/>foundation in the future</span>
+            </v-tooltip>
+            </div>
           </v-card>
         </v-col>
         <v-col cols="12" sm="6">
@@ -271,6 +273,8 @@ export default {
   font-weight: normal;
 }
 .support-icon{
-  text-align: right;
+  position: absolute;
+  right: 8px;
+  top:96px;
 }
 </style>
