@@ -2,19 +2,10 @@
   <v-container class="badges-nft">
     <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
     <v-card>
-      <!-- <v-subheader>
-        <h3 class="sub-title">My Badge NFTs</h3>
-        <v-tooltip right color="start_unstake">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
-          </template>
-          <span>Get badges through participation and contributions in governance</span>
-        </v-tooltip>
-      </v-subheader> -->
       <v-row justify="space-between" class="nft-header">
         <v-col class="nft-title">
           <span class="title">My NFTs</span>
-          <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
+          <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px" @click="openNftHelp">mdi-help-circle-outline</v-icon>
         </v-col>
         <v-col style="text-align: right">
           <span >
@@ -43,6 +34,30 @@
         <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
       </div>
     </v-card>
+    <v-dialog v-model="nftHelpDialog" width="750" class="dialog-card">
+      <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <div class="dialog-nft-help">
+          <v-card-title class="dialog-title">NFT List</v-card-title>
+          <div @click="cancelNftHelp" class="close-btn"><v-icon>mdi-close</v-icon></div>
+        </div>
+        <v-list rounded class="ma-dialog start_unstake">
+          <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
+          <template v-slot:item="{ item }">
+            <v-col cols="6" md="4" class="rei-genesis">
+              <v-card outlined class="nftList" @click="openNftInfo(item)">
+                <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
+                <v-img v-else :src="item.image" />
+                <div class="nft-text">
+                  <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
+                  <div style="font-size: 18px">{{ item.name }}</div>
+                </div>
+              </v-card>
+            </v-col>
+          </template>
+        </v-data-iterator>
+        </v-list>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -79,20 +94,24 @@ export default {
       nftList: [],
       imageShow: true,
       url: '',
+      nftHelpDialog:false,
       testConfigList: [
         {
-          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+          "address": '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
         },
       ],
       prodConfigList: [
         {
-          address: '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d'
+          "address": '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d',
+          "image":"",
+          "name":"",
+          "organization":""
         },
         {
-          address: '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B'
+          "address": '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B'
         },
         {
-          address: '0x4035374c2c157F46effeA16e71A62b8992F2AD1b'
+          "address": '0x4035374c2c157F46effeA16e71A62b8992F2AD1b'
         },
       ]
     };
@@ -110,7 +129,8 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
-      nftInfo: 'nftInfo'
+      nftInfo: 'nftInfo',
+      dark: 'dark'
     })
   },
   methods: {
@@ -188,6 +208,12 @@ export default {
         }
       });
     },
+    openNftHelp(){
+      this.nftHelpDialog = true;
+    },
+    cancelNftHelp(){
+      this.nftHelpDialog = false;
+    }
   }
 };
 </script>
@@ -319,6 +345,20 @@ a:hover {
   .right-content {
     font-size: 14px;
     // color: #000;
+  }
+}
+.dialog-nft-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .dialog-title {
+    // margin-left: 12px;
+  }
+  .close-btn {
+    margin-right: 16px;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
   }
 }
 @media screen and (max-width: 900px) {
