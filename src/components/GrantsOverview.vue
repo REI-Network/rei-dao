@@ -5,18 +5,18 @@
         <v-row justify="space-between">
             <v-col cols="12" sm="6">
                 <v-card :class="dark?'chip-dark grants-chart':'chip-light elevation-0 grants-chart'">
-                    <div id="myCharts" ref="chart" style="height:348px;" class="dispribution"></div>
+                    <div id="myGranntsCharts" ref="grantChart" style="height:348px;" class="dispribution"></div>
                 </v-card>
             </v-col>
             <v-col cols="12" sm="6">
                 <v-card :class="dark?'chip-dark partners':'chip-light elevation-0 partners'">
                     <v-row>
                         <v-col cols="12" sm="6">
-                            <div class="number-color">500,000  <span class="font-grey">REI</span></div>
+                            <div class="number-color">{{ totalProjectAmount | asset(2) }}  <span class="font-grey">REI</span></div>
                             <div class="font-grey">$REI for ecosystem partners</div>
                         </v-col>
                         <v-col cols="12" sm="6">
-                            <div class="number-color">6  <span class="font-grey">REI</span></div>
+                            <div class="number-color">{{ projectNumber }} <span class="font-grey">REI</span></div>
                             <div class="font-grey">Ecosystem partners have been sponsored</div>
                         </v-col>
                     </v-row>
@@ -24,11 +24,11 @@
                 <v-card :class="dark?'chip-dark support':'chip-light elevation-0 support'">
                     <v-row>
                         <v-col cols="12" sm="6">
-                            <div class="number-color">3,602,500  <span class="font-grey">REI</span></div>
+                            <div class="number-color">{{ grantsAmount.supportValidatorAmount | asset(2) }}  <span class="font-grey">REI</span></div>
                             <div class="font-grey">$REI for supporting validators</div>
                         </v-col>
                         <v-col cols="12" sm="6">
-                            <div class="number-color">16  <span class="font-grey">REI</span></div>
+                            <div class="number-color">{{ grantsAmount.supportValidatorNumber }}</div>
                             <div class="font-grey">Validators have been supported</div>
                         </v-col>
                     </v-row>
@@ -41,11 +41,22 @@
 <script>
 import { mapGetters } from 'vuex';
 import filters from '../filters';
+const projectsList = require('../grantsInfo/projectList.json');
 
 export default {
   filters,
   data() {
-    return {};
+    return {
+      totalGrants: 150000000,
+      totalProjectAmount:0,
+      projectNumber:0,
+      grantsAmount:{
+        "supportValidatorAmount": 70740449,
+        "supportValidatorNumber": 24
+      },
+      percentProject:0,
+      percentValidator:0,
+    };
   },
   watch: {},
   computed: {
@@ -56,11 +67,29 @@ export default {
     })
   },
   mounted() {
+      this.init()
       this.myCharts()
   },
   methods: {
-      myCharts(){
-      const chart = this.$refs.chart;
+    init(){
+      let totalProjectAmount = 0;
+      for(let i = 0;i < projectsList.list.length; i++){
+        let data = projectsList.list[i];
+        totalProjectAmount += data.sponsored_amount*1;
+      }
+      this.totalProjectAmount = totalProjectAmount;
+      this.projectNumber = projectsList.list.length;
+      this.percentProject = (totalProjectAmount*1/this.totalGrants*100).toFixed(2);
+      this.percentValidator = (this.grantsAmount.supportValidatorAmount*1/this.totalGrants*100).toFixed(2);
+      this.percentRemain = (100 - this.percentProject - this.percentValidator).toFixed(2);
+    },
+    myCharts(){
+      const chart = this.$refs.grantChart;
+      let data = [
+                  { value: this.percentProject, name: '$REI for supporting validators' },
+                  { value: this.percentValidator, name: '$REI for ecosystem partners' },
+                  { value: this.percentRemain, name: 'Remaining $REI' },
+                ]
       if(chart){
         const myChart = this.$echarts.init(chart);
         var option = {
@@ -88,7 +117,7 @@ export default {
             },
             color:['#64B5FF','#7A7AB3','#4CC7B6'],
             title:{
-                text:'1B',
+                text:'150M',
                 left:"22%",
                 top:"41%",
                 textStyle:{
@@ -119,11 +148,7 @@ export default {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    { value: '30', name: '$REI for supporting validators' },
-                    { value: '30', name: '$REI for ecosystem partners' },
-                    { value: '40', name: 'Remaining $REI' },
-                ],
+                data: data
               }
             ]
           },
