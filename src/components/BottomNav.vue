@@ -83,6 +83,13 @@ export default {
           link: '/bridge',
           name: 'bridge',
           show: true,
+        },
+        {
+          icon: '&#xe60c;',
+          text: 'Grants',
+          link: '/grants',
+          name: 'grants',
+          show: true,
         }
       ]
     };
