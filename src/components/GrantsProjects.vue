@@ -21,7 +21,7 @@
                   <div class="font-grey detail">{{item.project_desc}}</div>
                   <v-row justify="space-between">
                     <v-col cols="12" md="3">
-                      <h2>PB</h2>
+                      <h2>{{item.project_token.symbol }}</h2>
                       <div class="font-grey">Token</div>
                     </v-col>
                     <v-col cols="12" md="5">
@@ -29,7 +29,7 @@
                       <div class="font-grey">Went live on</div>
                     </v-col>
                     <v-col cols="12" md="4">
-                      <h2>{{ item.sponsored_amount | asset(0) }}&nbsp;<span class="font-grey">REI</span></h2>
+                      <h2>{{ item.sponsored_amount }}&nbsp;<span class="font-grey">REI</span></h2>
                       <div class="font-grey">Sponsored</div>
                     </v-col>
                   </v-row>
