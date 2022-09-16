@@ -40,7 +40,7 @@
         <v-card class="data-card">
           <v-row>
             <v-col cols="12" sm="4">
-              <v-row justify="flex-start" align="center">
+              <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
                   <v-img src="../assets/images/grants-token.png" height="50" width="50px"></v-img>
                 </v-col>
@@ -51,7 +51,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" sm="4">
-              <v-row justify="flex-start" align="center">
+              <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
                   <v-img src="../assets/images/grants-went.png" height="50" width="50px"></v-img>
                 </v-col>
@@ -62,7 +62,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" sm="4">
-              <v-row justify="flex-start" align="center">
+              <v-row justify="start" align="center">
                 <v-col cols="12" md="2" style="padding-right: 0">
                   <v-img src="../assets/images/grants-sponsored.png" height="50" width="50px"></v-img>
                 </v-col>

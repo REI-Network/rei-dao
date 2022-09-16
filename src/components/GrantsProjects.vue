@@ -14,14 +14,16 @@
             <v-row justify="space-between">
               <v-col cols="12" md="11" class="left-content">
                 <div class="image">
-                  <v-img :src="`https://ipfs.io/ipfs/${item.project_logo}`" width="120" />
+                  <v-img :src="`https://ipfs.io/ipfs/${item.project_logo}`"
+                  lazy-src="../assets/images/logo_bg.png"
+                  width="120" />
                 </div>
                 <div class="supported">
                   <div><span class="name">{{item.project_name}}</span><span class="game-active">{{item.categories}}</span></div>
                   <div class="font-grey detail">{{item.project_desc}}</div>
                   <v-row justify="space-between">
                     <v-col cols="12" md="3">
-                      <h2>{{item.project_token.symbol }}</h2>
+                      <h2 v-if="item.project_token && item.project_token.symbol">{{item.project_token.symbol }}</h2>
                       <div class="font-grey">Token</div>
                     </v-col>
                     <v-col cols="12" md="5">
