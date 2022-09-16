@@ -20,6 +20,7 @@
             <div>Balance</div>
             <v-btn
               icon
+              :loading="getListLoading"
               @click="getBalance()"
               color="#FFF"
             >

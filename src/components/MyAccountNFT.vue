@@ -37,19 +37,18 @@
     <v-dialog v-model="nftHelpDialog" width="750" class="dialog-card">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-nft-help">
-          <v-card-title class="dialog-title">NFT List</v-card-title>
+          <v-card-title class="dialog-title">Currently NFTs included</v-card-title>
           <div @click="cancelNftHelp" class="close-btn"><v-icon>mdi-close</v-icon></div>
         </div>
         <v-list rounded class="ma-dialog start_unstake">
-          <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
+          <v-data-iterator :items="prodConfigList"  hide-default-footer class="data-list">
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
-              <v-card outlined class="nftList" @click="openNftInfo(item)">
-                <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
-                <v-img v-else :src="item.image" />
+              <v-card outlined class="nftList">
+                <v-img :src="ipfsGateway+item.image" />
                 <div class="nft-text">
-                  <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
-                  <div style="font-size: 18px">{{ item.name }}</div>
+                  <div class="rei-text">{{ item.organization }}<v-icon size="10" class="star" color="orange">mdi-star</v-icon></div>
+                  <div style="font-size: 14px">{{ item.name }}</div>
                 </div>
               </v-card>
             </v-col>
@@ -69,14 +68,12 @@ import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 
-const nft_contract_test = '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d';
-const nft_contract_prod = '0x4035374c2c157F46effeA16e71A62b8992F2AD1b';
-
 export default {
   filters,
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
+      ipfsGateway:"https://ipfs.io/ipfs/",
       page: 1,
       pageCount: 1,
       itemsPerPage: 6,
@@ -97,22 +94,31 @@ export default {
       nftHelpDialog:false,
       testConfigList: [
         {
-          "address": '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d'
+          "address": '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d',
+          "image":"bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u",
+          "name":"Genesis Proposal Badges NFT",
+          "organization":"REI DAO"
         },
       ],
       prodConfigList: [
         {
+          "address": '0x4035374c2c157F46effeA16e71A62b8992F2AD1b',
+          "image":"bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u",
+          "name":"Genesis Proposal Badges NFT",
+          "organization":"REI DAO"
+        },
+        {
           "address": '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d',
-          "image":"",
-          "name":"",
-          "organization":""
+          "image":"bafkreih6tkghnjtb3mdemvemr4t6htzhxckuq3aizmebuw6b6adhncz4ga",
+          "name":"Korean Community NFT",
+          "organization":"REI DAO"
         },
         {
-          "address": '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B'
-        },
-        {
-          "address": '0x4035374c2c157F46effeA16e71A62b8992F2AD1b'
-        },
+          "address": '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
+          "image":"bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee",
+          "name":"ReiFans NFT",
+          "organization":"REI DAO"
+        }
       ]
     };
   },
