@@ -310,7 +310,12 @@ export default {
         let amount = 0;
         if(this.connection.address){
             balance = await commissionShare.methods.balanceOf(this.connection.address).call();
-            amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
+            if(balance>0){
+              amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
+            } else {
+              amount = 0;
+            }
+            
         }
         return {
             balance,
