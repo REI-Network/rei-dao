@@ -20,6 +20,7 @@
             <div>Balance</div>
             <v-btn
               icon
+              :loading="getListLoading"
               @click="getBalance()"
               color="#FFF"
             >
@@ -68,14 +69,31 @@
                     <div class="asset-logo">
                       <v-img :src="item.logo" width="30" height="30"></v-img>
                     </div>
-                    <div>{{ item.symbol }}</div>
+                    <div>{{ item.symbol }} </div>
                   </v-row>
                 </template>
                 <template v-slot:item.price="{ item }">
                   <span>${{ item.price | asset(5) }}</span>
                 </template>
                 <template v-slot:item.balance="{ item }">
-                  <span>{{ item.balance | asset(4) }}</span>
+                  <span>{{ item.balance | asset(4) }}
+                    <v-tooltip right v-if="item.symbol=='REI'">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon size="14">mdi-help-circle-outline</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>
+                            Wallet: {{ assetFromWei(reiBalance) | asset(4) }}<br>
+                            Voting: {{ assetFromWei(myTotalStake) | asset(4) }}<br>
+                            Gas stake: {{ assetFromWei(totalGasAmount) | asset(4) }}
+                        </span>
+                      </v-tooltip>
+                  </span>
                 </template>
                 <template v-slot:item.value="{ item }">
                   <span>${{ item.value | asset(5) }}</span>
@@ -116,12 +134,19 @@
 import Web3 from 'web3';
 import abiERC20 from '../abis/abiERC20';
 import MyAccountBalance from '../components/MyAccountBalance';
+import abiConfig from '../abis/abiConfig';
+import abiStakeManager from '../abis/abiStakeManager'
+import abiCommissionShare from '../abis/abiCommissionShare'
 import MyAccountNFT from '../components/MyAccountNFT';
-import { getPrice } from '../service/CommonService'
+import { getPrice, postRpcRequest } from '../service/CommonService'
 import Address from '../components/Address';
 import { mapGetters } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
 import find from 'lodash/find';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+let client = null;
 
 import filters from '../filters';
 export default {
@@ -141,6 +166,11 @@ export default {
       getListLoading: false,
       totalAmount:0,
       checkStatus: false,
+      myTotalStake:0,
+      stakeManagerContract:null,
+      stakeManageInstance:null,
+      totalGasAmount:0,
+      reiBalance:0,
       headers: [
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
@@ -213,6 +243,7 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
+      apiUrl: 'apiUrl',
       dark: 'dark'
     }),
     checkStatusColor() {
@@ -224,7 +255,6 @@ export default {
     }
   },
   mounted() {
-    this.init();
     this.connect();
     this.getBalance();
   },
@@ -236,8 +266,12 @@ export default {
             window.web3 = new Web3(window.web3.currentProvider);
         }
     },
-    init(){
-
+    async init(){
+        let contract = new web3.eth.Contract(abiConfig,config_contract); 
+        this.stakeManagerContract = await contract.methods.stakeManager().call();
+        this.stakeManageInstance = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
+        await this.getMyStakeInfo();
+        await this.getTotalGasStake();
     },
     handleHideAsset(){
       if(this.checkStatus == false){
@@ -251,20 +285,93 @@ export default {
       }
       
     },
+    async getMyStakeInfo() {
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+            uri: `${url}chainmonitor`,
+            cache: new InMemoryCache(),
+        })
+        const myStakesInfo = gql`
+            query stakeInfos {
+            stakeInfos(where:{
+                from:"${this.connection.address}"
+            }){
+                id
+                from
+                timestamp
+                validator
+            }
+        }`
+        const {data:{stakeInfos}} = await client.query({
+            query: myStakesInfo,
+            variables: {
+            },
+            fetchPolicy: 'cache-first',
+        })
+        if(stakeInfos.length>0){
+            let myStakeValidatorMap = stakeInfos.map((item)=>{
+                return this.stakeManageInstance.methods.validators(item.validator).call()
+            })
+
+            let validators = await Promise.all(myStakeValidatorMap);
+            let balanceOfShareMap = validators.map(item => {
+                return this.getBalanceOfShare(item);
+            })
+            let balanceOfShare = await Promise.all(balanceOfShareMap);
+            let total = 0;
+            for(let i = 0;i < balanceOfShare.length;i++){
+                total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount))
+            }
+            this.myTotalStake = total;
+        }
+    },
+    async getBalanceOfShare(activeValidatorsShare) {
+        let commissionShare = new web3.eth.Contract(abiCommissionShare,activeValidatorsShare[1]);
+        let balance = 0;
+        let amount = 0;
+        if(this.connection.address){
+            balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+            if(balance>0){
+              amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
+            } else {
+              amount = 0;
+            }
+            
+        }
+        return {
+            balance,
+            amount,
+            commissionShare
+        };
+    },
+    async getTotalGasStake(){
+         let apiUrl = this.apiUrl.rpc;
+         let arr = [];
+         arr.push(this.connection.address);
+         arr.push('latest')
+         let param = {
+             method:'rei_getTotalAmount',
+             params:arr
+         }
+        let res = await postRpcRequest(apiUrl,param);
+        this.totalGasAmount = res.data.result;
+    },
     async getBalance(){
       let asset = [], assetAllArr = [], assetZeroArr = [], assetArr = [];
       if(!this.connection.address) return;
       this.getListLoading = true;
       let _assetObj = {};
-      
+      await this.init();
       for(let i = 0; i < this.tokenInfoList.length; i++){
         let token = this.tokenInfoList[i];
         if(token.symbol == 'REI'){
           let reiBalance = await web3.eth.getBalance(this.connection.address);
+          this.reiBalance = reiBalance;
+          let totalBalance = web3.utils.toBN(reiBalance).add(web3.utils.toBN(this.myTotalStake)).add(web3.utils.toBN(this.totalGasAmount));
           _assetObj = {
             symbol: 'REI',
             logo: 'https://static.rei.network/media/currency_logo.png',
-            balance: web3.utils.fromWei(web3.utils.toBN(reiBalance)),
+            balance: web3.utils.fromWei(totalBalance),
             price: 0,
             value: 0
           }
@@ -330,6 +437,9 @@ export default {
       this.getListLoading = false;
 
 
+    },
+    assetFromWei(item){
+      return item > 0 ? web3.utils.fromWei(item) : 0
     }
   }
 };
