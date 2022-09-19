@@ -97,8 +97,9 @@ export default {
     myCharts() {
       const chart = this.$refs.grantChart;
       let data = [
-        { value: this.percentProject, amount: this.totalProjectAmount, name: '$REI for ecosystem partners' },
         { value: this.percentValidator, amount: this.grantsAmount.supportValidatorAmount, name: '$REI for supporting validators ' },
+        { value: this.percentProject, amount: this.totalProjectAmount, name: '$REI for ecosystem partners' },
+        
         { value: this.percentRemain, amount: this.remainingNumber, name: 'Remaining $REI' }
       ];
       if (chart) {
@@ -132,7 +133,7 @@ export default {
                 trigger: 'item'
               }
             },
-            color: ['#64B5FF', '#7A7AB3', '#4CC7B6'],
+            color: ['#7A7AB3', '#64B5FF', '#4CC7B6'],
             title: {
               text: '150M',
               left: '19%',
