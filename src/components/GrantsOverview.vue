@@ -97,8 +97,8 @@ export default {
     myCharts() {
       const chart = this.$refs.grantChart;
       let data = [
-        { value: this.percentProject, amount: this.totalProjectAmount, name: '$REI for supporting validators' },
-        { value: this.percentValidator, amount: this.grantsAmount.supportValidatorAmount, name: '$REI for ecosystem partners' },
+        { value: this.percentProject, amount: this.totalProjectAmount, name: '$REI for ecosystem partners' },
+        { value: this.percentValidator, amount: this.grantsAmount.supportValidatorAmount, name: '$REI for supporting validators ' },
         { value: this.percentRemain, amount: this.remainingNumber, name: 'Remaining $REI' }
       ];
       if (chart) {
