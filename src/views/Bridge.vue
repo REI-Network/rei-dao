@@ -4,16 +4,19 @@
       <h1>Bridges Asset Management</h1>
       <div class="title-detailed">Easier Management of Bridge Assets on REI Network</div>
     </div>
+    <BridgeAsset></BridgeAsset>
     <BridgeUser></BridgeUser>
   </v-container>
 </template>
 
 <script>
 import BridgeUser from '../components/BridgeUser';
+import BridgeAsset from '../components/BridgeAsset';
 
 export default { 
   components:{
    BridgeUser,
+   BridgeAsset
   },
   data() {
     return {
