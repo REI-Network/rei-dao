@@ -623,6 +623,7 @@ export default {
       setRateLoading: false,
       rewardBalance: 0,
       nodeList: [],
+      nodeListRaw:[],
       activeList: [],
       notActiveList: [],
       indexedNodeList: [],
@@ -810,6 +811,7 @@ export default {
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
+      this.nodeListRaw = [].concat(this.nodeList);
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -1207,6 +1209,18 @@ export default {
       return util.dateFormat(val, 'YYYY-MM-dd hh:mm:ss');
     },
     changeState() {
+      let activeList = [];
+      let notActiveList = [];
+      for(let i = 0; i < this.nodeListRaw.length; i++){
+        let _node = this.nodeListRaw[i];
+        if(_node.active){
+          activeList.push(_node);
+        } else {
+          notActiveList.push(_node);
+        }
+      }
+      this.activeList = activeList;
+      this.notActiveList = notActiveList;
       if (this.listFilter == '1') {
         this.nodeList = this.activeList;
       } else if (this.listFilter == '2') {
@@ -1214,22 +1228,6 @@ export default {
       } else {
         this.nodeList = this.activeList.concat(this.notActiveList);
       }
-      this.nodeList = this.nodeList.map((item) => {
-        let obj = {};
-        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
-        if (detail) {
-          obj = {
-            nodeName: detail.nodeName,
-            logo: detail.logo,
-            website: detail.website,
-            nodeDesc: detail.nodeDesc
-          };
-        }
-        return {
-          ...item,
-          ...obj
-        };
-      });
     },
     windowWidth() {
       const that = this;
