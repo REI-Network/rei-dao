@@ -95,6 +95,27 @@
               <template v-slot:item.apr="{ item }">
                 {{ item.apr | asset(2) }}%
               </template>
+              <template v-slot:item.responseRate="{ item }">
+                <span v-if="item.minerInfo"> 
+                  {{ item.responseRate }}%
+                  <v-tooltip right v-if="item.minerInfo">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon size="14">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>
+                        Block produced: {{ item.minerInfo.minerMessage.minedNumber}}<br>
+                        Block missed: {{ item.minerInfo.minerMissRecordNumber }}
+                    </span>
+                  </v-tooltip>
+                </span>
+                <span v-if="!item.minerInfo"> - </span>
+              </template>
               <template v-slot:item.power="{ item }">
                 {{ item.power | asset(2) }}
               </template>
@@ -489,7 +510,7 @@ import find from 'lodash/find';
 import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getValidatorDetails } from '../service/CommonService';
+import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -547,6 +568,7 @@ export default {
           value: 'address'
         },
         { text: 'APR', value: 'apr' },
+        { text: 'Response Rate', value: 'responseRate' },
         { text: this.$t('stake.voting_power'), value: 'power' },
         { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
         { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
@@ -743,7 +765,17 @@ export default {
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
       this.stakeListLoading = false;
+      let nodeArr = activeList.map((item)=>{
+        return item.address;
+      })
       let Details = await getValidatorDetails();
+      let minedInfo = await getValidatorMinedInfo({miner:nodeArr.join()});
+      let minedInfoMap = {};
+      for(let i = 0; i < minedInfo.data.length; i++){
+        let _data = minedInfo.data[i];
+        let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner)
+        minedInfoMap[_address] = _data;
+      }
       this.detailsList = Details.data.data;
       this.totalAmount = 0;
       for(let i=0; i<this.activeList.length; i++){
@@ -765,6 +797,7 @@ export default {
         }else{
           apr = 0
         }
+        let _miner = web3.utils.toChecksumAddress(item.address);
         
         return {
           ...item,
@@ -772,7 +805,9 @@ export default {
           logo: logo,
           website: website,
           nodeDesc: nodeDesc,
-          apr:apr
+          apr:apr,
+          minerInfo: minedInfoMap[_miner],
+          responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
@@ -784,6 +819,9 @@ export default {
 
       this.getMyStakeList();
       this.Calculation();
+    },
+    async getMinedInfo(){
+
     },
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
@@ -1276,6 +1314,12 @@ export default {
     },
     checkRewardState(address){
       return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address)
+    },
+    calResponseRate(item){
+      if(!item) return 0;
+      let totalBlock = item.minerMessage.minedNumber*1 + item.minerMissRecordNumber*1;
+      let percent = item.minerMessage.minedNumber/totalBlock*100
+      return percent.toFixed(2)
     }
   },
   computed: {
