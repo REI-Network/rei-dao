@@ -52,6 +52,12 @@ export const getNftHolder = (params) => http({
   params
 });
 
+export const getValidatorMinedInfo = (params) => http({
+  method: 'get',
+  url:'https://gateway.rei.network/api/miner',
+  params
+});
+
 
 export const postRpcRequest = (apiurl,params) => http({
     method: 'POST',

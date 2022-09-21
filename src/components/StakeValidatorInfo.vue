@@ -61,6 +61,24 @@
           <div class="font-grey">APR</div>
           <h2>{{ apr | asset(2) }}%</h2>
         </v-col>
+         <v-col cols="12" sm="3">
+          <div class="font-grey">Response Rate <v-tooltip right v-if="minedInfo">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon size="14">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>
+                        Block produced: {{ minedInfo.minerMessage&&minedInfo.minerMessage.minedNumber}}<br>
+                        Block missed: {{ minedInfo.minerMissRecordNumber }}
+                    </span>
+                  </v-tooltip></div>
+          <h2>{{ responseRate | asset(2) }}%</h2>
+        </v-col>
       </v-row>
     </v-card>
     <v-dialog v-model="dialog" width="500" class="dialog-card">
@@ -240,7 +258,7 @@ import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getValidatorList, getValidatorDetails } from '../service/CommonService';
+import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonService';
 import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -291,6 +309,8 @@ export default {
       activeInfoList:[],
       validatorList:[],
       activeList: [],
+      minedInfo:{},
+      responseRate:0,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
       defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a']
@@ -396,7 +416,11 @@ export default {
     },
     async getValidatorInfo() {
       let validatorDetails = await getValidatorDetails();
+      
       let address = this.$route.query.id;
+      let minedInfo = await getValidatorMinedInfo({miner:address});
+      this.minedInfo = minedInfo.data ? minedInfo.data[0]: {};
+      this.responseRate = this.calResponseRate(this.minedInfo)
       let validatorInfo = validatorDetails.data.data;
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
@@ -594,6 +618,12 @@ export default {
     },
     cancelCalculation() {
       this.calculationDialog = false;
+    },
+    calResponseRate(item){
+      if(!item) return 0;
+      let totalBlock = item.minerMessage.minedNumber*1 + item.minerMissRecordNumber*1;
+      let percent = item.minerMessage.minedNumber/totalBlock*100
+      return percent.toFixed(2)
     }
   }
 };
