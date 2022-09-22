@@ -64,13 +64,13 @@
          <v-col cols="12" sm="3">
           <div class="font-grey">Response Rate <v-tooltip right v-if="minedInfo">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
+                      <v-icon
+                        size="14"
                         v-bind="attrs"
                         v-on="on"
                       >
-                        <v-icon size="14">mdi-help-circle-outline</v-icon>
-                      </v-btn>
+                        mdi-help-circle-outline
+                      </v-icon>
                     </template>
                     <span>
                         Block produced: {{ minedInfo.minerMessage&&minedInfo.minerMessage.minedNumber}}<br>
@@ -138,7 +138,6 @@
             <div class="pb-1 text-body-1 share-rei">
               <span class="font-color">{{ $t('stake.commonnsion_share_balance') }}</span>
               <span style="font-weight: bold">{{ myCommissionShareBalance | asset(2) }}</span>
-              <span class="font-color">REI</span>
             </div>
             <v-row>
               <v-col class="from-voting">
