@@ -120,9 +120,9 @@
                 {{ item.power | asset(2) }}
               </template>
               <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template>
-              <template v-slot:item.balanceOfShare="{ item }">
+              <!-- <template v-slot:item.balanceOfShare="{ item }">
                 {{ item.balanceOfShare | asset(2) }}
-              </template>
+              </template> -->
               <template v-slot:item.actions="{ item }">
                 <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
                   {{ $t('stake.staking') }}
@@ -571,8 +571,7 @@ export default {
         { text: 'Response Rate', value: 'responseRate' },
         { text: this.$t('stake.voting_power'), value: 'power' },
         { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
-        { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
-        // { text: this.$t('stake.status'), value: 'isActive' },
+        // { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
       myStakeHeaders: [
