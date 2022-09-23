@@ -976,9 +976,8 @@ export default {
             tooltip: {
               trigger: 'item',
               formatter: function (params) {
-                  let value = util.asset(params.data.value,2)
                   let amount = util.asset(params.data.amount,2)
-                  return params.data.name + '                          ' + value + '%' + '<br/>' + '$' + amount;
+                  return params.data.name + '                          ' + params.data.value + '%' + '<br/>' + '$' + amount;
                 }
             },
             query: {
@@ -1110,9 +1109,8 @@ export default {
             tooltip: {
               trigger: 'item',
               formatter: function (params) {
-                  let value = util.asset(params.data.value,2)
                   let amount = util.asset(params.data.amount,2)
-                  return params.data.name  +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ value + '%' + '<br/>' + '$' + amount;
+                  return params.data.name  +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ params.data.value + '%' + '<br/>' + '$' + amount;
                 }
             },
             query: {
