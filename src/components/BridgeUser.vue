@@ -924,8 +924,14 @@ export default {
       return `https://app.multichain.org/#/router?bridgetoken=${token.contractAddress}&network=47805`;
     },
     async getPrice() {
-      let arr = ['REI', 'WBTC', 'USDT', 'USDC', 'WETH', 'DAI', 'BUSD'];
+      let arr = []
+      for (let i = 0; i < this.contractItems.length; i++) {
+        let item = this.contractItems[i];
+        let symbol = item.symbol.toUpperCase()
+        arr.push(symbol)
+      }
       let { data: priceList } = await getPrice({ symbols: arr.join() });
+      // console.log('priceList',priceList)
       this.bridgeList = this.bridgeList.map((item) => {
         let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
         if (_asset) {
@@ -963,12 +969,15 @@ export default {
             return {
               name: item.symbol,
               amount: item.amount,
+              total:item.total,
               value: value
             };
           });
           this.cBridgeTotalMillion = util.asset(this.cBridgeTotalAmount/1000000,2)
       const chart = this.$refs.cBridgeChart;
-      let data = this.bridgeArr;
+      let data = this.bridgeArr.filter((item) => {
+        return item.total>0
+      });
       if (chart) {
         this.myChart = this.$echarts.init(chart);
         var option = {
@@ -977,7 +986,8 @@ export default {
               trigger: 'item',
               formatter: function (params) {
                   let amount = util.asset(params.data.amount,2)
-                  return params.data.name + '                          ' + params.data.value + '%' + '<br/>' + '$' + amount;
+                  let total = util.asset(params.data.total,4)
+                  return params.data.name  +':'+ params.data.value + '%' + '<br/>' + '$' + amount + '<br/>' + total;
                 }
             },
             query: {
@@ -987,7 +997,7 @@ export default {
               selectedMode: false,
               orient: 'vertical',
               icon: 'circle',
-              right: '12%',
+              right: '18%',
               top: 'center',
               itemGap: 50,
               itemWidth: 16,
@@ -1003,7 +1013,7 @@ export default {
               left: '19%',
               top: '41%',
               textStyle: {
-                // color: '#868e9e',
+                color: '#868e9e',
                 fontSize: 20,
                 fontWeight: 700,
                 align: 'center'
@@ -1041,9 +1051,9 @@ export default {
               },
               option: {
                 title: {
-                  text: '1.30M',
-                  left: '18%',
-                  top: '43%',
+                  text: this.cBridgeTotalMillion+'M',
+                  left: '13%',
+                  top: '45%',
                   textStyle: {
                     fontSize: 16
                   }
@@ -1053,7 +1063,6 @@ export default {
                   left: '14%',
                   top: '51%',
                   style: {
-                    text: 'Total Supply',
                     fill: '#868e9e',
                     textAlign: 'center',
                     fontSize: 12
@@ -1078,12 +1087,12 @@ export default {
           ]
         };
         this.myChart.setOption(option);
-        window.addEventListener('resize', function () {
+        window.addEventListener('resize',() => {
           this.myChart.resize();
         });
       }
       this.$on('hook:destroyed', () => {
-        window.removeEventListener('resize', function () {
+        window.removeEventListener('resize',() => {
           this.myChart.resize();
         });
       });
@@ -1095,13 +1104,15 @@ export default {
             return {
               name: item.symbol,
               amount: item.amount,
+              total:item.total,
               value: value
             };
           });
-          this.multichainTotalMillion = util.asset(this.multichainTotalAmount/1000000,2)
+      this.multichainTotalMillion = util.asset(this.multichainTotalAmount/1000000,2)
       const chart = this.$refs.MultichainChart;
-      let data = this.chainArr;
-      console.log('data', data);
+      let data = this.chainArr.filter((item) => {
+        return item.total>0
+      });
       if (chart) {
         this.myChart2 = this.$echarts.init(chart);
         var option = {
@@ -1110,7 +1121,8 @@ export default {
               trigger: 'item',
               formatter: function (params) {
                   let amount = util.asset(params.data.amount,2)
-                  return params.data.name  +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ params.data.value + '%' + '<br/>' + '$' + amount;
+                  let total = util.asset(params.data.total,4)
+                  return params.data.name  +':'+ params.data.value + '%' + '<br/>' + '$' + amount + '<br/>' + total;
                 }
             },
             query: {
@@ -1136,7 +1148,7 @@ export default {
               left: '19%',
               top: '41%',
               textStyle: {
-                // color: '#868e9e',
+                color: '#868e9e',
                 fontSize: 20,
                 fontWeight: 700,
                 align: 'center'
@@ -1174,9 +1186,9 @@ export default {
               },
               option: {
                 title: {
-                  text: '1.30M',
-                  left: '18%',
-                  top: '43%',
+                  text: this.multichainTotalMillion+'M',
+                  left: '13%',
+                  top: '45%',
                   textStyle: {
                     fontSize: 16
                   }
@@ -1200,12 +1212,12 @@ export default {
           ]
         };
         this.myChart2.setOption(option);
-        window.addEventListener('resize', function () {
+        window.addEventListener('resize',() => {
           this.myChart2.resize();
         });
       }
       this.$on('hook:destroyed', () => {
-        window.removeEventListener('resize', function () {
+        window.removeEventListener('resize',() => {
           this.myChart2.resize();
         });
       });
