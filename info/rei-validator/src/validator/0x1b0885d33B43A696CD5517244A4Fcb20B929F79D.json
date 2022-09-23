@@ -1,0 +1,13 @@
+{
+  "nodeName": "Default Validator4",
+  "nodeAddress": "0x1b0885d33B43A696CD5517244A4Fcb20B929F79D",
+  "logo": "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
+  "nodeDesc": "REI network mainnet default validator 4",
+  "website": "https://rei.network/",
+  "location": {
+    "country": "Singapore",
+    "city": "Singapore",
+    "longitude": "103.851632",
+    "latitude": "1.338197"
+  }
+}

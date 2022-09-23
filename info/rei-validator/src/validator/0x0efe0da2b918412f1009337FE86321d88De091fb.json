@@ -1,0 +1,13 @@
+{
+  "nodeName": "Default Validator1",
+  "nodeAddress": "0x0efe0da2b918412f1009337FE86321d88De091fb",
+  "logo": "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
+  "nodeDesc": "REI network mainnet default validator 1",
+  "website": "https://rei.network/",
+  "location": {
+    "country": "China",
+    "city": "Hong kong",
+    "longitude": "114.16546",
+    "latitude": "22.27534"
+  }
+}

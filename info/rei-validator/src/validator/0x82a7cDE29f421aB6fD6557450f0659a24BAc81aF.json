@@ -1,0 +1,13 @@
+{
+    "nodeName": "BigONE",
+    "nodeAddress": "0x82a7cDE29f421aB6fD6557450f0659a24BAc81aF",
+    "logo": "bafkreihfo5dlyert3cv5c4kc2kjtkztizm52w337jthocskfij7gsxewee",
+    "nodeDesc": "As an established exchange and an early supporter of REI, BigONE has a mature experience in the operation and maintenance of validator nodes and a strict risk control system to ensure the safe and stable operation of nodes.",
+    "website": "https://big.one/",
+    "location": {
+        "country": "America",
+        "city": "California",
+        "longitude": "118.243683",
+        "latitude": "34.052235"
+    }
+}

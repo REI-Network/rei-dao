@@ -1,0 +1,13 @@
+{
+  "nodeName": "TestValidator1",
+  "nodeAddress": "0x116F46EB05D5e42b4CD10E70B1b49706942f5948",
+  "logo": "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
+  "nodeDesc": "REI network testnet validator 1",
+  "website": "https://rei.network/",
+  "location": {
+    "country": "China",
+    "city": "Hong kong",
+    "longitude": "114.16546",
+    "latitude": "22.27534"
+  }
+}

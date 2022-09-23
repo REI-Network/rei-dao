@@ -1,0 +1,13 @@
+{
+	"nodeName": "CryptoDog",
+	"nodeAddress": "0x5aE336c468bbA2684b7C1C70688B17Ae444C5a01",
+	"logo": "bafkreieg5bruc4asmlsrqe35fm6rbseef2sbupuowhu25dzpjiokmsfi5m",
+	"nodeDesc": "CryptoDog Validator",
+	"website": "",
+	"location": {
+		"country": "America",
+		"city": "California",
+		"longitude": "118.243683",
+		"latitude": "34.052235"
+	}
+}

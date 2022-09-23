@@ -1,0 +1,13 @@
+{
+  "nodeName": "DeFinder",
+  "nodeAddress": "0x4E02f5Dd4B2Cd055B31Cb2a62F19b1C57a9C992C",
+  "logo": "bafkreibozm7vrdnj5yi35zg7g3x6skturra3esbgy6wivqngj6u3y7hhvy",
+  "nodeDesc": "DeFinder is a blockchain data analysis platform that helps investors make effective investment decisions.",
+  "website": "https://definder.info/",
+  "location": {
+    "country": "China",
+    "city": "Hong kong",
+    "longitude": "114.16546",
+    "latitude": "22.27534"
+  }
+}

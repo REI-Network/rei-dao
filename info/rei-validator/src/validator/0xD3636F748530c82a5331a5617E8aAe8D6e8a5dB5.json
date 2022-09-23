@@ -1,0 +1,13 @@
+{
+  "nodeName": "TAXI",
+  "nodeAddress": "0xD3636F748530c82a5331a5617E8aAe8D6e8a5dB5",
+  "logo": "bafkreiawrvio4yuqvp5d6ylmyld5nbckpfvllg7zcvq3ybekb7tt6e6kje",
+  "nodeDesc": "Just didi，We're on our way",
+  "website": "",
+  "location": {
+    "country": "China",
+    "city": "Hong kong",
+    "longitude": "14.16546",
+    "latitude": "42.27534"
+  }
+}

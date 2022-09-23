@@ -1,0 +1,13 @@
+{
+  "nodeName": "Default Validator2",
+  "nodeAddress": "0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4",
+  "logo": "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
+  "nodeDesc": "REI network mainnet default validator 2",
+  "website": "https://rei.network/",
+  "location": {
+    "country": "America",
+    "city": "Los Angeles",
+    "longitude": "-118.29",
+    "latitude": "33.93"
+  }
+}

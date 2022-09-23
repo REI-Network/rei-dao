@@ -1,0 +1,13 @@
+{
+  "nodeName": "Validator Name",
+  "nodeAddress": "Validator Address",
+  "logo": "IPFS Hash",
+  "nodeDesc": "Validator Description",
+  "website": "https://your-awesome-project.com/",
+  "location": {
+    "country": "The country where the Validator is located",
+    "city": "The city where the Validator is located",
+    "longitude": "The longitude of the server location",
+    "latitude": "The latitude of the server location"
+  }
+}
