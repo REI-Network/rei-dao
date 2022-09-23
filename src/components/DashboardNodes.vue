@@ -422,7 +422,7 @@ Address,
           nodeAddress: this.miner,
           nodeDesc: '',
           nodeName: 'Validator',
-          logo: 'https://static.rei.network/media/currency_logo.png'
+          logo: 'bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy'
         }
       }
       let lightData = find(this.locationData, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));
