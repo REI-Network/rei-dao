@@ -36,7 +36,7 @@ export const getValidatorList = (params) => http({
 });
 export const getValidatorDetails = (params) => http({
     method: 'GET',
-    url:'https://gateway.rei.network/api/validator/details',
+    url:'/data/validator/validator-list.json',
     params
 });
 
@@ -57,6 +57,18 @@ export const getValidatorMinedInfo = (params) => http({
   url:'https://gateway.rei.network/api/miner',
   params
 });
+
+export const getIpfsGateway = (cid) => {
+  let url = '';
+  if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == '4EVERLAND'){
+    url = `https://${cid}.ipfs.4everland.io`;
+  } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
+    url = `https://ipfs.io/ipfs/${cid}`;
+  } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
+    url = `https://gateway.pinata.cloud/ipfs/${cid}`;
+  }
+  return url;
+};
 
 
 export const postRpcRequest = (apiurl,params) => http({

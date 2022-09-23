@@ -4,7 +4,7 @@
     <v-row class="mt-5 mb-5">
       <v-col class="rei-validator">
         <div>
-          <v-img v-if="detail && detail.logo" :src="detail.logo" width="42" height="42" />
+          <v-img v-if="detail && detail.logo" :src="$IpfsGateway(detail.logo)" width="42" height="42" />
           <v-img v-else src="../assets/images/rei.svg" width="42" height="42" />
         </div>
         <div class="fans-right">

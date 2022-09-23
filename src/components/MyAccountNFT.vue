@@ -45,7 +45,7 @@
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList">
-                <v-img :src="ipfsGateway+item.image" />
+                <v-img :src="$IpfsGateway(item.image)" />
                 <div class="nft-text">
                   <div class="rei-text">{{ item.organization }}<v-icon size="10" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 14px">{{ item.name }}</div>
@@ -73,7 +73,6 @@ export default {
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
-      ipfsGateway:"https://ipfs.io/ipfs/",
       page: 1,
       pageCount: 1,
       itemsPerPage: 6,

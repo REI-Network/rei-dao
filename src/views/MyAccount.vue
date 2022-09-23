@@ -67,7 +67,7 @@
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center">
                     <div class="asset-logo">
-                      <v-img :src="item.logo" width="30" height="30"></v-img>
+                      <v-img :src="$IpfsGateway(item.logo)" width="30" height="30"></v-img>
                     </div>
                     <div>{{ item.symbol }} </div>
                   </v-row>
@@ -184,48 +184,48 @@ export default {
       tokenInfoList:[
         {
           decimals: "18",
-          logo: "https://static.rei.network/media/currency_logo.png",
+          logo: "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
           symbol:"REI"
         },
         {
           decimals: "8",
           erc20Address: "0x8059E671Be1e76f8db5155bF4520f86ACfDc5561",
-          logo: "https://static.rei.network/imgs/WBTC.png",
+          logo: "bafkreiakvobel6nvizg4krw7kmtdzsf5amvxz3gnubexl7md6izzce2hay",
           name:"Wrapped BTC",
           symbol:"WBTC"
         },
         {
           decimals: "6",
           erc20Address: "0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7",
-          logo: "https://static.rei.network/imgs/USDT.png",
+          logo: "bafkreia4f3h4rqekqineqopsvyg7dwdznkg7em4ttnjxwtrgkfh2j6irsy",
           name:"Tether USD",
           symbol:"USDT"
         },
         {
           decimals: "6",
           erc20Address: "0x8d5E1225981359E2E09A3AB8F599A51486f53314",
-          logo: "https://static.rei.network/imgs/USDC.png",
+          logo: "bafkreidncrqb2cyrbecg4ntfsk4mb4sw76yhl5urqc3f3xozpltglve7ty",
           name:"USD Coin",
           symbol:"USDC"
         },
         {
           decimals: "18",
           erc20Address: "0x7a5313468c1C1a3Afb2Cf5ec46558A7D0fc2884A",
-          logo: "https://static.rei.network/imgs/WETH.png",
+          logo: "bafkreicsv5dhrd2rutq3zdqk3gunix5idx6z5lyixv5nkkr3mgi4qxdye4",
           name:"Wrapped Ether",
           symbol:"WETH"
         },
         {
           decimals: "18",
           erc20Address: "0x0ba85980B122353D77fBb494222a10a46E4FB1f6",
-          logo: "https://static.rei.network/imgs/DAI.png",
+          logo: "bafkreidzpyhertnzgzvjuxtzrq5lkdtbzzslbfzrtnq4fdtvgynmk3psny",
           name:"Dai Stablecoin",
           symbol:"DAI"
         },
         {
           decimals: "18",
           erc20Address: "0x02CD448123E3Ef625D3A3Eb04A30E6ACa29C7786",
-          logo: "https://static.rei.network/imgs/BUSD.png",
+          logo: "bafkreia2l332gaw25wrkyj37xtixyqezwyhkouhz5qjrfkwi4wjjcaakl4",
           name:"Binance USD",
           symbol:"BUSD"
         }
@@ -369,8 +369,8 @@ export default {
           this.reiBalance = reiBalance;
           let totalBalance = web3.utils.toBN(reiBalance).add(web3.utils.toBN(this.myTotalStake)).add(web3.utils.toBN(this.totalGasAmount));
           _assetObj = {
-            symbol: 'REI',
-            logo: 'https://static.rei.network/media/currency_logo.png',
+            symbol: token.symbol,
+            logo: token.logo,
             balance: web3.utils.fromWei(totalBalance),
             price: 0,
             value: 0
