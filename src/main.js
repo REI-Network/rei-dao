@@ -7,8 +7,11 @@ import store from './store';
 import i18n from './i18n';
 import echarts from 'echarts'
 import '../src/assets/iconfont/iconfont.css'
+import { getIpfsGateway } from './service/CommonService';
 
 Vue.prototype.$echarts =echarts;
+Vue.prototype.$IpfsGateway = getIpfsGateway;
+
 // 日期格式化
 Date.prototype.format = function(fmt) {
   // author: meizz

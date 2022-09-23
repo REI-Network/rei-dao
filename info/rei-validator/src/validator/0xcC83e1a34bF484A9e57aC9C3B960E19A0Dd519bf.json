@@ -1,0 +1,13 @@
+{
+  "nodeName": "Nabox Labs",
+  "nodeAddress": "0xcC83e1a34bF484A9e57aC9C3B960E19A0Dd519bf",
+  "logo": "bafkreifyxrt7k4jyzi27unnu2jxbhnduhiav5cbsi3jjia435ghf653wsi",
+  "nodeDesc": "Nabox is a cross-chain DID application built for Web3. With Nabox, you can manage assets across different blockchains whether for DeFi, GameFi, NFTs, and other use cases that come up. Nabox is your gateway to the multi-chain world.",
+  "website": "https://nabox.io/",
+  "location": {
+    "country": "The Republic of Singapore",
+    "city": "Singapore City",
+    "longitude": "103.82",
+    "latitude": "1.35208"
+  }
+}

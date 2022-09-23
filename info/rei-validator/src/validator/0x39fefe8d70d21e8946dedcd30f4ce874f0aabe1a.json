@@ -1,0 +1,13 @@
+{
+  "nodeName": "CryptoDiffer",
+  "nodeAddress": "0x39fefe8d70d21e8946dedcd30f4ce874f0aabe1a",
+  "logo": "bafkreidq2hnbknu5z7faqbqxatbf2mpt3bhtlg4btst4pu7la4gq7oj7zq",
+  "nodeDesc": "CryptoDiffer Validator",
+  "website": "https://cryptodiffer.com/",
+  "location": {
+    "country": "America",
+    "city": "San Francisco",
+    "longitude": "-122.41942",
+    "latitude": "37.77493"
+  }
+}

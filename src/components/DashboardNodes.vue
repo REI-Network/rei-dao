@@ -20,7 +20,7 @@
                         <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
                                <div>
-                                    <v-img v-if="currentNode.logo" :src="currentNode.logo" height="36" width="36"></v-img>
+                                    <v-img v-if="currentNode.logo" :src="$IpfsGateway(currentNode.logo)" height="36" width="36"></v-img>
                                     <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>
@@ -307,7 +307,7 @@ Address,
               nodeAddress: item.address,
               nodeDesc: '',
               nodeName: 'Validator',
-              logo: 'https://static.rei.network/media/currency_logo.png'
+              logo: 'bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy'
             }
           }
           if(!location){
@@ -422,7 +422,7 @@ Address,
           nodeAddress: this.miner,
           nodeDesc: '',
           nodeName: 'Validator',
-          logo: 'https://static.rei.network/media/currency_logo.png'
+          logo: 'bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy'
         }
       }
       let lightData = find(this.locationData, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.miner));

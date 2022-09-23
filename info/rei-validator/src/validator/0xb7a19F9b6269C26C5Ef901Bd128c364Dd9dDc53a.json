@@ -1,0 +1,13 @@
+{
+  "nodeName": "Default Validator3",
+  "nodeAddress": "0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a",
+  "logo": "bafkreiavru5i3kdvsgqqjru2n6t7mgf724jinllip3gaj74drhkvm7swiy",
+  "nodeDesc": "REI network mainnet default validator 3",
+  "website": "https://rei.network/",
+  "location": {
+    "country": "United Kingdom",
+    "city": "London",
+    "longitude": "0.241",
+    "latitude": "51.528"
+  }
+}

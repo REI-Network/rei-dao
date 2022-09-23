@@ -83,7 +83,7 @@
           <v-tab-item key="11">
             <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
+                <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" width="24" height="24" class="logo-image"></v-img>
                 <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                 <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                 <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
@@ -153,7 +153,7 @@
           <v-tab-item key="13">
             <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-img v-if="item.logo" :src="item.logo" width="24" height="24" class="logo-image"></v-img>
+                <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" width="24" height="24" class="logo-image"></v-img>
                 <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                 <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                 <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
@@ -639,7 +639,7 @@ export default {
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
-      defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a']
+      defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a'],
     };
   },
   watch: {
@@ -768,7 +768,7 @@ export default {
       let nodeArr = activeList.map((item)=>{
         return item.address;
       })
-      let Details = await getValidatorDetails();
+      let _details = await getValidatorDetails();
       let minedInfo = await getValidatorMinedInfo({miner:nodeArr.join()});
       let minedInfoMap = {};
       for(let i = 0; i < minedInfo.data.length; i++){
@@ -776,7 +776,7 @@ export default {
         let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner)
         minedInfoMap[_address] = _data;
       }
-      this.detailsList = Details.data.data;
+      this.detailsList = _details.data.data;
       this.totalAmount = 0;
       for(let i=0; i<this.activeList.length; i++){
         let item = this.activeList[i];
@@ -1319,6 +1319,7 @@ export default {
       return percent.toFixed(2)
     }
   },
+
   computed: {
     ...mapGetters({
       dark: 'dark',

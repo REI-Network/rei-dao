@@ -1,0 +1,13 @@
+{
+  "nodeName": "Oort",
+  "nodeAddress": "0x4AE71645F2D42aac2A7550d9DAE778e594d1E2F7",
+  "logo": "bafkreifhnylzrz2rjdfnnhx7g3f2xkdrat6r5mf3zndxzlqjgdjrw5etuu",
+  "nodeDesc": "Oortswap is also a AMM-based decentralized margin trading platform",
+  "website": "https://www.oortswap.org/",
+  "location": {
+    "country": "Singarpore",
+    "city": "Singarpore",
+    "longitude": "103.86262",
+    "latitude": "1.35421"
+  }
+}
