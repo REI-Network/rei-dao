@@ -931,7 +931,6 @@ export default {
         arr.push(symbol)
       }
       let { data: priceList } = await getPrice({ symbols: arr.join() });
-      // console.log('priceList',priceList)
       this.bridgeList = this.bridgeList.map((item) => {
         let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
         if (_asset) {
@@ -943,6 +942,7 @@ export default {
           amount: amount
         };
       });
+      this.cBridgeTotalAmount = 0;
       for (let i = 0; i < this.bridgeList.length; i++) {
         this.cBridgeTotalAmount += this.bridgeList[i].amount;
       }
@@ -957,6 +957,7 @@ export default {
           amount: amount
         };
       });
+      this.multichainTotalAmount = 0;
       for (let i = 0; i < this.chainList.length; i++) {
         this.multichainTotalAmount += this.chainList[i].amount;
       }
