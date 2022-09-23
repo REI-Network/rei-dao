@@ -987,7 +987,7 @@ export default {
               formatter: function (params) {
                   let amount = util.asset(params.data.amount,2)
                   let total = util.asset(params.data.total,4)
-                  return params.data.name  +':'+ params.data.value + '%' + '<br/>' + '$' + amount + '<br/>' + total;
+                  return params.data.name  +':'+ params.data.value + '%'  + '<br/>' + total + '<br/>' + '$' + amount;
                 }
             },
             query: {
@@ -1122,7 +1122,7 @@ export default {
               formatter: function (params) {
                   let amount = util.asset(params.data.amount,2)
                   let total = util.asset(params.data.total,4)
-                  return params.data.name  +':'+ params.data.value + '%' + '<br/>' + '$' + amount + '<br/>' + total;
+                  return params.data.name  +':'+ params.data.value + '%'+ '<br/>' + total + '<br/>' + '$' + amount ;
                 }
             },
             query: {
