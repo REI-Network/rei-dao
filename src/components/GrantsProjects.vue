@@ -14,7 +14,7 @@
             <v-row justify="space-between">
               <v-col cols="12" md="11" class="left-content">
                 <div class="image">
-                  <v-img class="image" :src="`https://ipfs.io/ipfs/${item.project_logo}`" lazy-src="../assets/images/logo_bg.png" width="120" />
+                  <v-img class="image" :src="$IpfsGateway(item.project_logo)" lazy-src="../assets/images/logo_bg.png" width="120" />
                 </div>
                 <div class="supported">
                   <div>

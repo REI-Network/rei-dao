@@ -9,7 +9,7 @@
         <v-card class="grants-detail">
           <v-row>
             <v-col cols="12" md="2">
-              <v-img class="image" :src="`https://ipfs.io/ipfs/${projectDetails.project_logo}`" 
+              <v-img class="image" :src="$IpfsGateway(projectDetails.project_logo)" 
               lazy-src="../assets/images/logo_bg.png"
               aspect-ratio="1"
               />
@@ -31,7 +31,7 @@
               <v-btn width="120" target="_blank" v-if="projectDetails.links && projectDetails.links.website" :href="projectDetails.links.website"> Go </v-btn>
             </v-col>
             <v-col cols="12" md="5">
-              <v-img class="image" :src="`https://ipfs.io/ipfs/${projectDetails.screenshot}`" height="250" 
+              <v-img class="image" :src="$IpfsGateway(projectDetails.screenshot)" height="250" 
               lazy-src="../assets/images/Detail_bg.png"
               />
             </v-col>

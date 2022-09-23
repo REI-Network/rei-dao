@@ -64,7 +64,7 @@ export const getIpfsGateway = (cid) => {
     url = `https://${cid}.ipfs.4everland.io`;
   } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
     url = `https://ipfs.io/ipfs/${cid}`;
-  } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
+  } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'PINATA'){
     url = `https://gateway.pinata.cloud/ipfs/${cid}`;
   }
   return url;
