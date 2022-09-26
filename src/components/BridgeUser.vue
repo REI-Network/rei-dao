@@ -48,7 +48,7 @@
                 <template v-slot:item.symbol="{ item }">
                   <div class="bridge-label">
                     <div class="left-img">
-                      <v-img v-if="item.logo" :src="item.logo" class="logo-img" height="32" width="32" />
+                      <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" class="logo-img" height="32" width="32" />
                       <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
                     </div>
                     <span class="label-text"> {{ item.symbol }}</span>
@@ -101,7 +101,7 @@
                 <template v-slot:item.symbol="{ item }">
                   <div class="bridge-label">
                     <div class="left-img">
-                      <v-img v-if="item.logo" :src="item.logo" class="logo-img" height="32" width="32" />
+                      <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" class="logo-img" height="32" width="32" />
                       <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
                     </div>
                     <span class="label-text">{{ item.symbol }}</span>
