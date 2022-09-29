@@ -28,15 +28,9 @@ const dir = '../../../public/data/validator/';
 
 const dist = path.resolve(__dirname, '../../../public/data/validator')
 
-console.log(path.resolve(__dirname, '../../../public/data/validator'));
-console.log(fs.existsSync(dist));
-
 if (!fs.existsSync(dist)) {
   fs.mkdirSync(dist);
 }
-
-
-
 
 fs.writeFile(dist+'/validator-list.json', data, (err) => {
   if (err) throw err;

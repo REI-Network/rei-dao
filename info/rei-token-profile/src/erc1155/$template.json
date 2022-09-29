@@ -1,0 +1,15 @@
+{
+  "name": "your awesome NFT",
+  "address": "Contract Address",
+  "organization": "Organization name",
+  "overview":{
+        "en": "Token Description."
+  },
+  "email": "Email",
+  "website": "https://your-awesome-project.com/",
+  "links": {
+    "twitter": "https://twitter.com/your-awesome-project",
+    "telegram": "https://t.me/joinchat/your-awesome-project",
+    "github": "https://github.com/your-awesome-project"
+  }
+}
