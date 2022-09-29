@@ -10,7 +10,7 @@
         <v-col style="text-align: right">
           <span >
             <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-            <a class="font-grey" href="https://github.com/REI-Network/rei-token-profile" target="_blank">Submit a token support here</a>
+            <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
           </span>
         </v-col>
       </v-row>
