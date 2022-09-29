@@ -23,7 +23,7 @@ git branch xxx-validator
 git checkout xxx-validator
 ```
 
-4. Add a new json file to the src/validator directory, named by your validator address. 
+4. Add a new json file to the [./src/validator](./src/validator/) directory, named by your validator address. 
   For example:
   *0x4779Af7e65c055979C8100f2183635E5d28c78f5.json*
 

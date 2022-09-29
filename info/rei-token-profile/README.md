@@ -13,7 +13,7 @@ REI Token Profile is the detailed information of the REI DAO My Account assets i
 2. Clone the repo from your own account, please note: do no clone the origin one directly, but clone the repo you forked
 ```
 git clone https://github.com/xxxxxxxx/rei-dao.git
-cd rei-token-profile/
+cd rei-dao/
 ```
 
 3. Create a new branch (file) and switch to a new branch named by your token name
@@ -23,7 +23,7 @@ git branch xxx-token
 git checkout xxx-token
 ```
 
-4. Add a new json file to the src/erc20 or src/erc721 or src/1155 directory, named by your token contract address. 
+4. Add a new json file to the [./src/erc20](./src/erc20/) or [./src/erc721](./src/erc721/) or [./src/erc1155](./src/erc1155/) directory, named by your token contract address. 
   For example:
   *0x4779Af7e65c055979C8100f2183635E5d28c78f5.json*
 
