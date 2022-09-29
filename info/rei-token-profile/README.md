@@ -12,7 +12,7 @@ REI Token Profile is the detailed information of the REI DAO My Account assets i
 
 2. Clone the repo from your own account, please note: do no clone the origin one directly, but clone the repo you forked
 ```
-git clone https://github.com/xxxxxxxx/rei-token-profile.git
+git clone https://github.com/xxxxxxxx/rei-dao.git
 cd rei-token-profile/
 ```
 

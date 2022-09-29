@@ -12,8 +12,8 @@ REI validator Profile is the detailed information of the REI validator.
 
 2. Clone the repo from your own account, please note: do no clone the origin one directly, but clone the repo you forked
 ```
-git clone https://github.com/xxxxxxxx/rei-validator.git
-cd rei-validator/
+git clone https://github.com/xxxxxxxx/rei-dao.git
+cd rei-dao/
 ```
 
 3. Create a new branch (file) and switch to a new branch named by your validator name
