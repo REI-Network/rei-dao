@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3237452 */
-  src: url('iconfont.woff2?t=1657701438536') format('woff2'),
-       url('iconfont.woff?t=1657701438536') format('woff'),
-       url('iconfont.ttf?t=1657701438536') format('truetype');
+  src: url('iconfont.woff2?t=1665300332180') format('woff2'),
+       url('iconfont.woff?t=1665300332180') format('woff'),
+       url('iconfont.ttf?t=1665300332180') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Dashboards:before {
+  content: "\e61d";
+}
+
+.icon-Governance:before {
+  content: "\e61e";
+}
+
+.icon-a-Gasstake:before {
+  content: "\e61f";
+}
+
+.icon-a-MyAccount:before {
+  content: "\e620";
+}
+
+.icon-Bridges:before {
+  content: "\e621";
+}
+
+.icon-Grants:before {
+  content: "\e622";
+}
+
+.icon-Voting1:before {
+  content: "\e623";
+}
+
+.icon-Setting:before {
+  content: "\e624";
 }
 
 .icon-bridge_nav:before {

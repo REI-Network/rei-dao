@@ -58,7 +58,15 @@
           <h2 v-else>0%</h2>
         </v-col>
         <v-col cols="12" sm="3">
-          <div class="font-grey">APR</div>
+          <div class="font-grey">
+            APR
+             <v-tooltip left color="start_unstake">
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="16" style="margin:0 0 4px 4px"> mdi-help-circle-outline </v-icon>
+              </template>
+              <span>It's a theoretical rate of return. The actual reward is<br/> affected by the network block production duration <br/>and the validator response rate, the actual rate of<br/> return shall prevail.</span>
+            </v-tooltip>
+          </div>
           <h2>{{ apr | asset(2) }}%</h2>
         </v-col>
          <v-col cols="12" sm="3">
