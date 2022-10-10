@@ -1,7 +1,7 @@
 <template>
   <v-dialog width="400">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn small class="mx-1" icon v-bind="attrs" v-on="on"><v-icon>mdi-cog-outline</v-icon></v-btn>
+      <v-btn small class="mx-1" icon v-bind="attrs" v-on="on"><span class="iconfont">&#xe624;</span></v-btn>
     </template>
     <v-card color="start_unstake">
       
@@ -54,5 +54,8 @@ export default {
 .change_btn{
   color: #FFF;
   background-color: #6979F8 !important;
+}
+.iconfont{
+  font-size: 24px;
 }
 </style>

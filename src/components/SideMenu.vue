@@ -47,49 +47,49 @@ export default {
       version: process.env.VUE_APP_VERSION,
       links: [
         {
-          icon: '&#xe604;',
+          icon: '&#xe61d;',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards',
           show: true,
         },
         {
-          icon: '&#xe603;',
+          icon: '&#xe620;',
           text: 'My Account',
           link: '/myAccount',
           name: 'myAccount',
           show: true,
         },
         {
-          icon: '&#xe601;',
+          icon: '&#xe623;',
           text: 'stake.staking',
           link: '/stake',
           name: 'stake',
           show: true,
         },
         {
-          icon: '&#xe605;',
+          icon: '&#xe61f;',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'stakeforgas',
           show: true,
         },
         {
-          icon: '&#xe615;',
+          icon: '&#xe61e;',
           text: 'Governance',
           link: '/governance',
           name: 'governance',
           show: true,
         },
         {
-          icon: '&#xe61c;',
+          icon: '&#xe621;',
           text: 'Bridges',
           link: '/bridge',
           name: 'bridge',
           show: true,
         },
         {
-          icon: '&#xe60c;',
+          icon: '&#xe622;',
           text: 'Grants',
           link: '/grants',
           name: 'grants',
@@ -119,5 +119,8 @@ export default {
 
 .theme--dark.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled){
   color: #868e9e;
+}
+.iconfont{
+  font-size: 18px;
 }
 </style>

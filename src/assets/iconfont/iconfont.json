@@ -6,6 +6,62 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "32187281",
+      "name": "Dashboards",
+      "font_class": "Dashboards",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "32187282",
+      "name": "Governance",
+      "font_class": "Governance",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "32187283",
+      "name": "Gas stake",
+      "font_class": "a-Gasstake",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "32187284",
+      "name": "My Account",
+      "font_class": "a-MyAccount",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "32187285",
+      "name": "Bridges",
+      "font_class": "Bridges",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "32187286",
+      "name": "Grants",
+      "font_class": "Grants",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "32187287",
+      "name": "Voting",
+      "font_class": "Voting1",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "32187288",
+      "name": "Setting",
+      "font_class": "Setting",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
       "icon_id": "30558922",
       "name": "bridge_nav",
       "font_class": "bridge_nav",

@@ -41,21 +41,21 @@ export default {
       offset:true,
       links: [
         {
-          icon: '&#xe604;',
+          icon: '&#xe61d;',
           text: 'Dashboards',
           link: '/dashboards',
           name: 'dashboards',
           show: true,
         },
         {
-          icon: '&#xe603;',
+          icon: '&#xe620;',
           text: 'MyAccount',
           link: '/myAccount',
           name: 'myAccount',
           show: true
         },
         {
-          icon: '&#xe601;',
+          icon: '&#xe623;',
           text: 'stake.staking',
           link: '/stake',
           name: 'stake',
@@ -64,28 +64,28 @@ export default {
       ],
         items:[
         {
-          icon: '&#xe605;',
+          icon: '&#xe61f;',
           text: 'stakeforgas.title',
           link: '/stakeforgas',
           name: 'Gas Stake',
           show: true
         },
         {
-          icon: '&#xe615;',
+          icon: '&#xe61e;',
           text: 'Governance',
           link: '/governance',
           name: 'governance',
           show: true,
         },
         {
-          icon: '&#xe61c;',
+          icon: '&#xe621;',
           text: 'Bridge',
           link: '/bridge',
           name: 'bridge',
           show: true,
         },
         {
-          icon: '&#xe60c;',
+          icon: '&#xe622;',
           text: 'Grants',
           link: '/grants',
           name: 'grants',
