@@ -63,35 +63,12 @@ export const getIpfsGateway = (cid) => {
 
   let url = '';
   if(!ipfsgateway){
-    if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == '4EVERLAND'){
-      url = `https://ipfs.4everland.xyz/ipfs/${cid}`;
-    } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
-      url = `https://ipfs.io/ipfs/${cid}`;
-    } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'PINATA'){
-      url = `https://gateway.pinata.cloud/ipfs/${cid}`;
-    }
+    url = `https://4everland.io/ipfs/${cid}`;
   } else {
-    url = `${decodeURIComponent(ipfsgateway)}${cid}`;
+    url = `${decodeURIComponent(ipfsgateway)}/ipfs/${cid}`;
   }
   return url;
 };
-export const getIpfsGatewayUrl = () => {
-  let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
-  let url = '';
-  if(!ipfsgateway){
-    if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == '4EVERLAND'){
-      url = `https://ipfs.4everland.xyz/ipfs/`;
-    } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'IPFS'){
-      url = `https://ipfs.io/ipfs/`;
-    } else if(process.env.VUE_APP_IPFS_GATEWAY.toUpperCase() == 'PINATA'){
-      url = `https://gateway.pinata.cloud/ipfs/`;
-    }
-  } else {
-    url = decodeURIComponent(ipfsgateway);
-  }
-  return url;
-};
-
 
 export const postRpcRequest = (apiurl,params) => http({
     method: 'POST',
