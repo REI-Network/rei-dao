@@ -72,7 +72,6 @@ export const getIpfsGateway = (cid) => {
     }
   } else {
     url = `${decodeURIComponent(ipfsgateway)}${cid}`;
-    console.log(url)
   }
   return url;
 };
