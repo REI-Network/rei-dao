@@ -103,3 +103,10 @@ export const postRpcRequest = (apiurl,params) => http({
          params:params.params
     }
 });
+
+
+export const getResponseTime = (url,params) => http({
+  method: 'get',
+  url:url,
+  params
+});
