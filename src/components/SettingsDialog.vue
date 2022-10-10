@@ -16,15 +16,35 @@
           </v-col>
         </v-row>
       </v-sheet>
+      
+      <v-sheet class="pa-8 start_unstake">
+        <div class="mb-1">IPFS Gateway</div>
+        <v-row>
+          <v-col
+            class="d-flex"
+            cols="24"
+            sm="12"
+          >
+            <v-select
+              :items="items"
+              v-model="gateway"
+              @change="changeGateway()"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-sheet>
     </v-card>
   </v-dialog>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { getIpfsGatewayUrl } from '../service/CommonService';
 export default {
   data() {
     return {
-      dialog: false
+      dialog: false,
+      items: ['https://ipfs.4everland.xyz/ipfs/','https://ipfs.io/ipfs/','https://gateway.pinata.cloud/ipfs/'],
+      gateway:''
     };
   },
   computed: {
@@ -35,11 +55,22 @@ export default {
       modes: 'modes'
     })
   },
+  mounted(){
+    this.init()
+  },
   methods: {
     ...mapActions({
       switchDarkMode: 'switchDarkMode',
       switchLanguage: 'switchLanguage'
-    })
+    }),
+    async init(){
+      let url = getIpfsGatewayUrl();
+      this.gateway = url;
+    },
+    changeGateway(){
+      localStorage.setItem('ipfsGatewayUrl', encodeURIComponent(this.gateway));
+      window.location.reload();
+    }
   }
 };
 </script>
