@@ -47,16 +47,17 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { getIpfsGatewayUrl,getResponseTime } from '../service/CommonService';
+import { getResponseTime } from '../service/CommonService';
 export default {
   data() {
     return {
       dialog: false,
       items: [],
       gatawayList:[
-        'https://ipfs.4everland.xyz/ipfs/',
-        'https://ipfs.io/ipfs/',
-        'https://gateway.pinata.cloud/ipfs/'
+        'https://4everland.io',
+        'https://ipfs.io',
+        'https://gateway.pinata.cloud',
+        'https://dweb.link'
       ],
       gateway:''
     };
@@ -78,22 +79,29 @@ export default {
       switchLanguage: 'switchLanguage'
     }),
     async init(){
-      let url = getIpfsGatewayUrl();
+      let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
+      let url = '';
+      if(!ipfsgateway){
+        url = `https://4everland.io`;
+      } else {
+        url = decodeURIComponent(ipfsgateway);
+      }
+      
       this.gateway = url;
       this.items = [];
-      for(let i = 0; i<this.gatawayList.length;i++){
+      for(let i = 0; i < this.gatawayList.length; i++){
         let item = this.gatawayList[i];
         let time = await this.getResponse(item)
         this.items.push({
-          url:item,
+          url: item,
           time: time
         })
       }
     },
     async getResponse(url){
-      let ajaxTime = new Date().getTime();
-      await getResponseTime(`${url}bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba`);
-      let totalTime = new Date().getTime()-ajaxTime;
+      let startTime = new Date().getTime();
+      await getResponseTime(`${url}/ipfs/bafkreie7q3iidccmpvszul7kudcvvuavuo7u6gzlbobczuk5nqk3b4akba`);
+      let totalTime = new Date().getTime() - startTime;
       return totalTime
     },
     changeGateway(){
