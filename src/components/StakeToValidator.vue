@@ -110,7 +110,9 @@
                     </template>
                     <span>
                         Block produced: {{ item.minerInfo.minerMessage.minedNumber}}<br>
-                        Block missed: {{ item.minerInfo.minerMissRecordNumber }}
+                        Block missed(All): {{ item.minerInfo.minerMissRecordNumber }}<br>
+                        Block missed(7day): {{ item.minerInfo.minerMissRecordNumberDay7 }}<br>
+                        Block missed(1day): {{ item.minerInfo.minerMissRecordNumberDay1 }}
                     </span>
                   </v-tooltip>
                 </span>
@@ -506,6 +508,7 @@ import abiCommissionShare from '../abis/abiCommissionShare';
 import abiValidatorRewardPool from '../abis/abiValidatorRewardPool';
 import Address from '../components/Address';
 import filters from '../filters';
+import dayjs from 'dayjs';
 import find from 'lodash/find';
 import util from '../utils/util';
 import UnstakeToValidator from './UnstakeToValidator';
@@ -513,6 +516,9 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+
+const ONE_DAY_UNIX = 24 * 60 * 60;
+
 let client = null;
 
 export default {
@@ -769,12 +775,26 @@ export default {
         return item.address;
       })
       let _details = await getValidatorDetails();
+
+      // get validator response rate;
+      const endTimestamp = dayjs().unix();
+      const startTimestampDay1 = endTimestamp - ONE_DAY_UNIX;
+      const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX*7;
+
       let minedInfo = await getValidatorMinedInfo({miner:nodeArr.join()});
+      let minedInfoDay1 = await getValidatorMinedInfo({miner:nodeArr.join(),starttimestamp:startTimestampDay1 });
+      let minedInfoDay7 = await getValidatorMinedInfo({miner:nodeArr.join(),starttimestamp:startTimestampDay7 });
+
       let minedInfoMap = {};
       for(let i = 0; i < minedInfo.data.length; i++){
         let _data = minedInfo.data[i];
         let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner)
-        minedInfoMap[_address] = _data;
+        let obj  = {
+          ..._data,
+          minerMissRecordNumberDay1: minedInfoDay1.data[i].minerMissRecordNumber,
+          minerMissRecordNumberDay7: minedInfoDay7.data[i].minerMissRecordNumber,
+        }
+        minedInfoMap[_address] = obj;
       }
       this.detailsList = _details.data.data;
       this.totalAmount = 0;

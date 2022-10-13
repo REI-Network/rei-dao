@@ -82,7 +82,9 @@
                     </template>
                     <span>
                         Block produced: {{ minedInfo.minerMessage&&minedInfo.minerMessage.minedNumber}}<br>
-                        Block missed: {{ minedInfo.minerMissRecordNumber }}
+                        Block missed(All):{{ minedInfo.minerMissRecordNumber }}<br>
+                        Block missed(7day): {{ minedInfo.minerMissRecordNumberDay7 }}<br>
+                        Block missed(1day): {{ minedInfo.minerMissRecordNumberDay1 }}
                     </span>
                   </v-tooltip></div>
           <h2>{{ responseRate | asset(2) }}%</h2>
@@ -261,6 +263,7 @@ import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import find from 'lodash/find';
 import util from '../utils/util';
+import dayjs from 'dayjs';
 import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
@@ -269,6 +272,8 @@ import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonSer
 import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+
+const ONE_DAY_UNIX = 24 * 60 * 60;
 let client = null;
 
 export default {
@@ -425,9 +430,23 @@ export default {
       let validatorDetails = await getValidatorDetails();
       
       let address = this.$route.query.id;
+
+      // get validator response rate;
+      const endTimestamp = dayjs().unix();
+      const startTimestampDay1 = endTimestamp - ONE_DAY_UNIX;
+      const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX*7;
+
       let minedInfo = await getValidatorMinedInfo({miner:address});
+
+      let minedInfoDay1 = await getValidatorMinedInfo({miner:address,starttimestamp:startTimestampDay1 });
+      let minedInfoDay7 = await getValidatorMinedInfo({miner:address,starttimestamp:startTimestampDay7 });
+
       this.minedInfo = minedInfo.data ? minedInfo.data[0]: {};
-      this.responseRate = this.calResponseRate(this.minedInfo)
+
+      this.minedInfo.minerMissRecordNumberDay1 = minedInfoDay1.data[0].minerMissRecordNumber;
+      this.minedInfo.minerMissRecordNumberDay7 = minedInfoDay7.data[0].minerMissRecordNumber;
+
+      this.responseRate = this.calResponseRate(this.minedInfo);
       let validatorInfo = validatorDetails.data.data;
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
