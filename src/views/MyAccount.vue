@@ -35,6 +35,7 @@
         <v-tab key="11">Portfolio</v-tab>
         <v-tab key="12">NFTs</v-tab>
         <v-tab key="13">DAOs</v-tab>
+        <v-tab key="14">History</v-tab>
       </v-tabs>
     <v-tabs-items v-model="tab1">
       <v-row :class="dark ? 'night' : 'daytime'">
@@ -117,11 +118,13 @@
                 <MyAccountBalance></MyAccountBalance>
               </v-col>
             </v-row>
-            <!-- <v-row>
+          </v-tab-item>
+          <v-tab-item key="14">
+            <v-row>
               <v-col>
-                <MyAccountCrude></MyAccountCrude>
+                <MyAccountHistory></MyAccountHistory>
               </v-col>
-            </v-row> -->
+            </v-row>
           </v-tab-item>
         </v-col>
       </v-row>
@@ -134,6 +137,7 @@
 import Web3 from 'web3';
 import abiERC20 from '../abis/abiERC20';
 import MyAccountBalance from '../components/MyAccountBalance';
+import MyAccountHistory from '../components/MyAccountHistory';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager'
 import abiCommissionShare from '../abis/abiCommissionShare'
@@ -154,6 +158,7 @@ export default {
     Address,
     MyAccountBalance,
     MyAccountNFT,
+    MyAccountHistory,
     [Jazzicon.name]: Jazzicon
   },
   filters,
