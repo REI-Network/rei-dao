@@ -5,13 +5,9 @@
       <v-row justify="space-between" class="nft-header">
         <v-col class="nft-title">
           <span class="title">My NFTs</span>
-          <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px" @click="openNftHelp">mdi-help-circle-outline</v-icon>
         </v-col>
         <v-col style="text-align: right">
-          <span >
-            <v-icon size="16" class="wallet-icon">mdi-arrow-up-thin-circle-outline</v-icon>
-            <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
-          </span>
+          
         </v-col>
       </v-row>
       <v-row justify="start" no-gutters style="padding: 0 4px">
@@ -22,7 +18,6 @@
                 <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
                 <v-img v-else :src="item.image" />
                 <div class="nft-text">
-                  <div class="rei-text">{{ item.organization }}<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 18px">{{ item.name }}</div>
                 </div>
               </v-card>
@@ -145,7 +140,6 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
-      nftInfo: 'nftInfo',
       dark: 'dark'
     })
   },
@@ -163,110 +157,50 @@ export default {
     },
     async init() {
       this.loading = true;
-      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
-        this.nftConfig = this.testConfigList;
-      } else {
-        this.nftConfig = this.prodConfigList;
-      }
       this.nftList = [];
-      if(this.nftInfo.length>0){
-        this.nftList = this.nftInfo;
-        this.loading = false;
-        return;
-      }
 
-      
+      let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
+      let _balance = await contract2.methods.balanceOf(this.connection.address).call();
+      if(_balance>0){
+        for(let i = 0; i < _balance; i++){
+          let token = await contract2.methods.tokenOfOwnerByIndex(this.connection.address,i).call();
+          let tokenInfo = await contract2.methods.tokenURI(token).call();
 
-      for (let i = 0; i < this.nftConfig.length; i++) {
-        if(this.nftConfig[i].token_standard == 'ERC-1155'){
-          let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
-          let addr = this.connection.address;
-          for (let j = 0; ;j++){
-            let flag = await contract.methods.exists(j).call();
-            if(flag){
-              let badgeNFTBalance = await contract.methods.balanceOf(addr, j).call();
-              let url = await contract.methods.uri(j).call();
-              let totalSupply = await contract.methods.totalSupply(j).call();
-              if (badgeNFTBalance > 0) {
-                let imageShow = false;
-                const { data } = await this.$axios.get(url);
-                const imgdata  = await this.$axios.get(data.image);
-                if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
-                  imageShow = true;
-                }
-                let address = this.nftConfig[i].address;
-                let nftDetail = {
-                  ...data,
-                  address,
-                  organization: this.nftConfig[i].organization,
-                  url,
-                  totalSupply,
-                  imageShow,
-                  tokenId:j
-                }
+          console.log('token',token)
+          console.log('_balance',_balance);
+          console.log('tokenInfo',tokenInfo)
 
-                for (let index = 0; index < badgeNFTBalance; index++) {
-                  this.nftList.push(nftDetail);
-                }
-              }
-            } else {
-              break
-            }
+          let imageShow = false;
+          const { data } = await this.$axios.get(tokenInfo);
+          if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+            imageShow = true;
           }
-        } else if(this.nftConfig[i].token_standard == 'ERC-721'){
-          let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
-          let _balance = await contract2.methods.balanceOf(this.connection.address).call();
-          if(_balance.length>0){
-            let token = await contract2.methods.tokenOfOwnerByIndex(this.connection.address,0).call();
-            let tokenInfo = await contract2.methods.tokenURI(token).call();
-
-            console.log('token',token)
-            console.log('_balance',_balance);
-            console.log('tokenInfo',tokenInfo)
-
-            let imageShow = false;
-            const { data } = await this.$axios.get(tokenInfo);
-            const imgdata  = await this.$axios.get(this.$IpfsGateway(data.image));
-            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
-              imageShow = true;
-            }
-            let address = this.nftConfig[i].address;
-            let nftDetail = {
-              name: this.nftConfig[i].name,
-              image:this.$IpfsGateway(data.image),
-              organization:this.nftConfig[i].organization,
-              address,
-              imageShow
-            }
-            this.nftList.push(nftDetail);
-          } 
+          let address = this.$route.query.address;
+          let nftDetail = {
+            name: data.name,
+            image: this.$IpfsGateway(data.image),
+            tokenid: token,
+            address,
+            imageShow
+          }
+          this.nftList.push(nftDetail);
         }
         
-        this.setNftInfo({nftInfo: this.nftList})
       }
+        //this.setNftInfo({nftInfo: this.nftList})
       this.loading = false;
     },
 
     openNftInfo(item) {
       // this.badgeNFTDialog = true;
-      if(item.token_standard == 'ERC-1155'){
-        this.$router.push({
-          name: 'NftDetails',
-          query: {
-            id: item.address,
-            tokenid: item.tokenId,
-
-          }
-        });
-      } else {
-        this.$router.push({
-          name: 'NftCollection',
-          query: {
-            address: item.address
-          }
-        });
-      }
-      
+      this.$router.push({
+        name: 'NftDetails',
+        query: {
+          id: item.address,
+          tokenid: item.tokenid,
+          standard: 'erc-721'
+        }
+      });
     },
     openNftHelp(){
       this.nftHelpDialog = true;

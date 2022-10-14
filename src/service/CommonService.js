@@ -60,12 +60,16 @@ export const getValidatorMinedInfo = (params) => http({
 
 export const getIpfsGateway = (cid) => {
   let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
+  let _cid = cid;
+  if(_cid.indexOf('ipfs/')==0){
+    _cid = _cid.replace('ipfs/', '');
+  }
 
   let url = '';
   if(!ipfsgateway){
-    url = `https://4everland.io/ipfs/${cid}`;
+    url = `https://4everland.io/ipfs/${_cid}`;
   } else {
-    url = `${decodeURIComponent(ipfsgateway)}/ipfs/${cid}`;
+    url = `${decodeURIComponent(ipfsgateway)}/ipfs/${_cid}`;
   }
   return url;
 };

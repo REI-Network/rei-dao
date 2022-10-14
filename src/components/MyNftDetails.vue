@@ -43,7 +43,7 @@
           </v-row>
           <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Token standard</div>
-            <div class="right-content">ERC-1155</div>
+            <div class="right-content">{{ standard }}</div>
           </v-row>
             </v-col>
             <v-col cols="12" sm="6">
@@ -60,7 +60,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-card class="wallet-table">
+    <v-card class="wallet-table" v-if="standard=='ERC-721'">
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
@@ -91,6 +91,7 @@
 
 import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
+import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import Address from '../components/Address';
@@ -161,37 +162,55 @@ export default {
     },
     async init() {
       this.loading = true;
-      if(this.nftInfo.length>0){
-        let info = find(this.nftInfo,(item)=> 
-          web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig) && item.tokenId == this.tokenId
+      if(this.$route.query.standard == 'erc-721'){
+          let contract = new web3.eth.Contract(abiERC721, this.nftConfig);
+          let tokenInfo = await contract.methods.tokenURI(this.$route.query.tokenid).call();
+
+          this.url = tokenInfo
           
-          )
-        this.url = info.url;
-        this.totalSupply = info.totalSupply;
-        this.nftName = info.name;
-        this.badgeNFTImg = info.image;
-        this.imageShow = info.imageShow;
-        this.description = info.description;
-        this.loading = false;
+            const { data } = await this.$axios.get(this.url);
+            this.imageShow = false;
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+              this.imageShow = true;
+            }
+            this.nftName = data.name;
+            this.badgeNFTImg = this.$IpfsGateway(data.image);
+            this.description = data.description;
+            this.standard = this.$router.query.standard.toUpperCase()
+          this.loading = false;
       } else {
-        let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
-        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
-        this.url = await contract.methods.uri(this.tokenId).call();
-        this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
-        if (this.badgeNFTBalance > 0) {
-          const { data } = await this.$axios.get(this.url);
-          const imgdata  = await this.$axios.get(data.image);
-          this.imageShow = false;
-          if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
-            this.imageShow = true;
+        if(this.nftInfo.length>0){
+          let info = find(this.nftInfo,(item)=> 
+            web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig) && item.tokenId == this.tokenId
+            
+            )
+          this.url = info.url;
+          this.totalSupply = info.totalSupply;
+          this.nftName = info.name;
+          this.badgeNFTImg = info.image;
+          this.imageShow = info.imageShow;
+          this.description = info.description;
+          this.loading = false;
+        } else {
+          let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
+          this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
+          this.url = await contract.methods.uri(this.tokenId).call();
+          this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
+          if (this.badgeNFTBalance > 0) {
+            const { data } = await this.$axios.get(this.url);
+            const imgdata  = await this.$axios.get(data.image);
+            this.imageShow = false;
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+              this.imageShow = true;
+            }
+            this.nftName = data.name;
+            this.badgeNFTImg = data.image;
+            this.description = data.description;
           }
-          this.nftName = data.name;
-          this.badgeNFTImg = data.image;
-          this.description = data.description;
+          this.loading = false;
         }
-        this.loading = false;
-       }
         this.getHolderList();
+      }
     },
     async getHolderList() {
       let params = {
