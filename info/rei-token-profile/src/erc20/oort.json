@@ -1,0 +1,17 @@
+{
+  "name": "OORT",
+  "symbol": "OORT",
+  "address": "0x3d1bbd0ec9af25e8f12383d9f6a6bbfa6dfef06f",
+  "logo_cid": "https://gateway.pinata.cloud/ipfs/QmRWhZk1jkD4wLCaYv8STyzhDPhcHdX21xZChH2F23tJyW/oort.png",
+  "overview": {
+    "en": "Oortswap is an Automated Market Maker (AMM), and the Exchange is at the heart of Oortswap , Oortswap is also a AMM-based decentralized margin trading platform on multi-chains, where users can easily earn interest through lending and perform leveraged trading."
+  },
+  "email": "Email",
+  "website": "https://www.oortswap.exchange/home",
+  "market_price": "https://info.oortswap.exchange/token/0x3d1bbd0ec9af25e8f12383d9f6a6bbfa6dfef06f",
+  "links": {
+    "twitter": "https://twitter.com/OortSwap",
+    "telegram": "https://t.me/joinchat/oortswap",
+    "github": "https://github.com/OortSwap/contracts"
+  }
+}
