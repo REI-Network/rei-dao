@@ -56,7 +56,7 @@ export default {
       gatawayList:[
         'https://4everland.io',
         'https://ipfs.io',
-        'https://gateway.pinata.cloud',
+        'https://ipfs-gateway.cloud',
         'https://dweb.link'
       ],
       gateway:''
