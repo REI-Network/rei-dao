@@ -202,7 +202,8 @@ export default {
                   url,
                   totalSupply,
                   imageShow,
-                  tokenId:j
+                  tokenId:j,
+                  token_standard: this.nftConfig[i].token_standard
                 }
 
                 for (let index = 0; index < badgeNFTBalance; index++) {
@@ -214,10 +215,11 @@ export default {
             }
           }
         } else if(this.nftConfig[i].token_standard == 'ERC-721'){
+          let _myAddress = this.connection.address;
           let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
-          let _balance = await contract2.methods.balanceOf(this.connection.address).call();
+          let _balance = await contract2.methods.balanceOf(_myAddress).call();
           if(_balance.length>0){
-            let token = await contract2.methods.tokenOfOwnerByIndex(this.connection.address,0).call();
+            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,0).call();
             let tokenInfo = await contract2.methods.tokenURI(token).call();
 
             console.log('token',token)
@@ -226,8 +228,7 @@ export default {
 
             let imageShow = false;
             const { data } = await this.$axios.get(tokenInfo);
-            const imgdata  = await this.$axios.get(this.$IpfsGateway(data.image));
-            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
               imageShow = true;
             }
             let address = this.nftConfig[i].address;
@@ -236,7 +237,8 @@ export default {
               image:this.$IpfsGateway(data.image),
               organization:this.nftConfig[i].organization,
               address,
-              imageShow
+              imageShow,
+              token_standard: this.nftConfig[i].token_standard
             }
             this.nftList.push(nftDetail);
           } 

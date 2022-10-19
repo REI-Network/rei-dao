@@ -60,7 +60,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-card class="wallet-table" v-if="standard=='ERC-721'">
+    <v-card class="wallet-table" v-if="standard=='ERC-1155'">
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
@@ -122,6 +122,7 @@ export default {
       totalSupply: 0,
       nftList: [],
       nftName: '',
+      standard: '',
       imageShow: true,
       url: '',
       getListLoading: false,
@@ -176,7 +177,7 @@ export default {
             this.nftName = data.name;
             this.badgeNFTImg = this.$IpfsGateway(data.image);
             this.description = data.description;
-            this.standard = this.$router.query.standard.toUpperCase()
+            this.standard = this.$router.query.standard?this.$router.query.standard.toUpperCase():'';
           this.loading = false;
       } else {
         if(this.nftInfo.length>0){
