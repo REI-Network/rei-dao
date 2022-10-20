@@ -1,7 +1,7 @@
 <template>
   <v-container class="stake_background" style="padding: 0">
     <v-row>
-      <v-col cols="12" md="2">
+      <!-- <v-col cols="12" md="2">
         <v-card outlined class="select-card">
           <v-select class="d-select" :items="items" label="All Types" outlined dense style="border-radius: 20px"></v-select>
         </v-card>
@@ -10,122 +10,128 @@
         <v-card outlined class="select-card">
           <v-select class="d-select" :items="items2" label="All Tokens" outlined dense style="border-radius: 20px"></v-select>
         </v-card>
-      </v-col>
+      </v-col> -->
       <v-col cols="12" md="3">
         <v-card outlined class="select-card">
           <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on"  style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="dateFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
             <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
           </v-menu>
           <v-icon class="right-icon">mdi-menu-right</v-icon>
           <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted2" label="End Time" outlined dense v-bind="attrs" v-on="on"  style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="dateFormatted2" label="End Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date2" no-title @input="menu2= false"></v-date-picker>
+            <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
           </v-menu>
         </v-card>
       </v-col>
     </v-row>
     <div>
-      <h3>2022-05-12</h3>
-      <v-card class="card-item">
-        <v-row>
-          <v-col cols="12" sm="4" class="left-item">
-            <div class="img">
-                <v-img src="../assets/images/history-icon.png" width="40"/>
-            </div>
-           <div>
-                <div class="font-grey">Receive</div>
-                <h4>05:45</h4>
-           </div>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">Form</div>
-            <h4>0xe2fs...48as</h4>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">60.49 BUSD</div>
-            <h4>$60.60</h4>
-          </v-col>
-        </v-row>
-      </v-card>
-      <v-card class="card-item">
-        <v-row>
-          <v-col cols="12" sm="4" class="left-item">
-            <div class="img">
-                <v-img src="../assets/images/history-icon.png" width="40"/>
-            </div>
-           <div>
-                <div class="font-grey">Receive</div>
-                <h4>05:45</h4>
-           </div>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">Form</div>
-            <h4>0xe2fs...48as</h4>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">1000REI</div>
-            <h4>$1000.20</h4>
-          </v-col>
-        </v-row>
-      </v-card>
+      <v-data-iterator :items="list"  hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
+        <template v-slot:item="{ item }">
+          <h3>{{ item.date }}</h3>
+          <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
+            <v-row>
+              <v-col cols="12" sm="3" class="left-item">
+                <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+                  <v-img src="../assets/images/history-4.png" width="40" />
+                </div>
+                <div class="img" v-else>
+                  <v-img src="../assets/images/history-2.png" width="40" />
+                </div>
+                <div>
+                  <div class="font-grey" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">Send</div>
+                  <div class="font-grey" v-else>Receive</div>
+                  <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
+                </div>
+              </v-col>
+              <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+                <div class="font-grey">To</div>
+                <h4>{{ info.to | addr }}</h4>
+              </v-col>
+              <v-col cols="12" sm="3" v-else>
+                <div class="font-grey">From</div>
+                <h4>{{ info.from | addr }}</h4>
+              </v-col>
+              <v-col cols="12" sm="3">
+                <h4>{{ info.value | asset(2) }}</h4>
+                <div class="font-grey" v-if="info.tokenSymbol">{{ info.tokenSymbol }}</div>
+                <div class="font-grey" v-else>REI</div>
+              </v-col>
+              <v-col cols="12" sm="3">
+                <div class="font-grey gas-fee">
+                  <span>Gas Fee</span>
+                  <div class="img">
+                    <v-img src="../assets/images/history-3.png" width="20" />
+                  </div>
+                </div>
+                <h4>{{ info.gasUsed }}</h4>
+              </v-col>
+            </v-row>
+          </v-card>
+        </template>
+      </v-data-iterator>
     </div>
-    <div class="content">
-      <h3>2022-05-12</h3>
-      <v-card class="card-item">
-        <v-row>
-          <v-col cols="12" sm="4" class="left-item">
-            <div class="img">
-                <v-img src="../assets/images/history-icon.png" width="40"/>
-            </div>
-           <div>
-                <div class="font-grey">Receive</div>
-                <h4>05:45</h4>
-           </div>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">Form</div>
-            <h4>0xe2fs...48as</h4>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">60.49 BUSD</div>
-            <h4>$60.60</h4>
-          </v-col>
+    <v-dialog v-model="dialog" width="600" class="dialog-card">
+      <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <v-row justify="space-between" align="center" no-gutters>
+          <div class="gas-fee">
+            <h3>Transaction Details</h3>
+            <a :href="`https://scan.rei.network/tx/${details.hash}`" target="_blank" class="img">
+              <v-img src="../assets/images/history-1.png" width="20" />
+            </a>
+          </div>
+          <div @click="cancelDetails" class="close-dialog">
+            <v-icon size="22">mdi-close</v-icon>
+          </div>
         </v-row>
+        <div class="font-grey">{{ (details.timeStamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+        <v-card :class="dark ? 'chip-dark' : 'chip-light elevation-0 '">
+          <v-row justify="space-between" no-gutter class="item-content">
+            <div class="item-name">Block number</div>
+            <div class="item-data">{{ details.blockNumber }}</div>
+          </v-row>
+          <v-row justify="space-between" v-if="details.from == address" no-gutter class="item-content">
+                <div class="item-name">To</div>
+                <div class="item-data">{{ details.to }}</div>
+            </v-row>
+          <v-row justify="space-between" v-else no-gutter class="item-content">
+            <div class="item-name">From</div>
+            <div class="item-data">{{ details.from }}</div>
+          </v-row>
+          <v-row justify="space-between" no-gutter class="item-content">
+            <div class="item-name">Transaction fee</div>
+            <div class="item-data">{{ details.gasUsed }}</div>
+          </v-row>
+          <v-row justify="space-between" no-gutter class="item-content">
+            <div class="item-name">Gas Price</div>
+            <div class="item-data">{{ details.gasPrice }}</div>
+          </v-row>
+          <v-row justify="space-between" no-gutter class="item-content">
+            <div class="item-name">Nonce</div>
+            <div class="item-data">{{ details.nonce }}</div>
+          </v-row>
+        </v-card>
+        <div class="receive">
+          <div class="item-name">Received</div>
+          <div class="price">{{ details.value | asset(2) }} REI</div>
+        </div>
       </v-card>
-      <v-card class="card-item">
-        <v-row>
-          <v-col cols="12" sm="4" class="left-item">
-            <div class="img">
-                <v-img src="../assets/images/history-icon.png" width="40"/>
-            </div>
-           <div>
-                <div class="font-grey">Receive</div>
-                <h4>05:45</h4>
-           </div>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">Form</div>
-            <h4>0xe2fs...48as</h4>
-          </v-col>
-          <v-col cols="12" sm="4">
-            <div class="font-grey">1000REI</div>
-            <h4>$1000.20</h4>
-          </v-col>
-        </v-row>
-      </v-card>
-    </div>
+    </v-dialog>
   </v-container>
 </template>
 <script>
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
+import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
-// import util from '../utils/util';
-/* eslint-disable no-undef */
+import util from '../utils/util';
+// import find from 'lodash/find';
 export default {
   filters,
   data: (vm) => ({
@@ -135,11 +141,21 @@ export default {
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     menu1: false,
     menu2: false,
-    items:[],
-    items2:[],
+    items: [],
+    items2: [],
+    loading: false,
+    setData: [],
+    transferList: [],
+    transactionsList: [],
+    dialog: false,
+    historyList: [],
+    list: [],
+    rawDataList:[],
+    details: '',
+    address:''
   }),
   mounted() {
-      this.historyData()
+    this.getData();
   },
   computed: {
     ...mapGetters({
@@ -152,6 +168,13 @@ export default {
     },
     computedDateFormatted2() {
       return this.formatDate2(this.date2);
+    },
+    listenChange() {
+      const { date,date2} = this;
+      return {
+        date,
+        date2,
+      };
     }
   },
   watch: {
@@ -160,6 +183,14 @@ export default {
     },
     date2() {
       this.dateFormatted2 = this.formatDate2(this.date2);
+    },
+    listenChange(date,date2) {
+      let startDate = Date.parse(this.date);
+      let endDate = Date.parse(this.date2);
+      this.list = [].concat(this.rawDataList)
+      this.list = this.list.filter((item) => {
+        return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+      })
     }
   },
   methods: {
@@ -168,24 +199,86 @@ export default {
       const [year, month, day] = date.split('-');
       return `${month}/${day}/${year}`;
     },
-     formatDate2(date2) {
+    formatDate2(date2) {
       if (!date2) return null;
       const [year, month, day] = date2.split('-');
       return `${month}/${day}/${year}`;
     },
-    async historyData(){
-        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
-        let historyList = data.result;
-        for (let i = 0; i < historyList.length; i++) {
-           //
+    async getData() {
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=${this.connection.address}`);
+      this.transferList = data.result;
+      this.historyData();
+    },
+    async historyData() {
+      this.address = this.connection.address.toLowerCase();
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
+      this.transactionsList = data.result;
+      this.historyList = this.transferList.concat(this.transactionsList);
+      this.historyList = this.historyList.map((item) => {
+        let timestamp = item.timeStamp * 1000;
+        let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
+        let gasUsed = web3.utils.fromWei(web3.utils.toBN(item.gasUsed));
+        let gasPrice = web3.utils.fromWei(web3.utils.toBN(item.gasPrice));
+        let value = item.value / 1e18;
+        return {
+          ...item,
+          date: date,
+          gasUsed: gasUsed,
+          gasPrice: gasPrice,
+          value: value
+        };
+      });
+      let tempArr = [];
+      for (let i = 0; i < this.historyList.length; i++) {
+        let item = this.historyList[i];
+        if (tempArr.indexOf(item.date) == -1) {
+          this.list.push({
+            date: item.date,
+            result: [item]
+          });
+          tempArr.push(item.date);
+        } else {
+          for (let j = 0; j < this.list.length; j++) {
+            let index = this.list[j];
+            if (index.date == item.date) {
+              index.result.push(item);
+              break;
+            }
+          }
         }
-        console.log('---',historyList)
+      }
+      this.rawDataList = this.list;
+    },
+    openDetails(value) {
+      this.dialog = true;
+      this.details = value;
+    },
+    cancelDetails() {
+      this.dialog = false;
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
+.dialog-night {
+  background-color: #595777;
+  padding: 20px;
+}
+.dialog-daytime {
+  background-color: #fff;
+  padding: 20px;
+}
+.chip-dark {
+  background-color: #13112b;
+  padding: 20px;
+  margin: 20px 0;
+}
+.chip-light {
+  background-color: #f5f5f7;
+  padding: 20px;
+  margin: 20px 0;
+}
 .card-item {
   padding: 20px;
   margin-top: 16px;
@@ -204,9 +297,36 @@ export default {
 .left-item {
   display: flex;
   align-items: center;
-  .img{
-      margin-right: 10px;
+  .img {
+    margin-right: 10px;
   }
+}
+.gas-fee {
+  display: flex;
+  align-items: center;
+  .img {
+    margin-left: 10px;
+  }
+}
+
+.item-content {
+  margin: 8px 0;
+  .item-data {
+    font-weight: 500;
+  }
+}
+.item-name {
+  color: grey;
+}
+.receive {
+  margin-top: 20px;
+  .price {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+.close-dialog {
+  cursor: pointer;
 }
 .content {
   margin-top: 40px;
