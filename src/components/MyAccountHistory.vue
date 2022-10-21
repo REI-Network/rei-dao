@@ -30,7 +30,7 @@
       </v-col>
     </v-row>
     <div>
-      <v-data-iterator :items="list"  hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
+      <v-data-iterator :items="list" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
         <template v-slot:item="{ item }">
           <h3>{{ item.date }}</h3>
           <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
@@ -58,17 +58,17 @@
               </v-col>
               <v-col cols="12" sm="3">
                 <h4>{{ info.value | asset(2) }}</h4>
-                <div class="font-grey" v-if="info.tokenSymbol">{{ info.tokenSymbol }}</div>
+                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol}}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
               <v-col cols="12" sm="3">
-                <div class="font-grey gas-fee">
+                <div class="font-grey gas-fee" >
                   <span>Gas Fee</span>
                   <div class="img">
                     <v-img src="../assets/images/history-3.png" width="20" />
                   </div>
                 </div>
-                <h4>{{ info.gasUsed }}</h4>
+                <h4>{{ info.gasUsed }} REI</h4>
               </v-col>
             </v-row>
           </v-card>
@@ -104,11 +104,11 @@
           </v-row>
           <v-row justify="space-between" no-gutter class="item-content">
             <div class="item-name">Transaction fee</div>
-            <div class="item-data">{{ details.gasUsed }}</div>
+            <div class="item-data">{{ details.gasUsed }} REI</div>
           </v-row>
           <v-row justify="space-between" no-gutter class="item-content">
             <div class="item-name">Gas Price</div>
-            <div class="item-data">{{ details.gasPrice }}</div>
+            <div class="item-data">{{ details.gasPrice }} Gwei</div>
           </v-row>
           <v-row justify="space-between" no-gutter class="item-content">
             <div class="item-name">Nonce</div>
@@ -116,8 +116,13 @@
           </v-row>
         </v-card>
         <div class="receive">
-          <div class="item-name">Received</div>
-          <div class="price">{{ details.value | asset(2) }} REI</div>
+          <div class="font-grey" v-if="details.from == address">Send</div>
+          <div class="item-name" v-else>Received</div>
+          <v-row align="center" class="value-symbol" no-gutters>
+            <div class="price">{{ details.value | asset(2) }}</div>
+            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
+               <div v-else>&nbsp;&nbsp;REI</div>
+          </v-row>
         </div>
       </v-card>
     </v-dialog>
@@ -145,14 +150,14 @@ export default {
     items2: [],
     loading: false,
     setData: [],
-    transferList: [],
+    sortDescVote:true,
     transactionsList: [],
     dialog: false,
     historyList: [],
     list: [],
     rawDataList:[],
     details: '',
-    address:''
+    address:'',
   }),
   mounted() {
     this.getData();
@@ -207,27 +212,44 @@ export default {
     async getData() {
       const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=${this.connection.address}`);
       this.transferList = data.result;
+      this.transferList = this.transferList.filter((item) => {
+        return item.value != 0;
+      })
       this.historyData();
     },
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
       this.transactionsList = data.result;
+      this.transactionsList = this.transactionsList.filter((item) => {
+        return item.value != 0;
+      })
       this.historyList = this.transferList.concat(this.transactionsList);
       this.historyList = this.historyList.map((item) => {
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
-        let gasUsed = web3.utils.fromWei(web3.utils.toBN(item.gasUsed));
-        let gasPrice = web3.utils.fromWei(web3.utils.toBN(item.gasPrice));
-        let value = item.value / 1e18;
+        let gasUsed = web3.utils.fromWei(item.gasUsed,'Gwei');
+        let gasPrice = item.gasPrice/1e9;
+        let value = 0;
+        if(item.tokenSymbol){
+          value = item.value/10**item.tokenDecimal;
+        }else{
+          value = item.value/1e18;
+        }
         return {
           ...item,
           date: date,
           gasUsed: gasUsed,
-          gasPrice: gasPrice,
+          gasPrice:gasPrice,
           value: value
         };
       });
+      function sortArr(attr){
+          return function(a,b){
+            return b[attr]-a[attr]
+          }
+        }
+      this.historyList = this.historyList.sort(sortArr('timeStamp'));
       let tempArr = [];
       for (let i = 0; i < this.historyList.length; i++) {
         let item = this.historyList[i];
@@ -247,11 +269,13 @@ export default {
           }
         }
       }
+      console.log('list',this.list)
       this.rawDataList = this.list;
     },
     openDetails(value) {
       this.dialog = true;
       this.details = value;
+      console.log('value',value)
     },
     cancelDetails() {
       this.dialog = false;
@@ -324,6 +348,17 @@ export default {
     font-size: 20px;
     font-weight: bold;
   }
+}
+.token-symbol{
+  width:100px;
+   overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.value-symbol{
+  margin-left: 2px;
+  font-weight: bold;
+  margin-top:2px;
 }
 .close-dialog {
   cursor: pointer;
