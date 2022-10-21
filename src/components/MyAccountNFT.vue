@@ -221,16 +221,12 @@ export default {
             }
           }
         } else if(this.nftConfig[i].token_standard == 'ERC-721'){
-          let _myAddress = '0x082B9B776E5d0b1771594676D12619F479B0a69c';
+          let _myAddress = this.connection.address;
           let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
           let _balance = await contract2.methods.balanceOf(_myAddress).call();
           if(_balance>0){
             let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,0).call();
             let tokenInfo = await contract2.methods.tokenURI(token).call();
-
-            console.log('token',token)
-            console.log('_balance',_balance);
-            console.log('tokenInfo',tokenInfo)
 
             let imageShow = false;
             const { data } = await this.$axios.get(tokenInfo);

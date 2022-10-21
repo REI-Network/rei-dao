@@ -189,7 +189,7 @@ export default {
       let contractAddress = this.$route.query.address;
       
 
-      let _myAddress = '0x082B9B776E5d0b1771594676D12619F479B0a69c';
+      let _myAddress = this.connection.address;
       let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
       this.token.symbol = await contract2.methods.symbol().call();
