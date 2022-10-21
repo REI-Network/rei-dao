@@ -210,7 +210,7 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=0x8D395Fed2A40f3bB20289b277F7FE34Af5ae8756`);
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=${this.connection.address}`);
       this.transferList = data.result;
       this.transferList = this.transferList.filter((item) => {
         return item.value != 0;
@@ -219,7 +219,7 @@ export default {
     },
     async historyData() {
       this.address = this.connection.address.toLowerCase();
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=0x8D395Fed2A40f3bB20289b277F7FE34Af5ae8756`);
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
       this.transactionsList = data.result;
       this.transactionsList = this.transactionsList.filter((item) => {
         return item.value != 0;
