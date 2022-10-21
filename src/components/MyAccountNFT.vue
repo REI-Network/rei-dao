@@ -20,7 +20,13 @@
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList" @click="openNftInfo(item)">
                 <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
-                <v-img v-else :src="item.image" />
+                <div v-else class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
+                  <v-img  :src="item.image" lazy-src="../assets/images/logo_bg.png" />
+                  <div class="collect-img-number">
+                    {{ item.balance }} <v-icon  size="16">mdi-layers</v-icon>
+                  </div>
+                  
+                </div>
                 <div class="nft-text">
                   <div class="rei-text">{{ item.organization }}<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 18px">{{ item.name }}</div>
@@ -45,7 +51,7 @@
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList">
-                <v-img :src="$IpfsGateway(item.image)" />
+                <v-img :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg.png" ></v-img>
                 <div class="nft-text">
                   <div class="rei-text">{{ item.organization }}<v-icon size="10" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 14px">{{ item.name }}</div>
@@ -124,7 +130,7 @@ export default {
         },
         {
           "address": '0xE4EDC855717281b994A6E2E43c98791dBCE497DA',
-          "image":"bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee",
+          "image":"bafkreieajvu4ze4tpb7k2zsvb2ow7haqv6datq5gilj2jq746xsefopwwi",
           "name":"beeHive NFT",
           "organization":"beeHive",
           "token_standard": "ERC-721"
@@ -215,10 +221,10 @@ export default {
             }
           }
         } else if(this.nftConfig[i].token_standard == 'ERC-721'){
-          let _myAddress = this.connection.address;
+          let _myAddress = '0x082B9B776E5d0b1771594676D12619F479B0a69c';
           let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
           let _balance = await contract2.methods.balanceOf(_myAddress).call();
-          if(_balance.length>0){
+          if(_balance>0){
             let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,0).call();
             let tokenInfo = await contract2.methods.tokenURI(token).call();
 
@@ -238,6 +244,7 @@ export default {
               organization:this.nftConfig[i].organization,
               address,
               imageShow,
+              balance: _balance,
               token_standard: this.nftConfig[i].token_standard
             }
             this.nftList.push(nftDetail);
@@ -257,7 +264,7 @@ export default {
           query: {
             id: item.address,
             tokenid: item.tokenId,
-
+            standard: 'erc-1155'
           }
         });
       } else {
@@ -422,6 +429,20 @@ a:hover {
     background-color: transparent;
     cursor: pointer;
   }
+}
+.collect-img-wrap{
+  position: relative;
+  .collect-img-number{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #f5f5f7;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+}
+.bg-dark .collect-img-number{
+  background-color: #252243;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {

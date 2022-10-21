@@ -38,7 +38,8 @@ const state = {
     graph:'https://api-graphql-main.rei.network/',
     chart: 'https://api-market-main.rei.network/'
   },
-  nftInfo:[]
+  nftInfo:[],
+  nftCollect:{}
 };
 const getters = {
   connection: (state) => state.connection,
@@ -75,6 +76,7 @@ const getters = {
   assetInfo: (state) => state.assetInfo,
   apiUrl: (state) => state.apiUrl,
   nftInfo:  (state) => state.nftInfo,
+  nftCollect: (state) => state.nftCollect
 };
 
 const mutations = {
@@ -152,6 +154,9 @@ const mutations = {
   },
   setNftInfo: (state, payload) => {
     state.nftInfo = payload.nftInfo;
+  },
+  setNftCollect: (state, payload) => {
+    state.nftCollect = payload.nftCollect;
   }
 
 };
@@ -202,7 +207,10 @@ const actions = {
   },
   setNftInfo: ({ commit }, payload) => {
     commit('setNftInfo', payload);
-  }
+  },
+  setNftCollect: ({ commit }, payload) => {
+    commit('setNftCollect', payload);
+  },
 };
 
 const store = new Vuex.Store({

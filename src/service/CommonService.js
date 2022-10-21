@@ -61,6 +61,7 @@ export const getValidatorMinedInfo = (params) => http({
 export const getIpfsGateway = (cid) => {
   let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
   let _cid = cid;
+  if(!_cid) return '';
   if(_cid.indexOf('ipfs/')==0){
     _cid = _cid.replace('ipfs/', '');
   }
