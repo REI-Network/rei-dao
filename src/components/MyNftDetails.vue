@@ -2,27 +2,27 @@
   <v-container :class="dark?'badges-nft':'badges-nft back-linear'">
     <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLink()">NFTs</a></span> / <span class="rei-fans">{{ nftName }}</span>
+        <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nftName }}</span>
       </div>
     </div>
     <v-row justify="space-between">
       <v-col cols="12" sm="4">
         <v-card class="nft-dialog">
           <video v-if="!imageShow" controls preload="meta" class="video-play" :src="this.badgeNFTImg" :poster="poster"></video>
-          <v-img v-else :src="this.badgeNFTImg" />
+          <v-img v-else :src="this.badgeNFTImg" lazy-src="../assets/images/logo_bg.png" />
         </v-card>
       </v-col>
       <v-col cols="12" sm="8" class="right-content">
         <v-row no-gutters justify="space-between">
-          <div class="rei-dao">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
+          <div class="rei-dao" v-if="standard=='ERC-1155'">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
         </v-row>
         <div class="genesis">{{ nftName }}</div>
-        <v-row>
+        <v-row class="ownersWrap">
           <!-- <div class="owners">
                                 <v-img src="../assets/images/owners.png" width="17" height="17" />
                                 <span> 150 owners</span>
                             </div> -->
-          <div class="owners">
+          <div class="owners" v-if="standard=='ERC-1155'">
             <v-img src="../assets/images/total.png" width="17" height="17" />
             <span> &nbsp;&nbsp;{{ totalSupply }} total</span>
           </div>
@@ -43,7 +43,7 @@
           </v-row>
           <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Token standard</div>
-            <div class="right-content">ERC-1155</div>
+            <div class="right-content">{{ standard }}</div>
           </v-row>
             </v-col>
             <v-col cols="12" sm="6">
@@ -58,9 +58,22 @@
             </v-col>
           </v-row>
         </v-card>
+        <v-card class="about-genesis" :class="dark ? 'bg-dark' : 'bg-light'" v-if="standard=='ERC-721'" style="margin-top: 20px">
+          <div class="title">Trait</div>
+          <v-row justify="space-between" >
+            <template >
+              <v-col cols="4" sm="4" v-for="(item, i) in attributes" :key="i" >
+                <div class="trait-wrap">
+                  <div class="nft-subtitle-2"> {{item.trait_type}} </div>
+                  <div class="nft-subtitle"> {{item.value}} </div>
+                </div>
+              </v-col>
+            </template>
+          </v-row>
+        </v-card>
       </v-col>
     </v-row>
-    <v-card class="wallet-table">
+    <v-card class="wallet-table" v-if="standard=='ERC-1155'">
       <v-row justify="space-between">
         <v-col>
           <span class="title">All Holders</span>
@@ -91,6 +104,7 @@
 
 import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
+import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import Address from '../components/Address';
@@ -112,7 +126,7 @@ export default {
       loading: false,
       badgeNFTDialog: false,
       badgeNFTBalance: '',
-      badgeNFTImg: '',
+      badgeNFTImg: 'bafkreigguc4dlfohzo6upgyiewvfwb5pmbaostgecuceje4corvp3e5m4e',
       pageVisible: 7,
       totalPage: 0,
       description: '',
@@ -121,9 +135,12 @@ export default {
       totalSupply: 0,
       nftList: [],
       nftName: '',
+      symbol:'',
+      standard: '',
       imageShow: true,
       url: '',
       getListLoading: false,
+      attributes:[],
       headers: [
         { text: 'Address', value: 'address' },
         { text: 'Amount', value: 'balance' }
@@ -161,37 +178,61 @@ export default {
     },
     async init() {
       this.loading = true;
-      if(this.nftInfo.length>0){
-        let info = find(this.nftInfo,(item)=> 
-          web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig) && item.tokenId == this.tokenId
+      this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+
+      if(this.$route.query.standard == 'erc-721'){
+          let contract = new web3.eth.Contract(abiERC721, this.nftConfig);
+          let tokenInfo = await contract.methods.tokenURI(this.$route.query.tokenid).call();
+          this.symbol = await contract.methods.symbol().call();
+
+          this.url = tokenInfo
           
-          )
-        this.url = info.url;
-        this.totalSupply = info.totalSupply;
-        this.nftName = info.name;
-        this.badgeNFTImg = info.image;
-        this.imageShow = info.imageShow;
-        this.description = info.description;
-        this.loading = false;
+            const { data } = await this.$axios.get(this.url);
+            this.imageShow = false;
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+              this.imageShow = true;
+            }
+            this.nftName = data.name;
+            this.badgeNFTImg = this.$IpfsGateway(data.image);
+            this.description = data.description;
+            this.attributes = data.attributes;
+            this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+          this.loading = false;
       } else {
-        let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
-        this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
-        this.url = await contract.methods.uri(this.tokenId).call();
-        this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
-        if (this.badgeNFTBalance > 0) {
-          const { data } = await this.$axios.get(this.url);
-          const imgdata  = await this.$axios.get(data.image);
-          this.imageShow = false;
-          if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
-            this.imageShow = true;
+        if(this.nftInfo.length>0){
+          let info = find(this.nftInfo,(item)=> 
+            web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.nftConfig) && item.tokenId == this.tokenId
+            
+            )
+          this.url = info.url;
+          this.totalSupply = info.totalSupply;
+          this.nftName = info.name;
+          this.badgeNFTImg = info.image;
+          this.imageShow = info.imageShow;
+          this.description = info.description;
+          this.loading = false;
+        } else {
+          let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig);
+          this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
+          this.url = await contract.methods.uri(this.tokenId).call();
+          this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
+          this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+
+          if (this.badgeNFTBalance > 0) {
+            const { data } = await this.$axios.get(this.url);
+            const imgdata  = await this.$axios.get(data.image);
+            this.imageShow = false;
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+              this.imageShow = true;
+            }
+            this.nftName = data.name;
+            this.badgeNFTImg = data.image;
+            this.description = data.description;
           }
-          this.nftName = data.name;
-          this.badgeNFTImg = data.image;
-          this.description = data.description;
+          this.loading = false;
         }
-        this.loading = false;
-       }
         this.getHolderList();
+      }
     },
     async getHolderList() {
       let params = {
@@ -205,6 +246,9 @@ export default {
     },
     routeLink() {
       this.$router.back();
+    },
+    routeLinkAccount(){
+      this.$router.push('/myAccount')
     }
   }
 };
@@ -286,6 +330,15 @@ a:hover {
   text-decoration: underline;
   color: #289eff;
 }
+.trait-wrap{
+  background-color:#f5f5f7;
+  border-radius: 4px;
+  padding: 15px 20px;
+}
+.bg-dark .trait-wrap{
+  background-color:#252243;
+}
+
 .nft-dialog {
   padding: 20px 28px;
   margin-left: 40px;
@@ -309,6 +362,9 @@ a:hover {
   font-size: 26px;
   font-weight: bold;
 }
+.ownersWrap{
+  min-height: 1.5rem;
+}
 .owners {
   display: flex;
   align-items: center;
@@ -318,6 +374,15 @@ a:hover {
 .title {
   font-size: 20px;
   // color: #121C32;
+}
+.nft-subtitle-2{
+  font-size: 1rem;
+  color: #858ea0;
+}
+.nft-subtitle{
+  font-size: 1.2rem;
+  line-height: 180%;
+  font-weight: bold;
 }
 .content {
   color: #858ea0;

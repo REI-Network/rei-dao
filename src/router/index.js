@@ -10,6 +10,7 @@ import Grants from '../views/Grants.vue';
 import GrantsDetails from '../components/GrantsDetails.vue';
 import StakeValidator from '../components/StakeValidator.vue';
 import MyNftDetails from '../components/MyNftDetails.vue';
+import MyNftCollection from '../components/MyAccountNFTCollections.vue';
 
 
 const routes = [
@@ -75,6 +76,11 @@ const routes = [
     path: '/myAccount/details',
     name: 'NftDetails',
     component: MyNftDetails
+  },
+  {
+    path: '/myAccount/collection',
+    name: 'NftCollection',
+    component: MyNftCollection
   }
 ];
 

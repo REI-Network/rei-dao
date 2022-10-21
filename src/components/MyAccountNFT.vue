@@ -20,9 +20,15 @@
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList" @click="openNftInfo(item)">
                 <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
-                <v-img v-else :src="item.image" />
+                <div v-else class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
+                  <v-img  :src="item.image" lazy-src="../assets/images/logo_bg.png" />
+                  <div class="collect-img-number">
+                    {{ item.balance }} <v-icon  size="16">mdi-layers</v-icon>
+                  </div>
+                  
+                </div>
                 <div class="nft-text">
-                  <div class="rei-text">REI DAO<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
+                  <div class="rei-text">{{ item.organization }}<v-icon size="14" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 18px">{{ item.name }}</div>
                 </div>
               </v-card>
@@ -45,7 +51,7 @@
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList">
-                <v-img :src="$IpfsGateway(item.image)" />
+                <v-img :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg.png" ></v-img>
                 <div class="nft-text">
                   <div class="rei-text">{{ item.organization }}<v-icon size="10" class="star" color="orange">mdi-star</v-icon></div>
                   <div style="font-size: 14px">{{ item.name }}</div>
@@ -65,6 +71,7 @@
 
 import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
+import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 
@@ -104,19 +111,29 @@ export default {
           "address": '0x4035374c2c157F46effeA16e71A62b8992F2AD1b',
           "image":"bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u",
           "name":"Genesis Proposal Badges NFT",
-          "organization":"REI DAO"
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
         },
         {
           "address": '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d',
           "image":"bafkreih6tkghnjtb3mdemvemr4t6htzhxckuq3aizmebuw6b6adhncz4ga",
           "name":"Korean Community NFT",
-          "organization":"REI DAO"
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
         },
         {
           "address": '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
           "image":"bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee",
           "name":"ReiFans NFT",
-          "organization":"REI DAO"
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
+        },
+        {
+          "address": '0xE4EDC855717281b994A6E2E43c98791dBCE497DA',
+          "image":"bafkreieajvu4ze4tpb7k2zsvb2ow7haqv6datq5gilj2jq746xsefopwwi",
+          "name":"beeHive NFT",
+          "organization":"beeHive",
+          "token_standard": "ERC-721"
         }
       ]
     };
@@ -163,39 +180,71 @@ export default {
         this.loading = false;
         return;
       }
-      for (let i = 0; i < this.nftConfig.length; i++) {
-        let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
-        let addr = this.connection.address;
-        for (let j = 0; ;j++){
-          let flag = await contract.methods.exists(j).call();
-          if(flag){
-            let badgeNFTBalance = await contract.methods.balanceOf(addr, j).call();
-            let url = await contract.methods.uri(j).call();
-            let totalSupply = await contract.methods.totalSupply(j).call();
-            if (badgeNFTBalance > 0) {
-              let imageShow = false;
-              const { data } = await this.$axios.get(url);
-              const imgdata  = await this.$axios.get(data.image);
-              if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
-                imageShow = true;
-              }
-              let address = this.nftConfig[i].address;
-              let nftDetail = {
-                ...data,
-                address,
-                url,
-                totalSupply,
-                imageShow,
-                tokenId:j
-              }
 
-              for (let index = 0; index < badgeNFTBalance; index++) {
-                this.nftList.push(nftDetail);
+      
+
+      for (let i = 0; i < this.nftConfig.length; i++) {
+        if(this.nftConfig[i].token_standard == 'ERC-1155'){
+          let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
+          let addr = this.connection.address;
+          for (let j = 0; ;j++){
+            let flag = await contract.methods.exists(j).call();
+            if(flag){
+              let badgeNFTBalance = await contract.methods.balanceOf(addr, j).call();
+              let url = await contract.methods.uri(j).call();
+              let totalSupply = await contract.methods.totalSupply(j).call();
+              if (badgeNFTBalance > 0) {
+                let imageShow = false;
+                const { data } = await this.$axios.get(url);
+                const imgdata  = await this.$axios.get(data.image);
+                if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+                  imageShow = true;
+                }
+                let address = this.nftConfig[i].address;
+                let nftDetail = {
+                  ...data,
+                  address,
+                  organization: this.nftConfig[i].organization,
+                  url,
+                  totalSupply,
+                  imageShow,
+                  tokenId:j,
+                  token_standard: this.nftConfig[i].token_standard
+                }
+
+                for (let index = 0; index < badgeNFTBalance; index++) {
+                  this.nftList.push(nftDetail);
+                }
               }
+            } else {
+              break
             }
-          } else {
-            break
           }
+        } else if(this.nftConfig[i].token_standard == 'ERC-721'){
+          let _myAddress = this.connection.address;
+          let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
+          let _balance = await contract2.methods.balanceOf(_myAddress).call();
+          if(_balance>0){
+            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,0).call();
+            let tokenInfo = await contract2.methods.tokenURI(token).call();
+
+            let imageShow = false;
+            const { data } = await this.$axios.get(tokenInfo);
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+              imageShow = true;
+            }
+            let address = this.nftConfig[i].address;
+            let nftDetail = {
+              name: this.nftConfig[i].name,
+              image:this.$IpfsGateway(data.image),
+              organization:this.nftConfig[i].organization,
+              address,
+              imageShow,
+              balance: _balance,
+              token_standard: this.nftConfig[i].token_standard
+            }
+            this.nftList.push(nftDetail);
+          } 
         }
         
         this.setNftInfo({nftInfo: this.nftList})
@@ -205,13 +254,24 @@ export default {
 
     openNftInfo(item) {
       // this.badgeNFTDialog = true;
-      this.$router.push({
-        name: 'NftDetails',
-        query: {
-          id: item.address,
-          tokenid: item.tokenId
-        }
-      });
+      if(item.token_standard == 'ERC-1155'){
+        this.$router.push({
+          name: 'NftDetails',
+          query: {
+            id: item.address,
+            tokenid: item.tokenId,
+            standard: 'erc-1155'
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'NftCollection',
+          query: {
+            address: item.address
+          }
+        });
+      }
+      
     },
     openNftHelp(){
       this.nftHelpDialog = true;
@@ -365,6 +425,20 @@ a:hover {
     background-color: transparent;
     cursor: pointer;
   }
+}
+.collect-img-wrap{
+  position: relative;
+  .collect-img-number{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #f5f5f7;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+}
+.bg-dark .collect-img-number{
+  background-color: #252243;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {
