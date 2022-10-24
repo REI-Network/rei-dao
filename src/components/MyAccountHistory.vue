@@ -119,7 +119,7 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value | asset (5)}}</div>
+            <div class="price">{{ details.value | asset(5) }}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
                <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
