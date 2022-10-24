@@ -57,7 +57,7 @@
                 <h4>{{ info.from | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
-                <h4>{{ info.value | asset(2) }}</h4>
+                <h4>{{ info.value }}</h4>
                 <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol}}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
@@ -119,7 +119,7 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value | asset(2) }}</div>
+            <div class="price">{{ details.value}}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
                <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
@@ -212,19 +212,16 @@ export default {
     async getData() {
       const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=${this.connection.address}`);
       this.transferList = data.result;
-      this.transferList = this.transferList.filter((item) => {
-        return item.value != 0;
-      })
       this.historyData();
     },
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
       this.transactionsList = data.result;
-      this.transactionsList = this.transactionsList.filter((item) => {
-        return item.value != 0;
-      })
       this.historyList = this.transferList.concat(this.transactionsList);
+      this.historyList = this.historyList.filter((item) => {
+        return item.value && item.value != 0;
+      })
       this.historyList = this.historyList.map((item) => {
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');

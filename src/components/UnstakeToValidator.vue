@@ -401,10 +401,11 @@ export default {
 .theme--dark.v-list{
   background: #595777 !important;
 }
-// .v-btn.v-btn--has-bg{
-//   color: #FFF;
-//   background:#6979F8 ;
-// }
+.v-btn.v-btn--has-bg{
+  color: #FFF;
+  background:#6979F8;
+  text-transform: none;
+}
 .warn-tip{
   margin-top: 1px;
   margin-bottom: 1px;
