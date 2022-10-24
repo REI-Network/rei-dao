@@ -57,7 +57,7 @@
                 <h4>{{ info.from | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
-                <h4>{{ info.value }}</h4>
+                <h4>{{ info.value | asset(5) }}</h4>
                 <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol}}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
@@ -119,7 +119,7 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value}}</div>
+            <div class="price">{{ details.value | asset (5)}}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
                <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
