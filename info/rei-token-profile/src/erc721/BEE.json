@@ -1,0 +1,15 @@
+{
+  "name": "Bee",
+  "address": "0xE4EDC855717281b994A6E2E43c98791dBCE497DA",
+  "organization": "Beehive game",
+  "overview":{
+        "en": "Living on the REI nework working as a community. By owning one of these NFTs, you will be able to play BeeHive RPG. Currently, this also means the game is capped to 3,000 players."
+  },
+  "email": "Email",
+  "website": "https://beehivegame.cc/",
+  "links": {
+    "twitter": "https://twitter.com/BeeHiverei",
+    "telegram": "https://t.me/joinchat/BeeHiveGame",
+    "github": "http://gitgit.voyagetest.xyz/mozi/bee"
+  }
+}
