@@ -1,0 +1,17 @@
+{
+  "name": "HONEY",
+  "symbol": "HONEY",
+  "address": "0xa30de46d08340a6900464f437078491f95a6559a",
+  "logo_cid": "https://gateway.pinata.cloud/ipfs/QmRWhZk1jkD4wLCaYv8STyzhDPhcHdX21xZChH2F23tJyW/sugar.png",
+  "overview": {
+    "en": "BeeHive is a REI on-chain Play and Earn RPG game based on the very efficient Tri-Token architecture and playable by anyone. The game takes place on the beehive where 3,000 Bees NFTs work as a community to earn real value cryptocurrencies."
+  },
+  "email": "Email",
+  "website": "https://beehivegame.cc/",
+  "market_price": "https://info.oortswap.exchange/token/0xa30de46d08340a6900464f437078491f95a6559a",
+  "links": {
+    "twitter": "https://twitter.com/BeeHiverei",
+    "telegram": "https://t.me/joinchat/BeeHiveGame",
+    "github": "http://gitgit.voyagetest.xyz/mozi/bee"
+  }
+}
