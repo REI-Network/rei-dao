@@ -49,7 +49,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <v-icon class="wallet-icon" v-bind="attrs" v-on="on" dense size="16" style="margin-bottom: 6px"> mdi-help-circle-outline </v-icon>
                     </template>
-                    <span>Wallet supports REI, WBTC, USDT, USDC, WETH,<br/> DAI, BUSD and other assets on REI Network</span>
+                    <span>Wallet supports REI, WBTC, USDT, USDC, WETH,<br/> DAI, BUSD, OORT, HONEY and other assets on REI Network</span>
                   </v-tooltip>
                   <!-- <v-icon size="16" class="wallet-icon" style="margin-bottom: 6px">mdi-help-circle-outline</v-icon> -->
                 </v-col>
@@ -233,6 +233,20 @@ export default {
           logo: "bafkreia2l332gaw25wrkyj37xtixyqezwyhkouhz5qjrfkwi4wjjcaakl4",
           name:"Binance USD",
           symbol:"BUSD"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0x3d1bbd0ec9af25e8f12383d9f6a6bbfa6dfef06f",
+          logo: "ipfs/QmRWhZk1jkD4wLCaYv8STyzhDPhcHdX21xZChH2F23tJyW/oort.png",
+          name:"Oort Token",
+          symbol:"OORT"
+        },
+        {
+          decimals: "18",
+          erc20Address: "0xa30de46d08340a6900464f437078491f95a6559a",
+          logo: "ipfs/QmRWhZk1jkD4wLCaYv8STyzhDPhcHdX21xZChH2F23tJyW/sugar.png",
+          name:"HONEY Token",
+          symbol:"HONEY"
         }
       ]
     };
