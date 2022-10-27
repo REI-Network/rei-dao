@@ -119,7 +119,7 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value | asset (5)}}</div>
+            <div class="price">{{ details.value | asset(5)}}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
                <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
@@ -135,6 +135,7 @@
 import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
+import { getHistoryData } from '../service/CommonService'
 import util from '../utils/util';
 // import find from 'lodash/find';
 export default {
@@ -156,6 +157,7 @@ export default {
     historyList: [],
     list: [],
     rawDataList:[],
+    internalList:[],
     details: '',
     address:'',
   }),
@@ -210,15 +212,23 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=tokentx&address=${this.connection.address}`);
-      this.transferList = data.result;
+      let data = await getHistoryData(`module=account&action=tokentx&address=${this.connection.address}`);
+      this.transferList = data.data.result;
+      this.getInternal();
+      // console.log('transferList',this.transferList)
+    },
+    async getInternal() {
+      let data = await getHistoryData(`module=account&action=txlistinternal&address=${this.connection.address}`);
+      let internalData = data.data.result;
+      this.internalList = this.transferList.concat(internalData);
+      // console.log('internalList',this.internalList)
       this.historyData();
     },
     async historyData() {
       this.address = this.connection.address.toLowerCase();
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=txlist&address=${this.connection.address}`);
-      this.transactionsList = data.result;
-      this.historyList = this.transferList.concat(this.transactionsList);
+      let data = await getHistoryData(`module=account&action=txlist&address=${this.connection.address}`);
+      this.transactionsList = data.data.result;
+      this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       })
