@@ -106,11 +106,11 @@
             <div class="item-name">Transaction fee</div>
             <div class="item-data">{{ details.gasUsed }} REI</div>
           </v-row>
-          <v-row justify="space-between" no-gutter class="item-content">
+          <v-row justify="space-between" no-gutter class="item-content" v-if="details.gasPrice">
             <div class="item-name">Gas Price</div>
             <div class="item-data">{{ details.gasPrice }} Gwei</div>
           </v-row>
-          <v-row justify="space-between" no-gutter class="item-content">
+          <v-row justify="space-between" no-gutter class="item-content" v-if="details.nonce">
             <div class="item-name">Nonce</div>
             <div class="item-data">{{ details.nonce }}</div>
           </v-row>
@@ -243,12 +243,19 @@ export default {
         }else{
           value = item.value/1e18;
         }
+        let hash = "";
+        if(item.hash){
+          hash = item.hash;
+        }else{
+          hash = item.transactionHash;
+        }
         return {
           ...item,
           date: date,
           gasUsed: gasUsed,
           gasPrice:gasPrice,
-          value: value
+          value: value,
+          hash: hash
         };
       });
       function sortArr(attr){
