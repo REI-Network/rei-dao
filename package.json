@@ -7,8 +7,10 @@
     "haifun <haifuncn@gmail.com> (https://github.com/haifun/)"
   ],
   "scripts": {
-    "serve": "ts-node ./info/rei-validator/build/index.ts && vue-cli-service serve --mode development",
-    "build": "ts-node ./info/rei-validator/build/index.ts && vue-cli-service build --mode production",
+    "serve": "npm run build:validator && npm run build:addressTag && vue-cli-service serve --mode development",
+    "build": "npm run build:validator && npm run build:addressTag && vue-cli-service build --mode production",
+    "build:validator": "ts-node ./info/rei-validator/build/index.ts",
+    "build:addressTag": "ts-node ./info/rei-address-tag/build/index.ts",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.js'",
     "deploy": "npm run build && surge --project dist && vercel --prod",
