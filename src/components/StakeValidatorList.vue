@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left">All Delegators<span class="total">{{delegatorList.length}}</span></v-tab>
+          <v-tab key="11" class="v-tab-left">All Delegators<span :class="dark?'total-dark total':'total-light total'">{{delegatorList.length}}</span></v-tab>
           <v-tab key="12" class="v-tab-left">My Votes</v-tab>
           <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
         </v-tabs>
@@ -403,9 +403,14 @@ export default {
 .total{
   padding: 4px 8px;
   border-radius: 20px;
-  color: white;
-  background-color: #E2E4EA;
   margin-left: 8px;
+  color: white;
+}
+.total-light{
+ background-color: #E2E4EA;
+}
+.total-dark{
+ background-color: #13112b;
 }
 .v-btn {
   text-transform: none !important;
