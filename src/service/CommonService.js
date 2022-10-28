@@ -57,6 +57,12 @@ export const getValidatorMinedInfo = (params) => http({
   url:'https://gateway.rei.network/api/miner',
   params
 });
+export const getAddressTag = (params) => http({
+  method: 'GET',
+  url:'/data/address/address-tag-list.json',
+  params
+});
+
 
 export const getIpfsGateway = (cid) => {
   let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');

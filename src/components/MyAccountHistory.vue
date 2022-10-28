@@ -50,11 +50,13 @@
               </v-col>
               <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
                 <div class="font-grey">To</div>
-                <h4>{{ info.to | addr }}</h4>
+                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-else>{{ info.to | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3" v-else>
                 <div class="font-grey">From</div>
-                <h4>{{ info.from | addr }}</h4>
+                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-else>{{ info.from | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
                 <h4>{{ info.value | asset(5) }}</h4>
@@ -136,7 +138,8 @@ import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
 import util from '../utils/util';
-// import find from 'lodash/find';
+import { getAddressTag } from '../service/CommonService';
+import find from 'lodash/find';
 export default {
   filters,
   data: (vm) => ({
@@ -158,6 +161,7 @@ export default {
     rawDataList:[],
     details: '',
     address:'',
+    detailsList:[]
   }),
   mounted() {
     this.getData();
@@ -222,7 +226,23 @@ export default {
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       })
+      
+      let addressTag = await getAddressTag();
+      this.detailsList = addressTag.data.data;
+      // console.log('addressTag',this.detailsList);
       this.historyList = this.historyList.map((item) => {
+        let name = "";
+        if(this.address == item.from.toLowerCase()){
+          let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
+          if(detail){
+            name = detail.addressName
+          }
+        }else{
+          let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
+          if(detail){
+            name = detail.addressName
+          }
+        }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
         let gasUsed = web3.utils.fromWei(item.gasUsed,'Gwei');
@@ -238,9 +258,11 @@ export default {
           date: date,
           gasUsed: gasUsed,
           gasPrice:gasPrice,
-          value: value
+          value: value,
+          addressName:name
         };
       });
+      console.log('historyList',this.historyList)
       function sortArr(attr){
           return function(a,b){
             return b[attr]-a[attr]
@@ -266,7 +288,6 @@ export default {
           }
         }
       }
-      console.log('list',this.list)
       this.rawDataList = this.list;
     },
     openDetails(value) {
