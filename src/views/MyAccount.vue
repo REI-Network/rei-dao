@@ -64,7 +64,7 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="walletDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center">
                     <div class="asset-logo">
@@ -439,7 +439,6 @@ export default {
           })
         }
       }
-
       
       if(!localStorage.getItem('hideAsset')){
         this.assetList = assetArr.concat(assetZeroArr);
@@ -454,12 +453,21 @@ export default {
 
       this.totalAmount = totalAmount
       this.getListLoading = false;
-
+      // console.log('assetList',this.assetList)
 
     },
     assetFromWei(item){
       return item > 0 ? web3.utils.fromWei(item) : 0
-    }
+    },
+    walletDetails(value) {
+      // this.validatorDialog = true;
+      this.$router.push({
+        name: 'MyAccountWallet',
+        query: {
+          id: value.symbol
+        }
+      });
+    },
   }
 };
 </script>
