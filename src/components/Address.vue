@@ -1,6 +1,7 @@
 <template>
     <span>
-        {{val | addr}}
+        <span v-if="brackets">({{val | addr}})</span>
+        <span v-else>{{val | addr}}</span>
         <v-btn color="secondary" :text="!dark" depressed small @click="copyAddr(val)">
             <v-icon small color="validator">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>     
         </v-btn>
@@ -18,6 +19,11 @@ export default {
             type: String,
             required: true
         },
+        brackets: {
+          type: Boolean,
+          required: false
+        }
+
     },
     data(){
         return {

@@ -22,7 +22,8 @@
                 :page.sync="page" 
                 @page-count="pageCount = $event">
                 <template v-slot:item.delegator="{ item }">
-                    <Address :val="item.delegator"></Address>
+                    <span> {{item.addressName}} </span>
+                    <Address :val="item.delegator" :brackets="!!item.addressName"></Address>
                     <span class="mine" v-if="item.delegator == connection.address">mine</span>
                 </template>
                 <template v-slot:item.amount="{ item }">
@@ -124,6 +125,7 @@ import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import Papa from 'papaparse';
+import { getAddressTag } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -249,12 +251,25 @@ export default {
         let balanceOfShareMap = delegatorList.map((item) => {
           return this.getBalanceOfShare(item);
         });
+        let { data: {data: addressTag} } = await getAddressTag();
+        let addressTagMap = {};
+        for(let i = 0; i < addressTag.length; i++){
+          let key = web3.utils.toChecksumAddress(addressTag[i].address);
+          addressTagMap[key] = addressTag[i];
+        }
+        console.log(addressTagMap)
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         var arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
+          let _addressName = '';
+          let _address = web3.utils.toChecksumAddress(delegatorList[i].from);
+          if(addressTagMap[_address]){
+            _addressName = addressTagMap[_address].addressName;
+          }
           arr.push({
-            delegator: web3.utils.toChecksumAddress(delegatorList[i].from),
-            amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance))
+            delegator: _address,
+            amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+            addressName: _addressName
           });
         }
         this.delegatorList = arr;
@@ -265,11 +280,13 @@ export default {
           }
         }
       this.delegatorList = this.delegatorList.sort(sortArr('amount'));
-        this.delegatorList.map((item,index) => {
+      this.delegatorList.map((item,index) => {
           if(item.delegator  == this.connection.address){
             this.delegatorList.unshift(this.delegatorList.splice(index , 1)[0]);
           }
-        })
+      })
+      
+
       this.stakeListLoading = false;
     },
     async getMyVotesList(){
