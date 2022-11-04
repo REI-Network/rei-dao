@@ -7,6 +7,7 @@ import StakeForGas from '../views/StakeForGas.vue';
 import Governance from '../views/Governance.vue';
 import Bridge from '../views/Bridge.vue';
 import Grants from '../views/Grants.vue';
+import Asset from '../views/Asset.vue';
 import GrantsDetails from '../components/GrantsDetails.vue';
 import StakeValidator from '../components/StakeValidator.vue';
 import MyNftDetails from '../components/MyNftDetails.vue';
@@ -87,7 +88,12 @@ const routes = [
     path: '/myAccount/wallet',
     name: 'MyAccountWallet',
     component: MyAccountWallet
-  }
+  },
+  {
+    path: '/asset',
+    name: 'Asset',
+    component: Asset
+  },
 ];
 
 const router = new VueRouter({

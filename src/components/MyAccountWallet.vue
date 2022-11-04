@@ -2,7 +2,7 @@
   <v-container class="stake_background wallet">
     <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLink()">Wallet</a></span> / <span class="rei-fans">RDoge</span>
+        <span><a class="back-voting" @click="routeLink()">Wallet</a></span> / <span class="rei-fans">{{ details.symbol }}</span>
       </div>
     </div>
     <v-row>
@@ -12,10 +12,11 @@
             <v-col cols="12" md="9">
               <v-row>
                 <div>
-                  <v-img class="img" src="../assets/images/rei.svg" width="48" height="48" />
+                  <v-img v-if="details.logo" class="img" :src="$IpfsGateway(details.logo)" width="48" height="48" />
+                  <v-img v-else class="img" src="../assets/images/rei.svg" width="48" height="48" />
                 </div>
                 <div>
-                  <h3>RDoge</h3>
+                  <h3>{{ details.symbol }}</h3>
                   <div>
                     <span class="font-grey">Contract address:0xADbBf74bc8d9CFfeC78526169cd81FdcBbA352eC2</span>
                     <v-btn class="copy-btn" @click="copyAddr()">
@@ -33,7 +34,7 @@
             <v-row justify="space-between">
               <v-col>
                 <div class="font-grey">Price</div>
-                <h2>$0.03</h2>
+                <h2>${{details.price | asset(5)}}</h2>
               </v-col>
               <v-col cols="12" md="4">
                 <div class="font-grey">Total Supply</div>
@@ -105,7 +106,7 @@ import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { getPrice, postRpcRequest } from '../service/CommonService';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -126,9 +127,11 @@ export default {
       transferLoading: false,
       addrCopying: false,
       tab1: null,
-      stakeManagerContract:null,
-      stakeManageInstance:null,
-      myTotalStake:0,
+      stakeManagerContract: null,
+      stakeManageInstance: null,
+      myTotalStake: 0,
+      details: '',
+      id: this.$route.query.id,
       holderHeaders: [
         { text: 'Rank', value: 'rak' },
         { text: 'Address', value: 'address' },
@@ -206,12 +209,12 @@ export default {
     };
   },
   watch: {
-      '$store.state.connection': function() {
-      if(this.connection && this.connection.network){
-          this.connect();
-          this.getBalance();
+    '$store.state.connection': function () {
+      if (this.connection && this.connection.network) {
+        this.connect();
+        this.getBalance();
       }
-    },
+    }
   },
   mounted() {
     this.connect();
@@ -227,28 +230,31 @@ export default {
     })
   },
   methods: {
-      connect() {
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-        } else if (window.web3) {
-            window.web3 = new Web3(window.web3.currentProvider);
-        }
+    routeLink() {
+      this.$router.back();
     },
-     async init(){
-        let contract = new web3.eth.Contract(abiConfig,config_contract); 
-        this.stakeManagerContract = await contract.methods.stakeManager().call();
-        this.stakeManageInstance = new web3.eth.Contract(abiStakeManager,this.stakeManagerContract);
-        await this.getMyStakeInfo();
-        await this.getTotalGasStake();
+    connect() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+      }
     },
-    
-     async getMyStakeInfo() {
-        let url = this.apiUrl.graph;
-        client = new ApolloClient({
-            uri: `${url}chainmonitor`,
-            cache: new InMemoryCache(),
-        })
-        const myStakesInfo = gql`
+    async init() {
+      let contract = new web3.eth.Contract(abiConfig, config_contract);
+      this.stakeManagerContract = await contract.methods.stakeManager().call();
+      this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
+      await this.getMyStakeInfo();
+      await this.getTotalGasStake();
+    },
+
+    async getMyStakeInfo() {
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainmonitor`,
+        cache: new InMemoryCache()
+      });
+      const myStakesInfo = gql`
             query stakeInfos {
             stakeInfos(where:{
                 from:"${this.connection.address}"
@@ -258,60 +264,60 @@ export default {
                 timestamp
                 validator
             }
-        }`
-        const {data:{stakeInfos}} = await client.query({
-            query: myStakesInfo,
-            variables: {
-            },
-            fetchPolicy: 'cache-first',
-        })
-        if(stakeInfos.length>0){
-            let myStakeValidatorMap = stakeInfos.map((item)=>{
-                return this.stakeManageInstance.methods.validators(item.validator).call()
-            })
+        }`;
+      const {
+        data: { stakeInfos }
+      } = await client.query({
+        query: myStakesInfo,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      if (stakeInfos.length > 0) {
+        let myStakeValidatorMap = stakeInfos.map((item) => {
+          return this.stakeManageInstance.methods.validators(item.validator).call();
+        });
 
-            let validators = await Promise.all(myStakeValidatorMap);
-            let balanceOfShareMap = validators.map(item => {
-                return this.getBalanceOfShare(item);
-            })
-            let balanceOfShare = await Promise.all(balanceOfShareMap);
-            let total = 0;
-            for(let i = 0;i < balanceOfShare.length;i++){
-                total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount))
-            }
-            this.myTotalStake = total;
+        let validators = await Promise.all(myStakeValidatorMap);
+        let balanceOfShareMap = validators.map((item) => {
+          return this.getBalanceOfShare(item);
+        });
+        let balanceOfShare = await Promise.all(balanceOfShareMap);
+        let total = 0;
+        for (let i = 0; i < balanceOfShare.length; i++) {
+          total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount));
         }
+        this.myTotalStake = total;
+      }
     },
     async getBalanceOfShare(activeValidatorsShare) {
-        let commissionShare = new web3.eth.Contract(abiCommissionShare,activeValidatorsShare[1]);
-        let balance = 0;
-        let amount = 0;
-        if(this.connection.address){
-            balance = await commissionShare.methods.balanceOf(this.connection.address).call();
-            if(balance>0){
-              amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
-            } else {
-              amount = 0;
-            }
-            
+      let commissionShare = new web3.eth.Contract(abiCommissionShare, activeValidatorsShare[1]);
+      let balance = 0;
+      let amount = 0;
+      if (this.connection.address) {
+        balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+        if (balance > 0) {
+          amount = await commissionShare.methods.estimateSharesToAmount(balance).call();
+        } else {
+          amount = 0;
         }
-        return {
-            balance,
-            amount,
-            commissionShare
-        };
+      }
+      return {
+        balance,
+        amount,
+        commissionShare
+      };
     },
-    async getTotalGasStake(){
-         let apiUrl = this.apiUrl.rpc;
-         let arr = [];
-         arr.push(this.connection.address);
-         arr.push('latest')
-         let param = {
-             method:'rei_getTotalAmount',
-             params:arr
-         }
-        let res = await postRpcRequest(apiUrl,param);
-        this.totalGasAmount = res.data.result;
+    async getTotalGasStake() {
+      let apiUrl = this.apiUrl.rpc;
+      let arr = [];
+      arr.push(this.connection.address);
+      arr.push('latest');
+      let param = {
+        method: 'rei_getTotalAmount',
+        params: arr
+      };
+      let res = await postRpcRequest(apiUrl, param);
+      this.totalGasAmount = res.data.result;
     },
     async getBalance() {
       let asset = [],
@@ -394,6 +400,11 @@ export default {
       this.getListLoading = false;
 
       console.log('assetList', this.assetList);
+      this.getWalletInfo();
+    },
+    getWalletInfo() {
+      this.details = find(this.assetList, (items) => items.symbol == this.id);
+      console.log('details', this.details);
     }
   }
 };

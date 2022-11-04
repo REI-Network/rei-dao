@@ -90,6 +90,13 @@ export default {
           link: '/grants',
           name: 'grants',
           show: true,
+        },
+        {
+          icon: '&#xe622;',
+          text: 'Asset',
+          link: '/asset',
+          name: 'asset',
+          show: true,
         }
       ]
     };
