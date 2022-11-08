@@ -10,7 +10,7 @@
           <h3>Total Token Assets</h3>
           <v-row>
             <v-tabs v-model="tab1" align-with-title class="erc-tabs" background-color="background">
-              <v-tab style="margin-left:0;" key="11">ERC20</v-tab>
+              <v-tab style="margin-left:12px;" key="11">ERC20</v-tab>
               <v-tab key="12">ERC721</v-tab>
               <v-tab key="13">ERC1155</v-tab>
             </v-tabs>
@@ -100,6 +100,11 @@ export default {
       dark: 'dark',
       connection: 'connection'
     })
+  },
+  methods:{
+      walletDetails(){
+          
+      }
   }
 };
 </script>
