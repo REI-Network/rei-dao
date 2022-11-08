@@ -125,5 +125,8 @@ export default {
       '.' +
       r
     );
+  },
+  isUrl(val){
+    return /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/.test(val);
   }
 };
