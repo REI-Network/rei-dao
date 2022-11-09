@@ -96,7 +96,9 @@ export default {
     minute: 'minute',
     neterror:'Switch to REI Network',
     loading: 'Loading... Please wait',
-    nodatatext: 'No data'
+    nodatatext: 'No data',
+    please_input_url: 'Please enter the url',
+    please_input_correct_url: 'Please enter the correct url',
   },
   unstake:{
     title: 'Pending Unstaked',
