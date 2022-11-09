@@ -27,3 +27,4 @@ tools/*.zip
 tools/publish.sh
 
 .vercel
+.hostingConfig.json
