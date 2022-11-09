@@ -25,8 +25,8 @@
           </v-col>
            <v-spacer></v-spacer>
           <v-col class="text-right">
-            <v-icon small @click="openSetGatewayDialog()">mdi-cog-outline</v-icon>
-            <v-icon small @click="openGatewayDialog()">mdi-sticker-plus-outline</v-icon>
+            <v-icon small @click="openSetGatewayDialog()" size="18" class="wallet-icon">mdi-cog-outline</v-icon>
+            <v-icon small @click="openGatewayDialog()" size="18" class="wallet-icon">mdi-sticker-plus-outline</v-icon>
           </v-col>
         </v-row>
         
@@ -279,7 +279,12 @@ export default {
   color: #FFF;
   background-color: #6979F8 !important;
 }
+.theme--dark.wallet-icon {
+  color: #FFF;
+}
+
 .iconfont{
   font-size: 24px;
 }
+
 </style>
