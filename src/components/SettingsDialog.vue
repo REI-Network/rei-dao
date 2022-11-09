@@ -25,8 +25,8 @@
           </v-col>
            <v-spacer></v-spacer>
           <v-col class="text-right">
-            <v-icon small @click="openSetGatewayDialog()" size="18" class="wallet-icon">mdi-cog-outline</v-icon>
-            <v-icon small @click="openGatewayDialog()" size="18" class="wallet-icon">mdi-sticker-plus-outline</v-icon>
+            <v-icon dense @click="openSetGatewayDialog()" size="18" class="wallet-icon mr-1">mdi-cog-outline</v-icon>
+            <v-icon dense @click="openGatewayDialog()" size="18" class="wallet-icon ">mdi-sticker-plus-outline</v-icon>
           </v-col>
         </v-row>
         
@@ -115,7 +115,6 @@
             <v-select
               :items="myItems"
               v-model="delGateway"
-              @change="changeMyGateway()"
             >
             </v-select>
           </v-col>
@@ -168,7 +167,6 @@ export default {
   },
   mounted(){
     this.init();
-    this.getMyGateway();
   },
   methods: {
     ...mapActions({
@@ -185,15 +183,19 @@ export default {
       }
       
       this.gateway = url;
-      this.items = this.gatawayList.map(item=>{
+
+      this.getMyGateway();
+      let _allGatewayList = this.gatawayList.concat(this.myItems);
+      this.items = _allGatewayList.map(item=>{
         return {
           url: item,
           time: 0
         }
       });
       let _items = [];
-      for(let i = 0; i < this.gatawayList.length; i++){
-        let item = this.gatawayList[i];
+      
+      for(let i = 0; i < _allGatewayList.length; i++){
+        let item = _allGatewayList[i];
         let time = await this.getResponse(item)
         _items.push({
           url: item,
@@ -235,12 +237,10 @@ export default {
       localStorage.setItem('myIpfsGatewayUrl', JSON.stringify(_gateway));
       this.addGatewayDialog = false;
       this.getMyGateway();
+      this.init();
     },
     cancelAddGateway(){
       this.addGatewayDialog = false;
-    },
-    changeMyGateway(){
-
     },
     openSetGatewayDialog(){
       this.setGatewayDialog = true;
@@ -258,6 +258,7 @@ export default {
       localStorage.setItem('myIpfsGatewayUrl', JSON.stringify(_gateway));
       this.setGatewayDialog = false;
       this.getMyGateway();
+      this.init();
     },
   }
 };
