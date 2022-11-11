@@ -13,39 +13,49 @@
                 <div>
                   <h3>{{ details.symbol }}</h3>
                   <div v-if="details.address">
-                    <span class="font-grey">{{ details.address }}</span>
-                    <v-btn class="copy-btn" @click="copyAddr()">
+                    <a :href="`https://scan.rei.network/token/${details.address}`" target="_blank">
+                      <span class="font-grey">{{ details.address }}</span>
+                    </a>
+                    <v-btn class="copy-btn" @click="copyAddr(details.address)">
                       <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
               </v-row>
             </v-col>
-            <v-col cols="12" md="3" style="text-align: right">
+            <!-- <v-col cols="12" md="3" style="text-align: right">
               <v-btn small color="start_unstake" class="mr-4 add-btn" height="32">Add Token to Metamask</v-btn>
-            </v-col>
+            </v-col> -->
           </v-row>
           <v-card outlined class="vote-number">
             <v-row justify="space-between">
-              <v-col>
+              <v-col cols="12" md="3">
                 <div class="font-grey">Price</div>
-                <h2>${{ details.price | asset(5) }}</h2>
+                <h3>${{ details.price | asset(5) }}</h3>
               </v-col>
-              <v-col cols="12" md="4">
-                <div class="font-grey">Total Supply</div>
-                <h2>{{ details.totalSupply | asset() }} {{ details.symbol }}</h2>
+              <v-col>
+                <div class="font-grey">
+                  Circulation Supply
+                  <v-tooltip right color="start_unstake">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+                    </template>
+                    <span>Circulation Supply on REI Network</span>
+                  </v-tooltip>
+                </div>
+                <h3>{{ details.totalSupply | asset(2) }} {{ details.symbol }}</h3>
               </v-col>
               <v-col>
                 <div class="font-grey">Holders</div>
                 <h2>{{ holderList.length }}</h2>
               </v-col>
-              <v-col>
+              <!-- <v-col>
                 <div class="font-grey">Transfers</div>
-                <h2>838</h2>
-              </v-col>
+                <h3>838</h3>
+              </v-col> -->
               <v-col>
                 <div class="font-grey">Decimals</div>
-                <h2>{{ details.decimals }}</h2>
+                <h3>{{ details.decimals }}</h3>
               </v-col>
             </v-row>
           </v-card>
@@ -53,7 +63,7 @@
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <v-tab key="12" class="v-tab-left">Token Transfers</v-tab>
+            <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
@@ -69,8 +79,8 @@
                   <span>{{ item.balance | asset(5) }}</span>
                 </template>
                 <template v-slot:item.percentage="{ item }">
-                  <span>{{ item.balance | asset(5) }}</span>
-                  <v-progress-linear color="indigo" rounded value="80"></v-progress-linear>
+                  <span>{{ item.percentage | asset(3) }} %</span>
+                  <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="holderList.length > 0">
@@ -122,7 +132,7 @@ export default {
     return {
       page: 1,
       pageCount: 0,
-      itemsPerPage: 20,
+      itemsPerPage: 50,
       transferPage: 1,
       transferCount: 0,
       transferPerPage: 20,
@@ -133,6 +143,8 @@ export default {
       stakeManagerContract: null,
       stakeManageInstance: null,
       myTotalStake: 0,
+      totalGasAmount: 0,
+      reiBalance: 0,
       details: '',
       id: this.$route.query.id,
       holderHeaders: [
@@ -354,7 +366,8 @@ export default {
           let balance = await contract.methods.balanceOf(this.connection.address).call();
           let decimals = token.decimals;
           let _balance = balance / 10 ** decimals;
-          let totalSupply = await contract.methods.totalSupply().call();
+          let total = await contract.methods.totalSupply().call();
+          let totalSupply = total / 10 ** decimals;
           _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
@@ -429,25 +442,70 @@ export default {
     async getWalletInfo() {
       const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}`);
       this.tokenList = data.result;
-      this.holderList = this.accountList.concat(this.tokenList);
-      // console.log('tokenList',this.tokenList);
-      function sortArr(attr){
-          return function(a,b){
-            return b[attr]-a[attr]
-          }
-        }
+      if (this.id == 'REI') {
+        this.holderList = this.accountList;
+      } else {
+        this.holderList = this.tokenList;
+      }
+      console.log('tokenList', this.tokenList);
+      function sortArr(attr) {
+        return function (a, b) {
+          return b[attr] - a[attr];
+        };
+      }
       this.holderList = this.holderList.sort(sortArr('balance'));
-      this.holderList = this.holderList.map((item,index) => {
+      this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
-        let balance = item.balance / 1e18;
+        let balance = 0;
+        if (this.id == 'REI') {
+          balance = parseFloat(item.balance) / 10 ** this.details.decimals;
+        } else {
+          balance = parseFloat(item.value) / 10 ** this.details.decimals;
+        }
+        let percentage = (balance / this.details.totalSupply) * 100;
+        console.log('--', percentage, balance, this.details.totalSupply);
         return {
           ...item,
           address: item.address,
           rank: rank,
-          balance: balance
+          balance: balance,
+          percentage: percentage
         };
       });
       console.log('holderList', this.holderList);
+    },
+    copyToClipboard(str) {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+    sleep(timestamp) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timestamp);
+      });
+    },
+    async copyAddr(addr) {
+      try {
+        window.navigator.clipboard.writeText(addr);
+        this.copyToClipboard(addr);
+      } catch (ex) {
+        console.log(ex);
+      } finally {
+        this.addrCopying = true;
+        await this.sleep(500);
+        this.addrCopying = false;
+      }
     }
   }
 };
@@ -467,6 +525,12 @@ export default {
   color: #868e9e;
   font-size: 14px;
 }
+a {
+  .font-grey:hover {
+    text-decoration: underline;
+    color: #6979f8;
+  }
+}
 .v-tab {
   text-transform: none !important;
 }
@@ -477,7 +541,6 @@ export default {
   }
   .copy-btn.v-btn.v-btn--has-bg {
     background-color: transparent !important;
-    margin-top: -8px;
   }
   .theme--light.vote-number {
     background-color: #f7f7f7;
