@@ -66,7 +66,7 @@
         </v-card>
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-            <v-tab v-if="id=='REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Token Holders</v-tab>
+            <v-tab v-if="id=='REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Holders</v-tab>
             <v-tab v-else style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
             <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
           </v-tabs>
