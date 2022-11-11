@@ -90,7 +90,14 @@ export default {
           link: '/grants',
           name: 'grants',
           show: true,
-        }
+        },
+        // {
+        //   icon: '&#xe626;',
+        //   text: 'Assets',
+        //   link: '/asset',
+        //   name: 'asset',
+        //   show: true,
+        // }
       ]
     };
   },
