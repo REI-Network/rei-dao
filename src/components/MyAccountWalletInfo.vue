@@ -5,7 +5,7 @@
         <v-card class="info-header">
           <v-row align="center">
             <v-col cols="12" md="9">
-              <v-row>
+              <v-row align="center">
                 <div>
                   <v-img v-if="details.logo" class="img" :src="$IpfsGateway(details.logo)" width="48" height="48" />
                   <v-img v-else class="img" src="../assets/images/rei.svg" width="48" height="48" />
@@ -34,7 +34,8 @@
                 <h3>${{ details.price | asset(5) }}</h3>
               </v-col>
               <v-col>
-                <div class="font-grey">
+                <div class="font-grey" v-if="id =='REI'">Total Supply</div>
+                <div class="font-grey" v-else>
                   Circulation Supply
                   <v-tooltip right color="start_unstake">
                     <template v-slot:activator="{ on, attrs }">
@@ -47,11 +48,11 @@
               </v-col>
               <v-col v-if="id == 'REI'">
                 <div class="font-grey">Holders</div>
-                <h2>{{ totalSupply | asset() }}</h2>
+                <h3>{{ totalSupply | asset() }}</h3>
               </v-col>
               <v-col v-else>
                 <div class="font-grey">Holders</div>
-                <h2>{{ holderList.length }}</h2>
+                <h3>{{ holderList.length }}</h3>
               </v-col>
               <!-- <v-col>
                 <div class="font-grey">Transfers</div>
@@ -82,12 +83,12 @@
                 </template> -->
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
-                  <v-tooltip right color="start_unstake">
-                    <template v-slot:activator="{ on, attrs }">
+                  <!--<v-tooltip right color="start_unstake">
+                     <template v-slot:activator="{ on, attrs }">
                       <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
                     </template>
                     <span>{{ item.balance }}</span>
-                  </v-tooltip>
+                  </v-tooltip> -->
                 </template>
                 <template v-slot:item.percentage="{ item }">
                   <span>{{ item.percentage | asset(3) }} %</span>
