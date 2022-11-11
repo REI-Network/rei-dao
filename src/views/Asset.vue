@@ -255,7 +255,7 @@ export default {
     },
     async getData(){
       this.getBalance();
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=listaccounts`);
+      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
       this.holderList = data.result;
       function sortArr(attr){
           return function(a,b){

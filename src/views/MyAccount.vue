@@ -66,7 +66,7 @@
               </v-row>
               <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="walletDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
-                  <v-row align="center">
+                  <v-row align="center" class="assets-list">
                     <div class="asset-logo">
                       <v-img :src="$IpfsGateway(item.logo)" width="30" height="30"></v-img>
                     </div>
@@ -476,8 +476,8 @@ export default {
 .container{
   max-width:100% !important;
 }
-.v-tabs {
-  // margin-top: 20px;
+.assets-list:hover{
+  cursor: pointer;
 }
 .v-tab {
   text-transform: none !important;

@@ -45,7 +45,11 @@
                 </div>
                 <h3>{{ details.totalSupply | asset(2) }} {{ details.symbol }}</h3>
               </v-col>
-              <v-col>
+              <v-col v-if="id == 'REI'">
+                <div class="font-grey">Holders</div>
+                <h2>{{ totalSupply | asset() }}</h2>
+              </v-col>
+              <v-col v-else>
                 <div class="font-grey">Holders</div>
                 <h2>{{ holderList.length }}</h2>
               </v-col>
@@ -62,7 +66,8 @@
         </v-card>
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-            <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
+            <v-tab v-if="id=='REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Token Holders</v-tab>
+            <v-tab v-else style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
             <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
           </v-tabs>
           <v-divider class="faq_border" />
@@ -77,6 +82,12 @@
                 </template> -->
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
+                  <v-tooltip right color="start_unstake">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="14" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
+                    </template>
+                    <span>{{ item.balance }}</span>
+                  </v-tooltip>
                 </template>
                 <template v-slot:item.percentage="{ item }">
                   <span>{{ item.percentage | asset(3) }} %</span>
@@ -116,7 +127,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest } from '../service/CommonService';
+import { getPrice, postRpcRequest,getReiSatistic } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import Address from '../components/Address';
@@ -135,7 +146,7 @@ export default {
       itemsPerPage: 50,
       transferPage: 1,
       transferCount: 0,
-      transferPerPage: 20,
+      transferPerPage: 50,
       loading: false,
       transferLoading: false,
       addrCopying: false,
@@ -146,6 +157,7 @@ export default {
       totalGasAmount: 0,
       reiBalance: 0,
       details: '',
+      totalSupply:0,
       id: this.$route.query.id,
       holderHeaders: [
         { text: 'Rank', value: 'rank' },
@@ -429,31 +441,34 @@ export default {
       this.totalAmount = totalAmount;
       this.getListLoading = false;
 
-      console.log('assetList', this.assetList);
+      // console.log('assetList', this.assetList);
       this.getAccountList();
     },
     async getAccountList() {
       this.details = find(this.assetList, (items) => items.symbol == this.id);
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=account&action=listaccounts`);
-      this.accountList = data.result;
+      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
+      this.accountList = data.data;
       // console.log('accountList',this.accountList);
       this.getWalletInfo();
+      let amount = await getReiSatistic();
+      this.totalSupply = amount.data.row.json.totalAddress;
+      console.log('totalAddress',this.totalSupply)
     },
     async getWalletInfo() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}`);
+      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
       this.tokenList = data.result;
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
         this.holderList = this.tokenList;
       }
-      console.log('tokenList', this.tokenList);
+      // console.log('tokenList', this.tokenList);
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
         };
       }
-      this.holderList = this.holderList.sort(sortArr('balance'));
+        this.holderList = this.holderList.sort(sortArr('balance'));
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
         let balance = 0;
@@ -463,7 +478,6 @@ export default {
           balance = parseFloat(item.value) / 10 ** this.details.decimals;
         }
         let percentage = (balance / this.details.totalSupply) * 100;
-        console.log('--', percentage, balance, this.details.totalSupply);
         return {
           ...item,
           address: item.address,
@@ -472,7 +486,7 @@ export default {
           percentage: percentage
         };
       });
-      console.log('holderList', this.holderList);
+      // console.log('holderList', this.holderList);
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
