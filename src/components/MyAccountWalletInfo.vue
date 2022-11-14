@@ -34,7 +34,7 @@
                 <h3>${{ details.price | asset(5) }}</h3>
               </v-col>
               <v-col>
-                <div class="font-grey" v-if="id =='REI'">Total Supply</div>
+                <div class="font-grey" v-if="id == 'REI'">Total Supply</div>
                 <div class="font-grey" v-else>
                   Circulation Supply
                   <v-tooltip right color="start_unstake">
@@ -67,7 +67,7 @@
         </v-card>
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-            <v-tab v-if="id=='REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Holders</v-tab>
+            <v-tab v-if="id == 'REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Holders</v-tab>
             <v-tab v-else style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
             <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
           </v-tabs>
@@ -128,7 +128,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest,getReiSatistic } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import Address from '../components/Address';
@@ -158,7 +158,7 @@ export default {
       totalGasAmount: 0,
       reiBalance: 0,
       details: '',
-      totalSupply:0,
+      totalSupply: 0,
       id: this.$route.query.id,
       holderHeaders: [
         { text: 'Rank', value: 'rank' },
@@ -350,6 +350,7 @@ export default {
       this.totalGasAmount = res.data.result;
     },
     async getBalance() {
+       this.loading = true;
       let asset = [],
         assetAllArr = [],
         assetZeroArr = [],
@@ -444,23 +445,24 @@ export default {
 
       // console.log('assetList', this.assetList);
       this.getAccountList();
+
+      this.loading = false;
     },
     async getAccountList() {
       this.details = find(this.assetList, (items) => items.symbol == this.id);
-      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
-      this.accountList = data.data;
-      // console.log('accountList',this.accountList);
-      this.getWalletInfo();
       let amount = await getReiSatistic();
       this.totalSupply = amount.data.row.json.totalAddress;
-      console.log('totalAddress',this.totalSupply)
+      this.getWalletInfo();
     },
     async getWalletInfo() {
-      const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
-      this.tokenList = data.result;
       if (this.id == 'REI') {
+        const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
+        this.accountList = data.data;
+        // console.log('accountList',this.accountList);
         this.holderList = this.accountList;
       } else {
+        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        this.tokenList = data.result;
         this.holderList = this.tokenList;
       }
       // console.log('tokenList', this.tokenList);
@@ -469,7 +471,7 @@ export default {
           return b[attr] - a[attr];
         };
       }
-        this.holderList = this.holderList.sort(sortArr('balance'));
+      this.holderList = this.holderList.sort(sortArr('balance'));
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
         let balance = 0;
@@ -487,7 +489,6 @@ export default {
           percentage: percentage
         };
       });
-      // console.log('holderList', this.holderList);
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
