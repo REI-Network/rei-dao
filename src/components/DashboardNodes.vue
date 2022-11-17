@@ -20,7 +20,7 @@
                         <v-row align="center" style="margin-top:2px;">
                             <v-col cols="12" md="3">
                                <div>
-                                    <v-img v-if="currentNode.logo" :src="$IpfsGateway(currentNode.logo)" height="36" width="36"></v-img>
+                                    <v-img v-if="currentNode.logo" :src="$IpfsGateway(currentNode.logo)" lazy-src="../assets/images/logo_bg_small.png" height="36" width="36"></v-img>
                                     <v-img v-else src="../assets/images/rei.svg" height="36" width="36"></v-img>
                                </div>
                             </v-col>

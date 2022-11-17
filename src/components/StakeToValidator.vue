@@ -83,8 +83,10 @@
           <v-tab-item key="11">
             <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" width="24" height="24" class="logo-image"></v-img>
-                <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                <v-lazy class="logoWrap">
+                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                </v-lazy>
                 <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                 <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                 <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
@@ -155,8 +157,10 @@
           <v-tab-item key="13">
             <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" width="24" height="24" class="logo-image"></v-img>
-                <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                <v-lazy class="logoWrap">
+                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                </v-lazy>
                 <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                 <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                 <!-- <Address :val="item.address"></Address> -->
@@ -722,7 +726,10 @@ export default {
 
       let validators = await getValidatorList(blockHeight);
 
-      await this.getMyStakeListData();
+      if(this.connection.address){
+        await this.getMyStakeListData();
+      }
+
 
       let validatorList = validators[0].Validator;
       let validatorArr = [];
@@ -747,7 +754,7 @@ export default {
           _validator.commissionShare = _balanceOfShare.commissionShare;
         }
 
-        if (web3.utils.toChecksumAddress(validatorList[i].address) == web3.utils.toChecksumAddress(this.connection.address)) {
+        if (this.connection.address && (web3.utils.toChecksumAddress(validatorList[i].address) == web3.utils.toChecksumAddress(this.connection.address))) {
           let validatorInfo = await this.stakeManageInstance.methods.validators(validatorList[i].address).call();
           _validator.updateTimestamp = validatorInfo.updateTimestamp;
         }
@@ -760,7 +767,7 @@ export default {
         }
       }
 
-      let validate_node = this.connection.address != null ? find(validatorArr, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.connection.address)) : false;
+      let validate_node = this.connection.address != '' ? find(validatorArr, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(this.connection.address)) : false;
       if (validate_node) {
         this.isNode = true;
       } else {
@@ -1330,6 +1337,7 @@ export default {
       return this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
     },
     checkRewardState(address){
+      if(!this.connection.address) return false;
       return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address)
     },
     calResponseRate(item){
@@ -1674,6 +1682,9 @@ export default {
   .theme--dark.v-btn.v-btn--has-bg {
     background-color: transparent;
   }
+}
+.logoWrap{
+  display: inline;
 }
 @keyframes metronome-example {
   from {

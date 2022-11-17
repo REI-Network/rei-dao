@@ -48,8 +48,10 @@
                 <template v-slot:item.symbol="{ item }">
                   <div class="bridge-label">
                     <div class="left-img">
-                      <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" class="logo-img" height="32" width="32" />
-                      <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
+                      <v-lazy class="logoWrap">
+                        <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png"  class="logo-img" height="32" width="32" />
+                        <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
+                      </v-lazy>
                     </div>
                     <span class="label-text"> {{ item.symbol }}</span>
                     <a :href="gotocBridgeUrl(item)" target="_blank">
@@ -101,8 +103,10 @@
                 <template v-slot:item.symbol="{ item }">
                   <div class="bridge-label">
                     <div class="left-img">
-                      <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" class="logo-img" height="32" width="32" />
-                      <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
+                      <v-lazy class="logoWrap">
+                        <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png"  class="logo-img" height="32" width="32" />
+                        <v-img v-else src="../assets/images/token-logo.svg" class="logo-img" height="32" width="32" />
+                      </v-lazy>
                     </div>
                     <span class="label-text">{{ item.symbol }}</span>
                     <a :href="gotocMultichainUrl(item)" target="_blank">
@@ -1363,5 +1367,8 @@ export default {
   //   padding:0 ;
   //   margin-bottom: -20px;
   // }
+}
+.logoWrap{
+  display: inline;
 }
 </style>
