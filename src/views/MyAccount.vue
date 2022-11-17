@@ -68,7 +68,9 @@
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center" class="assets-list">
                     <div class="asset-logo">
-                      <v-img :src="$IpfsGateway(item.logo)" width="30" height="30"></v-img>
+                      <v-lazy class="logoWrap">
+                        <v-img :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="30" height="30"></v-img>
+                      </v-lazy>
                     </div>
                     <div>{{ item.symbol }} </div>
                   </v-row>
@@ -561,5 +563,8 @@ export default {
      margin-right: 40px !important;
      width: 100%;
   }
+}
+.logoWrap{
+  display: inline;
 }
 </style>
