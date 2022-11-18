@@ -2,7 +2,7 @@
   <v-container :class="dark ? 'night stake' : 'daytime stake'">
     <div class="header-title">
       <h1>Asset</h1>
-      <a class="title-detailed" target="_blank" href=""> Token Assets on REI Network. Including ERC20, ERC1155, ERC721</a>
+      <span class="font-grey"> Token Assets on REI Network. Including ERC20, ERC1155, ERC721</span>
     </div>
     <v-row>
       <v-col>
