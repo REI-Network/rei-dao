@@ -100,7 +100,7 @@
                 </v-tab-item>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row style="margin-top:0;">
               <v-col style="margin-top:-12px;">
                 <v-tab-item key="12">
                   <div class="submit-here">
@@ -611,9 +611,10 @@ export default {
 }
 .submit-here{
   text-align:right;
+  margin-bottom:10px;
 }
 .wallet-icon{
-  margin: 0 8px;
+  margin-right:8px;
 }
 @media screen and (max-width: 900px) {
   .stake {
