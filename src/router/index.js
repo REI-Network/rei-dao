@@ -13,6 +13,7 @@ import StakeValidator from '../components/StakeValidator.vue';
 import MyNftDetails from '../components/MyNftDetails.vue';
 import MyNftCollection from '../components/MyAccountNFTCollections.vue';
 import MyAccountWallet from '../components/MyAccountWallet.vue';
+import AssetsInfo from '../components/AssetsInfo.vue';
 
 
 const routes = [
@@ -93,6 +94,11 @@ const routes = [
     path: '/asset',
     name: 'Asset',
     component: Asset
+  },
+  {
+    path: '/asset/assetInfo',
+    name: 'AssetsInfo',
+    component: AssetsInfo
   },
 ];
 
