@@ -46,9 +46,13 @@
                 </div>
                 <h3>{{ details.totalSupply | asset(2) }} {{ details.symbol }}</h3>
               </v-col>
-              <v-col>
+              <v-col v-if="id == 'REI'">
                 <div class="font-grey">Holders</div>
                 <h3>{{ totalSupply | asset() }}</h3>
+              </v-col>
+              <v-col v-else>
+                <div class="font-grey">Holders</div>
+                <h3>{{ holderList.length }}</h3>
               </v-col>
               <!-- <v-col>
                 <div class="font-grey">Transfers</div>
@@ -171,7 +175,7 @@ export default {
       ],
       lastAddress: '',
       lastBalance: '',
-      count: 0,
+      count: 50,
       countPage:0,
       disabled:true,
       totalList:[],
@@ -258,11 +262,11 @@ export default {
       // if (oldVal < newVal) {
         for (let i = 0; i < this.holderList.length; i++) {
           const item = this.holderList[i];
-          item.rank += this.count;
+          item.rank += this.count-50;
         // }
       }
       console.log(oldVal)
-      if(newVal >= 50){
+      if(newVal > 50){
         this.disabled = false;
       }else{
         this.disabled = true;
@@ -480,6 +484,7 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
+      console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
       const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
@@ -492,31 +497,36 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList)
-      // console.log('totalList',this.totalList,this.countPage)
+      // console.log('totalList',this.count,this.countPage,this.totalList)
     },
     ForwardPage() {
       this.count -= 50;
       this.countPage--;
       this.totalList.pop();
       this.accountList = this.totalList[this.countPage]
-      // console.log('lastItem',this.count,this.totalList,this.countPage);
+      for (let i = 0; i < this.accountList.length; i++) {
+        let lastItem = this.accountList[this.accountList.length - 1];
+        this.lastAddress = lastItem.address;
+        this.lastBalance = lastItem.balance;
+      }
+      // console.log('lastItem',this.count,this.countPage,this.totalList);
       // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
+       function sortArr(attr) {
+        return function (a, b) {
+          return b[attr] - a[attr];
+        };
+      }
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
         const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
         this.tokenList = data.result;
         this.holderList = this.tokenList;
+        this.holderList = this.holderList.sort(sortArr('balance'));
       }
       // console.log('tokenList', this.tokenList);
-      function sortArr(attr) {
-        return function (a, b) {
-          return b[attr] - a[attr];
-        };
-      }
-      this.holderList = this.holderList.sort(sortArr('balance'));
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
         let balance = 0;

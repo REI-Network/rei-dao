@@ -104,7 +104,7 @@
             <v-row>
               <v-col>
                 <v-tab-item key="12">
-                  <v-data-table :headers="headers" :items="list" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="walletDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                  <v-data-table :headers="headers" :items="list" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
@@ -117,13 +117,10 @@
                       <span>${{ item.price | asset(5) }}</span>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <Address :val="item.address"></Address>
+                      <a href="" target="_blank" :class="dark?'link-dark':'link-light'"><div>{{ item.address | addr }}</div></a>
                     </template>
                     <template v-slot:item.totalSupply="{ item }">
                       <span>${{ item.totalSupply }} {{ item.symbol }}</span>
-                    </template>
-                    <template v-slot:item.balance="{ item }">
-                      <span>{{ item.balance | asset(4) }} </span>
                     </template>
                     <template v-slot:item.value="{ item }">
                       <span>${{ item.value | asset(5) }}</span>
@@ -162,7 +159,6 @@ import Address from '../components/Address';
 
 export default {
   components: {
-    Address
   },
   filters,
   data() {
@@ -191,7 +187,7 @@ export default {
       totalSupply: 0,
       lastAddress: '',
       lastBalance: '',
-      count: 0,
+      count: 50,
       countPage: 0,
       disabled: true,
       totalList:[],
@@ -211,8 +207,7 @@ export default {
         { text: 'Price', value: 'price' },
         { text: 'Address', value: 'address' },
         { text: 'Total Supply', value: 'totalSupply' },
-        { text: 'Balance', value: 'balance' },
-        { text: 'Value', value: 'value' }
+        { text: 'Address count', value: 'count' }
       ],
 
       assetList: [],
@@ -298,13 +293,13 @@ export default {
     count(newVal, oldVal) {
       this.getWalletInfo();
       // if (oldVal < newVal) {
-        for (let i = 0; i < this.holderList.length; i++) {
-          const item = this.holderList[i];
-          item.rank += this.count;
+        for (let i = 0; i < this.accountList.length; i++) {
+          const item = this.accountList[i];
+          item.rank += this.count - 50;
         // }
       }
       console.log(oldVal)
-      if(newVal >= 50){
+      if(newVal > 50){
         this.disabled = false;
       }else{
         this.disabled = true;
@@ -431,12 +426,11 @@ export default {
 
       this.list = this.assetList;
       this.list.shift();
-      console.log('list',this.list)
       this.getAccountList();
+      this.getAddressCount();
       this.loading = false;
     },
     async getAccountList() {
-      this.details = find(this.assetList, (items) => items.symbol == this.id);
       const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
       this.accountList = data.data;
       this.getWalletInfo();
@@ -446,6 +440,7 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
+      console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
       const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
@@ -458,13 +453,18 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList)
-      // console.log('totalList',this.totalList,this.countPage)
+      console.log('totalList',this.count,this.lastBalance,this.lastAddress)
     },
     ForwardPage() {
       this.count -= 50;
       this.countPage--;
       this.totalList.pop();
       this.accountList = this.totalList[this.countPage]
+      for (let i = 0; i < this.accountList.length; i++) {
+        let lastItem = this.accountList[this.accountList.length - 1];
+        this.lastAddress = lastItem.address;
+        this.lastBalance = lastItem.balance;
+      }
       // console.log('lastItem',this.count,this.totalList,this.countPage);
       // console.log('accountList',this.accountList);
     },
@@ -481,9 +481,30 @@ export default {
           percentage: percentage
         };
       });
-        console.log('accountList', this.accountList);
+        // console.log('accountList', this.accountList);
     },
-    walletDetails(value) {
+    async getAddressCount(){
+      let countList = [];
+      for (let i = 0; i < this.list.length; i++) {
+        let item = this.list[i];
+        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${item.address}&offset=1000`);
+        let list = data.result
+        let _address = {
+          address:item.address,
+          data:list
+        }
+        countList.push(_address);
+      }
+      this.list=this.list.map((item) =>{
+        let details = find(countList, (items) => web3.utils.toChecksumAddress(items.address)==  web3.utils.toChecksumAddress(item.address));
+        let count = details.data.length;
+        return{
+          ...item,
+          count:count
+        }
+      })
+    },
+    assetsDetails(value) {
       console.log(value);
       this.$router.push({
         name: 'AssetsInfo',
@@ -567,7 +588,14 @@ export default {
     min-width: 36px;
   }
 }
-
+.link-light{
+  cursor: pointer;
+  color: #000 !important;
+}
+.link-dark{
+  cursor: pointer;
+  color: #FFF !important;
+}
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
 }
