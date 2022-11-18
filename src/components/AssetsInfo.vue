@@ -2,7 +2,7 @@
   <v-container class="dashboard stake_background">
     <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLink()">Assets</a></span> / <span class="rei-fans">{{ this.nodeName }}</span>
+        <span @click="routeLink()" class="font-grey">Assets</span> / <span class="rei-fans">{{ this.nodeName }}</span>
       </div>
     </div>
     <MyAccountWalletInfo></MyAccountWalletInfo>
@@ -54,6 +54,8 @@ export default {
     }
     .font-grey{
         color: #868E9E;
+        font-size: 16px;
+        cursor: pointer;
     }
 }
 .dashboard{

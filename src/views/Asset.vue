@@ -2,7 +2,7 @@
   <v-container :class="dark ? 'night stake' : 'daytime stake'">
     <div class="header-title">
       <h1>Asset</h1>
-      <a class="title-detailed" target="_blank" href=""> REI Network. Including ERC20, ERC1155, ERC721</a>
+      <a class="title-detailed" target="_blank" href=""> Token Assets on REI Network. Including ERC20, ERC1155, ERC721</a>
     </div>
     <v-row>
       <v-col>
@@ -33,7 +33,7 @@
                     <v-row justify="space-between">
                       <v-col>
                         <div class="font-grey">Price</div>
-                        <h3>${{ assetObj.price | asset(5) }}</h3>
+                        <h3>${{ current_price | asset(5) }}</h3>
                       </v-col>
                       <v-col>
                         <div class="font-grey">Total Supply</div>
@@ -61,7 +61,7 @@
                   <v-divider class="faq_border" />
                   <v-tabs-items v-model="tab2">
                     <v-tab-item key="11">
-                      <v-data-table :headers="accountHeaders" :items="accountList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="reiPage" @page-count="reiPageCount = $event">
+                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="reiPage" @page-count="reiPageCount = $event">
                         <template v-slot:item.rank="{ item }">
                           <span>{{ item.rank }}</span>
                         </template>
@@ -104,7 +104,7 @@
             <v-row>
               <v-col>
                 <v-tab-item key="12">
-                  <v-data-table :headers="headers" :items="list" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                  <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
@@ -117,7 +117,7 @@
                       <span>${{ item.price | asset(5) }}</span>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <a href="" target="_blank" :class="dark?'link-dark':'link-light'"><div>{{ item.address | addr }}</div></a>
+                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark?'link-dark':'link-light'"><div>{{ item.address | addr }}</div></a>
                     </template>
                     <template v-slot:item.totalSupply="{ item }">
                       <span>${{ item.totalSupply }} {{ item.symbol }}</span>
@@ -153,7 +153,7 @@ import abiStakeManager from '../abis/abiStakeManager';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
 import find from 'lodash/find';
 import Address from '../components/Address';
 
@@ -183,7 +183,7 @@ export default {
       myTotalStake: 0,
       reiBalance: 0,
       totalGasAmount: 0,
-      assetObj: {},
+      current_price: {},
       totalSupply: 0,
       lastAddress: '',
       lastBalance: '',
@@ -193,6 +193,7 @@ export default {
       totalList:[],
       list:[],
       accountList:[],
+      holderList:[],
       accountHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },
@@ -292,11 +293,9 @@ export default {
     },
     count(newVal, oldVal) {
       this.getWalletInfo();
-      // if (oldVal < newVal) {
-        for (let i = 0; i < this.accountList.length; i++) {
-          const item = this.accountList[i];
+        for (let i = 0; i < this.holderList.length; i++) {
+          const item = this.holderList[i];
           item.rank += this.count - 50;
-        // }
       }
       console.log(oldVal)
       if(newVal > 50){
@@ -308,7 +307,6 @@ export default {
   },
   mounted() {
     this.getBalance();
-    // this.getData();
   },
   methods: {
     connect() {
@@ -346,6 +344,9 @@ export default {
           let reiBalance = await web3.eth.getBalance(this.connection.address);
           this.reiBalance = reiBalance;
           let totalBalance = web3.utils.toBN(reiBalance).add(web3.utils.toBN(this.myTotalStake)).add(web3.utils.toBN(this.totalGasAmount));
+          let { data: priceList } = await getPrice({ symbols: 'REI' });
+          this.current_price = priceList.data[0].current_price;
+          console.log('this.current_price',this.current_price)
           _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
@@ -423,7 +424,6 @@ export default {
 
       this.totalAmount = totalAmount;
       this.getListLoading = false;
-
       this.list = this.assetList;
       this.list.shift();
       this.getAccountList();
@@ -431,8 +431,8 @@ export default {
       this.loading = false;
     },
     async getAccountList() {
-      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
-      this.accountList = data.data;
+      let data = await getTokenHolder('');
+      this.accountList = data.data.data;
       this.getWalletInfo();
       let amount = await getReiSatistic();
       this.totalSupply = amount.data.row.json.totalAddress;
@@ -440,11 +440,10 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
-      console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
-      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
-      this.accountList = data.data;
+      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
         this.lastAddress = lastItem.address;
@@ -453,7 +452,6 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList)
-      console.log('totalList',this.count,this.lastBalance,this.lastAddress)
     },
     ForwardPage() {
       this.count -= 50;
@@ -465,11 +463,9 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
-      // console.log('lastItem',this.count,this.totalList,this.countPage);
-      // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
-      this.accountList = this.accountList.map((item, index) => {
+      this.holderList = this.accountList.map((item, index) => {
         let rank = index + 1;
         let balance = parseFloat(item.balance) / 1e18;
         let percentage = (balance / 1000000000) * 100;
@@ -481,14 +477,13 @@ export default {
           percentage: percentage
         };
       });
-        // console.log('accountList', this.accountList);
     },
     async getAddressCount(){
       let countList = [];
       for (let i = 0; i < this.list.length; i++) {
         let item = this.list[i];
-        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${item.address}&offset=1000`);
-        let list = data.result
+        let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${item.address}&offset=1000`);
+        let list = data.data.result
         let _address = {
           address:item.address,
           data:list
@@ -549,7 +544,7 @@ export default {
 .asset-card {
   padding: 24px;
   .erc-tabs {
-    margin: 20px 0;
+    margin-top: 20px;
   }
 }
 .font-grey {
@@ -558,22 +553,25 @@ export default {
 }
 .theme--light.vote-number {
   background-color: #f7f7f7;
-  padding: 12px 20px;
-  margin-top: 20px;
+  padding: 20px;
+  margin-top: -10px;
 }
 .theme--dark.vote-number {
   background-color: #13112b;
-  padding: 12px 20px;
-  margin-top: 20px;
+  padding: 20px;
+  margin-top: -10px;
 }
 .v-sheet--outlined {
   border: none !important;
 }
 .vote-list {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 .asset-logo {
   margin-right: 10px;
+}
+.data-table{
+  cursor: pointer;
 }
 .turn-pages {
   margin: 20px 0;
@@ -591,6 +589,14 @@ export default {
 .link-light{
   cursor: pointer;
   color: #000 !important;
+}
+.link-light:hover{
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover{
+  color: #6979f8;
+  text-decoration: underline;
 }
 .link-dark{
   cursor: pointer;

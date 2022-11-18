@@ -134,7 +134,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import Address from '../components/Address';
@@ -475,8 +475,8 @@ export default {
     },
     async getAccountList() {
       this.details = find(this.assetList, (items) => items.symbol == this.id);
-      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
-      this.accountList = data.data;
+      let data = await getTokenHolder('');
+      this.accountList = data.data.data;
       this.getWalletInfo();
       let amount = await getReiSatistic();
       this.totalSupply = amount.data.row.json.totalAddress;
@@ -484,11 +484,11 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
-      console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
+      // console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
-      const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
-      this.accountList = data.data;
+      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
         this.lastAddress = lastItem.address;
@@ -497,7 +497,6 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList)
-      // console.log('totalList',this.count,this.countPage,this.totalList)
     },
     ForwardPage() {
       this.count -= 50;
@@ -521,8 +520,8 @@ export default {
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
-        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
-        this.tokenList = data.result;
+       let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        this.tokenList = data.data.result;
         this.holderList = this.tokenList;
         this.holderList = this.holderList.sort(sortArr('balance'));
       }
