@@ -62,6 +62,11 @@ export const getHistoryData = (url,params) => http({
   url:`https://scan.rei.network/api?${url}`,
   params
 });
+export const getTokenHolder = (url,params) => http({
+  method: 'get',
+  url:`https://gateway.rei.network/api/rei/holder${url}`,
+  params
+});
 export const getAddressTag = (params) => http({
   method: 'GET',
   url:'/data/address/address-tag-list.json',

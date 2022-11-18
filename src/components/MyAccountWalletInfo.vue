@@ -67,8 +67,7 @@
         </v-card>
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-            <v-tab v-if="id == 'REI'" style="margin-left: 0" key="11" class="v-tab-left">Top 50 Holders</v-tab>
-            <v-tab v-else style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
+            <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
             <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
           </v-tabs>
           <v-divider class="faq_border" />
@@ -78,9 +77,6 @@
                 <template v-slot:item.rank="{ item }">
                   <span>{{ item.rank }}</span>
                 </template>
-                <!-- <template v-slot:item.address="{ item }">
-                   <Address :val="item.address"></Address>
-                </template> -->
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
                   <!--<v-tooltip right color="start_unstake">
@@ -95,8 +91,18 @@
                   <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="holderList.length > 0">
+              <div class="text-center pt-2" v-if="holderList.length > 0 && id != 'REI'">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+              </div>
+              <div v-else>
+                <div class="turn-pages" align-content="end">
+                  <v-btn elevation="3" :disabled="disabled"  @click="ForwardPage" class="turn-btn">
+                    <v-icon>mdi-chevron-left</v-icon>
+                  </v-btn>
+                  <v-btn elevation="3" @click="BackwardPage" class="turn-btn">
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </div>
               </div>
             </v-tab-item>
             <v-tab-item key="12">
@@ -128,7 +134,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import Address from '../components/Address';
@@ -167,6 +173,12 @@ export default {
         // { text: 'Txn Count', value: 'count' },
         { text: 'Percentage', value: 'percentage' }
       ],
+      lastAddress: '',
+      lastBalance: '',
+      count: 50,
+      countPage:0,
+      disabled:true,
+      totalList:[],
       accountList: [],
       tokenList: [],
       holderList: [],
@@ -244,7 +256,22 @@ export default {
         this.connect();
         this.getBalance();
       }
-    }
+    },
+    count(newVal, oldVal) {
+      this.getWalletInfo();
+      // if (oldVal < newVal) {
+        for (let i = 0; i < this.holderList.length; i++) {
+          const item = this.holderList[i];
+          item.rank += this.count-50;
+        // }
+      }
+      console.log(oldVal)
+      if(newVal > 50){
+        this.disabled = false;
+      }else{
+        this.disabled = true;
+      }
+    },
   },
   mounted() {
     this.connect();
@@ -350,7 +377,7 @@ export default {
       this.totalGasAmount = res.data.result;
     },
     async getBalance() {
-       this.loading = true;
+      this.loading = true;
       let asset = [],
         assetAllArr = [],
         assetZeroArr = [],
@@ -443,35 +470,62 @@ export default {
       this.totalAmount = totalAmount;
       this.getListLoading = false;
 
-      // console.log('assetList', this.assetList);
       this.getAccountList();
-
       this.loading = false;
     },
     async getAccountList() {
       this.details = find(this.assetList, (items) => items.symbol == this.id);
+      let data = await getTokenHolder('');
+      this.accountList = data.data.data;
+      this.getWalletInfo();
       let amount = await getReiSatistic();
       this.totalSupply = amount.data.row.json.totalAddress;
-      this.getWalletInfo();
+      let lastItem = this.accountList[this.accountList.length - 1];
+      this.lastAddress = lastItem.address;
+      this.lastBalance = lastItem.balance;
+      this.totalList.push(this.accountList);
+      // console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
+    },
+    async BackwardPage() {
+      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      this.accountList = data.data.data;
+      for (let i = 0; i < this.accountList.length; i++) {
+        let lastItem = this.accountList[this.accountList.length - 1];
+        this.lastAddress = lastItem.address;
+        this.lastBalance = lastItem.balance;
+      }
+      this.count += 50;
+      this.countPage++;
+      this.totalList.push(this.accountList)
+    },
+    ForwardPage() {
+      this.count -= 50;
+      this.countPage--;
+      this.totalList.pop();
+      this.accountList = this.totalList[this.countPage]
+      for (let i = 0; i < this.accountList.length; i++) {
+        let lastItem = this.accountList[this.accountList.length - 1];
+        this.lastAddress = lastItem.address;
+        this.lastBalance = lastItem.balance;
+      }
+      // console.log('lastItem',this.count,this.countPage,this.totalList);
+      // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
-      if (this.id == 'REI') {
-        const { data } = await this.$axios.get(`https://gateway.rei.network/api/rei/holder`);
-        this.accountList = data.data;
-        // console.log('accountList',this.accountList);
-        this.holderList = this.accountList;
-      } else {
-        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
-        this.tokenList = data.result;
-        this.holderList = this.tokenList;
-      }
-      // console.log('tokenList', this.tokenList);
-      function sortArr(attr) {
+       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
         };
       }
-      this.holderList = this.holderList.sort(sortArr('balance'));
+      if (this.id == 'REI') {
+        this.holderList = this.accountList;
+      } else {
+       let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        this.tokenList = data.data.result;
+        this.holderList = this.tokenList;
+        this.holderList = this.holderList.sort(sortArr('balance'));
+      }
+      // console.log('tokenList', this.tokenList);
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
         let balance = 0;
@@ -489,6 +543,7 @@ export default {
           percentage: percentage
         };
       });
+      // console.log('holderList', this.holderList);
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
@@ -582,6 +637,22 @@ a {
 }
 .add-btn {
   text-transform: none;
+}
+.turn-pages {
+  margin: 20px 0;
+  text-align: right;
+  .turn-btn {
+    margin-right: 12px;
+  }
+  .v-icon {
+    color: #868e9e;
+  }
+  .v-btn:not(.v-btn--round).v-size--default{
+    min-width: 36px;
+  }
+}
+.theme--light.v-btn.v-btn--has-bg {
+  background-color: transparent;
 }
 @media screen and (max-width: 900px) {
   .wallet {
