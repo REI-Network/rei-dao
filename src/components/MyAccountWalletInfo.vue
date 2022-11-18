@@ -77,6 +77,9 @@
                 <template v-slot:item.rank="{ item }">
                   <span>{{ item.rank }}</span>
                 </template>
+                <template v-slot:item.address="{ item }">
+                  <span><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                </template>
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
                   <!--<v-tooltip right color="start_unstake">
@@ -95,8 +98,8 @@
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
               <div v-else>
-                <div class="turn-pages" align-content="end">
-                  <v-btn elevation="3" :disabled="disabled"  @click="ForwardPage" class="turn-btn">
+                <div class="turn-pages" align-content="end" v-if="holderList.length>0">
+                  <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
                   <v-btn elevation="3" @click="BackwardPage" class="turn-btn">
@@ -169,16 +172,16 @@ export default {
       holderHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },
-        { text: 'Balance(REI)', value: 'balance' },
+        { text: 'Balance', value: 'balance' },
         // { text: 'Txn Count', value: 'count' },
         { text: 'Percentage', value: 'percentage' }
       ],
       lastAddress: '',
       lastBalance: '',
       count: 50,
-      countPage:0,
-      disabled:true,
-      totalList:[],
+      countPage: 0,
+      disabled: true,
+      totalList: [],
       accountList: [],
       tokenList: [],
       holderList: [],
@@ -260,18 +263,18 @@ export default {
     count(newVal, oldVal) {
       this.getWalletInfo();
       // if (oldVal < newVal) {
-        for (let i = 0; i < this.holderList.length; i++) {
-          const item = this.holderList[i];
-          item.rank += this.count-50;
+      for (let i = 0; i < this.holderList.length; i++) {
+        const item = this.holderList[i];
+        item.rank += this.count - 50;
         // }
       }
-      console.log(oldVal)
-      if(newVal > 50){
+      console.log(oldVal);
+      if (newVal > 50) {
         this.disabled = false;
-      }else{
+      } else {
         this.disabled = true;
       }
-    },
+    }
   },
   mounted() {
     this.connect();
@@ -496,13 +499,13 @@ export default {
       }
       this.count += 50;
       this.countPage++;
-      this.totalList.push(this.accountList)
+      this.totalList.push(this.accountList);
     },
     ForwardPage() {
       this.count -= 50;
       this.countPage--;
       this.totalList.pop();
-      this.accountList = this.totalList[this.countPage]
+      this.accountList = this.totalList[this.countPage];
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
         this.lastAddress = lastItem.address;
@@ -512,7 +515,7 @@ export default {
       // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
-       function sortArr(attr) {
+      function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
         };
@@ -520,7 +523,7 @@ export default {
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
-       let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
         this.tokenList = data.data.result;
         this.holderList = this.tokenList;
         this.holderList = this.holderList.sort(sortArr('balance'));
@@ -647,12 +650,28 @@ a {
   .v-icon {
     color: #868e9e;
   }
-  .v-btn:not(.v-btn--round).v-size--default{
+  .v-btn:not(.v-btn--round).v-size--default {
     min-width: 36px;
   }
 }
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
+}
+.link-light{
+  cursor: pointer;
+  color: #000 ;
+}
+.link-light:hover{
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover{
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark{
+  cursor: pointer;
+  color: #FFF;
 }
 @media screen and (max-width: 900px) {
   .wallet {

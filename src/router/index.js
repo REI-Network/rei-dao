@@ -96,7 +96,7 @@ const routes = [
     component: Asset
   },
   {
-    path: '/Asset/assetInfo',
+    path: '/asset/assetInfo',
     name: 'AssetsInfo',
     component: AssetsInfo
   },

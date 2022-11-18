@@ -7,7 +7,7 @@
     <v-row>
       <v-col>
         <v-card class="asset-card">
-          <h3>Total Token Assets</h3>
+          <h3>Token Assets</h3>
           <v-row>
             <v-col>
               <v-tabs v-model="tab1" align-with-title hide-slider class="erc-tabs" background-color="background">
@@ -43,10 +43,6 @@
                         <div class="font-grey">Holders</div>
                         <h3>{{ this.totalSupply | asset() }}</h3>
                       </v-col>
-                      <!-- <v-col>
-                        <div class="font-grey">Transfers</div>
-                        <h3>838</h3>
-                      </v-col> -->
                       <v-col>
                         <div class="font-grey">Decimals</div>
                         <h3>18</h3>
@@ -65,6 +61,9 @@
                         <template v-slot:item.rank="{ item }">
                           <span>{{ item.rank }}</span>
                         </template>
+                        <template v-slot:item.address="{ item }">
+                          <span><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                        </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
                         </template>
@@ -73,7 +72,7 @@
                           <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                         </template>
                       </v-data-table>
-                      <div class="turn-pages" align-content="end">
+                      <div class="turn-pages" align-content="end" v-if="holderList.length>0">
                         <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                           <v-icon>mdi-chevron-left</v-icon>
                         </v-btn>
@@ -102,8 +101,12 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col style="margin-top:-12px;">
                 <v-tab-item key="12">
+                  <div class="submit-here">
+                    <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
+                    <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
+                  </div>
                   <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list">
@@ -183,7 +186,7 @@ export default {
       myTotalStake: 0,
       reiBalance: 0,
       totalGasAmount: 0,
-      current_price: {},
+      current_price: 0,
       totalSupply: 0,
       lastAddress: '',
       lastBalance: '',
@@ -207,7 +210,7 @@ export default {
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
         { text: 'Address', value: 'address' },
-        { text: 'Total Supply', value: 'totalSupply' },
+        { text: 'Circulation Supply', value: 'totalSupply' },
         { text: 'Address count', value: 'count' }
       ],
 
@@ -346,7 +349,6 @@ export default {
           let totalBalance = web3.utils.toBN(reiBalance).add(web3.utils.toBN(this.myTotalStake)).add(web3.utils.toBN(this.totalGasAmount));
           let { data: priceList } = await getPrice({ symbols: 'REI' });
           this.current_price = priceList.data[0].current_price;
-          console.log('this.current_price',this.current_price)
           _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
@@ -442,6 +444,7 @@ export default {
       this.totalList.push(this.accountList);
     },
     async BackwardPage() {
+      this.loading = true;
       let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
       this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
@@ -452,6 +455,7 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList)
+      this.loading = false;
     },
     ForwardPage() {
       this.count -= 50;
@@ -588,7 +592,7 @@ export default {
 }
 .link-light{
   cursor: pointer;
-  color: #000 !important;
+  color: #000 ;
 }
 .link-light:hover{
   color: #6979f8;
@@ -600,10 +604,16 @@ export default {
 }
 .link-dark{
   cursor: pointer;
-  color: #FFF !important;
+  color: #FFF;
 }
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
+}
+.submit-here{
+  text-align:right;
+}
+.wallet-icon{
+  margin: 0 8px;
 }
 @media screen and (max-width: 900px) {
   .stake {
