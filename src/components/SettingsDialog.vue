@@ -145,6 +145,7 @@ export default {
       inputGateway:'',
       items: [],
       gatawayList:[
+        'https://ipfs.rei.network',
         'https://4everland.io',
         'https://ipfs.io',
         'https://ipfs-gateway.cloud',
@@ -177,7 +178,7 @@ export default {
       let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
       let url = '';
       if(!ipfsgateway){
-        url = `https://4everland.io`;
+        url = `https://ipfs.rei.network`;
       } else {
         url = decodeURIComponent(ipfsgateway);
       }
