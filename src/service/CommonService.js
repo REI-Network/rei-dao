@@ -83,7 +83,7 @@ export const getIpfsGateway = (cid) => {
 
   let url = '';
   if(!ipfsgateway){
-    url = `https://4everland.io/ipfs/${_cid}`;
+    url = `https://ipfs.rei.network/ipfs/${_cid}`;
   } else {
     url = `${decodeURIComponent(ipfsgateway)}/ipfs/${_cid}`;
   }
