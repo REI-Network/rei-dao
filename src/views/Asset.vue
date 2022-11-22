@@ -18,6 +18,9 @@
                   <v-tab key="12">
                     <v-radio label="ERC20" value="2" class="trends-radio"> </v-radio>
                   </v-tab>
+                  <v-tab key="13">
+                    <v-radio label="ERC1155" value="3" class="trends-radio"> </v-radio>
+                  </v-tab>
                 </v-radio-group>
               </v-tabs>
             </v-col>
@@ -135,6 +138,41 @@
                 </v-tab-item>
               </v-col>
             </v-row>
+            <v-row style="margin-top:0;">
+              <v-col style="margin-top:-12px;">
+                <v-tab-item key="13">
+                  <div class="submit-here">
+                    <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
+                    <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
+                  </div>
+                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                    <template v-slot:item.assets="{ item }">
+                      <v-row align="center" class="assets-list">
+                        <div class="asset-logo">
+                          <v-img :src="$IpfsGateway(item.logo)" width="30" height="30"></v-img>
+                        </div>
+                        <div>{{ item.symbol }}</div>
+                      </v-row>
+                    </template>
+                    <template v-slot:item.price="{ item }">
+                      <span>${{ item.price | asset(5) }}</span>
+                    </template>
+                    <template v-slot:item.address="{ item }">
+                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark?'link-dark':'link-light'"><div>{{ item.address | addr }}</div></a>
+                    </template>
+                    <template v-slot:item.totalSupply="{ item }">
+                      <span>${{ item.totalSupply }} {{ item.symbol }}</span>
+                    </template>
+                    <template v-slot:item.value="{ item }">
+                      <span>${{ item.value | asset(5) }}</span>
+                    </template>
+                  </v-data-table>
+                  <div class="text-center pt-2" v-if="assetList.length > 10">
+                    <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+                  </div>
+                </v-tab-item>
+              </v-col>
+            </v-row>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -156,6 +194,7 @@ import abiStakeManager from '../abis/abiStakeManager';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
+import abiBadgesNFT from '../abis/abiBadgesNFT';
 import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
 import find from 'lodash/find';
 import Address from '../components/Address';
@@ -209,11 +248,18 @@ export default {
       headers: [
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
-        { text: 'Address', value: 'address' },
+        { text: 'Contract Address', value: 'address' },
         { text: 'Circulation Supply', value: 'totalSupply' },
         { text: 'Address count', value: 'count' }
       ],
-
+       nftHeaders: [
+        { text: 'Assets', value: 'assets' },
+        { text: 'Contract Address', value: 'address' },
+        { text: 'Total Supply', value: 'totalSupply' },
+        { text: 'Tx', value: 'tx' },
+        { text: 'Holders', value: 'holders' }
+      ],
+      nftList:[],
       assetList: [],
       tokenInfoList: [
         {
@@ -277,6 +323,44 @@ export default {
           name: 'HONEY Token',
           symbol: 'HONEY'
         }
+      ],
+       testConfigList: [
+        {
+          "address": '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d',
+          "image":"bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u",
+          "name":"Genesis Proposal Badges NFT",
+          "organization":"REI DAO"
+        },
+      ],
+      prodConfigList: [
+        {
+          "address": '0x4035374c2c157F46effeA16e71A62b8992F2AD1b',
+          "image":"bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u",
+          "name":"Genesis Proposal Badges NFT",
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
+        },
+        {
+          "address": '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d',
+          "image":"bafkreih6tkghnjtb3mdemvemr4t6htzhxckuq3aizmebuw6b6adhncz4ga",
+          "name":"Korean Community NFT",
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
+        },
+        {
+          "address": '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
+          "image":"bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee",
+          "name":"ReiFans NFT",
+          "organization":"REI DAO",
+          "token_standard": "ERC-1155"
+        },
+        {
+          "address": '0xE4EDC855717281b994A6E2E43c98791dBCE497DA',
+          "image":"bafkreieajvu4ze4tpb7k2zsvb2ow7haqv6datq5gilj2jq746xsefopwwi",
+          "name":"beeHive NFT",
+          "organization":"beeHive",
+          "token_standard": "ERC-721"
+        }
       ]
     };
   },
@@ -292,6 +376,7 @@ export default {
       if (this.connection && this.connection.network) {
         this.connect();
         this.getBalance();
+        this.getNFTList();
       }
     },
     count(newVal, oldVal) {
@@ -310,6 +395,7 @@ export default {
   },
   mounted() {
     this.getBalance();
+    this.getNFTList();
   },
   methods: {
     connect() {
@@ -511,7 +597,92 @@ export default {
           id: value.symbol
         }
       });
-    }
+    },
+    async getNFTList() {
+      this.loading = true;
+      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
+        this.nftConfig = this.testConfigList;
+      } else {
+        this.nftConfig = this.prodConfigList;
+      }
+      this.nftList = [];
+      if(this.nftInfo.length>0){
+        this.nftList = this.nftInfo;
+        this.loading = false;
+        return;
+      }
+
+      
+
+      for (let i = 0; i < this.nftConfig.length; i++) {
+        if(this.nftConfig[i].token_standard == 'ERC-1155'){
+          let contract = new web3.eth.Contract(abiBadgesNFT, '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d');
+          let addr = this.connection.address;
+          for (let j = 0; ;j++){
+            let flag = await contract.methods.exists(j).call();
+            if(flag){
+              let badgeNFTBalance = await contract.methods.balanceOf(addr, j).call();
+              let url = await contract.methods.uri(j).call();
+              let totalSupply = await contract.methods.totalSupply(j).call();
+              if (badgeNFTBalance > 0) {
+                let imageShow = false;
+                const { data } = await this.$axios.get(url);
+                const imgdata  = await this.$axios.get(data.image);
+                if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgdata.headers['content-type'])) {
+                  imageShow = true;
+                }
+                let address = this.nftConfig[i].address;
+                let nftDetail = {
+                  ...data,
+                  address,
+                  organization: this.nftConfig[i].organization,
+                  url,
+                  totalSupply,
+                  imageShow,
+                  tokenId:j,
+                  token_standard: this.nftConfig[i].token_standard
+                }
+
+                for (let index = 0; index < badgeNFTBalance; index++) {
+                  this.nftList.push(nftDetail);
+                }
+              }
+            } else {
+              break
+            }
+          }
+        } else if(this.nftConfig[i].token_standard == 'ERC-721'){
+          let _myAddress = this.connection.address;
+          let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
+          let _balance = await contract2.methods.balanceOf(_myAddress).call();
+          if(_balance>0){
+            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,0).call();
+            let tokenInfo = await contract2.methods.tokenURI(token).call();
+
+            let imageShow = false;
+            const { data } = await this.$axios.get(tokenInfo);
+            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+              imageShow = true;
+            }
+            let address = this.nftConfig[i].address;
+            let nftDetail = {
+              name: this.nftConfig[i].name,
+              image:this.$IpfsGateway(data.image),
+              organization:this.nftConfig[i].organization,
+              address,
+              imageShow,
+              balance: _balance,
+              token_standard: this.nftConfig[i].token_standard
+            }
+            this.nftList.push(nftDetail);
+          } 
+        }
+        
+        this.setNftInfo({nftInfo: this.nftList})
+      }
+      console.log('nftList',this.nftList)
+      this.loading = false;
+    },
   }
 };
 </script>
