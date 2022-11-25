@@ -18,6 +18,9 @@
                   <v-tab key="12">
                     <v-radio label="ERC20" value="2" class="trends-radio"> </v-radio>
                   </v-tab>
+                  <v-tab key="13">
+                    <v-radio label="ERC1155" value="3" class="trends-radio"> </v-radio>
+                  </v-tab>
                 </v-radio-group>
               </v-tabs>
             </v-col>
@@ -62,7 +65,9 @@
                           <span>{{ item.rank }}</span>
                         </template>
                         <template v-slot:item.address="{ item }">
-                          <span><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                          <span
+                            ><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span
+                          >
                         </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
@@ -72,7 +77,7 @@
                           <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                         </template>
                       </v-data-table>
-                      <div class="turn-pages" align-content="end" v-if="holderList.length>0">
+                      <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                         <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                           <v-icon>mdi-chevron-left</v-icon>
                         </v-btn>
@@ -100,8 +105,8 @@
                 </v-tab-item>
               </v-col>
             </v-row>
-            <v-row style="margin-top:0;">
-              <v-col style="margin-top:-12px;">
+            <v-row style="margin-top: 0">
+              <v-col style="margin-top: -12px">
                 <v-tab-item key="12">
                   <div class="submit-here">
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
@@ -120,7 +125,9 @@
                       <span>${{ item.price | asset(5) }}</span>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark?'link-dark':'link-light'"><div>{{ item.address | addr }}</div></a>
+                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                        ><div>{{ item.address | addr }}</div></a
+                      >
                     </template>
                     <template v-slot:item.totalSupply="{ item }">
                       <span>${{ item.totalSupply }} {{ item.symbol }}</span>
@@ -131,6 +138,38 @@
                   </v-data-table>
                   <div class="text-center pt-2" v-if="assetList.length > 10">
                     <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+                  </div>
+                </v-tab-item>
+              </v-col>
+            </v-row>
+            <v-row style="margin-top: 0">
+              <v-col style="margin-top: -12px">
+                <v-tab-item key="13">
+                  <div class="submit-here">
+                    <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
+                    <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
+                  </div>
+                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage" :loading="getNftListLoading" @click:row="assetsNft" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage" @page-count="nftPageCount = $event">
+                    <template v-slot:item.assets="{ item }">
+                      <v-row align="center" class="assets-list">
+                        <div class="asset-logo">
+                          <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video>
+                          <v-img v-else :src="item.image" width="40" height="40"></v-img>
+                        </div>
+                        <div>{{ item.name }}</div>
+                      </v-row>
+                    </template>
+                    <template v-slot:item.address="{ item }">
+                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                        ><div>{{ item.address | addr }}</div></a
+                      >
+                    </template>
+                    <template v-slot:item.totalSupply="{ item }">
+                      <span>{{ item.totalSupply }}</span>
+                    </template>
+                  </v-data-table>
+                  <div class="text-center pt-2" v-if="nftList.length > 0">
+                    <v-pagination v-model="nftPage" :length="nftPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
                 </v-tab-item>
               </v-col>
@@ -151,27 +190,28 @@
 import Web3 from 'web3';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
-import abiConfig from '../abis/abiConfig';
-import abiStakeManager from '../abis/abiStakeManager';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import abiERC20 from '../abis/abiERC20';
+import abiBadgesNFT from '../abis/abiBadgesNFT';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
+import abiERC721 from '../abis/abiERC721';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getNftHolder } from '../service/CommonService';
 import find from 'lodash/find';
-import Address from '../components/Address';
 
 export default {
-  components: {
-  },
+  components: {},
   filters,
   data() {
     return {
+      poster: require('../assets/images/Genesis.png'),
       tab1: null,
       tab2: null,
       radios: null,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
+      nftPage: 1,
+      nftPageCount: 0,
+      nftPerPage: 50,
       reiPage: 1,
       reiPageCount: 0,
       reiPerPage: 50,
@@ -181,8 +221,10 @@ export default {
       transferLoading: false,
       loading: false,
       getListLoading: false,
+      getNftListLoading: false,
       stakeManagerContract: null,
       stakeManageInstance: null,
+      imageShow: true,
       myTotalStake: 0,
       reiBalance: 0,
       totalGasAmount: 0,
@@ -192,11 +234,13 @@ export default {
       lastBalance: '',
       count: 50,
       countPage: 0,
+      nftConfig: [],
+      dataList: [],
       disabled: true,
-      totalList:[],
-      list:[],
-      accountList:[],
-      holderList:[],
+      totalList: [],
+      list: [],
+      accountList: [],
+      holderList: [],
       accountHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },
@@ -209,11 +253,18 @@ export default {
       headers: [
         { text: 'Assets', value: 'assets' },
         { text: 'Price', value: 'price' },
-        { text: 'Address', value: 'address' },
+        { text: 'Contract Address', value: 'address' },
         { text: 'Circulation Supply', value: 'totalSupply' },
         { text: 'Address count', value: 'count' }
       ],
-
+      nftHeaders: [
+        { text: 'Assets', value: 'assets' },
+        { text: 'Contract Address', value: 'address' },
+        { text: 'Total Supply', value: 'totalSupply' },
+        // { text: 'Tx', value: 'tx' },
+        { text: 'Holders', value: 'holders' }
+      ],
+      nftList: [],
       assetList: [],
       tokenInfoList: [
         {
@@ -277,6 +328,44 @@ export default {
           name: 'HONEY Token',
           symbol: 'HONEY'
         }
+      ],
+      testConfigList: [
+        {
+          address: '0xe917cd524261D27dbF7d629C86eDAC8fd7b7885d',
+          image: 'bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u',
+          name: 'Genesis Proposal Badges NFT',
+          organization: 'REI DAO'
+        }
+      ],
+      prodConfigList: [
+        {
+          address: '0x4035374c2c157F46effeA16e71A62b8992F2AD1b',
+          image: 'bafkreiccsx2nsqufbopovi6y7dkhmxign46hjqbnhtryvrfvvm7pps7o4u',
+          name: 'Genesis Proposal Badges NFT',
+          organization: 'REI DAO',
+          token_standard: 'ERC-1155'
+        },
+        {
+          address: '0x479a57Bb8Dd14FCa3Beeb63825126ebE16f2Ff2d',
+          image: 'bafkreih6tkghnjtb3mdemvemr4t6htzhxckuq3aizmebuw6b6adhncz4ga',
+          name: 'Korean Community NFT',
+          organization: 'REI DAO',
+          token_standard: 'ERC-1155'
+        },
+        // {
+        //   address: '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
+        //   image: 'bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee',
+        //   name: 'ReiFans NFT',
+        //   organization: 'REI DAO',
+        //   token_standard: 'ERC-1155'
+        // },
+        {
+          address: '0xE4EDC855717281b994A6E2E43c98791dBCE497DA',
+          image: 'bafkreieajvu4ze4tpb7k2zsvb2ow7haqv6datq5gilj2jq746xsefopwwi',
+          name: 'beeHive NFT',
+          organization: 'beeHive',
+          token_standard: 'ERC-721'
+        }
       ]
     };
   },
@@ -284,6 +373,7 @@ export default {
     ...mapGetters({
       dark: 'dark',
       connection: 'connection',
+      nftInfo: 'nftInfo',
       apiUrl: 'apiUrl'
     })
   },
@@ -292,26 +382,32 @@ export default {
       if (this.connection && this.connection.network) {
         this.connect();
         this.getBalance();
+        this.getNFTList();
       }
     },
     count(newVal, oldVal) {
       this.getWalletInfo();
-        for (let i = 0; i < this.holderList.length; i++) {
-          const item = this.holderList[i];
-          item.rank += this.count - 50;
+      for (let i = 0; i < this.holderList.length; i++) {
+        const item = this.holderList[i];
+        item.rank += this.count - 50;
       }
-      console.log(oldVal)
-      if(newVal > 50){
+      console.log(oldVal);
+      if (newVal > 50) {
         this.disabled = false;
-      }else{
+      } else {
         this.disabled = true;
       }
-    },
+    }
   },
   mounted() {
     this.getBalance();
+    this.getNFTList();
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx',
+      setNftInfo: 'setNftInfo'
+    }),
     connect() {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -353,7 +449,7 @@ export default {
             symbol: token.symbol,
             logo: token.logo,
             balance: web3.utils.fromWei(totalBalance),
-            price:0,
+            price: 0,
             address: token.erc20Address,
             decimals: token.decimals,
             totalSupply: 1000000000,
@@ -454,14 +550,14 @@ export default {
       }
       this.count += 50;
       this.countPage++;
-      this.totalList.push(this.accountList)
+      this.totalList.push(this.accountList);
       this.loading = false;
     },
     ForwardPage() {
       this.count -= 50;
       this.countPage--;
       this.totalList.pop();
-      this.accountList = this.totalList[this.countPage]
+      this.accountList = this.totalList[this.countPage];
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
         this.lastAddress = lastItem.address;
@@ -482,26 +578,26 @@ export default {
         };
       });
     },
-    async getAddressCount(){
+    async getAddressCount() {
       let countList = [];
       for (let i = 0; i < this.list.length; i++) {
         let item = this.list[i];
         let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${item.address}&offset=1000`);
-        let list = data.data.result
+        let list = data.data.result;
         let _address = {
-          address:item.address,
-          data:list
-        }
+          address: item.address,
+          data: list
+        };
         countList.push(_address);
       }
-      this.list=this.list.map((item) =>{
-        let details = find(countList, (items) => web3.utils.toChecksumAddress(items.address)==  web3.utils.toChecksumAddress(item.address));
+      this.list = this.list.map((item) => {
+        let details = find(countList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
         let count = details.data.length;
-        return{
+        return {
           ...item,
-          count:count
-        }
-      })
+          count: count
+        };
+      });
     },
     assetsDetails(value) {
       console.log(value);
@@ -509,6 +605,85 @@ export default {
         name: 'AssetsInfo',
         query: {
           id: value.symbol
+        }
+      });
+    },
+    async getNFTList() {
+      this.getNftListLoading = true;
+      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
+        this.nftConfig = this.testConfigList;
+      } else {
+        this.nftConfig = this.prodConfigList;
+      }
+      this.nftList = [];
+      let nftItems = [];
+      for (let i = 0; i < this.nftConfig.length; i++) {
+        if (this.nftConfig[i].token_standard == 'ERC-1155') {
+          let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
+          for (let j = 0; ; j++) {
+            let flag = await contract.methods.exists(j).call();
+            if (flag) {
+              let url = await contract.methods.uri(j).call();
+              let totalSupply = await contract.methods.totalSupply(j).call();
+              const { data } = await this.$axios.get(url);
+              let imageShow = false;
+              const imgData = await this.$axios.get(data.image);
+              if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgData.headers['content-type'])) {
+                imageShow = true;
+              }
+              let address = this.nftConfig[i].address;
+              let nftDetail = {
+                ...data,
+                address,
+                organization: this.nftConfig[i].organization,
+                totalSupply,
+                imageShow,
+                tokenId: j,
+                token_standard: this.nftConfig[i].token_standard
+              };
+              nftItems.push(nftDetail);
+            } else {
+              break;
+            }
+          }
+        }
+        let countList = [];
+        for (let i = 0; i < nftItems.length; i++) {
+          let item = nftItems[i];
+          let params = {
+            contract: item.address,
+            // tokenId: item.tokenId
+          };
+          const { data: holderList } = await getNftHolder(params);
+          let list = holderList;
+          // console.log('list', list);
+          let _address = {
+            address: item.address,
+            data: list
+          };
+          countList.push(_address);
+        }
+        nftItems = nftItems.map((item) => {
+          let details = find(countList, (items) => items.address == item.address);
+          let holders = details.data.length;
+          return {
+            ...item,
+            holders: holders
+          };
+        });
+      }
+      this.nftList = nftItems;
+      // console.log('nftList', this.nftList);
+      this.getNftListLoading = false;
+    },
+    assetsNft(item) {
+      this.$router.push({
+        name: 'AssetNft',
+        query: {
+          id: item.address,
+          tokenid: item.tokenId,
+          standard: 'erc-1155',
+          name:item.name,
         }
       });
     }
@@ -555,6 +730,9 @@ export default {
   color: #868e9e;
   font-size: 14px;
 }
+.video-play {
+  width: 40px !important;
+}
 .theme--light.vote-number {
   background-color: #f7f7f7;
   padding: 20px;
@@ -574,7 +752,7 @@ export default {
 .asset-logo {
   margin-right: 10px;
 }
-.data-table{
+.data-table {
   cursor: pointer;
 }
 .turn-pages {
@@ -586,35 +764,35 @@ export default {
   .v-icon {
     color: #868e9e;
   }
-  .v-btn:not(.v-btn--round).v-size--default{
+  .v-btn:not(.v-btn--round).v-size--default {
     min-width: 36px;
   }
 }
-.link-light{
+.link-light {
   cursor: pointer;
-  color: #000 ;
+  color: #000;
 }
-.link-light:hover{
+.link-light:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark:hover{
+.link-dark:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark{
+.link-dark {
   cursor: pointer;
-  color: #FFF;
+  color: #fff;
 }
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
 }
-.submit-here{
-  text-align:right;
-  margin-bottom:10px;
+.submit-here {
+  text-align: right;
+  margin-bottom: 10px;
 }
-.wallet-icon{
-  margin-right:8px;
+.wallet-icon {
+  margin-right: 8px;
 }
 @media screen and (max-width: 900px) {
   .stake {

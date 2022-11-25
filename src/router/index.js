@@ -10,10 +10,11 @@ import Grants from '../views/Grants.vue';
 import Asset from '../views/Asset.vue';
 import GrantsDetails from '../components/GrantsDetails.vue';
 import StakeValidator from '../components/StakeValidator.vue';
-import MyNftDetails from '../components/MyNftDetails.vue';
+import MyNftDetails from '../components/MyAccountNftInfo.vue';
 import MyNftCollection from '../components/MyAccountNFTCollections.vue';
 import MyAccountWallet from '../components/MyAccountWallet.vue';
 import AssetsInfo from '../components/AssetsInfo.vue';
+import AssetNft from '../components/AssetNft.vue';
 
 
 const routes = [
@@ -99,6 +100,11 @@ const routes = [
     path: '/asset/assetInfo',
     name: 'AssetsInfo',
     component: AssetsInfo
+  },
+  {
+    path: '/asset/assetNft',
+    name: 'AssetNft',
+    component: AssetNft
   },
 ];
 
