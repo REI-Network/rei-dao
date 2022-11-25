@@ -1,10 +1,10 @@
 <template>
-  <v-container :class="dark?'badges-nft':'badges-nft back-linear'">
-    <div class="header-title">
+  <v-container>
+    <!-- <div class="header-title">
       <div class="title-detailed">
         <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nftName }}</span>
       </div>
-    </div>
+    </div> -->
     <v-row justify="space-between">
       <v-col cols="12" sm="4">
         <v-card class="nft-dialog">
@@ -218,7 +218,7 @@ export default {
           this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
           this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
 
-          if (this.badgeNFTBalance > 0) {
+          // if (this.badgeNFTBalance > 0) {
             const { data } = await this.$axios.get(this.url);
             const imgdata  = await this.$axios.get(data.image);
             this.imageShow = false;
@@ -228,7 +228,7 @@ export default {
             this.nftName = data.name;
             this.badgeNFTImg = data.image;
             this.description = data.description;
-          }
+          // }
           this.loading = false;
         }
         this.getHolderList();
