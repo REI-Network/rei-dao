@@ -16,6 +16,7 @@
 import Web3 from 'web3';
 import MyNftDetails from '../components/MyNftDetails';
 import { mapGetters } from 'vuex';
+import find from 'lodash/find';
 
 export default {
   name: 'AssetsInfo',
@@ -25,7 +26,7 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.id
+      nodeName:this.$route.query.name
     };
   },
    computed: {
@@ -40,6 +41,9 @@ export default {
     routeLink(){
       this.$router.back()
     },
+    getNodeName(){
+
+    }
   }
 };
 </script>

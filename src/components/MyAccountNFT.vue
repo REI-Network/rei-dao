@@ -260,7 +260,8 @@ export default {
           query: {
             id: item.address,
             tokenid: item.tokenId,
-            standard: 'erc-1155'
+            standard: 'erc-1155',
+            name:item.name
           }
         });
       } else {

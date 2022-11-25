@@ -2,7 +2,7 @@
   <v-container :class="dark?'badges-nft dashboard':'badges-nft back-linear dashboard'">
     <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nftName }}</span>
+        <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span>  <span> / </span> <span class="rei-fans">{{ nodeName }}</span>
       </div>
     </div>
     <MyNftDetails></MyNftDetails>
@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.id
+      nodeName:this.$route.query.name
     };
   },
    computed: {

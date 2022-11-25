@@ -211,7 +211,7 @@ export default {
       itemsPerPage: 10,
       nftPage: 1,
       nftPageCount: 0,
-      nftPerPage: 10,
+      nftPerPage: 50,
       reiPage: 1,
       reiPageCount: 0,
       reiPerPage: 50,
@@ -352,13 +352,13 @@ export default {
           organization: 'REI DAO',
           token_standard: 'ERC-1155'
         },
-        {
-          address: '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
-          image: 'bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee',
-          name: 'ReiFans NFT',
-          organization: 'REI DAO',
-          token_standard: 'ERC-1155'
-        },
+        // {
+        //   address: '0x490b641A3B87c3C769E24e850163E9aAb23b4E8B',
+        //   image: 'bafkreibzg4wuxoke3lcepdtwqq2y55aprzvtbw6qwntrsf2yvq73iy3gee',
+        //   name: 'ReiFans NFT',
+        //   organization: 'REI DAO',
+        //   token_standard: 'ERC-1155'
+        // },
         {
           address: '0xE4EDC855717281b994A6E2E43c98791dBCE497DA',
           image: 'bafkreieajvu4ze4tpb7k2zsvb2ow7haqv6datq5gilj2jq746xsefopwwi',
@@ -615,58 +615,65 @@ export default {
       } else {
         this.nftConfig = this.prodConfigList;
       }
-      this.nftList = []
+      this.nftList = [];
+      let nftItems = [];
       for (let i = 0; i < this.nftConfig.length; i++) {
         if (this.nftConfig[i].token_standard == 'ERC-1155') {
           let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
-          let url = await contract.methods.uri(i).call();
-          let totalSupply = await contract.methods.totalSupply(i).call();
-          console.log('url', url, totalSupply);
-          const { data } = await this.$axios.get(url);
-          // console.log('data', data);
-          let imageShow = false;
-          const imgData = await this.$axios.get(data.image);
-          if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgData.headers['content-type'])) {
-            imageShow = true;
+          for (let j = 0; ; j++) {
+            let flag = await contract.methods.exists(j).call();
+            if (flag) {
+              let url = await contract.methods.uri(j).call();
+              let totalSupply = await contract.methods.totalSupply(j).call();
+              const { data } = await this.$axios.get(url);
+              let imageShow = false;
+              const imgData = await this.$axios.get(data.image);
+              if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgData.headers['content-type'])) {
+                imageShow = true;
+              }
+              let address = this.nftConfig[i].address;
+              let nftDetail = {
+                ...data,
+                address,
+                organization: this.nftConfig[i].organization,
+                totalSupply,
+                imageShow,
+                tokenId: i,
+                token_standard: this.nftConfig[i].token_standard
+              };
+              nftItems.push(nftDetail);
+            } else {
+              break;
+            }
           }
-          let address = this.nftConfig[i].address;
-          let nftDetail = {
-            ...data,
-            address,
-            organization: this.nftConfig[i].organization,
-            totalSupply,
-            imageShow,
-            tokenId: i,
-            token_standard: this.nftConfig[i].token_standard
-          };
-          this.nftList.push(nftDetail);
-          console.log('nftList', this.nftList);
         }
         let countList = [];
-        for (let i = 0; i < this.nftList.length; i++) {
-          let item = this.nftList[i];
+        for (let i = 0; i < nftItems.length; i++) {
+          let item = nftItems[i];
           let params = {
             contract: item.address,
-            tokenId: item.tokenId
+            // tokenId: item.tokenId
           };
           const { data: holderList } = await getNftHolder(params);
-          var list = holderList;
+          let list = holderList;
+          // console.log('list', list);
           let _address = {
-          address: item.address,
-          data: list
-        };
-        countList.push(_address);
+            address: item.address,
+            data: list
+          };
+          countList.push(_address);
         }
-        this.nftList = this.nftList.map((item) => {
-          let details = find(countList, (items) =>items.address == item.address);
+        nftItems = nftItems.map((item) => {
+          let details = find(countList, (items) => items.address == item.address);
           let holders = details.data.length;
-          // console.log('details', details,holders);
           return {
             ...item,
             holders: holders
           };
         });
       }
+      this.nftList = nftItems;
+      console.log('nftList', this.nftList);
       this.getNftListLoading = false;
     },
     assetsNft(item) {
@@ -675,7 +682,8 @@ export default {
         query: {
           id: item.address,
           tokenid: item.tokenId,
-          standard: 'erc-1155'
+          standard: 'erc-1155',
+          name:item.name,
         }
       });
     }
@@ -722,8 +730,8 @@ export default {
   color: #868e9e;
   font-size: 14px;
 }
-.video-play{
-  width:40px !important;
+.video-play {
+  width: 40px !important;
 }
 .theme--light.vote-number {
   background-color: #f7f7f7;

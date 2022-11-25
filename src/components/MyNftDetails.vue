@@ -238,7 +238,7 @@ export default {
     async getHolderList() {
       let params = {
         contract: this.$route.query.id,
-        tokenId: this.$route.query.tokenid,
+        // tokenId: this.$route.query.tokenid,
       }
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);
