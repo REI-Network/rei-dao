@@ -62,7 +62,8 @@
                           <span>{{ item.rank }}</span>
                         </template>
                         <template v-slot:item.address="{ item }">
-                          <span><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                          <span v-if="item.contractName "><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span>
+                          <span v-else ><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
                         </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
