@@ -673,7 +673,7 @@ export default {
         });
       }
       this.nftList = nftItems;
-      console.log('nftList', this.nftList);
+      // console.log('nftList', this.nftList);
       this.getNftListLoading = false;
     },
     assetsNft(item) {
