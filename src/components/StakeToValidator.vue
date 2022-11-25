@@ -122,6 +122,20 @@
               </template>
               <template v-slot:item.power="{ item }">
                 {{ item.power | asset(2) }}
+                <v-tooltip right v-if="item.votingPowerPercent">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon size="14">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>
+                        Voting Power Rate: {{ item.votingPowerPercent}}%
+                    </span>
+                </v-tooltip>
               </template>
               <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template>
               <!-- <template v-slot:item.balanceOfShare="{ item }">
@@ -818,9 +832,12 @@ export default {
           var website = detail.website;
           var nodeDesc = detail.nodeDesc;
         }
-        var apr = 0;
+        let apr = 0;
+        let votingPowerPercent = 0;
+
         if(item.active){
-          apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100
+          apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100;
+          votingPowerPercent = (item.power/this.totalAmount*100).toFixed(2);
         }else{
           apr = 0
         }
@@ -834,6 +851,7 @@ export default {
           nodeDesc: nodeDesc,
           apr:apr,
           minerInfo: minedInfoMap[_miner],
+          votingPowerPercent,
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
