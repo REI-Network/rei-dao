@@ -1,10 +1,10 @@
 <template>
-  <v-container :class="dark?'badges-nft':'badges-nft back-linear'">
-    <div class="header-title">
+  <v-container>
+    <!-- <div class="header-title">
       <div class="title-detailed">
         <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nftName }}</span>
       </div>
-    </div>
+    </div> -->
     <v-row justify="space-between">
       <v-col cols="12" sm="4">
         <v-card class="nft-dialog">
@@ -232,6 +232,7 @@ export default {
           this.loading = false;
         }
         this.getHolderList();
+        console.log('---',this.totalSupply,this.badgeNFTImg)
       }
     },
     async getHolderList() {
