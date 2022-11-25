@@ -153,8 +153,8 @@
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
-                          <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video>
-                          <v-img v-else :src="item.image" width="40" height="40"></v-img>
+                          <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
+                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40"></v-img>
                         </div>
                         <div>{{ item.name }}</div>
                       </v-row>
@@ -637,6 +637,7 @@ export default {
                 address,
                 organization: this.nftConfig[i].organization,
                 totalSupply,
+                image:this.nftConfig[i].image,
                 imageShow,
                 tokenId: j,
                 token_standard: this.nftConfig[i].token_standard
@@ -673,7 +674,7 @@ export default {
         });
       }
       this.nftList = nftItems;
-      // console.log('nftList', this.nftList);
+      console.log('nftList', this.nftList);
       this.getNftListLoading = false;
     },
     assetsNft(item) {
