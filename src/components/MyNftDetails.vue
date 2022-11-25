@@ -218,7 +218,7 @@ export default {
           this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
           this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
 
-          if (this.badgeNFTBalance > 0) {
+          // if (this.badgeNFTBalance > 0) {
             const { data } = await this.$axios.get(this.url);
             const imgdata  = await this.$axios.get(data.image);
             this.imageShow = false;
@@ -228,17 +228,16 @@ export default {
             this.nftName = data.name;
             this.badgeNFTImg = data.image;
             this.description = data.description;
-          }
+          // }
           this.loading = false;
         }
         this.getHolderList();
-        console.log('---',this.totalSupply,this.badgeNFTImg)
       }
     },
     async getHolderList() {
       let params = {
         contract: this.$route.query.id,
-        // tokenId: this.$route.query.tokenid,
+        tokenId: this.$route.query.tokenid,
       }
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);

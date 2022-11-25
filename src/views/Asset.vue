@@ -638,7 +638,7 @@ export default {
                 organization: this.nftConfig[i].organization,
                 totalSupply,
                 imageShow,
-                tokenId: i,
+                tokenId: j,
                 token_standard: this.nftConfig[i].token_standard
               };
               nftItems.push(nftDetail);
