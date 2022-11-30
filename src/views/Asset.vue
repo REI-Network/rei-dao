@@ -21,6 +21,9 @@
                   <v-tab key="13">
                     <v-radio label="ERC1155" value="3" class="trends-radio"> </v-radio>
                   </v-tab>
+                  <v-tab key="14">
+                    <v-radio label="ERC721" value="4" class="trends-radio"> </v-radio>
+                  </v-tab>
                 </v-radio-group>
               </v-tabs>
             </v-col>
@@ -65,8 +68,12 @@
                           <span>{{ item.rank }}</span>
                         </template>
                         <template v-slot:item.address="{ item }">
-                          <span v-if="item.contractName "><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span>
-                          <span v-else ><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                          <span v-if="item.contractName"
+                            ><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span
+                          >
+                          <span v-else
+                            ><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span
+                          >
                         </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
@@ -173,6 +180,38 @@
                 </v-tab-item>
               </v-col>
             </v-row>
+            <v-row style="margin-top: 0">
+              <v-col style="margin-top: -12px">
+                <v-tab-item key="14">
+                  <div class="submit-here">
+                    <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
+                    <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
+                  </div>
+                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNftListLoading" @click:row="getNftCollection" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
+                    <template v-slot:item.assets="{ item }">
+                      <v-row align="center" class="assets-list">
+                        <div class="asset-logo">
+                          <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
+                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40"></v-img>
+                        </div>
+                        <div>{{ item.name }}</div>
+                      </v-row>
+                    </template>
+                    <template v-slot:item.address="{ item }">
+                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                        ><div>{{ item.address | addr }}</div></a
+                      >
+                    </template>
+                    <template v-slot:item.totalSupply="{ item }">
+                      <span>{{ item.totalSupply }}</span>
+                    </template>
+                  </v-data-table>
+                  <div class="text-center pt-2" v-if="nftList2.length > 0">
+                    <v-pagination v-model="nftPage2" :length="nftPageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+                  </div>
+                </v-tab-item>
+              </v-col>
+            </v-row>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -211,6 +250,9 @@ export default {
       nftPage: 1,
       nftPageCount: 0,
       nftPerPage: 50,
+      nftPage2: 1,
+      nftPageCount2: 0,
+      nftPerPage2: 50,
       reiPage: 1,
       reiPageCount: 0,
       reiPerPage: 50,
@@ -221,6 +263,7 @@ export default {
       loading: false,
       getListLoading: false,
       getNftListLoading: false,
+      getNftListLoading2: false,
       stakeManagerContract: null,
       stakeManageInstance: null,
       imageShow: true,
@@ -263,7 +306,15 @@ export default {
         // { text: 'Tx', value: 'tx' },
         { text: 'Holders', value: 'holders' }
       ],
+      nftHeaders2: [
+        { text: 'Assets', value: 'assets' },
+        { text: 'Contract Address', value: 'address' },
+        { text: 'Total Supply', value: 'totalSupply' },
+        // { text: 'Tx', value: 'tx' },
+        { text: 'Holders', value: 'holders' }
+      ],
       nftList: [],
+      nftList2: [],
       assetList: [],
       tokenInfoList: [
         {
@@ -615,7 +666,9 @@ export default {
         this.nftConfig = this.prodConfigList;
       }
       this.nftList = [];
+      this.nftList2 = [];
       let nftItems = [];
+      let nftItems2 = [];
       for (let i = 0; i < this.nftConfig.length; i++) {
         if (this.nftConfig[i].token_standard == 'ERC-1155') {
           let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
@@ -636,7 +689,7 @@ export default {
                 address,
                 organization: this.nftConfig[i].organization,
                 totalSupply,
-                image:this.nftConfig[i].image,
+                image: this.nftConfig[i].image,
                 imageShow,
                 tokenId: j,
                 token_standard: this.nftConfig[i].token_standard
@@ -646,34 +699,71 @@ export default {
               break;
             }
           }
+          let countList = [];
+          for (let i = 0; i < nftItems.length; i++) {
+            let item = nftItems[i];
+            let params = {
+              contract: item.address
+              // tokenId: item.tokenId
+            };
+            const { data: holderList } = await getNftHolder(params);
+            let list = holderList;
+            // console.log('list', list);
+            let _address = {
+              address: item.address,
+              data: list
+            };
+            countList.push(_address);
+          }
+          nftItems = nftItems.map((item) => {
+            let details = find(countList, (items) => items.address == item.address);
+            let holders = details.data.length;
+            return {
+              ...item,
+              holders: holders
+            };
+          });
+          this.nftList = nftItems;
+        } else if (this.nftConfig[i].token_standard == 'ERC-721') {
+          let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
+          let totalSupply = await contract2.methods.totalSupply().call()
+          let address = this.nftConfig[i].address;
+          let nftDetail = {
+              name: this.nftConfig[i].name,
+              image:this.nftConfig[i].image,
+              organization:this.nftConfig[i].organization,
+              address,
+              totalSupply,
+              token_standard: this.nftConfig[i].token_standard
+            }
+            nftItems2.push(nftDetail);
+            let countList = [];
+          for (let i = 0; i < nftItems2.length; i++) {
+            let item = nftItems2[i];
+            let params = {
+              contract: item.address
+            };
+            const { data: holderList } = await getNftHolder(params);
+            let list = holderList;
+            let _address = {
+              address: item.address,
+              data: list
+            };
+            countList.push(_address);
+          }
+          nftItems2 = nftItems2.map((item) => {
+            let details = find(countList, (items) => items.address == item.address);
+            let holders = details.data.length;
+            return {
+              ...item,
+              holders: holders
+            };
+          });
+          this.nftList2 = nftItems2;
         }
-        let countList = [];
-        for (let i = 0; i < nftItems.length; i++) {
-          let item = nftItems[i];
-          let params = {
-            contract: item.address,
-            // tokenId: item.tokenId
-          };
-          const { data: holderList } = await getNftHolder(params);
-          let list = holderList;
-          // console.log('list', list);
-          let _address = {
-            address: item.address,
-            data: list
-          };
-          countList.push(_address);
-        }
-        nftItems = nftItems.map((item) => {
-          let details = find(countList, (items) => items.address == item.address);
-          let holders = details.data.length;
-          return {
-            ...item,
-            holders: holders
-          };
-        });
       }
-      this.nftList = nftItems;
-      console.log('nftList', this.nftList);
+      console.log('nftList2', this.nftList2);
+      // console.log('nftList', this.nftList);
       this.getNftListLoading = false;
     },
     assetsNft(item) {
@@ -683,9 +773,17 @@ export default {
           id: item.address,
           tokenid: item.tokenId,
           standard: 'erc-1155',
-          name:item.name,
+          name: item.name
         }
       });
+    },
+    getNftCollection(item){
+      this.$router.push({
+          name: 'AssetsCollections',
+          query: {
+            address: item.address
+          }
+        });
     }
   }
 };

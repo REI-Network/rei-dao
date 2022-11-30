@@ -15,6 +15,7 @@ import MyNftCollection from '../components/MyAccountNFTCollections.vue';
 import MyAccountWallet from '../components/MyAccountWallet.vue';
 import AssetsInfo from '../components/AssetsInfo.vue';
 import AssetNft from '../components/AssetNft.vue';
+import AssetsCollections from '../components/AssetsCollections.vue';
 
 
 const routes = [
@@ -105,6 +106,11 @@ const routes = [
     path: '/asset/assetNft',
     name: 'AssetNft',
     component: AssetNft
+  },
+  {
+    path: '/asset/collection',
+    name: 'AssetsCollections',
+    component: AssetsCollections
   },
 ];
 
