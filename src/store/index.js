@@ -39,7 +39,8 @@ const state = {
     chart: 'https://api-market-main.rei.network/'
   },
   nftInfo:[],
-  nftCollect:{}
+  nftCollect:{},
+  addressTags:{}
 };
 const getters = {
   connection: (state) => state.connection,
@@ -76,7 +77,8 @@ const getters = {
   assetInfo: (state) => state.assetInfo,
   apiUrl: (state) => state.apiUrl,
   nftInfo:  (state) => state.nftInfo,
-  nftCollect: (state) => state.nftCollect
+  nftCollect: (state) => state.nftCollect,
+  addressTags: (state) => state.addressTags
 };
 
 const mutations = {
@@ -157,6 +159,9 @@ const mutations = {
   },
   setNftCollect: (state, payload) => {
     state.nftCollect = payload.nftCollect;
+  },
+  setAddressTags: (state, payload) => {
+    state.addressTags = payload.addressTags;
   }
 
 };
@@ -210,6 +215,9 @@ const actions = {
   },
   setNftCollect: ({ commit }, payload) => {
     commit('setNftCollect', payload);
+  },
+  setAddressTags: ({ commit }, payload) => {
+    commit('setAddressTags', payload);
   },
 };
 
