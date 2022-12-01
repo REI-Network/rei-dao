@@ -1,8 +1,8 @@
 <template>
-  <v-container :class="dark?'badges-nft':'badges-nft back-linear'">
-     <div class="header-title">
+  <v-container :class="dark ? 'badges-nft' : 'badges-nft back-linear'">
+    <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-link" @click="routeLink()">NFTs</a></span> / <span class="link-title">{{token.symbol}}</span>
+        <span><a class="back-link" @click="routeLink()">Assets</a></span> / <span class="link-title">{{ token.symbol }}</span>
       </div>
       <v-row class="nft-collect-wrap">
         <v-col cols="1" sm="1">
@@ -11,24 +11,24 @@
           </v-card>
         </v-col>
         <v-col cols="6" sm="6">
-          <div class="genesis">{{token.symbol}}</div>
-          <div> {{token.description}}</div>
+          <div class="genesis">{{ token.symbol }}</div>
+          <div>{{ token.description }}</div>
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="4" sm="4" class="right-content">
           <v-card :class="dark ? 'chip-dark' : 'chip-light'" class="nft-collect-right">
-            <v-row no-gutters justify="space-between" >
+            <v-row no-gutters justify="space-between">
               <v-col cols="4" sm="4">
-                <div class="nft-subtitle-2"> Holder </div>
-                <div class="nft-subtitle"> {{holderList.length}} </div>
+                <div class="nft-subtitle-2">Holder</div>
+                <div class="nft-subtitle">{{ holderList.length }}</div>
               </v-col>
               <v-col cols="4" sm="4">
-                <div class="nft-subtitle-2"> Total supply </div>
-                <div class="nft-subtitle"> {{token.totalSupply}} </div>
+                <div class="nft-subtitle-2">Total supply</div>
+                <div class="nft-subtitle">{{ token.totalSupply }}</div>
               </v-col>
               <v-col cols="4" sm="4">
-                <div class="nft-subtitle-2"> Network </div>
-                <div class="nft-subtitle"> REI Network </div>
+                <div class="nft-subtitle-2">Network</div>
+                <div class="nft-subtitle">REI Network</div>
               </v-col>
             </v-row>
           </v-card>
@@ -36,8 +36,9 @@
       </v-row>
     </div>
     <v-tabs v-model="tab1" align-with-title :class="dark ? 'tab-dark' : 'tab-light'" background-color="background">
-        <v-tab key="11">All Holders</v-tab>
-      </v-tabs>
+      <v-tab key="11">All Holders</v-tab>
+      <v-tab key="12">Token ID List</v-tab>
+    </v-tabs>
     <v-tabs-items v-model="tab1">
       <v-tab-item key="11">
         <v-card class="wallet-table">
@@ -64,9 +65,30 @@
           </div>
         </v-card>
       </v-tab-item>
-
+      <v-tab-item key="12">
+        <v-card class="id-list">
+          <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
+            <template v-slot:item="{ item }">
+              <v-col cols="12" md="2" class="rei-genesis">
+                <v-card outlined class="nftList" @click="openNftInfo(item)">
+                  <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
+                  <div v-else class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
+                    <v-img v-if="item.image" :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg.png" />
+                    <v-img v-else src="../assets/images/logo_bg.png" />
+                  </div>
+                  <div class="nft-text">
+                    <div style="font-size: 13px">{{ item.name }}</div>
+                  </div>
+                </v-card>
+              </v-col>
+            </template>
+          </v-data-iterator>
+          <div class="pagination" v-if="nftList.length > 18">
+            <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
+          </div>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
-    
   </v-container>
 </template>
 <script>
@@ -77,7 +99,7 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
-import { getNftHolder } from '../service/CommonService'
+import { getNftHolder } from '../service/CommonService';
 import filters from '../filters';
 import Address from '../components/Address';
 
@@ -91,7 +113,7 @@ export default {
       poster: require('../assets/images/Genesis.png'),
       page: 1,
       pageCount: 1,
-      itemsPerPage: 6,
+      itemsPerPage: 18,
       pageSize: 6,
       loading: false,
       badgeNFTDialog: false,
@@ -104,14 +126,14 @@ export default {
       nftConfig: '',
       totalSupply: 0,
       nftList: [],
-      tab1:'11',
-      token:{
-        balance:0,
-        symbol:'',
+      tab1: '11',
+      token: {
+        balance: 0,
+        symbol: '',
         image: 'bafkreigguc4dlfohzo6upgyiewvfwb5pmbaostgecuceje4corvp3e5m4e',
         description: '',
-        holder:'',
-        totalSupply:''
+        holder: '',
+        totalSupply: ''
       },
       headers: [
         { text: 'Address', value: 'address' },
@@ -120,12 +142,12 @@ export default {
       holderList: [],
       page2: 1,
       pageCount2: 1,
-      itemsPerPage2:20,
+      itemsPerPage2: 20,
       pageSize2: 6,
-      getListLoading: false,
+      getListLoading: false
     };
   },
-  
+
   mounted() {
     this.connect();
     this.init();
@@ -154,33 +176,32 @@ export default {
     },
     async init() {
       this.loading = true;
-      
-      let contractAddress = this.$route.query.address;
-      
 
-      let _myAddress = this.connection.address;
+      let contractAddress = this.$route.query.address;
+
+      let _myAddress = '0x3847dece8edb08dca4912efd59d9a62320b7f884';
       let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
       this.token.symbol = await contract2.methods.symbol().call();
 
       let _balance = await contract2.methods.balanceOf(_myAddress).call();
       this.token.balance = _balance;
-      if(Object.keys(this.nftCollect).length > 0 && this.nftCollect[contractAddress]){
+      if (Object.keys(this.nftCollect).length > 0 && this.nftCollect[contractAddress]) {
         this.nftList = this.nftCollect[contractAddress];
         this.token.description = this.nftList[0].description;
         this.token.image = this.nftList[0].image;
         this.loading = false;
       } else {
-        if(_balance>0){
+        if (_balance > 0) {
           this.nftList = [];
-          
-          for(let i = 0; i < _balance; i++){
-            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress,i).call();
-            let tokenUrl = await contract2.methods.tokenURI(token).call();
 
+          for (let i = 0; i < _balance; i++) {
+            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress, i).call();
+            let tokenUrl = await contract2.methods.tokenURI(token).call();
+            console.log('tokenUrl', tokenUrl);
             let imageShow = false;
             const { data } = await this.$axios.get(tokenUrl);
-            if(i==0){
+            if (i == 0) {
               this.token.description = data.description;
               this.token.image = data.image;
             }
@@ -196,17 +217,16 @@ export default {
               tokenid: token,
               address,
               imageShow
-            }
+            };
             this.nftList.push(nftDetail);
           }
-          
         }
         let obj = {};
         obj[contractAddress] = this.nftList;
-        this.setNftCollect({nftCollect: obj})
+        this.setNftCollect({ nftCollect: obj });
       }
 
-      
+      console.log('nftList', this.nftList);
       this.loading = false;
     },
 
@@ -224,16 +244,16 @@ export default {
     async getHolderList() {
       let params = {
         contract: this.$route.query.address
-      }
+      };
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);
       this.holderList = holderList;
       this.getListLoading = false;
     },
-    openNftHelp(){
+    openNftHelp() {
       this.nftHelpDialog = true;
     },
-    cancelNftHelp(){
+    cancelNftHelp() {
       this.nftHelpDialog = false;
     },
     routeLink() {
@@ -244,8 +264,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container{
- max-width:100% !important;
+.container {
+  max-width: 100% !important;
 }
 .badges-nft {
   padding: 28px 0 28px 0;
@@ -253,9 +273,9 @@ export default {
   margin-top: -28px;
   max-width: 100% !important;
 }
-.collect-content{
-  margin:40px;
-  padding:28px;
+.collect-content {
+  margin: 40px;
+  padding: 28px;
   max-width: 100% !important;
 }
 .theme--light.sub-title {
@@ -265,7 +285,7 @@ export default {
   color: #fff;
 }
 .nft-header {
-  margin:0px 20px 0 20px;
+  margin: 0px 20px 0 20px;
   .title {
     font-weight: 500;
   }
@@ -282,6 +302,9 @@ export default {
     font-weight: bolder;
   }
 }
+// .back-linear{
+//   background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
+// }
 .back-link {
   color: #868e9e !important;
   font-size: 16px;
@@ -328,6 +351,50 @@ export default {
     margin-bottom: 6px;
   }
 }
+.data-nft {
+  display: flex;
+  width: 99%;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: #868e9e;
+  margin-bottom: 28px;
+}
+.data-list {
+  display: flex;
+  width: 100%;
+  // justify-content: space-between;
+  flex-wrap: wrap;
+}
+.theme--light.nftList {
+  // width: 31%;
+  background-color: #f7f8ff;
+  border: none;
+  margin: 12px 0;
+  padding: 0px;
+  border-radius: 5px;
+}
+.theme--dark.nftList {
+  // width: 31%;
+  background-color: #13112b;
+  border: none;
+  margin-top: 28px;
+  padding: 0px;
+  border-radius: 5px;
+}
+.collect-img-wrap {
+  position: relative;
+  .collect-img-number {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #f5f5f7;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+}
+.bg-dark .collect-img-number {
+  background-color: #252243;
+}
 .star {
   margin: 0 0 4px 4px;
 }
@@ -338,10 +405,10 @@ a:hover {
   text-decoration: underline;
   color: #289eff;
 }
-.nft-collect-wrap{
-  padding:20px 0
+.nft-collect-wrap {
+  padding: 20px 0;
 }
-.nft-collect-right{
+.nft-collect-right {
   padding: 28px;
 }
 .wallet-table {
@@ -354,18 +421,22 @@ a:hover {
     margin: 0 8px;
   }
 }
+.id-list{
+    padding: 28px;
+    margin: 40px;
+}
 .asset-logo {
   margin: 0 12px;
 }
-.nft-title{
-  padding-left:0;
-  padding-bottom:0;
+.nft-title {
+  padding-left: 0;
+  padding-bottom: 0;
 }
-.nft-subtitle-2{
-  font-size: .75rem;
+.nft-subtitle-2 {
+  font-size: 0.75rem;
   color: #858ea0;
 }
-.nft-subtitle{
+.nft-subtitle {
   font-size: 1rem;
   line-height: 180%;
   font-weight: bold;
@@ -418,6 +489,9 @@ a:hover {
     font-size: 14px;
     // color: #000;
   }
+}
+.v-tab {
+  text-transform: none !important;
 }
 .dialog-nft-help {
   display: flex;

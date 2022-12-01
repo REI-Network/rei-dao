@@ -31,7 +31,7 @@
         </div>
       </v-row>
     </v-card>
-    <v-tabs v-model="tab1" align-with-title :class="dark ? 'tab-dark' : 'tab-light'" background-color="background">
+    <v-tabs v-model="tab1" align-with-title  background-color="background">
         <v-tab key="11">Portfolio</v-tab>
         <v-tab key="12">NFTs</v-tab>
         <v-tab key="13">DAOs</v-tab>

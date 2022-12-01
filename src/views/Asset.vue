@@ -762,7 +762,7 @@ export default {
           this.nftList2 = nftItems2;
         }
       }
-      console.log('nftList2', this.nftList2);
+      // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
       this.getNftListLoading = false;
     },
