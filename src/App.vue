@@ -14,6 +14,8 @@ import { mapActions, mapGetters } from 'vuex';
 import NavHeader from './components/NavHeader';
 import SideMenu from './components/SideMenu';
 import BottomNav from './components/BottomNav';
+import { getAddressTag } from './service/CommonService';
+import web3 from 'web3';
 
 export default {
   name: 'App',
@@ -40,11 +42,23 @@ export default {
       };
     }
     this.switchDarkMode({ darkMode: Number(localStorage.getItem('darkMode') || '2') });
+    this.getAddress()
   },
   methods: {
     ...mapActions({
-      switchDarkMode: 'switchDarkMode'
-    })
+      switchDarkMode: 'switchDarkMode',
+      setAddressTags: 'setAddressTags'
+    }),
+    async getAddress(){
+      let addressList = await getAddressTag();
+      let addressTag = addressList.data.data;
+      let obj = {};
+      for(let i = 0; i < addressTag.length; i++){
+        let _address = web3.utils.toChecksumAddress(addressTag[i].address);
+        obj[_address] = addressTag[i];
+      }
+      this.setAddressTags({ addressTags: obj })
+    }
   }
 };
 </script>
