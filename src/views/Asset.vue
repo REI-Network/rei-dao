@@ -68,12 +68,9 @@
                           <span>{{ item.rank }}</span>
                         </template>
                         <template v-slot:item.address="{ item }">
-                          <span v-if="item.contractName"
-                            ><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span
-                          >
-                          <span v-else
-                            ><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span
-                          >
+                          <span v-if="item.addressName"><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.addressName }}({{ item.address | addr }})</a></span>
+                          <span v-if="item.contractName "><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span>
+                          <span v-if="!item.addressName&&!item.contractName" ><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
                         </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
@@ -424,7 +421,8 @@ export default {
       dark: 'dark',
       connection: 'connection',
       nftInfo: 'nftInfo',
-      apiUrl: 'apiUrl'
+      apiUrl: 'apiUrl',
+      addressTags: 'addressTags'
     })
   },
   watch: {
@@ -619,12 +617,16 @@ export default {
         let rank = index + 1;
         let balance = parseFloat(item.balance) / 1e18;
         let percentage = (balance / 1000000000) * 100;
+        let _address = web3.utils.toChecksumAddress(item.address);
+        let addressTags = this.addressTags[_address];
+
         return {
           ...item,
           address: item.address,
           rank: rank,
           balance: balance,
-          percentage: percentage
+          percentage: percentage,
+          addressName: addressTags ? addressTags.addressName : ''
         };
       });
     },
