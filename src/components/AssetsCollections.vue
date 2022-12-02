@@ -197,58 +197,7 @@ export default {
           this.imageShow = true;
         }
       }
-      console.log('imageShow', this.imageShow);
-      // let contractAddress = this.$route.query.address;
-
-      // let _myAddress = '0x3847dece8edb08dca4912efd59d9a62320b7f884`';
-      // let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
-      // this.token.totalSupply = await contract2.methods.totalSupply().call();
-      // this.token.symbol = await contract2.methods.symbol().call();
-
-      // let _balance = await contract2.methods.balanceOf(_myAddress).call();
-      // this.token.balance = _balance;
-      // if (Object.keys(this.nftCollect).length > 0 && this.nftCollect[contractAddress]) {
-      //   this.nftList = this.nftCollect[contractAddress];
-      //   this.token.description = this.nftList[0].description;
-      //   this.token.image = this.nftList[0].image;
-      //   this.loading = false;
-      // } else {
-      //   if (_balance > 0) {
-      //     this.nftList = [];
-
-      //     for (let i = 0; i < _balance; i++) {
-      //       let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress, i).call();
-      //       console.log('token',token)
-      //       let tokenUrl = await contract2.methods.tokenURI(token).call();
-      //       // console.log('tokenUrl', tokenUrl);
-      //       let imageShow = false;
-      //       const { data } = await this.$axios.get(tokenUrl);
-      //       if (i == 0) {
-      //         this.token.description = data.description;
-      //         this.token.image = data.image;
-      //       }
-      //       if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
-      //         imageShow = true;
-      //       }
-      //       let address = this.$route.query.address;
-      //       let nftDetail = {
-      //         description: data.description,
-      //         attributes: data.attributes,
-      //         name: data.name,
-      //         image: data.image,
-      //         tokenid: token,
-      //         address,
-      //         imageShow
-      //       };
-      //       this.nftList.push(nftDetail);
-      //     }
-      //   }
-      //   let obj = {};
-      //   obj[contractAddress] = this.nftList;
-      //   this.setNftCollect({ nftCollect: obj });
-      // }
-
-      console.log('nftList', this.nftList);
+      // console.log('nftList', this.nftList);
       this.loading = false;
     },
 
