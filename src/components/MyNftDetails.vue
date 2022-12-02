@@ -1,10 +1,5 @@
 <template>
   <v-container>
-    <!-- <div class="header-title">
-      <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLinkAccount()">NFTs</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nftName }}</span>
-      </div>
-    </div> -->
     <v-row justify="space-between">
       <v-col cols="12" sm="4">
         <v-card class="nft-dialog">
@@ -18,10 +13,6 @@
         </v-row>
         <div class="genesis">{{ nftName }}</div>
         <v-row class="ownersWrap">
-          <!-- <div class="owners">
-                                <v-img src="../assets/images/owners.png" width="17" height="17" />
-                                <span> 150 owners</span>
-                            </div> -->
           <div class="owners" v-if="standard=='ERC-1155'">
             <v-img src="../assets/images/total.png" width="17" height="17" />
             <span> &nbsp;&nbsp;{{ totalSupply }} total</span>

@@ -201,6 +201,9 @@ a{
 .tab-dark .v-slide-group__content{
   background-color: #100D22 !important;
 }
+.tab-light .v-slide-group__content{
+  background-color: #f3f4fa !important;
+}
 .v-image__image--preload{
   filter: none !important;
 }
