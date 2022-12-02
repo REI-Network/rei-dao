@@ -174,7 +174,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
-                  <div class="text-center pt-2" v-if="nftList.length > 0">
+                  <div class="text-center pt-2" v-if="nftList.length > 10">
                     <v-pagination v-model="nftPage" :length="nftPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
                 </v-tab-item>
@@ -206,7 +206,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
-                  <div class="text-center pt-2" v-if="nftList2.length > 0">
+                  <div class="text-center pt-2" v-if="nftList2.length > 10">
                     <v-pagination v-model="nftPage2" :length="nftPageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
                 </v-tab-item>

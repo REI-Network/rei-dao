@@ -2,7 +2,7 @@
   <v-container :class="dark?'badges-nft dashboard':'badges-nft back-linear dashboard'">
     <div class="header-title">
       <div class="title-detailed">
-        <span><a class="back-voting" @click="routeLinkAsset()">Assets</a></span> / <span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nodeName }}</span>
+        <span><a class="back-voting" @click="routeLinkAsset()">Assets / </a></span><span v-if="symbol"><a class="back-voting" @click="routeLink()">{{symbol}}</a> / </span> <span class="rei-fans">{{ nodeName }}</span>
       </div>
     </div>
     <MyNftDetails></MyNftDetails>
@@ -78,8 +78,11 @@ export default {
   padding-right:40px;
 }
 .back-voting{
-  color: #868E9E !important;
+  color: #868E9E ;
   font-size: 16px;
+}
+a:hover{
+    color: #6979f8;
 }
 @media screen and (max-width: 900px) {
   .dashboard{
