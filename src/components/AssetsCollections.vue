@@ -13,10 +13,13 @@
         <v-col cols="6" sm="6">
           <div class="genesis">{{ token.symbol }}</div>
           <div>{{ token.description }}</div>
-          <div>
+          <v-row style="margin-left:1px;margin-top:2px;" align="center">
             <span class="font-grey">Contract Address:</span>
-            <span style="font-weight: bold"> {{ this.$route.query.address }}</span>
-          </div>
+            <span style="font-weight: bold"> {{ contractAddress }}</span>
+            <v-btn class="copy-btn" @click="copyAddr(contractAddress)">
+              <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
+            </v-btn>
+          </v-row>
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="4" sm="4" class="right-content">
@@ -77,7 +80,8 @@
                 <v-card outlined class="nftList" @click="openNftInfo(item)">
                   <!-- <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video> -->
                   <div class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
-                    <v-lazy class="logoWrap">
+                    <v-img v-if="!item.image" src="../assets/images/logo_bg_small.png" lazy-src="../assets/images/logo_bg_small.png" />
+                    <v-lazy v-else class="logoWrap">
                       <v-img :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg_small.png" />
                     </v-lazy>
                   </div>
@@ -122,6 +126,7 @@ export default {
       pageSize: 6,
       loading: false,
       badgeNFTDialog: false,
+      addrCopying: false,
       badgeNFTBalance: '',
       badgeNFTImg: '',
       pageVisible: 7,
@@ -131,6 +136,7 @@ export default {
       nftConfig: '',
       totalSupply: 0,
       nftList: [],
+      contractAddress:this.$route.query.address,
       imageShow: false,
       tab1: '11',
       token: {
@@ -231,6 +237,39 @@ export default {
     },
     routeLink() {
       this.$router.back();
+    },
+    copyToClipboard(str) {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+    },
+     sleep(timestamp) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timestamp);
+      });
+    },
+    async copyAddr(addr) {
+      try {
+        window.navigator.clipboard.writeText(addr);
+        this.copyToClipboard(addr);
+      } catch (ex) {
+        console.log(ex);
+      } finally {
+        this.addrCopying = true;
+        await this.sleep(500);
+        this.addrCopying = false;
+      }
     }
   }
 };
@@ -278,6 +317,10 @@ export default {
 // .back-linear{
 //   background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);
 // }
+.copy-btn.v-btn.v-btn--has-bg {
+    background-color: transparent !important;
+    min-width: 0 !important;
+  }
 .back-link {
   color: #868e9e !important;
   font-size: 16px;
@@ -375,8 +418,8 @@ export default {
   padding: 0 24px 24px 0;
 }
 a:hover {
-  text-decoration: underline;
-  color: #289eff;
+  // text-decoration: underline;
+  color: #6979f8 !important;
 }
 .nft-collect-wrap {
   padding: 20px 0;
