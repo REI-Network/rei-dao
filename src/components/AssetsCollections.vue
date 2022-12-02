@@ -13,6 +13,10 @@
         <v-col cols="6" sm="6">
           <div class="genesis">{{ token.symbol }}</div>
           <div>{{ token.description }}</div>
+          <div>
+            <span class="font-grey">Contract Address:</span>
+            <span style="font-weight: bold"> {{ this.$route.query.address }}</span>
+          </div>
         </v-col>
         <v-spacer></v-spacer>
         <v-col cols="4" sm="4" class="right-content">
@@ -71,10 +75,11 @@
             <template v-slot:item="{ item }">
               <v-col cols="12" md="2" class="rei-genesis">
                 <v-card outlined class="nftList" @click="openNftInfo(item)">
-                  <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video>
-                  <div v-else class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
-                    <v-img v-if="item.image" :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg.png" />
-                    <v-img v-else src="../assets/images/logo_bg.png" />
+                  <!-- <video v-if="!item.imageShow" controls preload="meta" :src="item.image" :poster="poster" style="width: 100%"></video> -->
+                  <div class="collect-img-wrap" :class="dark ? 'bg-dark' : 'bg-light'">
+                    <v-lazy class="logoWrap">
+                      <v-img :src="$IpfsGateway(item.image)" lazy-src="../assets/images/logo_bg_small.png" />
+                    </v-lazy>
                   </div>
                   <div class="nft-text">
                     <div style="font-size: 13px">{{ item.name }}</div>
@@ -99,7 +104,7 @@ import Web3 from 'web3';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
-import { getNftHolder } from '../service/CommonService';
+import { getNftHolder, getAssetTokenList } from '../service/CommonService';
 import filters from '../filters';
 import Address from '../components/Address';
 
@@ -126,6 +131,7 @@ export default {
       nftConfig: '',
       totalSupply: 0,
       nftList: [],
+      imageShow: false,
       tab1: '11',
       token: {
         balance: 0,
@@ -176,55 +182,71 @@ export default {
     },
     async init() {
       this.loading = true;
-
-      let contractAddress = this.$route.query.address;
-
-      let _myAddress = '0x3847dece8edb08dca4912efd59d9a62320b7f884';
       let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
       this.token.symbol = await contract2.methods.symbol().call();
-
-      let _balance = await contract2.methods.balanceOf(_myAddress).call();
-      this.token.balance = _balance;
-      if (Object.keys(this.nftCollect).length > 0 && this.nftCollect[contractAddress]) {
-        this.nftList = this.nftCollect[contractAddress];
+      let params = {
+        id: this.$route.query.address
+      };
+      let tokenList = await getAssetTokenList(params);
+      this.nftList = tokenList.data.data;
+      for (let i = 0; i < this.nftList.length; i++) {
         this.token.description = this.nftList[0].description;
         this.token.image = this.nftList[0].image;
-        this.loading = false;
-      } else {
-        if (_balance > 0) {
-          this.nftList = [];
-
-          for (let i = 0; i < _balance; i++) {
-            let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress, i).call();
-            let tokenUrl = await contract2.methods.tokenURI(token).call();
-            console.log('tokenUrl', tokenUrl);
-            let imageShow = false;
-            const { data } = await this.$axios.get(tokenUrl);
-            if (i == 0) {
-              this.token.description = data.description;
-              this.token.image = data.image;
-            }
-            if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
-              imageShow = true;
-            }
-            let address = this.$route.query.address;
-            let nftDetail = {
-              description: data.description,
-              attributes: data.attributes,
-              name: data.name,
-              image: data.image,
-              tokenid: token,
-              address,
-              imageShow
-            };
-            this.nftList.push(nftDetail);
-          }
+        if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(this.token.image)) {
+          this.imageShow = true;
         }
-        let obj = {};
-        obj[contractAddress] = this.nftList;
-        this.setNftCollect({ nftCollect: obj });
       }
+      console.log('imageShow', this.imageShow);
+      // let contractAddress = this.$route.query.address;
+
+      // let _myAddress = '0x3847dece8edb08dca4912efd59d9a62320b7f884`';
+      // let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
+      // this.token.totalSupply = await contract2.methods.totalSupply().call();
+      // this.token.symbol = await contract2.methods.symbol().call();
+
+      // let _balance = await contract2.methods.balanceOf(_myAddress).call();
+      // this.token.balance = _balance;
+      // if (Object.keys(this.nftCollect).length > 0 && this.nftCollect[contractAddress]) {
+      //   this.nftList = this.nftCollect[contractAddress];
+      //   this.token.description = this.nftList[0].description;
+      //   this.token.image = this.nftList[0].image;
+      //   this.loading = false;
+      // } else {
+      //   if (_balance > 0) {
+      //     this.nftList = [];
+
+      //     for (let i = 0; i < _balance; i++) {
+      //       let token = await contract2.methods.tokenOfOwnerByIndex(_myAddress, i).call();
+      //       console.log('token',token)
+      //       let tokenUrl = await contract2.methods.tokenURI(token).call();
+      //       // console.log('tokenUrl', tokenUrl);
+      //       let imageShow = false;
+      //       const { data } = await this.$axios.get(tokenUrl);
+      //       if (i == 0) {
+      //         this.token.description = data.description;
+      //         this.token.image = data.image;
+      //       }
+      //       if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
+      //         imageShow = true;
+      //       }
+      //       let address = this.$route.query.address;
+      //       let nftDetail = {
+      //         description: data.description,
+      //         attributes: data.attributes,
+      //         name: data.name,
+      //         image: data.image,
+      //         tokenid: token,
+      //         address,
+      //         imageShow
+      //       };
+      //       this.nftList.push(nftDetail);
+      //     }
+      //   }
+      //   let obj = {};
+      //   obj[contractAddress] = this.nftList;
+      //   this.setNftCollect({ nftCollect: obj });
+      // }
 
       console.log('nftList', this.nftList);
       this.loading = false;
@@ -233,10 +255,12 @@ export default {
     openNftInfo(item) {
       // this.badgeNFTDialog = true;
       this.$router.push({
-        name: 'NftDetails',
+        name: 'AssetsTokenList',
         query: {
-          id: item.address,
-          tokenid: item.tokenid,
+          id: this.$route.query.address,
+          tokenid: item.edition,
+          name: item.name,
+          symbol: this.token.symbol,
           standard: 'erc-721'
         }
       });
@@ -421,9 +445,9 @@ a:hover {
     margin: 0 8px;
   }
 }
-.id-list{
-    padding: 28px;
-    margin: 40px;
+.id-list {
+  padding: 28px;
+  margin: 40px;
 }
 .asset-logo {
   margin: 0 12px;
