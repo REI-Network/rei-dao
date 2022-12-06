@@ -18,6 +18,7 @@
         </v-card>
       </v-col>
     </v-row>
+    <StakeValidatorsBlock></StakeValidatorsBlock>
     <StakeChartsFAQ></StakeChartsFAQ>
   </v-container>
 </template>
@@ -37,6 +38,7 @@ import util from '../utils/util'
 import StakeToValidator from '../components/StakeToValidator';
 import StakeOverview from '../components/StakeOverview';
 import StakeChartsFAQ from '../components/StakeChartsFAQ';
+import StakeValidatorsBlock from '../components/StakeValidatorsBlock';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -45,7 +47,8 @@ export default {
     StakeToValidator,
     // UnstakeToValidator,
     StakeOverview,
-    StakeChartsFAQ
+    StakeChartsFAQ,
+    StakeValidatorsBlock
   },
   filters,
   data() {
