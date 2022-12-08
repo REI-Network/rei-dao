@@ -184,7 +184,7 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNftListLoading" @click:row="getNftCollection" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
+                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNft721ListLoading" @click:row="getNftCollection" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
@@ -260,7 +260,7 @@ export default {
       loading: false,
       getListLoading: false,
       getNftListLoading: false,
-      getNftListLoading2: false,
+      getNft721ListLoading: false,
       stakeManagerContract: null,
       stakeManageInstance: null,
       imageShow: true,
@@ -431,6 +431,7 @@ export default {
         this.connect();
         this.getBalance();
         this.getNFTList();
+        this.getNFTList721();
       }
     },
     count(newVal, oldVal) {
@@ -450,6 +451,7 @@ export default {
   mounted() {
     this.getBalance();
     this.getNFTList();
+    this.getNFTList721();
   },
   methods: {
     ...mapActions({
@@ -462,18 +464,6 @@ export default {
       } else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider);
       }
-    },
-    async getTotalGasStake() {
-      let apiUrl = this.apiUrl.rpc;
-      let arr = [];
-      arr.push(this.connection.address);
-      arr.push('latest');
-      let param = {
-        method: 'rei_getTotalAmount',
-        params: arr
-      };
-      let res = await postRpcRequest(apiUrl, param);
-      this.totalGasAmount = res.data.result;
     },
 
     async getBalance() {
@@ -668,31 +658,20 @@ export default {
         this.nftConfig = this.prodConfigList;
       }
       this.nftList = [];
-      this.nftList2 = [];
       let nftItems = [];
-      let nftItems2 = [];
       for (let i = 0; i < this.nftConfig.length; i++) {
         if (this.nftConfig[i].token_standard == 'ERC-1155') {
           let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
           for (let j = 0; ; j++) {
             let flag = await contract.methods.exists(j).call();
             if (flag) {
-              let url = await contract.methods.uri(j).call();
               let totalSupply = await contract.methods.totalSupply(j).call();
-              const { data } = await this.$axios.get(url);
-              let imageShow = false;
-              const imgData = await this.$axios.get(data.image);
-              if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(imgData.headers['content-type'])) {
-                imageShow = true;
-              }
               let address = this.nftConfig[i].address;
               let nftDetail = {
-                ...data,
                 address,
                 organization: this.nftConfig[i].organization,
                 totalSupply,
                 image: this.nftConfig[i].image,
-                imageShow,
                 tokenId: j,
                 token_standard: this.nftConfig[i].token_standard
               };
@@ -726,7 +705,23 @@ export default {
             };
           });
           this.nftList = nftItems;
-        } else if (this.nftConfig[i].token_standard == 'ERC-721') {
+        }
+      }
+      // console.log('nftList2', this.nftList2);
+      // console.log('nftList', this.nftList);
+      this.getNftListLoading = false;
+    },
+    async getNFTList721() {
+      this.getNft721ListLoading = true;
+      if (this.connection.network == 'REI Testnet' || this.connection.network == 'REI Devnet') {
+        this.nftConfig = this.testConfigList;
+      } else {
+        this.nftConfig = this.prodConfigList;
+      }
+      this.nftList2 = [];
+      let nftItems2 = [];
+      for (let i = 0; i < this.nftConfig.length; i++) {
+        if (this.nftConfig[i].token_standard == 'ERC-721') {
           let contract2 = new web3.eth.Contract(abiERC721, this.nftConfig[i].address);
           let totalSupply = await contract2.methods.totalSupply().call()
           let address = this.nftConfig[i].address;
@@ -766,7 +761,7 @@ export default {
       }
       // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
-      this.getNftListLoading = false;
+      this.getNft721ListLoading = false;
     },
     assetsNft(item) {
       this.$router.push({
