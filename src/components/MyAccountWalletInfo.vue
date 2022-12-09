@@ -78,11 +78,7 @@
                   <span>{{ item.rank }}</span>
                 </template>
                 <template v-slot:item.address="{ item }">
-                  <span v-if="item.addressName"><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.addressName }}({{ item.address | addr }})</a></span>
-                  <span v-if="item.contractName"><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span>
-                  <span v-if="!item.addressName&&!item.contractName"><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
-                  
-
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
                 </template>
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
@@ -144,15 +140,16 @@ import abiCommissionShare from '../abis/abiCommissionShare';
 import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
-import Address from '../components/Address';
+import AddressTag from '../components/AddressTag';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
 
 export default {
   filters,
-  Address,
-  components: {},
+  components: {
+    AddressTag
+  },
   data() {
     return {
       page: 1,

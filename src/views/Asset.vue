@@ -68,9 +68,7 @@
                           <span>{{ item.rank }}</span>
                         </template>
                         <template v-slot:item.address="{ item }">
-                          <span v-if="item.addressName"><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.addressName }}({{ item.address | addr }})</a></span>
-                          <span v-if="item.contractName "><a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.contractName }}({{ item.address | addr }})</a></span>
-                          <span v-if="!item.addressName&&!item.contractName" ><a :class="dark?'link-dark':'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"> {{ item.address }}</a></span>
+                          <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address" :contractName="item.contractName"></AddressTag></a>
                         </template>
                         <template v-slot:item.balance="{ item }">
                           <span>{{ item.balance | asset(5) }}</span>
@@ -224,6 +222,7 @@
 
 import Web3 from 'web3';
 import { mapActions, mapGetters } from 'vuex';
+import AddressTag from '../components/AddressTag';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
@@ -233,7 +232,9 @@ import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryDat
 import find from 'lodash/find';
 
 export default {
-  components: {},
+  components: {
+    AddressTag
+  },
   filters,
   data() {
     return {
