@@ -690,6 +690,7 @@ export default {
         window.web3 = new Web3(window.web3.currentProvider);
       }
     },
+    
     async init() {
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
@@ -814,6 +815,8 @@ export default {
           ..._data,
           minerMissRecordNumberDay1: minedInfoDay1.data[i].minerMissRecordNumber,
           minerMissRecordNumberDay7: minedInfoDay7.data[i].minerMissRecordNumber,
+          minerMintedBlockNumberDay1: minedInfoDay1.data[i].minerMintedBlockNumber,
+          minerMintedBlockNumberDay7: minedInfoDay7.data[i].minerMintedBlockNumber,
         }
         minedInfoMap[_address] = obj;
       }
@@ -862,7 +865,7 @@ export default {
       this.minIndexVotingPower = web3.utils.fromWei(web3.utils.toBN(minIndexVotingPower));
       let validatorRewardPool = await contract.methods.validatorRewardPool().call();
       this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
-
+      this.getMessage();
       this.getMyStakeList();
       this.Calculation();
     },
@@ -1363,6 +1366,9 @@ export default {
       let totalBlock = item.minerMessage.minedNumber*1 + item.minerMissRecordNumber*1;
       let percent = item.minerMessage.minedNumber/totalBlock*100
       return percent.toFixed(2)
+    },
+    getMessage(){
+      this.$emit('send',this.nodeList);
     }
   },
 
@@ -1378,7 +1384,8 @@ export default {
         stake,
         days
       };
-    }
+    },
+
   }
 };
 </script>

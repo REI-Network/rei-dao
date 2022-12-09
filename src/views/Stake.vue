@@ -14,10 +14,11 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
-            <StakeToValidator></StakeToValidator>
+            <StakeToValidator @send="send" ></StakeToValidator>
         </v-card>
       </v-col>
     </v-row>
+    <StakeValidatorsBlock :msg="msg"></StakeValidatorsBlock>
     <StakeChartsFAQ></StakeChartsFAQ>
   </v-container>
 </template>
@@ -37,6 +38,7 @@ import util from '../utils/util'
 import StakeToValidator from '../components/StakeToValidator';
 import StakeOverview from '../components/StakeOverview';
 import StakeChartsFAQ from '../components/StakeChartsFAQ';
+import StakeValidatorsBlock from '../components/StakeValidatorsBlock';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
 
@@ -45,13 +47,15 @@ export default {
     StakeToValidator,
     // UnstakeToValidator,
     StakeOverview,
-    StakeChartsFAQ
+    StakeChartsFAQ,
+    StakeValidatorsBlock
   },
   filters,
   data() {
     return {
         isNode: false,
         tabNav: null,
+        msg:[],
     };
   },
   computed: {
@@ -59,6 +63,13 @@ export default {
       dark: 'dark',
       connection: 'connection'
     })
+  },
+  mounted(){
+  },
+  methods:{
+    send(data){
+      this.msg = data;
+    },
   }
 };
 </script>
