@@ -155,7 +155,7 @@
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
                           <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
-                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40"></v-img>
+                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40" lazy-src="../assets/images/logo_bg.png" ></v-img>
                         </div>
                         <div>{{ item.name }}</div>
                       </v-row>
@@ -187,7 +187,7 @@
                       <v-row align="center" class="assets-list">
                         <div class="asset-logo">
                           <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
-                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40"></v-img>
+                          <v-img :src="$IpfsGateway(item.image)" width="40" height="40" lazy-src="../assets/images/logo_bg.png" ></v-img>
                         </div>
                         <div>{{ item.name }}</div>
                       </v-row>
