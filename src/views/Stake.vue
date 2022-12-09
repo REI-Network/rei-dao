@@ -14,11 +14,11 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-card class="flex-column mt-2">
-            <StakeToValidator></StakeToValidator>
+            <StakeToValidator @send="send" ></StakeToValidator>
         </v-card>
       </v-col>
     </v-row>
-    <StakeValidatorsBlock></StakeValidatorsBlock>
+    <StakeValidatorsBlock :msg="msg"></StakeValidatorsBlock>
     <StakeChartsFAQ></StakeChartsFAQ>
   </v-container>
 </template>
@@ -55,6 +55,7 @@ export default {
     return {
         isNode: false,
         tabNav: null,
+        msg:[],
     };
   },
   computed: {
@@ -62,6 +63,13 @@ export default {
       dark: 'dark',
       connection: 'connection'
     })
+  },
+  mounted(){
+  },
+  methods:{
+    send(data){
+      this.msg = data;
+    },
   }
 };
 </script>
