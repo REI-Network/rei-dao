@@ -10,7 +10,7 @@
       <v-col cols="12" sm="6" style="padding-right: 0">
         <v-card class="date-card">
           <v-row align="center" justify="space-between">
-            <h3 style="margin-left: 10px">Block loss rate</h3>
+            <h3 style="margin-left: 10px">Block Loss</h3>
             <v-chip-group active-class="chip_group" v-model="intervalModel" mandatory>
               <v-chip class="ma-3" x-small v-for="tag in tags" :key="tag">
                 {{ tag }}
