@@ -15,7 +15,7 @@
           <div>{{ token.description }}</div>
           <v-row style="margin-left:1px;margin-top:2px;" align="center">
             <span class="font-grey">Contract Address:</span>
-            <span style="font-weight: bold"> {{ contractAddress }}</span>
+            <span style="font-weight: bold"> {{ contractAddress | addr }}</span>
             <v-btn class="copy-btn" @click="copyAddr(contractAddress)">
               <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
             </v-btn>
@@ -60,7 +60,8 @@
                 <div class="asset-logo">
                   <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
                 </div>
-                <Address :val="item.address"></Address>
+                <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
+
               </v-row>
             </template>
             <template v-slot:item.balance="{ item }">
@@ -110,11 +111,11 @@ import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
 import { getNftHolder, getAssetTokenList } from '../service/CommonService';
 import filters from '../filters';
-import Address from '../components/Address';
+import AddressTag from '../components/AddressTag';
 
 export default {
   components: {
-    Address
+    AddressTag
   },
   filters,
   data() {
@@ -313,6 +314,22 @@ export default {
   .rei-fans {
     font-weight: bolder;
   }
+}
+.link-light {
+  cursor: pointer;
+  color: #000;
+}
+.link-light:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark {
+  cursor: pointer;
+  color: #fff;
 }
 // .back-linear{
 //   background: linear-gradient(180deg, #d6e3ff 0%, #ffffff 50%);

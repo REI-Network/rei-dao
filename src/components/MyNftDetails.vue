@@ -76,7 +76,7 @@
             <div class="asset-logo">
               <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
             </div>
-            <Address :val="item.address"></Address>
+             <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
           </v-row>
         </template>
         <template v-slot:item.balance="{ item }">
@@ -98,13 +98,13 @@ import abiBadgesNFT from '../abis/abiBadgesNFT';
 import abiERC721 from '../abis/abiERC721';
 import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
-import Address from '../components/Address';
+import AddressTag from '../components/AddressTag';
 import { getNftHolder } from '../service/CommonService'
 import find from 'lodash/find';
 
 export default {
   components: {
-    Address
+    AddressTag
   },
   filters,
   data() {
@@ -328,6 +328,22 @@ a:hover {
 }
 .bg-dark .trait-wrap{
   background-color:#252243;
+}
+.link-light {
+  cursor: pointer;
+  color: #000;
+}
+.link-light:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark {
+  cursor: pointer;
+  color: #fff;
 }
 
 .nft-dialog {
