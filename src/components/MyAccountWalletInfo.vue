@@ -14,7 +14,7 @@
                   <h3>{{ details.symbol }}</h3>
                   <div v-if="details.address">
                     <a :href="`https://scan.rei.network/token/${details.address}`" target="_blank">
-                      <span class="font-grey">{{ details.address }}</span>
+                      <span class="font-grey">{{ details.address | addr }}</span>
                     </a>
                     <v-btn class="copy-btn" @click="copyAddr(details.address)">
                       <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>

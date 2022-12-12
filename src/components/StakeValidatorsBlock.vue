@@ -145,7 +145,7 @@ export default {
                 }else{
                     name = util.addr(params.data.address)
                 }
-                return name + ' <br/> ' + 'Validator Voting Power'+':'+ votingPowerPercent + '%' + '<br/>' + power;
+                return name + ' <br/> ' + 'Voting Power Rate'+':'+ votingPowerPercent + '%' + '<br/>' + 'Voting Power'+ ':'+ power;
               }
             },
             query: {
