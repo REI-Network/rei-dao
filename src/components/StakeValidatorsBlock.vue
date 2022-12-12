@@ -1,13 +1,13 @@
 <template>
   <v-container class="dashboard stake_background">
     <v-row>
-      <v-col cols="12" sm="6" style="padding-left: 0">
+      <v-col cols="12" sm="6" style="padding-left: 0;padding-bottom:0;">
         <v-card class="date-card">
           <h3>Validator Voting Power</h3>
           <div ref="validatorChart" style="height: 348px"></div>
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6" style="padding-right: 0">
+      <v-col cols="12" sm="6" style="padding-right: 0;padding-bottom:0;">
         <v-card class="date-card">
           <v-row align="center" justify="space-between">
             <h3 style="margin-left: 10px">Block Loss</h3>
@@ -17,7 +17,7 @@
               </v-chip>
             </v-chip-group>
           </v-row>
-          <div ref="blockChart" style="height: 348px"></div>
+              <div ref="blockChart" style="height: 348px"></div>
         </v-card>
       </v-col>
     </v-row>
@@ -28,15 +28,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-import Web3 from 'web3';
-import { mapActions, mapGetters } from 'vuex';
-import abiConfig from '../abis/abiConfig';
-import abiStakeManager from '../abis/abiStakeManager';
-import abiValidatorRewardPool from '../abis/abiValidatorRewardPool';
-import find from 'lodash/find';
-import dayjs from 'dayjs';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonService';
+import { mapGetters } from 'vuex';
 import util from '../utils/util'
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -84,33 +76,25 @@ export default {
         },
         msg:function(newMsg,oldMsg){
             this.nodeList = newMsg;
-            console.log('newMsg',newMsg)
-            console.log('oldMsg',oldMsg)
-            if(this.nodeList == []){
-                this.myChart.showLoading();
-                this.myChart2.showLoading();
-            }else{
-                this.myChart.hideLoading();
-                this.myChart2.hideLoading();
-            }
             this.myCharts();
             this.myCharts2();
             this.changeInterval()
         }
   },
   mounted() {
-    // this.getData()
     this.myCharts();
     this.myCharts2();
-    this.changeInterval()
+    this.changeInterval();
   },
   methods: {
-    // async getData(){
-    //   this.myCharts();
-    //   this.myCharts2();
-    //   this.changeInterval()
-    // },
     changeInterval(val){
+        if(this.msg.length == 0){
+                this.myChart.showLoading();
+                this.myChart2.showLoading();
+            }else{
+                this.myChart.hideLoading();
+                this.myChart2.hideLoading();
+            }
         let array = this.nodeList.map((item,index) => {
           return Object.assign({},{'name':item.nodeName,'address':item.address,'minerInfo':item.minerInfo})
        })
@@ -125,13 +109,11 @@ export default {
                   minerMissRecordNumberDay7:item.minerInfo.minerMissRecordNumberDay7,
                   minerMintedBlockNumberDay1:item.minerInfo.minerMintedBlockNumberDay1,
                   minerMintedBlockNumberDay7:item.minerInfo.minerMintedBlockNumberDay7,
-
-
               }
               minerInfoList.push(_obj)
           }
       }
-       console.log('minerInfo',minerInfoList)
+    //    console.log('minerInfo',minerInfoList)
       if(val == 1){
           this.blockLossList = minerInfoList.map((item) => {
           return Object.assign({},{'name':item.name,'address':item.address,'value':item.minerMissRecordNumberDay7,'produced':item.minerMintedBlockNumberDay7})
@@ -163,24 +145,13 @@ export default {
                 }else{
                     name = util.addr(params.data.address)
                 }
-                return name + ' <br/> ' + 'Validator Voting Power'+':'+ votingPowerPercent + '%' + '<br/>' + power;
+                return name + ' <br/> ' + 'Voting Power Rate'+':'+ votingPowerPercent + '%' + '<br/>' + 'Voting Power'+ ':'+ power;
               }
             },
             query: {
               maxAspectRatio: 1 // 当长宽比小于1时。
             },
             color: ['#74d2e7', '#48a9c5', '#0085ad', '#8db9ca', '#4298b5', '#005670','#00205b','#009f4d', '#84bd00', '#efdf00', '#fe5000', '#e4002b', '#da1884','#a51890','#0077c8','#008eaa', '#caccd1', '#C0EEE4', '#F8F988', '#FFCAC8', '#FF9E9E'],
-            graphic: {
-              type: 'text',
-              left: '36%',
-              top: '84%',
-              style: {
-                text: 'Validator Voting Power',
-                textAlign: 'center',
-                fill: '#868e9e',
-                fontSize: 14
-              }
-            },
             series: [
               {
                 name: '',
@@ -256,7 +227,7 @@ export default {
     myCharts2() {
       const chart2 = this.$refs.blockChart;
       let data = this.blockLossList;
-      console.log('blockLossList',data)
+    //   console.log('blockLossList',data)
       if (chart2) {
         this.myChart2 = this.$echarts.init(chart2);
         var option2 = {
@@ -387,6 +358,12 @@ export default {
 }
 .theme--dark.v-tabs-items {
   background-color: transparent;
+}
+.title{
+    font-size: 14px;
+    color: rgba(134,142,158,.6);
+    line-height: 18px;
+    transform: rotate(90deg);
 }
 @media screen and (max-width: 900px) {
 }
