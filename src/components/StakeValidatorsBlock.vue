@@ -152,17 +152,6 @@ export default {
               maxAspectRatio: 1 // 当长宽比小于1时。
             },
             color: ['#74d2e7', '#48a9c5', '#0085ad', '#8db9ca', '#4298b5', '#005670','#00205b','#009f4d', '#84bd00', '#efdf00', '#fe5000', '#e4002b', '#da1884','#a51890','#0077c8','#008eaa', '#caccd1', '#C0EEE4', '#F8F988', '#FFCAC8', '#FF9E9E'],
-            graphic: {
-              type: 'text',
-              left: '36%',
-              top: '84%',
-              style: {
-                text: 'Validator Voting Power',
-                textAlign: 'center',
-                fill: '#868e9e',
-                fontSize: 14
-              }
-            },
             series: [
               {
                 name: '',
