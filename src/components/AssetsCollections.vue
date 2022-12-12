@@ -5,17 +5,19 @@
         <span><a class="back-link" @click="routeLink()">Assets</a></span> / <span class="link-title">{{ token.symbol }}</span>
       </div>
       <v-row class="nft-collect-wrap">
-        <v-col cols="1" sm="1">
+        <v-col>
           <v-card class="">
-            <v-img :src="$IpfsGateway(token.image)" lazy-src="../assets/images/logo_bg.png" />
+            <v-img :src="$IpfsGateway(token.image)" lazy-src="../assets/images/logo_bg.png" width="128" height="128"/>
           </v-card>
         </v-col>
         <v-col cols="6" sm="6">
           <div class="genesis">{{ token.symbol }}</div>
           <div>{{ token.description }}</div>
-          <v-row style="margin-left:1px;margin-top:2px;" align="center">
+          <v-row style="margin-left:1px;margin-top:20px;" align="center">
             <span class="font-grey">Contract Address:</span>
-            <span style="font-weight: bold"> {{ contractAddress | addr }}</span>
+            <a :href="`https://scan.rei.network/token/${contractAddress}`" target="_blank">
+              <span class="address-link" > {{ contractAddress | addr }}</span>
+            </a>
             <v-btn class="copy-btn" @click="copyAddr(contractAddress)">
               <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
             </v-btn>
@@ -279,6 +281,14 @@ export default {
 <style scoped lang="scss">
 .container {
   max-width: 100% !important;
+}
+.address-link{
+  font-size: 14px;
+  color: #858ea0;
+}
+.address-link:hover{
+  color: #6979f8 !important;
+  text-decoration:underline ;
 }
 .badges-nft {
   padding: 28px 0 28px 0;
