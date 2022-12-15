@@ -6,6 +6,7 @@
           <v-tab key="11" class="v-tab-left">All Delegators<span :class="dark?'total-dark total':'total-light total'">{{delegatorList.length}}</span></v-tab>
           <v-tab key="12" class="v-tab-left">My Votes</v-tab>
           <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
+          <v-tab key="14" class="v-tab-left">History of Jail</v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
@@ -107,6 +108,37 @@
                     </v-pagination>
                 </div>
           </v-tab-item>
+           <v-tab-item key="14">
+              <v-data-table 
+                :headers="historyHeaders" 
+                :items="historyList" 
+                class="elevation-0" 
+                hide-default-footer 
+                :items-per-page="historyPerPage" 
+                :loading="stakeListLoading" 
+                :no-data-text="$t('msg.nodatatext')" 
+                :loading-text="$t('msg.loading')"
+                :page.sync="historyPage" 
+                @page-count="historyPageCount = $event">
+                <template v-slot:item.time="{ item }">
+                    <v-img :src="item.img" weight="24" height="24" />
+                    <span>{{ item.time*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</span>
+                </template>
+                 <template v-slot:item.amount="{ item }">
+                    - <span>{{ item.amount | asset(2) }}</span>
+                </template>
+              </v-data-table>
+              <div class="text-center pt-2" v-if="myWithdrawalsList.length > 0">
+                  <v-pagination 
+                    v-model="historyPage" 
+                    :length="historyPageCount" 
+                    color="vote_button" 
+                    background-color="start_unstake" 
+                    class="v-pagination" 
+                    total-visible="6">
+                    </v-pagination>
+                </div>
+          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -147,6 +179,9 @@ export default {
      withdrawalsPage: 1,
      withdrawalsPageCount: 0,
      withdrawalsPerPage: 20,
+     historyPage: 1,
+     historyPageCount: 0,
+     historyPerPage: 20,
      stakeListLoading: false,
      voteListLoading: false,
      stakeManageInstance:'',
@@ -159,6 +194,20 @@ export default {
      headers:[
         { text: "Delegators", value: 'delegator' },
         { text: "Amount ($REI)", value: 'amount' },
+     ],
+     historyHeaders:[
+      { text: "Delegators", value: 'delegator' },
+      { text: "Jail at", value: 'jail' },
+      { text: "Time of Paying fine", value: 'paying' },
+      { text: "Amount ($REI)", value: 'amount' },
+     ],
+     historyList:[
+      {
+        delegator:'REI FANs',
+        jail:'2022/12/03 12:26:18',
+        paying:'2022/12/06 15:30:24',
+        amount:'20,000.00'
+      }
      ],
      delegatorList:[
      ],
