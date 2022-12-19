@@ -115,15 +115,23 @@ export default {
       }
     //    console.log('minerInfo',minerInfoList)
       if(val == 1){
-          this.blockLossList = minerInfoList.map((item) => {
-          return Object.assign({},{'name':item.name,'address':item.address,'value':item.minerMissRecordNumberDay7,'produced':item.minerMintedBlockNumberDay7})
-       })
+         this.blockLossList=[];
+         minerInfoList.forEach((item)=>{
+          if(item.minerMissRecordNumberDay7!=0){
+            let obj = Object.assign({},{'name':item.name,'address':item.address,'value':item.minerMissRecordNumberDay7,'produced':item.minerMintedBlockNumberDay7})
+            this.blockLossList.push(obj)
+          }
+         })
       }else{
-          this.blockLossList = minerInfoList.map((item) => {
-          return Object.assign({},{'name':item.name,'address':item.address,'value':item.minerMissRecordNumberDay1,'produced':item.minerMintedBlockNumberDay1})
-       })
+        this.blockLossList=[];
+        minerInfoList.forEach((item)=>{
+          if(item.minerMissRecordNumberDay1!=0){
+            let obj = Object.assign({},{'name':item.name,'address':item.address,'value':item.minerMissRecordNumberDay1,'produced':item.minerMintedBlockNumberDay1})
+            this.blockLossList.push(obj)
+          }
+        })
       }
-       this.myCharts2() 
+      this.myCharts2() 
     },
     myCharts() {
       const chart = this.$refs.validatorChart;
@@ -194,15 +202,7 @@ export default {
                     fontSize: 12
                   }
                 },
-                legend: {
-                  right: '1%',
-                  itemWidth: 8, // 图例图形宽度
-                  itemHeight: 8,
-                  textStyle: {
-                    //图例文字的样式
-                    fontSize: 13
-                  }
-                },
+                legend: false,
                 series: [
                   {
                     radius: ['24%', '40%'],
@@ -290,26 +290,27 @@ export default {
               }
             }
           },
+          color: ['#74d2e7', '#48a9c5', '#0085ad', '#8db9ca', '#4298b5', '#005670','#00205b','#009f4d', '#84bd00', '#efdf00', '#fe5000', '#e4002b', '#da1884','#a51890','#0077c8','#008eaa', '#caccd1', '#C0EEE4', '#F8F988', '#FFCAC8', '#FF9E9E'],
           series: [
             {
-              name: 'REI FANs',
+              name: 'REI',
               type: 'bar',
               data:data,
-              itemStyle:{
-                  color:function(params){
-                      let color = '';
-                      if(params.data.value <= 100){
-                          color = '#FFDDDD'
-                      }else if( params.data.value >100 && params.data.value<=200){
-                           color = '#FF9494'
-                      }else if( params.data.value >200 && params.data.value<=300){
-                           color = '#F85454'
-                      }else{
-                           color = '#B20909'
-                      }
-                      return color;
-                  }
-              },
+              // itemStyle:{
+              //     color:function(params){
+              //         let color = '';
+              //         if(params.data.value <= 100){
+              //             color = '#FFDDDD'
+              //         }else if( params.data.value >100 && params.data.value<=200){
+              //              color = '#FF9494'
+              //         }else if( params.data.value >200 && params.data.value<=300){
+              //              color = '#F85454'
+              //         }else{
+              //              color = '#B20909'
+              //         }
+              //         return color;
+              //     }
+              // },
               barMaxWidth: '40%',
               barWidth: '18',
               barMinWidth: '10%',
