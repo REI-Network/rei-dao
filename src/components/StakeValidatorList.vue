@@ -6,7 +6,17 @@
           <v-tab key="11" class="v-tab-left">All Delegators<span :class="dark?'total-dark total':'total-light total'">{{delegatorList.length}}</span></v-tab>
           <v-tab key="12" class="v-tab-left">My Votes</v-tab>
           <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left">History of Jail</v-tab>
+          <v-tab key="14" class="v-tab-left">
+            History of Jail
+            <v-tooltip right>
+                      <v-btn icon>
+                        <v-icon size="14">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    <span>
+                    112332144
+                    </span>
+                  </v-tooltip>
+          </v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">

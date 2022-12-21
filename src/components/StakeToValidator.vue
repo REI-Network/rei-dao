@@ -123,20 +123,16 @@
           <v-tab-item key="12">
             <v-data-table :headers="jailHeaders" :items="jailList" :items-per-page="jailPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="jailLoading" :loading-text="$t('msg.loading')" :page.sync="jailPage" @page-count="jailPageCount = $event">
               <template v-slot:item.validators="{ item }">
-                <v-row>
+                <v-row align="center">
                   <div>
                     <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                   </div>
-                  <span>{{item.validators}}</span>
+                  <span>{{ item.validators }}</span>
+                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div>
                 </v-row>
               </template>
               <template v-slot:item.operation="{ item }">
-                <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{ 'btn-opacity': inDefaultList(item) }" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
-                  {{ $t('stake.staking') }}
-                </v-btn>
-                <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
-                  {{ $t('stake.claim') }}
-                </v-btn>
+                <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
               </template>
             </v-data-table>
             <v-row justify="end" align="center" v-if="jailList.length > 0">
@@ -493,6 +489,31 @@
         </v-row>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="payFineDialog" width="580">
+      <v-card class="dialog-card" :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <div class="dialog-validator">
+          <v-card-title>Pay Fine</v-card-title>
+          <div class="close-btn" @click="closePayFine"><v-icon>mdi-close</v-icon></div>
+        </div>
+        <v-card outlined :class="dark ? 'dark-pay pay-tips' : 'light-pay pay-tips'">
+          <div class="font-grey">
+            Tips:<br />
+            During this period, block production will be prohibited, and the validator needs to pay a fine of 20,000 REI to re-participate in block production. The fined 20,000 REI will be directly locked in the black hole address, and permanently cannot be withdrawn.
+          </div>
+        </v-card>
+        <v-row class="pay-btn" align="center">
+          <v-col>
+            <v-row align="center">
+              <h3>20,000</h3>
+              <span style="margin-left:8px;">REI</span>
+            </v-row>
+          </v-col>
+          <v-col style="text-align:right;">
+            <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -538,6 +559,7 @@ export default {
       jailPageCount: 0,
       jailPerPage: 20,
       listFilter: '',
+      payFineDialog: false,
       isNode: false,
       tab1: null,
       tab2: null,
@@ -677,6 +699,7 @@ export default {
     this.connect();
     this.init();
     this.windowWidth();
+    this.getJailList();
   },
   methods: {
     ...mapActions({
@@ -700,7 +723,7 @@ export default {
       let blockHeight = await web3.eth.getBlockNumber();
       let url = this.apiUrl.graph;
       client = new ApolloClient({
-        uri: `${url}chainmonitor`,
+        uri: `${url}chainMonitorBetterPos`,
         cache: new InMemoryCache()
       });
       const getValidatorsInfos = gql`
@@ -739,7 +762,6 @@ export default {
       };
 
       let validators = await getValidatorList(blockHeight);
-
       if (this.connection.address) {
         await this.getMyStakeListData();
       }
@@ -866,6 +888,7 @@ export default {
       this.getMessage();
       this.getMyStakeList();
       this.Calculation();
+      this.getJailList();
     },
     async getMinedInfo() {},
     async getMyStakeListData() {
@@ -1366,6 +1389,69 @@ export default {
     },
     getMessage() {
       this.$emit('send', this.nodeList);
+    },
+    async getJailList() {
+      let contract = new web3.eth.Contract(abiConfig, config_contract);
+
+      let blockHeight = await web3.eth.getBlockNumber();
+      let url = this.apiUrl.graph;
+      client = new ApolloClient({
+        uri: `${url}chainMonitorBetterPos`,
+        cache: new InMemoryCache()
+      });
+      const getJailInfos = gql`
+        query jailRecords {
+          jailRecords {
+            id
+            address
+            blockNumber
+            unjailedBlockNumber
+            unjailedTimestamp
+            unjailedForfeit
+          }
+        }
+      `;
+      let getValidatorList = async function (blockHeight) {
+        let getData = async function (blockHeight) {
+          const {
+            data: { jailRecords }
+          } = await client.query({
+            query: getJailInfos,
+            variables: {
+              blockHeight: String(blockHeight)
+            },
+            fetchPolicy: 'cache-first'
+          });
+          return jailRecords;
+        };
+        let _jailRecords = await getData(blockHeight);
+        if (!_jailRecords.length) {
+          _jailRecords = await getValidatorList(blockHeight - 1);
+        }
+        return _jailRecords;
+      };
+      let jailRecords = await getValidatorList(blockHeight);
+      jailRecords.map((item) => {
+        let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
+        console.log('detail', detail);
+        let power = 0;
+        if(detail){
+          power = details.power;
+        }
+        return{
+          ...item,
+          power:power
+        }
+      });
+      this.jailList = jailRecords;
+      console.log('jailList', this.jailList);
+      console.log('jailRecords', jailRecords);
+    },
+    getPayFine() {
+      this.payFineDialog = true;
+    },
+    closePayFine() {
+      this.payFineDialog = false;
     }
   },
 
@@ -1707,6 +1793,28 @@ export default {
 }
 .logoWrap {
   display: inline;
+}
+
+.on-jail {
+  font-size: 12px;
+  color: #868e9e;
+  padding: 2px 12px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+.pay-tips {
+  padding: 20px;
+  margin: 10px 20px;
+  border: none;
+}
+.dark-pay {
+  background-color: #393560;
+}
+.light-pay {
+  background-color: #ffedd9;
+}
+.pay-btn {
+  margin: 28px 20px;
 }
 @keyframes metronome-example {
   from {
