@@ -127,9 +127,12 @@
                   <div>
                     <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                   </div>
-                  <span>{{ item.validators }}</span>
+                  <span>{{ item.address | addr }}</span>
                   <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div>
                 </v-row>
+              </template>
+              <template v-slot:item.jail="{ item }">
+                <div>{{ item.unjailedBlockNumber * 1000 |dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
                 <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
@@ -812,6 +815,7 @@ export default {
       this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
+      this.getJailList();
       this.stakeListLoading = false;
       let nodeArr = activeList.map((item) => {
         return item.address;
@@ -888,7 +892,6 @@ export default {
       this.getMessage();
       this.getMyStakeList();
       this.Calculation();
-      this.getJailList();
     },
     async getMinedInfo() {},
     async getMyStakeListData() {
@@ -1391,8 +1394,7 @@ export default {
       this.$emit('send', this.nodeList);
     },
     async getJailList() {
-      let contract = new web3.eth.Contract(abiConfig, config_contract);
-
+     console.log('nodeList', this.nodeList);
       let blockHeight = await web3.eth.getBlockNumber();
       let url = this.apiUrl.graph;
       client = new ApolloClient({
@@ -1440,7 +1442,8 @@ export default {
         }
         return{
           ...item,
-          power:power
+          address:item.address,
+          power:power,
         }
       });
       this.jailList = jailRecords;
