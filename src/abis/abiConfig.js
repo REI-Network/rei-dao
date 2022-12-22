@@ -1,58 +1,6 @@
 const abiConfig =  [
     {
       "inputs": [],
-      "name": "blockTimestamp",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "contractFee",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "dailyFee",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "dailyFreeFee",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "fee",
       "outputs": [
         {
@@ -79,7 +27,7 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "feePoolLiquidateInterval",
+      "name": "feePoolInterval",
       "outputs": [
         {
           "internalType": "uint256",
@@ -92,20 +40,7 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "feeRecoverInterval",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "freeFee",
+      "name": "feeToken",
       "outputs": [
         {
           "internalType": "address",
@@ -118,7 +53,7 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "freeFeeRecoverInterval",
+      "name": "forfeit",
       "outputs": [
         {
           "internalType": "uint256",
@@ -150,6 +85,19 @@ const abiConfig =  [
     },
     {
       "inputs": [],
+      "name": "jailThreshold",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "minIndexVotingPower",
       "outputs": [
         {
@@ -163,12 +111,12 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "minerRewardFactor",
+      "name": "prison",
       "outputs": [
         {
-          "internalType": "uint8",
+          "internalType": "address",
           "name": "",
-          "type": "uint8"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -176,12 +124,12 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "router",
+      "name": "recordsAmountPeriod",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "uint256",
           "name": "",
-          "type": "address"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -198,123 +146,6 @@ const abiConfig =  [
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_cf",
-          "type": "address"
-        }
-      ],
-      "name": "setContractFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_f",
-          "type": "address"
-        }
-      ],
-      "name": "setFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_fp",
-          "type": "address"
-        }
-      ],
-      "name": "setFeePool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_ff",
-          "type": "address"
-        }
-      ],
-      "name": "setFreeFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_r",
-          "type": "address"
-        }
-      ],
-      "name": "setRouter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_s",
-          "type": "address"
-        }
-      ],
-      "name": "setStakeManager",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_c",
-          "type": "address"
-        }
-      ],
-      "name": "setSystemCaller",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_u",
-          "type": "address"
-        }
-      ],
-      "name": "setUnstakePool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_v",
-          "type": "address"
-        }
-      ],
-      "name": "setValidatorRewardPool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -371,19 +202,6 @@ const abiConfig =  [
     },
     {
       "inputs": [],
-      "name": "userFreeFeeLimit",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "validatorRewardPool",
       "outputs": [
         {
@@ -408,5 +226,5 @@ const abiConfig =  [
       "stateMutability": "view",
       "type": "function"
     }
-  ];
+];
 export default abiConfig;
