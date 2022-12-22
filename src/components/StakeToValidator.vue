@@ -515,7 +515,7 @@
             </v-row>
           </v-col>
           <v-col style="text-align:right;">
-            <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
+            <v-btn tile small color="vote_button" @click="submitPay" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
           </v-col>
         </v-row>
       </v-card>
@@ -671,6 +671,7 @@ export default {
       stakeToNodeLoading: false,
       rewardLoading: false,
       setRateLoading: false,
+      onjailLoading: false,
       rewardBalance: 0,
       nodeList: [],
       nodeListRaw: [],
@@ -1448,6 +1449,37 @@ export default {
     },
     closePayFine() {
       this.payFineDialog = false;
+    },
+    async submitPay() {
+      try {
+        this.onjailLoading = true;
+        const onjailRes = await this.stakeManageInstance.methods.unjail().send(
+          { from: this.connection.address,
+            value: web3.utils.numberToHex(this.onJailPayAmount)
+          }
+        );
+        if (onjailRes.transactionHash) {
+          console.log(onjailRes);
+          this.addTx({
+            tx: {
+              txid: onjailRes.transactionHash,
+              type: 'onjail',
+              status: 'PENDING',
+              data: {
+                amount: web3.utils.fromWei(web3.utils.toBN(this.onJailPayAmount)),
+                symbol: 'REI',
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+          this.payFineDialog = false;
+        }
+      } catch (e) {
+        this.payFineDialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+      this.onjailLoading = false;
     }
   },
 
