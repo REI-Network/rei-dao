@@ -671,7 +671,7 @@ export default {
       stakeToNodeLoading: false,
       rewardLoading: false,
       setRateLoading: false,
-      onjailLoading: false,
+      unjailLoading: false,
       rewardBalance: 0,
       nodeList: [],
       nodeListRaw: [],
@@ -686,7 +686,7 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
-      onJailPayAmount:'20000',
+      unJailPayAmount:'20000',
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
@@ -725,8 +725,8 @@ export default {
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
-      this.onJailPayAmount = await contract.methods.forfeit().call();
-      console.log(this.onJailPayAmount);
+      this.unJailPayAmount = await contract.methods.forfeit().call();
+      console.log(this.unJailPayAmount);
 
       this.stakeManagerContract = await contract.methods.stakeManager().call();
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
@@ -1452,21 +1452,21 @@ export default {
     },
     async submitPay() {
       try {
-        this.onjailLoading = true;
-        const onjailRes = await this.stakeManageInstance.methods.unjail().send(
+        this.unjailLoading = true;
+        const unjailRes = await this.stakeManageInstance.methods.unjail().send(
           { from: this.connection.address,
-            value: web3.utils.numberToHex(this.onJailPayAmount)
+            value: web3.utils.numberToHex(this.unJailPayAmount)
           }
         );
-        if (onjailRes.transactionHash) {
-          console.log(onjailRes);
+        if (unjailRes.transactionHash) {
+          console.log(unjailRes);
           this.addTx({
             tx: {
-              txid: onjailRes.transactionHash,
-              type: 'onjail',
+              txid: unjailRes.transactionHash,
+              type: 'unjail',
               status: 'PENDING',
               data: {
-                amount: web3.utils.fromWei(web3.utils.toBN(this.onJailPayAmount)),
+                amount: web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount)),
                 symbol: 'REI',
               },
               timestamp: new Date().getTime()
