@@ -504,13 +504,13 @@
         <v-card outlined :class="dark ? 'dark-pay pay-tips' : 'light-pay pay-tips'">
           <div class="font-grey">
             Tips:<br />
-            During this period, block production will be prohibited, and the validator needs to pay a fine of 20,000 REI to re-participate in block production. The fined 20,000 REI will be directly locked in the black hole address, and permanently cannot be withdrawn.
+            During this period, block production will be prohibited, and the validator needs to pay a fine of {{ unJailAmount | asset(0) }} REI to re-participate in block production. The fined {{ unJailAmount | asset(0) }} REI will be directly locked in the black hole address, and permanently cannot be withdrawn.
           </div>
         </v-card>
         <v-row class="pay-btn" align="center">
           <v-col>
             <v-row align="center">
-              <h3>20,000</h3>
+              <h3>{{ unJailAmount | asset(0) }}</h3>
               <span style="margin-left:8px;">REI</span>
             </v-row>
           </v-col>
@@ -591,6 +591,7 @@ export default {
       totalAmount: 0,
       calculationItems: [],
       nodeInfoList: [],
+
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -687,6 +688,7 @@ export default {
       minIndexVotingPower: 0,
       unstakeDelay: 0,
       unJailPayAmount:'20000',
+      unJailAmount:0,
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
@@ -1440,8 +1442,8 @@ export default {
           power:power,
         }
       });
-      console.log('jailList', this.jailList);
-      console.log('jailRecords', jailRecords);
+      this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
+      console.log('111',this.unJailPayAmount,this.unJailAmount)
       this.jailLoading = false;
     },
     getPayFine() {
