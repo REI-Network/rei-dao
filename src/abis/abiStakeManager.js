@@ -7,9 +7,19 @@ const abiStakeManager = [
           "type": "address"
         },
         {
+          "internalType": "address",
+          "name": "_proposer",
+          "type": "address"
+        },
+        {
           "internalType": "address[]",
           "name": "genesisValidators",
           "type": "address[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_activeValidators",
+          "type": "bytes"
         }
       ],
       "stateMutability": "nonpayable",
@@ -77,6 +87,25 @@ const abiStakeManager = [
         {
           "indexed": true,
           "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Reward",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "validator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
           "name": "rate",
           "type": "uint256"
         },
@@ -88,6 +117,25 @@ const abiStakeManager = [
         }
       ],
       "name": "SetCommissionRate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "validator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Slash",
       "type": "event"
     },
     {
@@ -228,6 +276,31 @@ const abiStakeManager = [
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "miner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "missedRoundNumberThisBlock",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct MissRecord[]",
+          "name": "record",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "addMissRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "config",
       "outputs": [
@@ -306,6 +379,43 @@ const abiStakeManager = [
         {
           "internalType": "uint256",
           "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getActiveValidatorInfos",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "excludes",
+          "type": "address[]"
+        }
+      ],
+      "name": "getTotalLockedAmountAndValidatorCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_totalLockedAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "validatorCount",
           "type": "uint256"
         }
       ],
@@ -442,19 +552,45 @@ const abiStakeManager = [
     {
       "inputs": [
         {
-          "internalType": "address[]",
-          "name": "acValidators",
-          "type": "address[]"
+          "internalType": "bytes32[]",
+          "name": "hashes",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "initEvidenceHash",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_proposer",
+          "type": "address"
         },
         {
-          "internalType": "int256[]",
-          "name": "priorities",
-          "type": "int256[]"
+          "internalType": "bytes",
+          "name": "_activeValidators",
+          "type": "bytes"
         }
       ],
       "name": "onAfterBlock",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proposer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -507,6 +643,11 @@ const abiStakeManager = [
           "internalType": "uint8",
           "name": "reason",
           "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
         }
       ],
       "name": "slash",
@@ -598,6 +739,26 @@ const abiStakeManager = [
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "totalLockedAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unjail",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -658,6 +819,25 @@ const abiStakeManager = [
           "internalType": "uint256",
           "name": "timestamp",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "usedEvidence",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
