@@ -685,6 +685,7 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
+      onJailPayAmount:'20000',
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
@@ -722,6 +723,9 @@ export default {
     async init() {
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
+
+      this.onJailPayAmount = await contract.methods.forfeit().call();
+      console.log(this.onJailPayAmount);
 
       this.stakeManagerContract = await contract.methods.stakeManager().call();
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
@@ -886,6 +890,7 @@ export default {
         };
       });
       this.nodeListRaw = [].concat(this.nodeList);
+      
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -1398,12 +1403,13 @@ export default {
     },
     async getJailList() {
       this.jailLoading = true;
-      let blockHeight = await web3.eth.getBlockNumber();
       let url = this.apiUrl.graph;
+
       client = new ApolloClient({
         uri: `${url}chainMonitorBetterPos`,
         cache: new InMemoryCache()
       });
+
       const getJailInfos = gql`
         query jailRecords {
           jailRecords {
@@ -1416,27 +1422,10 @@ export default {
           }
         }
       `;
-      let getValidatorList = async function (blockHeight) {
-        let getData = async function (blockHeight) {
-          const {
-            data: { jailRecords }
-          } = await client.query({
+      const { data: { jailRecords } } = await client.query({
             query: getJailInfos,
-            variables: {
-              blockHeight: String(blockHeight)
-            },
             fetchPolicy: 'cache-first'
           });
-          return jailRecords;
-        };
-        let _jailRecords = await getData(blockHeight);
-        if (!_jailRecords.length) {
-          _jailRecords = await getValidatorList(blockHeight - 1);
-        }
-        return _jailRecords;
-      };
-      let jailRecords = await getValidatorList(blockHeight);
-      console.log('nodeList', this.nodeList);
       this.jailList = jailRecords.map((item) => {
         let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
         console.log('detail', detail);
