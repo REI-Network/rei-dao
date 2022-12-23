@@ -123,7 +123,7 @@
           <v-tab-item key="12">
             <v-data-table :headers="jailHeaders" :items="jailList" :items-per-page="jailPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="jailLoading" :loading-text="$t('msg.loading')" :page.sync="jailPage" @page-count="jailPageCount = $event">
               <template v-slot:item.validators="{ item }">
-                <v-row align="center">
+                <v-row align="center" @click="getJailRecords(item.address)" class="jail-head">
                   <div>
                     <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                   </div>
@@ -138,7 +138,10 @@
                 <div>{{ item.unjailedTimestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
-                <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
+                <div v-if="item.address == connection.address">
+                  <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
+                </div>
+                <div v-else> - </div>
               </template>
             </v-data-table>
             <v-row justify="end" align="center" v-if="jailList.length > 0" style="margin-bottom:20px;">
@@ -1443,7 +1446,6 @@ export default {
         }
       });
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
-      console.log('111',this.unJailPayAmount,this.unJailAmount)
       this.jailLoading = false;
     },
     getPayFine() {
@@ -1482,6 +1484,14 @@ export default {
         this.$dialog.notify.warning(e.message);
       }
       this.onjailLoading = false;
+    },
+    getJailRecords(value){
+      this.$router.push({
+        name: 'StakeInfo',
+        query: {
+          id: value
+        }
+      });
     }
   },
 
@@ -1845,6 +1855,9 @@ export default {
 }
 .pay-btn {
   margin: 28px 20px;
+}
+.jail-head:hover{
+  cursor: pointer;
 }
 @keyframes metronome-example {
   from {
