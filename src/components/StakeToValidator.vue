@@ -128,7 +128,7 @@
                     <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                   </div>
                   <span>{{ item.address | addr }}</span>
-                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div>
+                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">Jail</div>
                 </v-row>
               </template>
               <template v-slot:item.power="{ item }">
@@ -144,7 +144,7 @@
                 <div v-else> - </div>
               </template>
             </v-data-table>
-            <v-row justify="end" align="center" v-if="jailList.length > 0" style="margin-bottom:20px;">
+            <v-row justify="end" align="center" v-if="jailList.length > 10" style="margin-bottom:20px;">
               <div class="text-center pt-2">
                 <v-pagination v-model="jailPage" :length="jailPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
@@ -633,7 +633,7 @@ export default {
       jailHeaders: [
         { text: 'Validators', value: 'validators' },
         { text: 'Voting Power', value: 'power' },
-        { text: 'Jail at', value: 'jail' },
+        { text: 'Time in Jail', value: 'jail' },
         { text: 'Operation', value: 'operation' }
       ],
       jailList: [
