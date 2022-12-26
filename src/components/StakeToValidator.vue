@@ -4,14 +4,11 @@
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" class="v-tab-left">Validator List</v-tab>
-          <v-tab key="12">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="13">My Voted Validators</v-tab>
+          <v-tab key="12">Jail</v-tab>
+          <v-tab key="13">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="14">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
-          <!-- <v-btn text outlined color="validator" @click="setCalculation()">
-            Earnings Calculation
-            <span class="iconfont">&#xe619;</span>
-          </v-btn> -->
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
             {{ $t('stake.set_commission_rate') }}
             <span class="iconfont">&#xe618;</span>
@@ -27,30 +24,10 @@
           </div>
         </v-row>
         <div v-else>
-          <!-- <v-divider class="faq_border" />
-          <v-row @click="setCalculation()" class="iphone-btn" justify="space-between" align="center">
-            <div>
-              <v-icon>mdi-library-outline</v-icon>
-              <v-btn class="v-btn" text outlined color="validator">
-                Earnings Calculation
-              </v-btn>
-            </div>
-            <div>></div>
-          </v-row> -->
           <v-divider class="faq_border" />
           <v-row @click="stakeToNode" class="iphone-btn" justify="space-between" align="center">
             <div>
               <span class="iconfont">&#xe601;</span>
-              <!-- <v-btn
-                        text
-                        outlined
-                        color="validator"
-                        v-if="isNode"
-                        @click="setRate"
-                        >
-                        {{$t('stake.set_commission_rate')}}
-                    </v-btn> -->
-
               <v-btn class="v-btn" text outlined color="validator" v-if="connection.address" @click="stakeToNode">
                 {{ $t('stake.stake_to_other_node') }}
               </v-btn>
@@ -64,16 +41,6 @@
               <v-btn text outlined color="validator" @click="setRate">
                 {{ $t('stake.set_commission_rate') }}
               </v-btn>
-              <!-- <v-btn
-                        class="v-btn"
-                        text
-                        outlined
-                        color="validator"
-                        v-if="connection.address"
-                        @click="stakeToNode"
-                    >
-                    {{$t('stake.stake_to_other_node')}}
-                    </v-btn> -->
             </div>
             <div>></div>
           </v-row>
@@ -94,27 +61,21 @@
                   <span class="iconfont">&#xe619;</span>
                 </v-btn>
               </template>
-              <template v-slot:item.apr="{ item }">
-                {{ item.apr | asset(2) }}%
-              </template>
+              <template v-slot:item.apr="{ item }"> {{ item.apr | asset(2) }}% </template>
               <template v-slot:item.responseRate="{ item }">
-                <span v-if="item.minerInfo"> 
+                <span v-if="item.minerInfo">
                   {{ item.responseRate }}%
                   <v-tooltip right v-if="item.minerInfo">
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                      >
+                      <v-btn icon v-bind="attrs" v-on="on">
                         <v-icon size="14">mdi-help-circle-outline</v-icon>
                       </v-btn>
                     </template>
                     <span>
-                        Block produced: {{ item.minerInfo.minerMessage.minedNumber}}<br>
-                        Block missed(All): {{ item.minerInfo.minerMissRecordNumber }}<br>
-                        Block missed(7day): {{ item.minerInfo.minerMissRecordNumberDay7 }}<br>
-                        Block missed(1day): {{ item.minerInfo.minerMissRecordNumberDay1 }}
+                      Block produced: {{ item.minerInfo.minerMessage.minedNumber }}<br />
+                      Block missed(All): {{ item.minerInfo.minerMissRecordNumber }}<br />
+                      Block missed(7day): {{ item.minerInfo.minerMissRecordNumberDay7 }}<br />
+                      Block missed(1day): {{ item.minerInfo.minerMissRecordNumberDay1 }}
                     </span>
                   </v-tooltip>
                 </span>
@@ -123,18 +84,12 @@
               <template v-slot:item.power="{ item }">
                 {{ item.power | asset(2) }}
                 <v-tooltip right v-if="item.votingPowerPercent">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        <v-icon size="14">mdi-help-circle-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>
-                        Voting Power Rate: {{ item.votingPowerPercent}}%
-                    </span>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon size="14">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span> Voting Power Rate: {{ item.votingPowerPercent }}% </span>
                 </v-tooltip>
               </template>
               <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template>
@@ -142,7 +97,7 @@
                 {{ item.balanceOfShare | asset(2) }}
               </template> -->
               <template v-slot:item.actions="{ item }">
-                <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
+                <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" v-if="connection.address" :class="{ 'btn-opacity': inDefaultList(item) }" :disabled="inDefaultList(item)" @click.stop="handleStaking(item)" height="32">
                   {{ $t('stake.staking') }}
                 </v-btn>
                 <v-btn tile small color="start_unstake" class="mr-4 unstake_btn btn-radius" v-if="connection.address" @click.stop="handleClaim(item)" height="32">
@@ -166,9 +121,39 @@
             </v-row>
           </v-tab-item>
           <v-tab-item key="12">
-            <UnstakeToValidator></UnstakeToValidator>
+            <v-data-table :headers="jailHeaders" :items="jailList" :items-per-page="jailPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="jailLoading" :loading-text="$t('msg.loading')" :page.sync="jailPage" @page-count="jailPageCount = $event">
+              <template v-slot:item.validators="{ item }">
+                <v-row align="center" @click="getJailRecords(item.address)" class="jail-head">
+                  <div>
+                    <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                  </div>
+                  <span>{{ item.address | addr }}</span>
+                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div>
+                </v-row>
+              </template>
+              <template v-slot:item.power="{ item }">
+                <div>{{ item.power | asset(2) }}</div>
+              </template>
+              <template v-slot:item.jail="{ item }">
+                <div>{{ item.unjailedTimestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+              </template>
+              <template v-slot:item.operation="{ item }">
+                <div v-if="item.address == connection.address">
+                  <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
+                </div>
+                <div v-else> - </div>
+              </template>
+            </v-data-table>
+            <v-row justify="end" align="center" v-if="jailList.length > 0" style="margin-bottom:20px;">
+              <div class="text-center pt-2">
+                <v-pagination v-model="jailPage" :length="jailPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
+              </div>
+            </v-row>
           </v-tab-item>
           <v-tab-item key="13">
+            <UnstakeToValidator></UnstakeToValidator>
+          </v-tab-item>
+          <v-tab-item key="14">
             <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
               <template v-slot:item.address="{ item }">
                 <v-lazy class="logoWrap">
@@ -190,7 +175,7 @@
               </template>
 
               <template v-slot:item.actions="{ item }">
-                <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{'btn-opacity':inDefaultList(item)}" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
+                <v-btn tile small color="vote_button" class="mr-4 btn-radius font-btn" :class="{ 'btn-opacity': inDefaultList(item) }" :disabled="inDefaultList(item)" style="color: #fff" @click.stop="handleStaking(item)" height="32">
                   {{ $t('stake.staking') }}
                 </v-btn>
                 <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="handleClaim(item)" height="32">
@@ -330,7 +315,6 @@
               </v-col>
             </v-row>
 
-            
             <!-- <div class="pb-3 text-caption"><strong class="text--secondary">{{$t('stake.tips_claim_info',{unstakeDelay: timeToFormat(unstakeDelay)})}}</strong></div> -->
 
             <div class="text-center">
@@ -344,7 +328,7 @@
                 {{ $t('stake.btn_submit') }}
               </v-btn>
             </div>
-            <div class="pb-3 text-caption">{{$t('stake.estimate_receive')}}: {{receiveBalance}} REI</div>
+            <div class="pb-3 text-caption">{{ $t('stake.estimate_receive') }}: {{ receiveBalance }} REI</div>
             <div :class="dark ? 'pb-3 text-day' : 'pb-3 text-caption'">
               <strong>{{ $t('stake.tips_claim_info', { unstakeDelay: timeToFormat(unstakeDelay) }) }}</strong>
             </div>
@@ -445,9 +429,11 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon color="right_icon" v-bind="attrs" v-on="on" dense size="16" style="margin-left: 4px"> mdi-alert-circle-outline </v-icon>
                 </template>
-                <span>This calculation of earnings is for reference only<br />
+                <span
+                  >This calculation of earnings is for reference only<br />
                   and does not represent the final earnings, please<br />
-                  refer to the actual results.</span>
+                  refer to the actual results.</span
+                >
               </v-tooltip>
             </h3>
           </v-col>
@@ -466,16 +452,16 @@
               </v-row>
               <v-row>
                 <div class="calculate-address">{{ nodeInfoList.address }}</div>
-                <v-btn @click="copyAddr(nodeInfoList.address)" style="margin-top:8px;">
+                <v-btn @click="copyAddr(nodeInfoList.address)" style="margin-top: 8px">
                   <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
               </v-row>
             </v-card>
-            <v-row class="calculate-input" style="margin-top:30px;">
-                <span class="subheading mr-1" style="margin-left:12px">Vote</span>
-                <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
-                  <div style="width:200px;"><v-text-field v-model="stake" color="#6979F8" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
-                <span class="subheading mr-1"> REI</span>
+            <v-row class="calculate-input" style="margin-top: 30px">
+              <span class="subheading mr-1" style="margin-left: 12px">Vote</span>
+              <!-- <span :class="dark ? 'dark-amount' : 'light-amount'">{{ stake | asset() }}</span> -->
+              <div style="width: 200px"><v-text-field v-model="stake" color="#6979F8" :class="dark ? 'dark-amount' : 'light-amount'"></v-text-field></div>
+              <span class="subheading mr-1"> REI</span>
             </v-row>
             <!-- <v-slider v-model="stake" track-color="#F5F5F5" track-fill-color="#6979F8" thumb-color="#6979F8" tick-size="10" loader-height="10" always-dirty min="0" max="2000000"> </v-slider> -->
             <!-- <v-row justify="space-between" class="slider-num font-grey">
@@ -484,9 +470,9 @@
             </v-row> -->
             <v-row class="" justify="space-between">
               <v-col class="text-left">
-                <span class=" mr-1">Locking $REI for</span>
+                <span class="mr-1">Locking $REI for</span>
                 <span :class="dark ? 'dark-amount' : 'light-amount'">{{ this.days }}</span>
-                <span class=" mr-1"> days</span>
+                <span class="mr-1"> days</span>
               </v-col>
             </v-row>
             <v-slider v-model="days" track-color="#F5F5F5" track-fill-color="#6979F8" thumb-color="#6979F8" always-dirty min="0" max="365" tick-size="8"> </v-slider>
@@ -508,6 +494,31 @@
                 </div>
               </v-col>
             </v-row>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="payFineDialog" width="580">
+      <v-card class="dialog-card" :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <div class="dialog-validator">
+          <v-card-title>Pay Fine</v-card-title>
+          <div class="close-btn" @click="closePayFine"><v-icon>mdi-close</v-icon></div>
+        </div>
+        <v-card outlined :class="dark ? 'dark-pay pay-tips' : 'light-pay pay-tips'">
+          <div class="font-grey">
+            Tips:<br />
+            During this period, block production will be prohibited, and the validator needs to pay a fine of {{ unJailAmount | asset(0) }} REI to re-participate in block production. The fined {{ unJailAmount | asset(0) }} REI will be directly locked in the black hole address, and permanently cannot be withdrawn.
+          </div>
+        </v-card>
+        <v-row class="pay-btn" align="center">
+          <v-col>
+            <v-row align="center">
+              <h3>{{ unJailAmount | asset(0) }}</h3>
+              <span style="margin-left:8px;">REI</span>
+            </v-row>
+          </v-col>
+          <v-col style="text-align:right;">
+            <v-btn tile small color="vote_button" @click="submitPay" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
           </v-col>
         </v-row>
       </v-card>
@@ -553,11 +564,16 @@ export default {
       pageMyVoted: 1,
       pageMyVotedCount: 0,
       itemsMyVotedPerPage: 10,
+      jailPage: 1,
+      jailPageCount: 0,
+      jailPerPage: 20,
       listFilter: '',
+      payFineDialog: false,
       isNode: false,
       tab1: null,
       tab2: null,
       stakeListLoading: false,
+      jailLoading: false,
       myStakeListLoading: false,
       dialog: false,
       claimDialog: false,
@@ -578,6 +594,7 @@ export default {
       totalAmount: 0,
       calculationItems: [],
       nodeInfoList: [],
+
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -613,6 +630,20 @@ export default {
         { text: 'Estimate Reward', value: 'rewards' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
+      jailHeaders: [
+        { text: 'Validators', value: 'validators' },
+        { text: 'Voting Power', value: 'power' },
+        { text: 'Jail at', value: 'jail' },
+        { text: 'Operation', value: 'operation' }
+      ],
+      jailList: [
+        {
+          img: '../assets/images/icon.png',
+          validators: 'REI FANs',
+          power: '312,323,212.00',
+          jail: '2022/12/03 12:26:18'
+        }
+      ],
       status: {
         true: this.$t('stake.isActive'),
         false: this.$t('stake.notActive')
@@ -644,9 +675,10 @@ export default {
       stakeToNodeLoading: false,
       rewardLoading: false,
       setRateLoading: false,
+      unjailLoading: false,
       rewardBalance: 0,
       nodeList: [],
-      nodeListRaw:[],
+      nodeListRaw: [],
       activeList: [],
       notActiveList: [],
       indexedNodeList: [],
@@ -658,12 +690,14 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
+      unJailPayAmount:'20000',
+      unJailAmount:0,
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
       amountRules: [(v) => !!v || this.$t('msg.please_input_amount'), (v) => (v && util.isNumber(v)) || this.$t('msg.please_input_correct_num'), (v) => (v && v > 0) || this.$t('msg.please_input_not_zero')],
       addressRules: [(v) => !!v || this.$t('msg.please_input_address')],
-      defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a'],
+      defaultValidatorList: ['0x0efe0da2b918412f1009337FE86321d88De091fb', '0x1b0885d33B43A696CD5517244A4Fcb20B929F79D', '0x2957879B3831b5AC1Ef0EA1fB08Dd21920f439b4', '0xaA714ecc110735B4E114C8B35F035fc8706fF930', '0xb7a19F9b6269C26C5Ef901Bd128c364Dd9dDc53a']
     };
   },
   watch: {
@@ -672,12 +706,13 @@ export default {
     },
     listenChange(stake, days) {
       this.Calculation();
-    },
+    }
   },
   mounted() {
     this.connect();
     this.init();
     this.windowWidth();
+    
   },
   methods: {
     ...mapActions({
@@ -690,10 +725,13 @@ export default {
         window.web3 = new Web3(window.web3.currentProvider);
       }
     },
-    
+
     async init() {
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
+
+      this.unJailPayAmount = await contract.methods.forfeit().call();
+      console.log(this.unJailPayAmount);
 
       this.stakeManagerContract = await contract.methods.stakeManager().call();
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
@@ -701,7 +739,7 @@ export default {
       let blockHeight = await web3.eth.getBlockNumber();
       let url = this.apiUrl.graph;
       client = new ApolloClient({
-        uri: `${url}chainmonitor`,
+        uri: `${url}chainMonitorBetterPos`,
         cache: new InMemoryCache()
       });
       const getValidatorsInfos = gql`
@@ -740,11 +778,9 @@ export default {
       };
 
       let validators = await getValidatorList(blockHeight);
-
-      if(this.connection.address){
+      if (this.connection.address) {
         await this.getMyStakeListData();
       }
-
 
       let validatorList = validators[0].Validator;
       let validatorArr = [];
@@ -759,7 +795,7 @@ export default {
           commissionShare: null,
           commissionAddress: validatorList[i].commissionAddress,
           commissionRate: validatorList[i].commissionRate,
-          active: validatorList[i].active,
+          active: validatorList[i].active
         };
 
         let _stakedValidator = find(this.myStakeListRawData, (item) => web3.utils.toChecksumAddress(item.validator) == web3.utils.toChecksumAddress(validatorList[i].address));
@@ -769,7 +805,7 @@ export default {
           _validator.commissionShare = _balanceOfShare.commissionShare;
         }
 
-        if (this.connection.address && (web3.utils.toChecksumAddress(validatorList[i].address) == web3.utils.toChecksumAddress(this.connection.address))) {
+        if (this.connection.address && web3.utils.toChecksumAddress(validatorList[i].address) == web3.utils.toChecksumAddress(this.connection.address)) {
           let validatorInfo = await this.stakeManageInstance.methods.validators(validatorList[i].address).call();
           _validator.updateTimestamp = validatorInfo.updateTimestamp;
         }
@@ -792,37 +828,38 @@ export default {
       this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
+      this.getJailList();
       this.stakeListLoading = false;
-      let nodeArr = activeList.map((item)=>{
+      let nodeArr = activeList.map((item) => {
         return item.address;
-      })
+      });
       let _details = await getValidatorDetails();
 
       // get validator response rate;
       const endTimestamp = dayjs().unix();
       const startTimestampDay1 = endTimestamp - ONE_DAY_UNIX;
-      const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX*7;
+      const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX * 7;
 
-      let minedInfo = await getValidatorMinedInfo({miner:nodeArr.join()});
-      let minedInfoDay1 = await getValidatorMinedInfo({miner:nodeArr.join(),starttimestamp:startTimestampDay1 });
-      let minedInfoDay7 = await getValidatorMinedInfo({miner:nodeArr.join(),starttimestamp:startTimestampDay7 });
+      let minedInfo = await getValidatorMinedInfo({ miner: nodeArr.join() });
+      let minedInfoDay1 = await getValidatorMinedInfo({ miner: nodeArr.join(), starttimestamp: startTimestampDay1 });
+      let minedInfoDay7 = await getValidatorMinedInfo({ miner: nodeArr.join(), starttimestamp: startTimestampDay7 });
 
       let minedInfoMap = {};
-      for(let i = 0; i < minedInfo.data.length; i++){
+      for (let i = 0; i < minedInfo.data.length; i++) {
         let _data = minedInfo.data[i];
-        let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner)
-        let obj  = {
+        let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner);
+        let obj = {
           ..._data,
           minerMissRecordNumberDay1: minedInfoDay1.data[i].minerMissRecordNumber,
           minerMissRecordNumberDay7: minedInfoDay7.data[i].minerMissRecordNumber,
           minerMintedBlockNumberDay1: minedInfoDay1.data[i].minerMintedBlockNumber,
-          minerMintedBlockNumberDay7: minedInfoDay7.data[i].minerMintedBlockNumber,
-        }
+          minerMintedBlockNumberDay7: minedInfoDay7.data[i].minerMintedBlockNumber
+        };
         minedInfoMap[_address] = obj;
       }
       this.detailsList = _details.data.data;
       this.totalAmount = 0;
-      for(let i=0; i<this.activeList.length; i++){
+      for (let i = 0; i < this.activeList.length; i++) {
         let item = this.activeList[i];
         this.totalAmount += parseFloat(item.power);
       }
@@ -838,27 +875,28 @@ export default {
         let apr = 0;
         let votingPowerPercent = 0;
 
-        if(item.active){
-          apr = (100000000 / this.totalAmount)*0.1* (item.commissionRate/100)*100;
-          votingPowerPercent = (item.power/this.totalAmount*100).toFixed(2);
-        }else{
-          apr = 0
+        if (item.active) {
+          apr = (100000000 / this.totalAmount) * 0.1 * (item.commissionRate / 100) * 100;
+          votingPowerPercent = ((item.power / this.totalAmount) * 100).toFixed(2);
+        } else {
+          apr = 0;
         }
         let _miner = web3.utils.toChecksumAddress(item.address);
-        
+
         return {
           ...item,
           nodeName: nodeName,
           logo: logo,
           website: website,
           nodeDesc: nodeDesc,
-          apr:apr,
+          apr: apr,
           minerInfo: minedInfoMap[_miner],
           votingPowerPercent,
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
       this.nodeListRaw = [].concat(this.nodeList);
+      
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -869,9 +907,7 @@ export default {
       this.getMyStakeList();
       this.Calculation();
     },
-    async getMinedInfo(){
-
-    },
+    async getMinedInfo() {},
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
       client = new ApolloClient({
@@ -897,24 +933,24 @@ export default {
       });
       this.myStakeListRawData = stakeInfos;
     },
-    async getMyStakeRewardList(){
+    async getMyStakeRewardList() {
       let url = this.apiUrl.graph;
       let client = new ApolloClient({
         uri: `${url}voteReward`,
         cache: new InMemoryCache()
       });
       const getVoterInfos = gql`
-        query voterInfos($arrId: [String]){
-          voterInfos(where:{id_in:$arrId}){
-          id
-          cost
-          timestamp
-          commissionAddress
+        query voterInfos($arrId: [String]) {
+          voterInfos(where: { id_in: $arrId }) {
+            id
+            cost
+            timestamp
+            commissionAddress
           }
         }
-        `;
+      `;
       let arrId = [];
-      for(let i = 0; i<this.myStakeListRawData.length;i++){
+      for (let i = 0; i < this.myStakeListRawData.length; i++) {
         let _item = this.myStakeListRawData[i];
         arrId.push(_item.id);
       }
@@ -950,14 +986,15 @@ export default {
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         let arr = [];
         for (let i = 0; i < myStakeList.length; i++) {
-          let rewardInfo = {},reward = 0;
-          if(balanceOfShare[i].balance>0){
+          let rewardInfo = {},
+            reward = 0;
+          if (balanceOfShare[i].balance > 0) {
             rewardInfo = await this.stakeManageInstance.methods.estimateSharesToAmount(myStakeList[i].validator, balanceOfShare[i].balance).call();
             reward = web3.utils.fromWei(web3.utils.toBN(rewardInfo).sub(web3.utils.toBN(voterInfos[i].cost)));
           } else {
             reward = 0;
           }
-          
+
           arr.push({
             address: myStakeList[i].validator,
             power: web3.utils.fromWei(web3.utils.toBN(validatorPower[i])),
@@ -1258,9 +1295,9 @@ export default {
     changeState() {
       let activeList = [];
       let notActiveList = [];
-      for(let i = 0; i < this.nodeListRaw.length; i++){
+      for (let i = 0; i < this.nodeListRaw.length; i++) {
         let _node = this.nodeListRaw[i];
-        if(_node.active){
+        if (_node.active) {
           activeList.push(_node);
         } else {
           notActiveList.push(_node);
@@ -1303,7 +1340,7 @@ export default {
     },
 
     Calculation() {
-      let votingRewardsYear = 10000000 * ((parseFloat(this.nodeInfoList.power) + this.stake ) / (this.totalAmount + this.stake)) * (this.nodeInfoList.commissionRate/ 100);
+      let votingRewardsYear = 10000000 * ((parseFloat(this.nodeInfoList.power) + this.stake) / (this.totalAmount + this.stake)) * (this.nodeInfoList.commissionRate / 100);
       this.userRewardsYear = ((votingRewardsYear * this.stake) / (parseFloat(this.nodeInfoList.power) + this.stake) / 365) * this.days;
       this.current = (this.userRewardsYear / (this.stake * 365)) * this.days * 100;
     },
@@ -1357,18 +1394,104 @@ export default {
     inDefaultList(item) {
       return this.defaultValidatorList.includes(web3.utils.toChecksumAddress(item.address));
     },
-    checkRewardState(address){
-      if(!this.connection.address) return false;
-      return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address)
+    checkRewardState(address) {
+      if (!this.connection.address) return false;
+      return web3.utils.toChecksumAddress(address) == web3.utils.toChecksumAddress(this.connection.address);
     },
-    calResponseRate(item){
-      if(!item) return 0;
-      let totalBlock = item.minerMessage.minedNumber*1 + item.minerMissRecordNumber*1;
-      let percent = item.minerMessage.minedNumber/totalBlock*100
-      return percent.toFixed(2)
+    calResponseRate(item) {
+      if (!item) return 0;
+      let totalBlock = item.minerMessage.minedNumber * 1 + item.minerMissRecordNumber * 1;
+      let percent = (item.minerMessage.minedNumber / totalBlock) * 100;
+      return percent.toFixed(2);
     },
-    getMessage(){
-      this.$emit('send',this.nodeList);
+    getMessage() {
+      this.$emit('send', this.nodeList);
+    },
+    async getJailList() {
+      this.jailLoading = true;
+      let url = this.apiUrl.graph;
+
+      client = new ApolloClient({
+        uri: `${url}chainMonitorBetterPos`,
+        cache: new InMemoryCache()
+      });
+
+      const getJailInfos = gql`
+        query jailRecords {
+          jailRecords {
+            id
+            address
+            blockNumber
+            unjailedBlockNumber
+            unjailedTimestamp
+            unjailedForfeit
+          }
+        }
+      `;
+      const { data: { jailRecords } } = await client.query({
+            query: getJailInfos,
+            fetchPolicy: 'cache-first'
+          });
+      this.jailList = jailRecords.map((item) => {
+        let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
+        console.log('detail', detail);
+        let power = 0;
+        if(detail){
+          power = detail.power;
+        }
+        return{
+          ...item,
+          address:item.address,
+          power:power,
+        }
+      });
+      this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
+      this.jailLoading = false;
+    },
+    getPayFine() {
+      this.payFineDialog = true;
+    },
+    closePayFine() {
+      this.payFineDialog = false;
+    },
+    async submitPay() {
+      try {
+        this.unjailLoading = true;
+        const unjailRes = await this.stakeManageInstance.methods.unjail().send(
+          { from: this.connection.address,
+            value: web3.utils.numberToHex(this.unJailPayAmount)
+          }
+        );
+        if (unjailRes.transactionHash) {
+          console.log(unjailRes);
+          this.addTx({
+            tx: {
+              txid: unjailRes.transactionHash,
+              type: 'unjail',
+              status: 'PENDING',
+              data: {
+                amount: web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount)),
+                symbol: 'REI',
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+          this.payFineDialog = false;
+        }
+      } catch (e) {
+        this.payFineDialog = false;
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+      this.onjailLoading = false;
+    },
+    getJailRecords(value){
+      this.$router.push({
+        name: 'StakeInfo',
+        query: {
+          id: value
+        }
+      });
     }
   },
 
@@ -1384,8 +1507,7 @@ export default {
         stake,
         days
       };
-    },
-
+    }
   }
 };
 </script>
@@ -1545,13 +1667,14 @@ export default {
     cursor: pointer;
   }
 }
-.subheading{
-  height:30px;
-  margin-top:20px;
+.subheading {
+  height: 30px;
+  margin-top: 20px;
   // margin-left:8px;
 }
-.theme--light.v-input input, .theme--light.v-input textarea{
-  color:#6979F8 !important;
+.theme--light.v-input input,
+.theme--light.v-input textarea {
+  color: #6979f8 !important;
 }
 .from-voting {
   display: flex;
@@ -1627,7 +1750,7 @@ export default {
   }
 }
 .light-amount {
-  color: #6979F8;
+  color: #6979f8;
   font-weight: bolder !important;
   font-size: 22px;
 }
@@ -1684,7 +1807,7 @@ export default {
   background-color: #f5f9fd;
 }
 .dark-nodes {
-  background-color:#4C4A68;
+  background-color: #4c4a68;
   // opacity: 0.5;
 }
 .btn-opacity {
@@ -1708,8 +1831,33 @@ export default {
     background-color: transparent;
   }
 }
-.logoWrap{
+.logoWrap {
   display: inline;
+}
+
+.on-jail {
+  font-size: 12px;
+  color: #868e9e;
+  padding: 2px 12px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+.pay-tips {
+  padding: 20px;
+  margin: 10px 20px;
+  border: none;
+}
+.dark-pay {
+  background-color: #393560;
+}
+.light-pay {
+  background-color: #ffedd9;
+}
+.pay-btn {
+  margin: 28px 20px;
+}
+.jail-head:hover{
+  cursor: pointer;
 }
 @keyframes metronome-example {
   from {
