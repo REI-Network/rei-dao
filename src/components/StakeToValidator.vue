@@ -1489,7 +1489,8 @@ export default {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value
+          id: value,
+          jail:true,
         }
       });
     }

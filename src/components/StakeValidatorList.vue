@@ -8,7 +8,7 @@
           >
           <v-tab key="12" class="v-tab-left">My Votes</v-tab>
           <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left">
+          <v-tab key="14" class="v-tab-left" v-if="this.$route.query.jail">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -68,7 +68,7 @@
               <v-pagination v-model="withdrawalsPage" :length="withdrawalsPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
-          <v-tab-item key="14">
+          <v-tab-item key="14" v-if="this.$route.query.jail">
             <v-data-table :headers="historyHeaders" :items="historyList" class="elevation-0" hide-default-footer :items-per-page="historyPerPage" :loading="jailLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="historyPage" @page-count="historyPageCount = $event">
               <template v-slot:item.jail="{ item }">
                 <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
