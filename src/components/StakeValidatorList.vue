@@ -70,17 +70,18 @@
           </v-tab-item>
           <v-tab-item key="14" v-if="this.$route.query.jail">
             <v-data-table :headers="historyHeaders" :items="historyList" class="elevation-0" hide-default-footer :items-per-page="historyPerPage" :loading="jailLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="historyPage" @page-count="historyPageCount = $event">
-              <template v-slot:item.jail="{ item }">
+              <template v-slot:item.timestamp="{ item }">
                 <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
-              <template v-slot:item.paying="{ item }">
-                <div>{{ (item.unjailedTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+              <template v-slot:item.unjailedTimestamp="{ item }">
+                <div v-if="item.unjailedTimestamp">{{ (item.unjailedTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+                <div v-if="!item.unjailedTimestamp">-</div>
               </template>
-              <template v-slot:item.amount="{ item }">
+              <template v-slot:item.unjailedForfeit="{ item }">
                 <div>{{ item.unjailedForfeit | asset(2)}}</div>
               </template>
             </v-data-table>
-            <div class="text-center pt-2" v-if="myWithdrawalsList.length > 10">
+            <div class="text-center pt-2" v-if="historyList.length > 10">
               <v-pagination v-model="historyPage" :length="historyPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
@@ -143,17 +144,11 @@ export default {
       ],
       historyHeaders: [
         // { text: 'Delegators', value: 'delegator' },
-        { text: 'Time in Jail', value: 'jail' },
-        { text: 'Time of Paying fine', value: 'paying' },
-        { text: 'Amount ($REI)', value: 'amount' }
+        { text: 'Time in Jail', value: 'timestamp' },
+        { text: 'Time of Paying fine', value: 'unjailedTimestamp' },
+        { text: 'Amount ($REI)', value: 'unjailedForfeit' }
       ],
       historyList: [
-        {
-          delegator: 'REI FANs',
-          jail: '2022/12/03 12:26:18',
-          paying: '2022/12/06 15:30:24',
-          amount: '20,000.00'
-        }
       ],
       delegatorList: [],
       myVotesHeaders: [
@@ -436,12 +431,13 @@ export default {
       });
       console.log('jailRecords', jailRecords);
       this.historyList = jailRecords.map((item) => {
-        let unjailedForfeit = web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit));
+        let unjailedForfeit = item.unjailedForfeit ? web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit)):0;
         return{
           ...item,
           unjailedForfeit:unjailedForfeit,
         }
       })
+      console.log('historyList',this.historyList)
        this.jailLoading = false;
     }
   }
