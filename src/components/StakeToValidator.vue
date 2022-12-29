@@ -518,7 +518,7 @@
             </v-row>
           </v-col>
           <v-col style="text-align:right;">
-            <v-btn tile small color="vote_button" @click="submitPay" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
+            <v-btn tile small color="vote_button" :loading="unjailLoading" @click="submitPay" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
           </v-col>
         </v-row>
       </v-card>
@@ -1447,7 +1447,6 @@ export default {
       this.jailList = this.jailList.filter((item) => {
         return item.unjailedForfeit === null;
       });
-      console.log('jailList',this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },
@@ -1486,7 +1485,7 @@ export default {
         console.log(e);
         this.$dialog.notify.warning(e.message);
       }
-      this.onjailLoading = false;
+      this.unjailLoading = false;
     },
     getJailRecords(value){
       this.$router.push({
