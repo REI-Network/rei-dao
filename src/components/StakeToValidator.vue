@@ -128,7 +128,7 @@
                     <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
                   </div>
                   <span>{{ item.address | addr }}</span>
-                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div>
+                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">Jail</div>
                 </v-row>
               </template>
               <template v-slot:item.power="{ item }">
@@ -138,13 +138,13 @@
                 <div>{{ item.unjailedTimestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
-                <div v-if="item.address == connection.address">
-                  <v-btn tile small color="start_unstake" class="mr-4 btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
+                <div v-if="item.address.toUpperCase() == connection.address.toUpperCase()">
+                  <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
                 </div>
                 <div v-else> - </div>
               </template>
             </v-data-table>
-            <v-row justify="end" align="center" v-if="jailList.length > 0" style="margin-bottom:20px;">
+            <v-row justify="end" align="center" v-if="jailList.length > 10" style="margin-bottom:20px;">
               <div class="text-center pt-2">
                 <v-pagination v-model="jailPage" :length="jailPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
@@ -633,7 +633,7 @@ export default {
       jailHeaders: [
         { text: 'Validators', value: 'validators' },
         { text: 'Voting Power', value: 'power' },
-        { text: 'Jail at', value: 'jail' },
+        { text: 'Time in Jail', value: 'jail' },
         { text: 'Operation', value: 'operation' }
       ],
       jailList: [
@@ -1434,7 +1434,6 @@ export default {
           });
       this.jailList = jailRecords.map((item) => {
         let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
-        console.log('detail', detail);
         let power = 0;
         if(detail){
           power = detail.power;
@@ -1445,6 +1444,10 @@ export default {
           power:power,
         }
       });
+      this.jailList = this.jailList.filter((item) => {
+        return item.unjailedForfeit === null;
+      });
+      console.log('jailList',this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },
@@ -1489,7 +1492,7 @@ export default {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value
+          id: value,
         }
       });
     }

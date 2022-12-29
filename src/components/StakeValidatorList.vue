@@ -11,16 +11,15 @@
           <v-tab key="14" class="v-tab-left">
             <v-row>
               <div>History of Jail</div>
-              <!-- <v-menu open-on-hover top offset-y>
+              <v-menu open-on-hover top offset-y>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
                 <v-list class="history-list">
-                  <v-list-item>
-                    <v-list-item-title>REI Network</v-list-item-title>
-                  </v-list-item>
+                    <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
+                    <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
                 </v-list>
-              </v-menu> -->
+              </v-menu>
             </v-row>
           </v-tab>
         </v-tabs>
@@ -71,26 +70,18 @@
           </v-tab-item>
           <v-tab-item key="14">
             <v-data-table :headers="historyHeaders" :items="historyList" class="elevation-0" hide-default-footer :items-per-page="historyPerPage" :loading="jailLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="historyPage" @page-count="historyPageCount = $event">
-              <template v-slot:item.delegator="{ item }">
-                <v-row align="center">
-                  <!-- <div>
-                    <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                  </div> -->
-                  <span>{{ item.address | addr }}</span>
-                  <!-- <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">On Jail</div> -->
-                </v-row>
+              <template v-slot:item.timestamp="{ item }">
+                <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
-              <template v-slot:item.jail="{ item }">
-                <div>{{ (item.unjailedTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+              <template v-slot:item.unjailedTimestamp="{ item }">
+                <div v-if="item.unjailedTimestamp">{{ (item.unjailedTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+                <div v-if="!item.unjailedTimestamp">-</div>
               </template>
-              <template v-slot:item.paying="{ item }">
-                <div>{{ (item.unjailedTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
-              </template>
-              <template v-slot:item.amount="{ item }">
+              <template v-slot:item.unjailedForfeit="{ item }">
                 <div>{{ item.unjailedForfeit | asset(2)}}</div>
               </template>
             </v-data-table>
-            <div class="text-center pt-2" v-if="myWithdrawalsList.length > 0">
+            <div class="text-center pt-2" v-if="historyList.length > 10">
               <v-pagination v-model="historyPage" :length="historyPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
@@ -152,18 +143,12 @@ export default {
         { text: 'Amount ($REI)', value: 'amount' }
       ],
       historyHeaders: [
-        { text: 'Delegators', value: 'delegator' },
-        { text: 'Jail at', value: 'jail' },
-        { text: 'Time of Paying fine', value: 'paying' },
-        { text: 'Amount ($REI)', value: 'amount' }
+        // { text: 'Delegators', value: 'delegator' },
+        { text: 'Time in Jail', value: 'timestamp' },
+        { text: 'Time of Paying fine', value: 'unjailedTimestamp' },
+        { text: 'Amount ($REI)', value: 'unjailedForfeit' }
       ],
       historyList: [
-        {
-          delegator: 'REI FANs',
-          jail: '2022/12/03 12:26:18',
-          paying: '2022/12/06 15:30:24',
-          amount: '20,000.00'
-        }
       ],
       delegatorList: [],
       myVotesHeaders: [
@@ -430,6 +415,7 @@ export default {
             id
             address
             blockNumber
+            timestamp
             unjailedBlockNumber
             unjailedTimestamp
             unjailedForfeit
@@ -445,12 +431,13 @@ export default {
       });
       console.log('jailRecords', jailRecords);
       this.historyList = jailRecords.map((item) => {
-        let unjailedForfeit = web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit));
+        let unjailedForfeit = item.unjailedForfeit ? web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit)):0;
         return{
           ...item,
           unjailedForfeit:unjailedForfeit,
         }
       })
+      console.log('historyList',this.historyList)
        this.jailLoading = false;
     }
   }
@@ -502,5 +489,11 @@ export default {
 }
 .history-list {
   padding: 20px;
+  width: 320px;
+  color: #868e9e;
+  font-size: 14px;
+}
+.history-help{
+  text-indent:2em;
 }
 </style>
