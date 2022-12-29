@@ -6,6 +6,7 @@
           <v-tab key="11" class="v-tab-left">All Delegators<span :class="dark?'total-dark total':'total-light total'">{{delegatorList.length}}</span></v-tab>
           <v-tab key="12" class="v-tab-left">My Votes</v-tab>
           <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
+          <v-tab key="15" class="v-tab-left">History of slash</v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
@@ -107,6 +108,33 @@
                     </v-pagination>
                 </div>
           </v-tab-item>
+           <v-tab-item key="15">
+              <v-data-table 
+                :headers="slashHeaders" 
+                :items="slashList" 
+                class="elevation-0" 
+                hide-default-footer 
+                :items-per-page="slashPerPage" 
+                :loading="slashLoading" 
+                :no-data-text="$t('msg.nodatatext')" 
+                :loading-text="$t('msg.loading')"
+                :page.sync="slashPage" 
+                @page-count="slashPageCount = $event">
+                <template v-slot:item.reason="{ item }">
+                    <span class="reason-list"> {{ item.reason  }}</span>
+                </template>
+              </v-data-table>
+              <div class="text-center pt-2" v-if="slashList.length > 10">
+                  <v-pagination 
+                    v-model="slashPage" 
+                    :length="slashPageCount" 
+                    color="vote_button" 
+                    background-color="start_unstake" 
+                    class="v-pagination" 
+                    total-visible="6">
+                    </v-pagination>
+                </div>
+          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -147,8 +175,12 @@ export default {
      withdrawalsPage: 1,
      withdrawalsPageCount: 0,
      withdrawalsPerPage: 20,
+     slashPage: 1,
+     slashPageCount: 0,
+     slashPerPage: 20,
      stakeListLoading: false,
      voteListLoading: false,
+     slashLoading:false,
      stakeManageInstance:'',
      commissionShareInstance:'',
      allStakeListLoading:false,
@@ -185,6 +217,20 @@ export default {
             time:"2022-12-19 12:30",
             amount:121545.00
          }
+     ],
+     slashHeaders:[
+      { text: "Block Height", value: 'block' },
+      { text: "Timestamp", value: 'timestamp' },
+      { text: "Reason", value: 'reason' },
+      { text: "Slash amount ($REI)", value: 'amount' },
+     ],
+     slashList:[
+      {
+        block:'9185063',
+        timestamp:'2022/12/03 12:26:18',
+        reason:'double signatures >',
+        amount:'560,000.00'
+      }
      ]
     };
   },
@@ -452,5 +498,9 @@ export default {
 }
 .down{
   margin-top: 4px;
+}
+.reason-list{
+  background-color: #FFCDCD;
+  padding:5px 10px;
 }
 </style>
