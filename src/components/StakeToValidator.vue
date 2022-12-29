@@ -1434,7 +1434,6 @@ export default {
           });
       this.jailList = jailRecords.map((item) => {
         let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
-        console.log('detail', detail);
         let power = 0;
         if(detail){
           power = detail.power;
@@ -1445,6 +1444,10 @@ export default {
           power:power,
         }
       });
+      this.jailList = this.jailList.filter((item) => {
+        return item.unjailedForfeit === null;
+      });
+      console.log('jailList',this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },
@@ -1490,7 +1493,6 @@ export default {
         name: 'StakeInfo',
         query: {
           id: value,
-          jail:true,
         }
       });
     }
