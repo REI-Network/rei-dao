@@ -874,8 +874,8 @@ export default {
     },
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
-      client = new ApolloClient({
-        uri: `${url}chainMonitorBetterPos`,
+      let client = new ApolloClient({
+        uri: `${url}chainMonitorOnlyForStake`,
         cache: new InMemoryCache()
       });
       const getStakeinfos = gql`
