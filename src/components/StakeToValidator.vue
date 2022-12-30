@@ -730,9 +730,6 @@ export default {
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
-      this.unJailPayAmount = await contract.methods.forfeit().call();
-      console.log(this.unJailPayAmount);
-
       this.stakeManagerContract = await contract.methods.stakeManager().call();
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
 
@@ -897,6 +894,8 @@ export default {
       });
       this.nodeListRaw = [].concat(this.nodeList);
       
+      this.unJailPayAmount = await contract.methods.forfeit().call();
+      console.log(this.unJailPayAmount);
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
