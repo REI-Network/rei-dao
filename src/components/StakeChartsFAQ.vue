@@ -141,7 +141,7 @@ export default {
 
         let url = this.apiUrl.graph;
         let client = new ApolloClient({
-            uri: `${url}chainmonitor`,
+            uri: `${url}chainMonitorBetterPos`,
             cache: new InMemoryCache(),
         })
         let blockNumber = await web3.eth.getBlockNumber();
