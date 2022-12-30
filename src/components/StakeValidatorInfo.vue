@@ -378,7 +378,7 @@ export default {
       let blockHeight = await web3.eth.getBlockNumber();
       let url = this.apiUrl.graph;
       client = new ApolloClient({
-        uri: `${url}chainmonitor`,
+        uri: `${url}chainMonitorBetterPos`,
         cache: new InMemoryCache()
       });
       const getValidatorsInfos = gql`

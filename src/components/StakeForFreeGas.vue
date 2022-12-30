@@ -408,7 +408,7 @@ export default {
     async getDepositList() {
         let url = this.apiUrl.graph;
         client = new ApolloClient({
-            uri: `${url}chainmonitor`,
+            uri: `${url}chainMonitorBetterPos`,
             cache: new InMemoryCache(),
         })
         const deposit = gql`
@@ -452,7 +452,7 @@ export default {
     async getMystakeByOther(){
         let url = this.apiUrl.graph;
         client = new ApolloClient({
-            uri: `${url}chainmonitor`,
+            uri: `${url}chainMonitorBetterPos`,
             cache: new InMemoryCache(),
         })
         const depositByOther = gql`
