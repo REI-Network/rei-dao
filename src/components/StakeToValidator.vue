@@ -124,18 +124,20 @@
             <v-data-table :headers="jailHeaders" :items="jailList" :items-per-page="jailPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="jailLoading" :loading-text="$t('msg.loading')" :page.sync="jailPage" @page-count="jailPageCount = $event">
               <template v-slot:item.validators="{ item }">
                 <v-row align="center" @click="getJailRecords(item.address)" class="jail-head">
-                  <div>
-                    <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                  </div>
-                  <span>{{ item.address | addr }}</span>
+                  <v-lazy class="logoWrap">
+                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                </v-lazy>
+                <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                   <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">Jail</div>
                 </v-row>
               </template>
               <template v-slot:item.power="{ item }">
                 <div>{{ item.power | asset(2) }}</div>
               </template>
-              <template v-slot:item.jail="{ item }">
-                <div>{{ item.unjailedTimestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+              <template v-slot:item.timestamp="{ item }">
+                <div>{{ item.timestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
                 <div v-if="item.address.toUpperCase() == connection.address.toUpperCase()">
@@ -633,16 +635,10 @@ export default {
       jailHeaders: [
         { text: 'Validators', value: 'validators' },
         { text: 'Voting Power', value: 'power' },
-        { text: 'Time in Jail', value: 'jail' },
+        { text: 'Time in Jail', value: 'timestamp' },
         { text: 'Operation', value: 'operation' }
       ],
       jailList: [
-        {
-          img: '../assets/images/icon.png',
-          validators: 'REI FANs',
-          power: '312,323,212.00',
-          jail: '2022/12/03 12:26:18'
-        }
       ],
       status: {
         true: this.$t('stake.isActive'),
@@ -825,12 +821,14 @@ export default {
       this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
-      this.getJailList();
+
       this.stakeListLoading = false;
       let nodeArr = activeList.map((item) => {
         return item.address;
       });
       let _details = await getValidatorDetails();
+      this.detailsList = _details.data.data;
+      this.getJailList();
 
       // get validator response rate;
       const endTimestamp = dayjs().unix();
@@ -854,7 +852,7 @@ export default {
         };
         minedInfoMap[_address] = obj;
       }
-      this.detailsList = _details.data.data;
+      
       this.totalAmount = 0;
       for (let i = 0; i < this.activeList.length; i++) {
         let item = this.activeList[i];
@@ -1417,10 +1415,11 @@ export default {
 
       const getJailInfos = gql`
         query jailRecords {
-          jailRecords {
+          jailRecords(where:{unjailedBlockNumber:null}) {
             id
             address
             blockNumber
+            timestamp
             unjailedBlockNumber
             unjailedTimestamp
             unjailedForfeit
@@ -1431,21 +1430,32 @@ export default {
             query: getJailInfos,
             fetchPolicy: 'cache-first'
           });
-      this.jailList = jailRecords.map((item) => {
-        let detail = find(this.nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.address));
-        let power = 0;
-        if(detail){
-          power = detail.power;
-        }
-        return{
-          ...item,
-          address:item.address,
-          power:power,
-        }
+          console.log(this.nodeList)
+      this.jailList = jailRecords;
+      let jailListMap = jailRecords.map((item) => {
+        return this.stakeManageInstance.methods.getVotingPowerByAddress(item.address).call();
       });
-      this.jailList = this.jailList.filter((item) => {
-        return item.unjailedForfeit === null;
-      });
+      let validatorPower = await Promise.all(jailListMap);
+      let list = []
+      for(let i = 0; i < validatorPower.length; i++){
+       let power = web3.utils.fromWei(web3.utils.toBN(validatorPower[i]))
+       let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(this.jailList[i].address));
+        let nodeName,logo;
+        if (detail) {
+          nodeName = detail.nodeName;
+          logo = detail.logo;
+        }
+       list.push({
+        ...this.jailList[i],
+        power,
+        nodeName,
+        logo
+       })
+      }
+      
+
+      this.jailList = list;
+      console.log(this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },
