@@ -272,7 +272,7 @@ export default {
       this.stakeListLoading = true;
       let url = this.apiUrl.graph;
       client = new ApolloClient({
-        uri: `${url}chainmonitor`,
+        uri: `${url}chainMonitorOnlyForStake`,
         cache: new InMemoryCache()
       });
       const getStakeinfos = gql`
@@ -339,7 +339,7 @@ export default {
       this.voteListLoading = true;
       let url = this.apiUrl.graph;
       let client = new ApolloClient({
-        uri: `${url}onlystakeinfoMore`,
+        uri: `${url}chainMonitorOnlyForStake`,
         cache: new InMemoryCache()
       });
       const getMyVoteInfos = gql`
@@ -375,7 +375,7 @@ export default {
       this.withdrawListLoading = true;
       let url = this.apiUrl.graph;
       let client = new ApolloClient({
-        uri: `${url}chainmonitor`,
+        uri: `${url}chainMonitorOnlyForStake`,
         cache: new InMemoryCache()
       });
       const getMyWithdrawInfos = gql`
