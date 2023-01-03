@@ -120,8 +120,12 @@
                 :loading-text="$t('msg.loading')"
                 :page.sync="slashPage" 
                 @page-count="slashPageCount = $event">
+
+                <template v-slot:item.timestamp="{ item }">
+                    <span> {{ item.slashBlockTimestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss')}}</span>
+                </template>
                 <template v-slot:item.reason="{ item }">
-                    <span class="reason-list"> {{ item.reason  }}</span>
+                    <span class="reason-list"> {{ item.reason  }}></span>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="slashList.length > 10">
@@ -153,7 +157,7 @@ import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import Papa from 'papaparse';
-import { getAddressTag } from '../service/CommonService';
+import { getAddressTag,getSlashRecords } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -219,14 +223,14 @@ export default {
          }
      ],
      slashHeaders:[
-      { text: "Block Height", value: 'block' },
+      { text: "Block Height", value: 'slashBlockHeight' },
       { text: "Timestamp", value: 'timestamp' },
       { text: "Reason", value: 'reason' },
       { text: "Slash amount ($REI)", value: 'amount' },
      ],
      slashList:[
       {
-        block:'9185063',
+        slashBlockHeight:'9185063',
         timestamp:'2022/12/03 12:26:18',
         reason:'double signatures >',
         amount:'560,000.00'
@@ -244,6 +248,7 @@ export default {
   mounted(){
     this.connect();
     this.init();
+    this.getSlashData();
   },
   methods: {
     connect() {
@@ -452,6 +457,13 @@ export default {
         return false;
       }
     },
+    async getSlashData(){
+      let data = await getSlashRecords(`miner=0x3e276d54908f759ab4c79ca60283ec275ae078ca&offset=0&limit=10`);
+      this.slashList = data.data
+      console.log('slashList',this.slashList)
+      // const { data } = await this.$axios.get(`https://gateway.rei.network/api/slashRecords?miner=${this.$route.query.id}&offset=0&limit=10`);
+  
+    }
   }
 };
 </script>
