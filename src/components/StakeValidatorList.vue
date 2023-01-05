@@ -61,8 +61,8 @@
                 <span> {{ (item.slashBlockTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
               </template>
               <template v-slot:item.reason="{ item }">
-                <v-btn class="reason-list" @click="openProof">
-                  <span> {{ item.reason }}></span>
+                <v-btn class="reason-list" @click="openProof(item)">
+                  <span style="font-size:12px;"> {{ item.reason }}></span>
                 </v-btn>
               </template>
               <template v-slot:item.amount="{ item }">
@@ -84,125 +84,129 @@
         </div>
         <h4>voting1</h4>
         <v-list dense>
-          <v-list-item-group color="primary">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>ChainId</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.chainId }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Type</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.type }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Height</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.height }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Round</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.round }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Hash</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.hash }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Index</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.index }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Signature</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteAJson.signature }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>ChainId</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.chainId }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Type</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.type }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Height</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.height }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Round</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.round }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Hash</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteAJson.hash" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Index</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.index }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Signature</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteAJson.signature" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
         <h4>voting2</h4>
         <v-list dense>
-          <v-list-item-group color="primary">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>ChainId</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.chainId }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Type</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.type }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Height</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.height }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Round</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.round }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Hash</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.hash }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Index</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.index }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-list-item-title>Signature</v-list-item-title>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ voteBJson.signature }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>ChainId</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.chainId }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Type</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.type }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Height</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.height }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Round</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.round }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Hash</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+             <v-list-item-title>
+                <Address :val="voteBJson.hash" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Index</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.index }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Signature</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteBJson.signature" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-card>
     </v-dialog>
@@ -250,6 +254,7 @@ export default {
       voteListLoading: false,
       slashLoading: false,
       setProofDialog: false,
+      addrCopying: false,
       stakeManageInstance: '',
       commissionShareInstance: '',
       allStakeListLoading: false,
@@ -299,8 +304,8 @@ export default {
           amount: '560,000.00'
         }
       ],
-      voteAJson:[],
-      voteBJson:[],
+      voteAJson: [],
+      voteBJson: []
     };
   },
   computed: {
@@ -528,25 +533,24 @@ export default {
       }
     },
     async getSlashData() {
-      let data = await getSlashRecords(`miner=${this.$route.query.id}&offset=0&limit=10`);
+      let data = await getSlashRecords({miner:this.$route.query.id});
       this.slashList = data.data;
       this.slashList = this.slashList.map((item) => {
         let amount = web3.utils.fromWei(web3.utils.toBN(item.slashAmount));
-        this.voteAJson = item.voteAJson;
-        this.voteBJson = item.voteBJson;
         return {
           ...item,
           amount: amount
         };
       });
-      console.log('slashList', this.slashList);
     },
-    openProof() {
+    openProof(value) {
       this.setProofDialog = true;
+      this.voteAJson = value.voteAJson;
+      this.voteBJson = value.voteBJson;
     },
     cancelProof() {
       this.setProofDialog = false;
-    }
+    },
   }
 };
 </script>
@@ -595,6 +599,7 @@ export default {
   margin-top: 4px;
 }
 .reason-list {
+  font-size: 14px !important;
   background-color: #ffcdcd !important;
 }
 .dialog-night {
@@ -603,23 +608,23 @@ export default {
 .dialog-daytime {
   background-color: #fff;
 }
-.dialog-card{
+.dialog-card {
   padding: 20px;
 }
-.v-list-item{
-   color: #8B8B8B;
+.v-list-item {
+  color: #8b8b8b;
 }
-.theme--light.v-list-item:nth-child(odd){
-   background-color: #F0F0F0;
+.theme--light.v-list-item:nth-child(odd) {
+  background-color: #f0f0f0;
 }
-.theme--dark.v-list-item:nth-child(odd){
-   background-color: #393560;
+.theme--dark.v-list-item:nth-child(odd) {
+  background-color: #393560;
 }
-h4{
-    margin-top: 20px;
-  }
-.proof-title{
-  font-size:20px;
+h4 {
+  margin-top: 20px;
+}
+.proof-title {
+  font-size: 20px;
   font-weight: bold;
 }
 .dialog-validator {
@@ -632,5 +637,16 @@ h4{
     background-color: transparent;
     cursor: pointer;
   }
+}
+.copy-btn.v-btn.v-btn--has-bg {
+  background-color: transparent !important;
+  min-width: 0 !important;
+}
+.copy-btn.v-btn:not(.v-btn--round).v-size--default {
+  padding: 0;
+}
+.v-list-item--dense .v-list-item__icon,
+.v-list--dense .v-list-item .v-list-item__icon {
+  width: 56px !important;
 }
 </style>

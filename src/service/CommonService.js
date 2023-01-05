@@ -72,9 +72,9 @@ export const getAssetTokenList = (params) => http({
   url:`https://gateway.rei.network/api/nft/tokenlist/?`,
   params
 });
-export const getSlashRecords= (url,params) => http({
+export const getSlashRecords= (params) => http({
   method: 'get',
-  url:`https://gateway.rei.network/api/slashRecords?${url}`,
+  url:`https://gateway.rei.network/api/slashRecords?`,
   params
 });
 export const getAddressTag = (params) => http({
