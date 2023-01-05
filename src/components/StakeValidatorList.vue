@@ -533,6 +533,7 @@ export default {
       }
     },
     async getSlashData() {
+      this.slashLoading = true;
       let data = await getSlashRecords({miner:this.$route.query.id});
       this.slashList = data.data;
       this.slashList = this.slashList.map((item) => {
@@ -542,6 +543,7 @@ export default {
           amount: amount
         };
       });
+      this.slashLoading = false;
     },
     openProof(value) {
       this.setProofDialog = true;
