@@ -16,13 +16,25 @@
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
                 <v-list class="history-list">
-                    <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
-                    <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
+                  <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
+                  <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
                 </v-list>
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left">History of slash</v-tab>
+          <v-tab key="15" class="v-tab-left">
+            <v-row>
+              <div>History of slash</div>
+              <v-menu open-on-hover top offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                </template>
+                <v-list class="history-list">
+                  <p class="history-help">In the REI Network's Slash mechanism, if there is double signing behavior by validators, the penalty rate is 20%, which means that all users who voted for the penalized node and the node itself will lose 20% of the REI. </p>
+                </v-list>
+              </v-menu>
+            </v-row>
+          </v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
@@ -88,12 +100,17 @@
           </v-tab-item>
           <v-tab-item key="15">
             <v-data-table :headers="slashHeaders" :items="slashList" class="elevation-0" hide-default-footer :items-per-page="slashPerPage" :loading="slashLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
+               <template v-slot:item.slashBlockHeight="{ item }">
+                <a :class="dark?'block-dark block-link':'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
+                  <span> {{ item.slashBlockHeight }}</span>
+                </a>
+              </template>
               <template v-slot:item.timestamp="{ item }">
                 <span> {{ (item.slashBlockTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
               </template>
               <template v-slot:item.reason="{ item }">
                 <v-btn class="reason-list" @click="openProof(item)">
-                  <span style="font-size:12px;"> {{ item.reason }}></span>
+                  <span style="font-size:12px;"> {{ item.reason }} ></span>
                 </v-btn>
               </template>
               <template v-slot:item.amount="{ item }">
@@ -110,7 +127,7 @@
     <v-dialog v-model="setProofDialog" width="580">
       <v-card class="dialog-card" :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
-          <div class="proof-title">Proof</div>
+          <div class="proof-title">Evidence</div>
           <div @click="cancelProof" class="close-btn"><v-icon>mdi-close</v-icon></div>
         </div>
         <h4>voting1</h4>
@@ -733,15 +750,20 @@ h4 {
     cursor: pointer;
   }
 }
-.copy-btn.v-btn.v-btn--has-bg {
-  background-color: transparent !important;
-  min-width: 0 !important;
+.v-btn{
+  font-weight: normal !important;
 }
-.copy-btn.v-btn:not(.v-btn--round).v-size--default {
-  padding: 0;
+.block-dark{
+  color: #FFF;
 }
-.v-list-item--dense .v-list-item__icon,
-.v-list--dense .v-list-item .v-list-item__icon {
-  width: 56px !important;
+.block-light{
+  color: #000;
+}
+.block-light:hover{
+  color: #6979f8 !important;
+  text-decoration:underline ;
+}
+.theme--dark.v-list{
+  background:#504985 !important;
 }
 </style>
