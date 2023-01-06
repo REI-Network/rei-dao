@@ -24,7 +24,7 @@
           </v-tab>
           <v-tab key="15" class="v-tab-left">
             <v-row>
-              <div>History of slash</div>
+              <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
@@ -765,5 +765,8 @@ h4 {
 }
 .theme--dark.v-list{
   background:#504985 !important;
+}
+.v-tab{
+  padding:0 24px;
 }
 </style>
