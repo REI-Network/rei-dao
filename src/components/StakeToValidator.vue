@@ -893,7 +893,6 @@ export default {
       this.nodeListRaw = [].concat(this.nodeList);
       
       this.unJailPayAmount = await contract.methods.forfeit().call();
-      console.log(this.unJailPayAmount);
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -1430,7 +1429,6 @@ export default {
             query: getJailInfos,
             fetchPolicy: 'cache-first'
           });
-          console.log(this.nodeList)
       this.jailList = jailRecords;
       let jailListMap = jailRecords.map((item) => {
         return this.stakeManageInstance.methods.getVotingPowerByAddress(item.address).call();
@@ -1455,7 +1453,6 @@ export default {
       
 
       this.jailList = list;
-      console.log(this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },

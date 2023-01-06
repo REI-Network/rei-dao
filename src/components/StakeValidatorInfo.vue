@@ -451,8 +451,8 @@ export default {
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
 
-      this.votingPower =  web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower));
-      
+      this.votingPower =  this.detailData.votingPower ? web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower)):0;
+
       this.totalAmount = 0;
       for (let i = 0; i < this.activeInfoList.length; i++) {
         let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
@@ -505,7 +505,6 @@ export default {
       let balance = 0;
       if (this.connection.address) {
         balance = await this.commissionShareInstance.methods.balanceOf(this.connection.address).call();
-        console.log(balance);
       }
       return {
         balance
@@ -646,7 +645,7 @@ export default {
       this.calculationDialog = false;
     },
     calResponseRate(item){
-      if(!item) return 0;
+      if(!item||!item.minerMessage) return 0;
       let totalBlock = item.minerMessage.minedNumber*1 + item.minerMissRecordNumber*1;
       let percent = item.minerMessage.minedNumber/totalBlock*100
       return percent.toFixed(2)
