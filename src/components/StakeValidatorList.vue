@@ -16,8 +16,21 @@
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
                 <v-list class="history-list">
-                    <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
-                    <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
+                  <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
+                  <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
+                </v-list>
+              </v-menu>
+            </v-row>
+          </v-tab>
+          <v-tab key="15" class="v-tab-left">
+            <v-row>
+              <div>History of Slash</div>
+              <v-menu open-on-hover top offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
+                </template>
+                <v-list class="history-list">
+                  <p class="history-help">In the REI Network's Slash mechanism, if there is double signing behavior by validators, the penalty rate is 20%, which means that all users who voted for the penalized node and the node itself will lose 20% of the REI. </p>
                 </v-list>
               </v-menu>
             </v-row>
@@ -85,9 +98,166 @@
               <v-pagination v-model="historyPage" :length="historyPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
+          <v-tab-item key="15">
+            <v-data-table :headers="slashHeaders" :items="slashList" class="elevation-0" hide-default-footer :items-per-page="slashPerPage" :loading="slashLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
+               <template v-slot:item.slashBlockHeight="{ item }">
+                <a :class="dark?'block-dark block-link':'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
+                  <span> {{ item.slashBlockHeight }}</span>
+                </a>
+              </template>
+              <template v-slot:item.timestamp="{ item }">
+                <span> {{ (item.slashBlockTimestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
+              </template>
+              <template v-slot:item.reason="{ item }">
+                <v-btn class="reason-list" @click="openProof(item)">
+                  <span style="font-size:12px;"> {{ item.reason }} ></span>
+                </v-btn>
+              </template>
+              <template v-slot:item.amount="{ item }">
+                <span> {{ item.amount | asset(2) }}</span>
+              </template>
+            </v-data-table>
+            <div class="text-center pt-2" v-if="slashList.length > 10">
+              <v-pagination v-model="slashPage" :length="slashPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+            </div>
+          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
+    <v-dialog v-model="setProofDialog" width="580">
+      <v-card class="dialog-card" :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <div class="dialog-validator">
+          <div class="proof-title">Evidence</div>
+          <div @click="cancelProof" class="close-btn"><v-icon>mdi-close</v-icon></div>
+        </div>
+        <h4>voting1</h4>
+        <v-list dense>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>ChainId</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.chainId }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Type</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.type }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Height</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.height }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Round</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.round }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Hash</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteAJson.hash" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Index</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteAJson.index }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Signature</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteAJson.signature" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <h4>voting2</h4>
+        <v-list dense>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>ChainId</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.chainId }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Type</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.type }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Height</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.height }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Round</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.round }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Hash</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+             <v-list-item-title>
+                <Address :val="voteBJson.hash" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Index</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ voteBJson.index }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-list-item-title>Signature</v-list-item-title>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <Address :val="voteBJson.signature" ></Address>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -103,7 +273,7 @@ import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import Papa from 'papaparse';
-import { getAddressTag } from '../service/CommonService';
+import { getAddressTag, getSlashRecords } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -131,6 +301,12 @@ export default {
       stakeListLoading: false,
       voteListLoading: false,
       jailLoading: false,
+      slashPage: 1,
+      slashPageCount: 0,
+      slashPerPage: 20,
+      slashLoading: false,
+      setProofDialog: false,
+      addrCopying: false,
       stakeManageInstance: '',
       commissionShareInstance: '',
       allStakeListLoading: false,
@@ -173,7 +349,23 @@ export default {
           time: '2022-12-19 12:30',
           amount: 121545.0
         }
-      ]
+      ],
+      slashHeaders: [
+        { text: 'Block Height', value: 'slashBlockHeight' },
+        { text: 'Timestamp', value: 'timestamp' },
+        { text: 'Reason', value: 'reason' },
+        { text: 'Slash amount ($REI)', value: 'amount' }
+      ],
+      slashList: [
+        {
+          slashBlockHeight: '9185063',
+          timestamp: '2022/12/03 12:26:18',
+          reason: 'double signatures >',
+          amount: '560,000.00'
+        }
+      ],
+      voteAJson: [],
+      voteBJson: []
     };
   },
   computed: {
@@ -187,6 +379,7 @@ export default {
     this.connect();
     this.init();
     this.getHistoryJail();
+    this.getSlashData();
   },
   methods: {
     connect() {
@@ -439,7 +632,28 @@ export default {
       })
       console.log('historyList',this.historyList)
        this.jailLoading = false;
-    }
+    },
+    async getSlashData() {
+      this.slashLoading = true;
+      let data = await getSlashRecords({miner:this.$route.query.id});
+      this.slashList = data.data;
+      this.slashList = this.slashList.map((item) => {
+        let amount = web3.utils.fromWei(web3.utils.toBN(item.slashAmount));
+        return {
+          ...item,
+          amount: amount
+        };
+      });
+      this.slashLoading = false;
+    },
+    openProof(value) {
+      this.setProofDialog = true;
+      this.voteAJson = value.voteAJson;
+      this.voteBJson = value.voteBJson;
+    },
+    cancelProof() {
+      this.setProofDialog = false;
+    },
   }
 };
 </script>
@@ -495,5 +709,64 @@ export default {
 }
 .history-help{
   text-indent:2em;
+}
+.reason-list {
+  font-size: 14px !important;
+  background-color: #ffcdcd !important;
+}
+.dialog-night {
+  background-color: #595777;
+}
+.dialog-daytime {
+  background-color: #fff;
+}
+.dialog-card {
+  padding: 20px;
+}
+.v-list-item {
+  color: #8b8b8b;
+}
+.theme--light.v-list-item:nth-child(odd) {
+  background-color: #f0f0f0;
+}
+.theme--dark.v-list-item:nth-child(odd) {
+  background-color: #393560;
+}
+h4 {
+  margin-top: 20px;
+}
+.proof-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.dialog-validator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .close-btn {
+    margin-right: 16px;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+  }
+}
+.v-btn{
+  font-weight: normal !important;
+}
+.block-dark{
+  color: #FFF;
+}
+.block-light{
+  color: #000;
+}
+.block-light:hover{
+  color: #6979f8 !important;
+  text-decoration:underline ;
+}
+.theme--dark.v-list{
+  background:#504985 !important;
+}
+.v-tab{
+  padding:0 24px;
 }
 </style>
