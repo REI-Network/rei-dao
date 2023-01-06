@@ -96,7 +96,7 @@
     <v-dialog v-model="setProofDialog" width="580">
       <v-card class="dialog-card" :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
-          <div class="proof-title">Proof</div>
+          <div class="proof-title">Evidence</div>
           <div @click="cancelProof" class="close-btn"><v-icon>mdi-close</v-icon></div>
         </div>
         <h4>voting1</h4>
