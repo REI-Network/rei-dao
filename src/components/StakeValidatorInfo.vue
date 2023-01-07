@@ -10,7 +10,7 @@
         <div class="fans-right">
           <v-row align="center">
             <h3 class="validator-nodename" v-if="detail && detail.nodeName">{{ detail.nodeName }}</h3>
-            <div v-if="detailData" :class="detailData.active?'active':'not-active'">{{ status[detailData.active] }}</div>
+            <div v-if="detailData" :class="activeClass[detailData.active]">{{ status[detailData.active] }}</div>
             <div class="three-img">
               <!-- <v-img class="img-icon" src="../assets/images/twitter.svg" width="20" height="20"/> -->
               <a v-if="detail && detail.website" :href="detail.website" target="_blank"><v-img class="img-icon" src="../assets/images/circle-icon.svg" width="20" height="20" /></a>
@@ -36,7 +36,7 @@
             {{ $t('stake.claim') }}
           </v-btn>
         </div>
-        <div v-if="detailData.active">
+        <div v-if="detailData.active==true">
           <v-btn width="196" small color="start_unstake" class="calculate-btn unstake_btn" height="32" @click="setCalculation()">
             <span class="iconfont">&#xe619;</span><span style="font-size:12px;">Calculate Rewards</span>
           </v-btn>
@@ -205,7 +205,8 @@
                 <div class="font-grey">&nbsp;&nbsp;Commission Rate: {{ detailData.commissionRate }}%</div>
               </v-row>
               <v-row>
-                <div class="calculate-address">{{ detail.nodeAddress  }}</div>
+                <div class="calculate-address" v-if="detail&&detail.nodeAddress">{{ detail.nodeAddress  }}</div>
+                <span class="font-grey" v-else>{{ detailData && detailData.address }}</span>
                 <v-btn @click="copyAddr(detail.address)" style="margin-top:8px;">
                   <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
                 </v-btn>
@@ -310,7 +311,13 @@ export default {
       votingPower:0,
       status: {
         true: this.$t('stake.isActive'),
-        false: this.$t('stake.notActive')
+        false: this.$t('stake.notActive'),
+        jail: 'Jail'
+      },
+      activeClass: {
+        true: 'active',
+        false: 'not-active',
+        jail: 'jail'
       },
       form: {
         amount: 0
@@ -451,7 +458,16 @@ export default {
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
       this.detailData = find(this.validatorList, (item) => web3.utils.toChecksumAddress(item.address) == web3.utils.toChecksumAddress(address));
 
-      this.votingPower =  this.detailData.votingPower ? web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower)):0;
+      this.votingPower =  this.detailData&&this.detailData.votingPower ? web3.utils.fromWei(web3.utils.toBN(this.detailData.votingPower)):0;
+
+      if(!this.detailData){
+        this.detailData = {};
+        let votingPower = await this.stakeManageInstance.methods.getVotingPowerByAddress(web3.utils.toChecksumAddress(address)).call();
+        let res = await this.stakeManageInstance.methods.validators(address).call();
+        this.detailData.active = 'jail';
+        this.detailData.commissionRate = res.commissionRate;
+        this.votingPower = votingPower ? web3.utils.fromWei(web3.utils.toBN(votingPower)):0;
+      }
 
       this.totalAmount = 0;
       for (let i = 0; i < this.activeInfoList.length; i++) {
@@ -822,6 +838,14 @@ export default {
   margin-left: 2px;
   padding: 2px 10px;
   color: #fff;
+}
+.jail{
+  line-height: 20px;
+  background-color: #f5f9fd;
+  border-radius: 15px;
+  margin-left: 2px;
+  padding: 2px 10px;
+  color: #868e9e;
 }
 .light-amount {
   color: #6979F8;

@@ -33,7 +33,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import find from 'lodash/find';
 export default {
   data() {
     return {
@@ -110,13 +109,8 @@ export default {
   watch: {
   },
   mounted(){
-   this.getRoute()
   },
   methods: {
-    getRoute(){
-        let path = find(this.links, (item) => item.link == this.$route.path);
-        this.value = path.name;
-    },
     go(e, link) {
       if (link != this.$route.path) {
         this.$router.replace(link);
