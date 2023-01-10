@@ -64,15 +64,15 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="walletDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
-                  <v-row align="center" class="assets-list">
+                  <v-row align="center" class="assets-list" @click="walletDetails(item)">
                     <div class="asset-logo">
                       <v-lazy class="logoWrap">
                         <v-img :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="30" height="30"></v-img>
                       </v-lazy>
                     </div>
-                    <div>{{ item.symbol }} </div>
+                    <div class="name-hover">{{ item.symbol }} </div>
                   </v-row>
                 </template>
                 <template v-slot:item.price="{ item }">
@@ -536,6 +536,10 @@ export default {
 .font-grey {
   font-size: 14px;
   color: #868e9e;
+}
+.name-hover:hover {
+  color: #4856c0;
+  text-decoration: underline;
 }
 .hideButton{
   cursor: pointer;

@@ -113,13 +113,13 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" @click:row="assetsDetails" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                  <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading"  :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                     <template v-slot:item.assets="{ item }">
-                      <v-row align="center" class="assets-list">
+                      <v-row align="center" class="assets-list" @click="assetsDetails(item)">
                         <div class="asset-logo">
                           <v-img :src="$IpfsGateway(item.logo)" width="30" height="30"></v-img>
                         </div>
-                        <div>{{ item.symbol }}</div>
+                        <div class="name-hover">{{ item.symbol }}</div>
                       </v-row>
                     </template>
                     <template v-slot:item.price="{ item }">
@@ -150,14 +150,14 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage" :loading="getNftListLoading" @click:row="assetsNft" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage" @page-count="nftPageCount = $event">
+                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage" :loading="getNftListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage" @page-count="nftPageCount = $event">
                     <template v-slot:item.assets="{ item }">
-                      <v-row align="center" class="assets-list">
+                      <v-row align="center" class="assets-list" @click="assetsNft(item)">
                         <div class="asset-logo">
                           <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
                           <v-img :src="$IpfsGateway(item.image)" width="40" height="40" lazy-src="../assets/images/logo_bg.png" ></v-img>
                         </div>
-                        <div>{{ item.name }}</div>
+                        <div class="name-hover">{{ item.name }}</div>
                       </v-row>
                     </template>
                     <template v-slot:item.address="{ item }">
@@ -182,14 +182,14 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNft721ListLoading" @click:row="getNftCollection" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
+                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNft721ListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
                     <template v-slot:item.assets="{ item }">
-                      <v-row align="center" class="assets-list">
+                      <v-row align="center" class="assets-list" @click="getNftCollection(item)">
                         <div class="asset-logo">
                           <!-- <video v-if="!item.imageShow" controls preload="meta" class="video-play" :src="item.image" :poster="poster"></video> -->
                           <v-img :src="$IpfsGateway(item.image)" width="40" height="40" lazy-src="../assets/images/logo_bg.png" ></v-img>
                         </div>
-                        <div>{{ item.name }}</div>
+                        <div class="name-hover">{{ item.name }}</div>
                       </v-row>
                     </template>
                     <template v-slot:item.address="{ item }">
@@ -889,6 +889,10 @@ export default {
 }
 .wallet-icon {
   margin-right: 8px;
+}
+.name-hover:hover {
+  color: #4856c0;
+  text-decoration: underline;
 }
 @media screen and (max-width: 900px) {
   .stake {
