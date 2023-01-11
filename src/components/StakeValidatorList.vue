@@ -302,8 +302,6 @@ export default {
       slashPage: 1,
       slashPageCount: 0,
       slashPerPage: 20,
-      stakeListLoading: false,
-      voteListLoading: false,
       slashLoading: false,
       setProofDialog: false,
       addrCopying: false,
@@ -441,7 +439,6 @@ export default {
           let key = web3.utils.toChecksumAddress(addressTag[i].address);
           addressTagMap[key] = addressTag[i];
         }
-        console.log(addressTagMap);
         let balanceOfShare = await Promise.all(balanceOfShareMap);
         var arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
@@ -506,7 +503,6 @@ export default {
           amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
         };
       });
-      console.log('myVoteInfos', this.myVotesList);
 
       this.voteListLoading = false;
     },
@@ -546,7 +542,6 @@ export default {
           amount: web3.utils.fromWei(web3.utils.toBN(item.shares))
         };
       });
-      console.log('unStakeInfos', this.myWithdrawalsList);
 
       this.withdrawListLoading = false;
     },
@@ -622,7 +617,6 @@ export default {
         query: getJailInfos,
         fetchPolicy: 'cache-first'
       });
-      console.log('jailRecords', jailRecords);
       this.historyList = jailRecords.map((item) => {
         let unjailedForfeit = item.unjailedForfeit ? web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit)):0;
         return{
@@ -630,7 +624,6 @@ export default {
           unjailedForfeit:unjailedForfeit,
         }
       })
-      console.log('historyList',this.historyList)
        this.jailLoading = false;
     },
     async getSlashData() {

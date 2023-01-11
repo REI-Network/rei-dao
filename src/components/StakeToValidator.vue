@@ -48,18 +48,20 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer @click:row="validatorDetails" :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-lazy class="logoWrap">
-                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
-                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                </v-lazy>
-                <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
-                <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
-                <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
-                <v-btn v-if="item.active" text outlined color="validator" @click.stop="setCalculation(item)">
-                  <span class="iconfont">&#xe619;</span>
-                </v-btn>
+                <div @click="validatorDetails(item)">
+                  <v-lazy class="logoWrap">
+                    <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                  </v-lazy>
+                  <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                  <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
+                  <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
+                  <v-btn v-if="item.active" text outlined color="validator" @click.stop="setCalculation(item)">
+                    <span class="iconfont">&#xe619;</span>
+                  </v-btn>
+                </div>
               </template>
               <template v-slot:item.apr="{ item }"> {{ item.apr | asset(2) }}% </template>
               <template v-slot:item.responseRate="{ item }">
@@ -125,11 +127,11 @@
               <template v-slot:item.validators="{ item }">
                 <v-row align="center" @click="getJailRecords(item.address)" class="jail-head">
                   <v-lazy class="logoWrap">
-                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
-                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                </v-lazy>
-                <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
-                <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
+                    <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                  </v-lazy>
+                  <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                  <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                   <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">Jail</div>
                 </v-row>
               </template>
@@ -137,16 +139,16 @@
                 <div>{{ item.power | asset(2) }}</div>
               </template>
               <template v-slot:item.timestamp="{ item }">
-                <div>{{ item.timestamp * 1000 | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+                <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
                 <div v-if="item.address.toUpperCase() == connection.address.toUpperCase()">
                   <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
                 </div>
-                <div v-else> - </div>
+                <div v-else>-</div>
               </template>
             </v-data-table>
-            <v-row justify="end" align="center" v-if="jailList.length > 10" style="margin-bottom:20px;">
+            <v-row justify="end" align="center" v-if="jailList.length > 10" style="margin-bottom: 20px">
               <div class="text-center pt-2">
                 <v-pagination v-model="jailPage" :length="jailPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
@@ -156,15 +158,16 @@
             <UnstakeToValidator></UnstakeToValidator>
           </v-tab-item>
           <v-tab-item key="14">
-            <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" @click:row="myVoteDetails" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
+            <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
               <template v-slot:item.address="{ item }">
-                <v-lazy class="logoWrap">
-                  <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
-                  <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
-                </v-lazy>
-                <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
-                <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
-                <!-- <Address :val="item.address"></Address> -->
+                <div @click="myVoteDetails(item)">
+                  <v-lazy class="logoWrap">
+                    <v-img v-if="item.logo" :src="$IpfsGateway(item.logo)" lazy-src="../assets/images/logo_bg_small.png" width="24" height="24" class="logo-image"></v-img>
+                    <v-img v-else src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                  </v-lazy>
+                  <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
+                  <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
+                </div>
               </template>
               <template v-slot:item.power="{ item }">
                 {{ item.power | asset(2) }}
@@ -516,10 +519,10 @@
           <v-col>
             <v-row align="center">
               <h3>{{ unJailAmount | asset(0) }}</h3>
-              <span style="margin-left:8px;">REI</span>
+              <span style="margin-left: 8px">REI</span>
             </v-row>
           </v-col>
-          <v-col style="text-align:right;">
+          <v-col style="text-align: right">
             <v-btn tile small color="vote_button" :loading="unjailLoading" @click="submitPay" class="mr-4 font-btn btn-radius" height="32" width="100"> Pay </v-btn>
           </v-col>
         </v-row>
@@ -638,8 +641,7 @@ export default {
         { text: 'Time in Jail', value: 'timestamp' },
         { text: 'Operation', value: 'operation' }
       ],
-      jailList: [
-      ],
+      jailList: [],
       status: {
         true: this.$t('stake.isActive'),
         false: this.$t('stake.notActive')
@@ -686,8 +688,8 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
-      unJailPayAmount:'20000',
-      unJailAmount:0,
+      unJailPayAmount: '20000',
+      unJailAmount: 0,
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
       rateRules: [(v) => !!v || this.$t('msg.please_input_number'), (v) => (v && util.isNumber(v) && v >= 1 && v <= 100) || this.$t('msg.please_input_1_100_num')],
@@ -708,7 +710,6 @@ export default {
     this.connect();
     this.init();
     this.windowWidth();
-    
   },
   methods: {
     ...mapActions({
@@ -852,7 +853,7 @@ export default {
         };
         minedInfoMap[_address] = obj;
       }
-      
+
       this.totalAmount = 0;
       for (let i = 0; i < this.activeList.length; i++) {
         let item = this.activeList[i];
@@ -891,9 +892,8 @@ export default {
         };
       });
       this.nodeListRaw = [].concat(this.nodeList);
-      
+
       this.unJailPayAmount = await contract.methods.forfeit().call();
-      console.log(this.unJailPayAmount);
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let minIndexVotingPower = await contract.methods.minIndexVotingPower().call();
@@ -1415,7 +1415,7 @@ export default {
 
       const getJailInfos = gql`
         query jailRecords {
-          jailRecords(where:{unjailedBlockNumber:null}) {
+          jailRecords(where: { unjailedBlockNumber: null }) {
             id
             address
             blockNumber
@@ -1426,36 +1426,35 @@ export default {
           }
         }
       `;
-      const { data: { jailRecords } } = await client.query({
-            query: getJailInfos,
-            fetchPolicy: 'cache-first'
-          });
-          console.log(this.nodeList)
+      const {
+        data: { jailRecords }
+      } = await client.query({
+        query: getJailInfos,
+        fetchPolicy: 'cache-first'
+      });
       this.jailList = jailRecords;
       let jailListMap = jailRecords.map((item) => {
         return this.stakeManageInstance.methods.getVotingPowerByAddress(item.address).call();
       });
       let validatorPower = await Promise.all(jailListMap);
-      let list = []
-      for(let i = 0; i < validatorPower.length; i++){
-       let power = web3.utils.fromWei(web3.utils.toBN(validatorPower[i]))
-       let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(this.jailList[i].address));
-        let nodeName,logo;
+      let list = [];
+      for (let i = 0; i < validatorPower.length; i++) {
+        let power = web3.utils.fromWei(web3.utils.toBN(validatorPower[i]));
+        let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(this.jailList[i].address));
+        let nodeName, logo;
         if (detail) {
           nodeName = detail.nodeName;
           logo = detail.logo;
         }
-       list.push({
-        ...this.jailList[i],
-        power,
-        nodeName,
-        logo
-       })
+        list.push({
+          ...this.jailList[i],
+          power,
+          nodeName,
+          logo
+        });
       }
-      
 
       this.jailList = list;
-      console.log(this.jailList)
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
     },
@@ -1468,11 +1467,7 @@ export default {
     async submitPay() {
       try {
         this.unjailLoading = true;
-        const unjailRes = await this.stakeManageInstance.methods.unjail().send(
-          { from: this.connection.address,
-            value: web3.utils.numberToHex(this.unJailPayAmount)
-          }
-        );
+        const unjailRes = await this.stakeManageInstance.methods.unjail().send({ from: this.connection.address, value: web3.utils.numberToHex(this.unJailPayAmount) });
         if (unjailRes.transactionHash) {
           console.log(unjailRes);
           this.addTx({
@@ -1482,7 +1477,7 @@ export default {
               status: 'PENDING',
               data: {
                 amount: web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount)),
-                symbol: 'REI',
+                symbol: 'REI'
               },
               timestamp: new Date().getTime()
             }
@@ -1496,11 +1491,11 @@ export default {
       }
       this.unjailLoading = false;
     },
-    getJailRecords(value){
+    getJailRecords(value) {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value,
+          id: value
         }
       });
     }
@@ -1660,6 +1655,7 @@ export default {
 }
 .name-hover:hover {
   color: #4856c0;
+  text-decoration: underline;
 }
 .theme--dark.v-tabs-items {
   background-color: transparent;
@@ -1867,7 +1863,7 @@ export default {
 .pay-btn {
   margin: 28px 20px;
 }
-.jail-head:hover{
+.jail-head:hover {
   cursor: pointer;
 }
 @keyframes metronome-example {
