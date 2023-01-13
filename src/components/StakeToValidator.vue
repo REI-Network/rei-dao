@@ -554,6 +554,8 @@ const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 const ONE_DAY_UNIX = 24 * 60 * 60;
 
 let client = null;
+let clientStake = null;
+let clientReward = null;
 
 export default {
   components: {
@@ -731,11 +733,17 @@ export default {
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
 
       let blockHeight = await web3.eth.getBlockNumber();
+      let currentBlockHeight = localStorage.getItem('currentBlockHeight') || blockHeight;
+      if((blockHeight-currentBlockHeight) < 60){
+        blockHeight = currentBlockHeight;
+      }
       let url = this.apiUrl.graph;
-      client = new ApolloClient({
-        uri: `${url}chainMonitorBetterPos`,
-        cache: new InMemoryCache()
-      });
+      if(!client){
+        client = new ApolloClient({
+          uri: `${url}chainMonitorBetterPos`,
+          cache: new InMemoryCache()
+        });
+      }
       const getValidatorsInfos = gql`
         query validators($blockHeight: String) {
           validators(where: { id: $blockHeight }) {
@@ -765,8 +773,10 @@ export default {
           return validators;
         };
         let _validator = await getData(blockHeight);
+        localStorage.setItem('currentBlockHeight', blockHeight);
         if (!_validator.length) {
           _validator = await getValidatorList(blockHeight - 1);
+          localStorage.setItem('currentBlockHeight', blockHeight-1);
         }
         return _validator;
       };
@@ -832,7 +842,13 @@ export default {
       this.getJailList();
 
       // get validator response rate;
-      const endTimestamp = dayjs().unix();
+      let currentEndTime = localStorage.getItem('currentEndTime');
+      let endTimestamp = dayjs().unix();
+      if((endTimestamp - currentEndTime) < 180 ){
+        endTimestamp = currentEndTime
+      } else {
+        localStorage.setItem('currentEndTime', endTimestamp);
+      }
       const startTimestampDay1 = endTimestamp - ONE_DAY_UNIX;
       const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX * 7;
 
@@ -907,10 +923,13 @@ export default {
     async getMinedInfo() {},
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
-      let client = new ApolloClient({
-        uri: `${url}chainMonitorOnlyForStake`,
-        cache: new InMemoryCache()
-      });
+      if(!clientStake){
+        clientStake = new ApolloClient({
+          uri: `${url}chainMonitorOnlyForStake`,
+          cache: new InMemoryCache()
+        });
+      }
+
       const getStakeinfos = gql`
          query stakeInfos {
             stakeInfos(where: { from: "${this.connection.address}" }) {
@@ -923,7 +942,7 @@ export default {
         `;
       const {
         data: { stakeInfos }
-      } = await client.query({
+      } = await clientStake.query({
         query: getStakeinfos,
         variables: {},
         fetchPolicy: 'cache-first'
@@ -932,10 +951,12 @@ export default {
     },
     async getMyStakeRewardList() {
       let url = this.apiUrl.graph;
-      let client = new ApolloClient({
-        uri: `${url}voteReward`,
-        cache: new InMemoryCache()
-      });
+      if(!clientReward){
+        clientReward = new ApolloClient({
+          uri: `${url}voteReward`,
+          cache: new InMemoryCache()
+        });
+      }
       const getVoterInfos = gql`
         query voterInfos($arrId: [String]) {
           voterInfos(where: { id_in: $arrId }) {
@@ -953,7 +974,7 @@ export default {
       }
       const {
         data: { voterInfos }
-      } = await client.query({
+      } = await clientReward.query({
         query: getVoterInfos,
         variables: {
           arrId
@@ -1407,11 +1428,12 @@ export default {
     async getJailList() {
       this.jailLoading = true;
       let url = this.apiUrl.graph;
-
-      client = new ApolloClient({
-        uri: `${url}chainMonitorBetterPos`,
-        cache: new InMemoryCache()
-      });
+      if(!client){
+        client = new ApolloClient({
+          uri: `${url}chainMonitorBetterPos`,
+          cache: new InMemoryCache()
+        });
+      }
 
       const getJailInfos = gql`
         query jailRecords {

@@ -439,7 +439,13 @@ export default {
       let address = this.$route.query.id;
 
       // get validator response rate;
-      const endTimestamp = dayjs().unix();
+      let currentEndTime = localStorage.getItem('currentEndTime');
+      let endTimestamp = dayjs().unix();
+      if((endTimestamp - currentEndTime) < 180 ){
+        endTimestamp = currentEndTime
+      } else {
+        localStorage.setItem('currentEndTime', endTimestamp);
+      }
       const startTimestampDay1 = endTimestamp - ONE_DAY_UNIX;
       const startTimestampDay7 = endTimestamp - ONE_DAY_UNIX*7;
 
