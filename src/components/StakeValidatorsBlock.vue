@@ -191,22 +191,11 @@ export default {
                 maxWidth: 450
               },
               option: {
-                graphic: {
-                  type: 'text',
-                  left: '36%',
-                  top: '51%',
-                  style: {
-                    text: 'Validator Voting Power',
-                    fill: '#868e9e',
-                    textAlign: 'center',
-                    fontSize: 12
-                  }
-                },
                 legend: false,
                 series: [
                   {
                     radius: ['24%', '40%'],
-                    center: ['24%', '50%']
+                    center: ['50%', '50%']
                   }
                 ]
               }
@@ -236,7 +225,7 @@ export default {
               formatter: function (params) {
                 let produced = util.asset(params.data.produced,0);
                 let value = params.data.value;
-                let rate = params.data.value/(params.data.produced+params.data.value);
+                let rate = params.data.value/(params.data.produced+params.data.value)*100;
                 let lossRate = util.asset(rate,4);
                 let name = '';
                 if(params.data.name){
