@@ -1,85 +1,66 @@
-import http from './http';
-export const getUnstake = (apiurl, params) => http({
-    method: 'GET',
-    url: `${apiurl}api/Unstake`,
-    params
+import axios from './http';
+
+import { cacheAdapterEnhancer } from 'axios-extensions';
+
+const http = axios.create({
+	adapter: cacheAdapterEnhancer(axios.defaults.adapter)
 });
 
-export const getMyStake = (apiurl,params) => http({
-    method: 'GET',
-    url: `${apiurl}api/MyStakeAddress`,
-    params
-});
-
-export const getAssetPrice = (apiurl,params) => http({
-    method: 'GET',
-    url: `${apiurl}market/asset/chart`,
-    params
-});
-
-export const getAssetInfo = (apiurl,params) => http({
-    method: 'GET',
-    url: `${apiurl}market/asset/info`,
-    params
-});
-
-export const getPrice = (params) => http({
-  method: 'GET',
-  url: `https://api-market-main.rei.network/market/asset/price`,
+export const getUnstake = (apiurl, params) => http(`${apiurl}api/Unstake`,{
   params
 });
 
-export const getValidatorList = (params) => http({
-    method: 'GET',
-    url:'https://gateway.rei.network/api/validator',
-    params
-});
-export const getValidatorDetails = (params) => http({
-    method: 'GET',
-    url:'/data/validator/validator-list.json',
-    params
-});
-
-export const getReiSatistic = (params) => http({
-  method: 'GET',
-  url:'https://gateway.rei.network/api/reistats',
+export const getMyStake = (apiurl,params) => http(`${apiurl}api/MyStakeAddress`,{
   params
 });
 
-export const getNftHolder = (params) => http({
-  method: 'GET',
-  url:'https://gateway.rei.network/api/nft/holder',
+export const getAssetPrice = (apiurl,params) => http(`${apiurl}market/asset/chart`, {
   params
 });
 
-export const getValidatorMinedInfo = (params) => http({
-  method: 'get',
-  url:'https://gateway.rei.network/api/miner',
+export const getAssetInfo = (apiurl, params) => http(`${apiurl}market/asset/info`,{
   params
 });
-export const getHistoryData = (url,params) => http({
-  method: 'get',
-  url:`https://scan.rei.network/api?${url}`,
+
+export const getPrice = (params) => http('https://api-market-main.rei.network/market/asset/price',{
   params
 });
-export const getTokenHolder = (url,params) => http({
-  method: 'get',
-  url:`https://gateway.rei.network/api/rei/holder${url}`,
+
+export const getValidatorList = (params) => http('https://gateway.rei.network/api/validator',{
   params
 });
-export const getAssetTokenList = (params) => http({
-  method: 'get',
-  url:`https://gateway.rei.network/api/nft/tokenlist/?`,
+export const getValidatorDetails = (params) => http('/data/validator/validator-list.json',{
   params
 });
-export const getSlashRecords= (params) => http({
-  method: 'get',
-  url:`https://gateway.rei.network/api/slashRecords`,
+
+export const getReiSatistic = (params) => http.get('https://gateway.rei.network/api/reistats',
+{
   params
 });
-export const getAddressTag = (params) => http({
-  method: 'GET',
-  url:'/data/address/address-tag-list.json',
+
+export const getNftHolder = (params) => http('https://gateway.rei.network/api/nft/holder',{
+  params
+});
+
+export const getValidatorMinedInfo = (params) => http.get('https://gateway.rei.network/api/miner',
+{
+  params
+});
+
+
+export const getHistoryData = (url,params) => http(`https://scan.rei.network/api?${url}`,{
+  params
+});
+export const getTokenHolder = (url,params) => http(`https://gateway.rei.network/api/rei/holder${url}`,{
+  params
+});
+export const getAssetTokenList = (params) => http(`https://gateway.rei.network/api/nft/tokenlist/`,{
+  params
+});
+export const getSlashRecords= (params) => http(`https://gateway.rei.network/api/slashRecords`,{
+  params
+});
+export const getAddressTag = (params) => http('/data/address/address-tag-list.json',{
   params
 });
 
@@ -112,8 +93,6 @@ export const postRpcRequest = (apiurl,params) => http({
 });
 
 
-export const getResponseTime = (url,params) => http({
-  method: 'get',
-  url:url,
+export const getResponseTime = (url,params) => http(url,{
   params
 });
