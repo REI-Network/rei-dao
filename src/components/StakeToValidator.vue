@@ -111,6 +111,7 @@
                 <span v-if="!connection.address"> - </span>
               </template>
             </v-data-table>
+            <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
               <div class="text-center pt-2">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
@@ -563,6 +564,8 @@ export default {
   filters,
   data() {
     return {
+      skeletonLoading:true,
+      boilerplate:true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -824,6 +827,7 @@ export default {
       this.notActiveList = notActiveList;
 
       this.stakeListLoading = false;
+      this.skeletonLoading = false;
       let nodeArr = activeList.map((item) => {
         return item.address;
       });
