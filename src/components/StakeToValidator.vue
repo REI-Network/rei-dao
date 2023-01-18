@@ -48,7 +48,7 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
                 <div @click="validatorDetails(item)">
                   <v-lazy class="logoWrap">

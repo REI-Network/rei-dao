@@ -63,7 +63,7 @@
                   <v-divider class="faq_border" />
                   <v-tabs-items v-model="tab2">
                     <v-tab-item key="11">
-                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="reiPage" @page-count="reiPageCount = $event">
+                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="reiPage" @page-count="reiPageCount = $event">
                         <template v-slot:item.rank="{ item }">
                           <span>{{ item.rank }}</span>
                         </template>
@@ -78,6 +78,7 @@
                           <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                         </template>
                       </v-data-table>
+                      <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                       <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                         <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                           <v-icon>mdi-chevron-left</v-icon>
@@ -239,6 +240,8 @@ export default {
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
+      skeletonLoading:true,
+      boilerplate:true,
       tab1: null,
       tab2: null,
       radios: null,
@@ -566,6 +569,7 @@ export default {
       this.getAccountList();
       this.getAddressCount();
       this.loading = false;
+      this.skeletonLoading = false;  
     },
     async getAccountList() {
       let data = await getTokenHolder('');
@@ -591,6 +595,7 @@ export default {
       this.countPage++;
       this.totalList.push(this.accountList);
       this.loading = false;
+      this.skeletonLoading = false;
     },
     ForwardPage() {
       this.count -= 50;
