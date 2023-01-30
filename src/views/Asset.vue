@@ -63,7 +63,7 @@
                   <v-divider class="faq_border" />
                   <v-tabs-items v-model="tab2">
                     <v-tab-item key="11">
-                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="reiPage" @page-count="reiPageCount = $event">
+                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="reiPage" @page-count="reiPageCount = $event">
                         <template v-slot:item.rank="{ item }">
                           <span>{{ item.rank }}</span>
                         </template>
@@ -78,6 +78,7 @@
                           <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                         </template>
                       </v-data-table>
+                      <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                       <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                         <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                           <v-icon>mdi-chevron-left</v-icon>
@@ -169,6 +170,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
+                  <v-skeleton-loader class="skeleton" v-if="nftSkeletonLoading == true" :loading="nftSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                   <div class="text-center pt-2" v-if="nftList.length > 10">
                     <v-pagination v-model="nftPage" :length="nftPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
@@ -239,6 +241,8 @@ export default {
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
+      skeletonLoading:true,
+      nftSkeletonLoading:true,
       tab1: null,
       tab2: null,
       radios: null,
@@ -566,6 +570,7 @@ export default {
       this.getAccountList();
       this.getAddressCount();
       this.loading = false;
+      this.skeletonLoading = false;  
     },
     async getAccountList() {
       let data = await getTokenHolder('');
@@ -591,6 +596,7 @@ export default {
       this.countPage++;
       this.totalList.push(this.accountList);
       this.loading = false;
+      this.skeletonLoading = false;
     },
     ForwardPage() {
       this.count -= 50;
@@ -710,6 +716,7 @@ export default {
       }
       // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
+      this.nftSkeletonLoading = false;
       this.getNftListLoading = false;
     },
     async getNFTList721() {
@@ -893,6 +900,9 @@ export default {
 .name-hover:hover {
   color: #4856c0;
   text-decoration: underline;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .stake {

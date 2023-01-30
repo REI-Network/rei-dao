@@ -48,7 +48,7 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
                 <div @click="validatorDetails(item)">
                   <v-lazy class="logoWrap">
@@ -111,6 +111,7 @@
                 <span v-if="!connection.address"> - </span>
               </template>
             </v-data-table>
+            <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
               <div class="text-center pt-2">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
@@ -565,6 +566,7 @@ export default {
   filters,
   data() {
     return {
+      skeletonLoading:true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -834,6 +836,7 @@ export default {
       this.notActiveList = notActiveList;
 
       this.stakeListLoading = false;
+      this.skeletonLoading = false;
       let nodeArr = activeList.map((item) => {
         return item.address;
       });
@@ -1887,6 +1890,9 @@ export default {
 }
 .jail-head:hover {
   cursor: pointer;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @keyframes metronome-example {
   from {

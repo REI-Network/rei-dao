@@ -56,7 +56,7 @@
               <span class="title">All Holders</span>
             </v-col>
           </v-row>
-          <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage2" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page2" @page-count="pageCount2 = $event">
+          <v-data-table :headers="headers" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage2" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page2" @page-count="pageCount2 = $event">
             <template v-slot:item.address="{ item }">
               <v-row align="center">
                 <div class="asset-logo">
@@ -70,6 +70,7 @@
               <span>{{ item.balance }}</span>
             </template>
           </v-data-table>
+           <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
           <div class="text-center pt-2" v-if="holderList.length > 0">
             <v-pagination v-model="page2" :length="pageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
           </div>
@@ -123,6 +124,7 @@ export default {
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
+      skeletonLoading:true,
       page: 1,
       pageCount: 1,
       itemsPerPage: 18,
@@ -230,7 +232,8 @@ export default {
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);
       this.holderList = holderList;
-      this.getListLoading = false;
+      this.getListLoading = false
+      this.skeletonLoading = false;
     },
     openNftHelp() {
       this.nftHelpDialog = true;
@@ -549,6 +552,9 @@ a:hover {
     background-color: transparent;
     cursor: pointer;
   }
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {

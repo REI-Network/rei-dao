@@ -44,7 +44,7 @@
         <v-tab-item key="1">
           <v-row class="background">
             <v-col>
-              <v-data-table :headers="headers" :items="bridgeList" class="background elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+              <v-data-table :headers="headers" :items="bridgeList" class="background elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" loading-text="" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.symbol="{ item }">
                   <div class="bridge-label">
                     <div class="left-img">
@@ -90,6 +90,7 @@
                   <v-btn small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32"> Revoke </v-btn>
                 </template>
               </v-data-table>
+               <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
               <div class="text-pagination pt-2" v-if="bridgeList.length > 0">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
@@ -438,6 +439,7 @@ export default {
   filters,
   data() {
     return {
+      skeletonLoading:true,
       tab: '1',
       radios: null,
       page: 1,
@@ -633,6 +635,7 @@ export default {
         this.bridgeList = bridgeList;
         this.chainList = chainList;
         this.getListLoading = false;
+         this.skeletonLoading = false;
       } catch (e) {
         this.getListLoading = false;
         this.$dialog.notify.warning(e.message);
@@ -1349,6 +1352,9 @@ export default {
     margin-left: 8px;
     background-image: url('../assets/images/add_link_normal.svg') center center no-repeat;
   }
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .bridge-user {
