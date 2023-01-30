@@ -76,6 +76,20 @@
           </v-card>
         </template>
       </v-data-iterator>
+      <v-card v-if="skeletonLoading == true" style="padding:20px;">
+         <v-row justify="space-between">
+           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
+             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+           </v-col>
+         </v-row>
+      </v-card>
+      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:28px;">
+         <v-row justify="space-between">
+           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
+             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+           </v-col>
+         </v-row>
+      </v-card>
     </div>
     <v-dialog v-model="dialog" width="600" class="dialog-card">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
@@ -148,6 +162,7 @@ export default {
     dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
+    skeletonLoading:true,
     menu1: false,
     menu2: false,
     items: [],
@@ -306,6 +321,7 @@ export default {
         }
       }
       this.rawDataList = this.list;
+      this.skeletonLoading = false;
     },
     openDetails(value) {
       this.dialog = true;

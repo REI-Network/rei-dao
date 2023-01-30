@@ -15,7 +15,7 @@
         </v-col>
       </v-row>
       <v-row justify="start" no-gutters style="padding: 0 4px">
-        <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
+        <v-data-iterator :items="nftList" :page.sync="page" @page-count="pageCount = $event" :items-per-page.sync="itemsPerPage" hide-default-footer :loading="loading" loading-text="" :class="this.nftList.length !== 0 ? 'data-list' : 'data-nft'">
           <template v-slot:item="{ item }">
             <v-col cols="6" md="4" class="rei-genesis">
               <v-card outlined class="nftList" @click="openNftInfo(item)">
@@ -35,6 +35,16 @@
             </v-col>
           </template>
         </v-data-iterator>
+      </v-row>
+      <v-row style="padding:20px">
+        <v-col v-for="n in 3" :key="n">
+         <v-skeleton-loader min-height="180" v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="card"></v-skeleton-loader>
+        </v-col>
+      </v-row>
+        <v-row style="padding:20px;">
+        <v-col v-for="n in 3" :key="n">
+         <v-skeleton-loader min-height="180" v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="card"></v-skeleton-loader>
+        </v-col>
       </v-row>
       <div class="pagination" v-if="nftList.length > 6">
         <v-pagination v-model="page" :length="pageCount" total-visible="7" color="vote_button"></v-pagination>
@@ -80,6 +90,7 @@ export default {
   data() {
     return {
       poster: require('../assets/images/Genesis.png'),
+      skeletonLoading:true,
       page: 1,
       pageCount: 1,
       itemsPerPage: 6,
@@ -249,6 +260,7 @@ export default {
         
         this.setNftInfo({nftInfo: this.nftList})
       }
+      this.skeletonLoading = false;
       this.loading = false;
     },
 
@@ -440,6 +452,9 @@ a:hover {
 }
 .bg-dark .collect-img-number{
   background-color: #252243;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {
