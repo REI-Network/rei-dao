@@ -111,7 +111,7 @@
                 <span v-if="!connection.address"> - </span>
               </template>
             </v-data-table>
-            <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+            <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
               <div class="text-center pt-2">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
@@ -565,7 +565,6 @@ export default {
   data() {
     return {
       skeletonLoading:true,
-      boilerplate:true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -1869,6 +1868,9 @@ export default {
 }
 .jail-head:hover {
   cursor: pointer;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @keyframes metronome-example {
   from {

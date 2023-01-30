@@ -102,7 +102,9 @@
                   <span>${{ item.value | asset(5) }}</span>
                 </template>
               </v-data-table>
-               <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+              <v-sheet>
+                <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+              </v-sheet>
               <div class="text-center pt-2" v-if="assetList.length > 10">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
@@ -168,7 +170,6 @@ export default {
   data() {
     return {
       skeletonLoading:true,
-      boilerplate:true,
       tab1: null,
       page: 1,
       pageCount: 0,
@@ -560,7 +561,9 @@ export default {
 .asset-logo {
   margin: 0 12px;
 }
-
+.skeleton{
+  margin-top:-68px;
+}
 @media screen and (max-width: 900px) {
   .myAccount {
     padding-left: 20px;

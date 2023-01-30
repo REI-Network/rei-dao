@@ -78,7 +78,7 @@
                           <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                         </template>
                       </v-data-table>
-                      <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+                      <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                       <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                         <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                           <v-icon>mdi-chevron-left</v-icon>
@@ -170,6 +170,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
+                  <v-skeleton-loader class="skeleton" v-if="nftSkeletonLoading == true" :loading="nftSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                   <div class="text-center pt-2" v-if="nftList.length > 10">
                     <v-pagination v-model="nftPage" :length="nftPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
@@ -241,7 +242,7 @@ export default {
     return {
       poster: require('../assets/images/Genesis.png'),
       skeletonLoading:true,
-      boilerplate:true,
+      nftSkeletonLoading:true,
       tab1: null,
       tab2: null,
       radios: null,
@@ -715,6 +716,7 @@ export default {
       }
       // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
+      this.nftSkeletonLoading = false;
       this.getNftListLoading = false;
     },
     async getNFTList721() {
@@ -898,6 +900,9 @@ export default {
 .name-hover:hover {
   color: #4856c0;
   text-decoration: underline;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .stake {

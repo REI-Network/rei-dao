@@ -70,7 +70,7 @@
               <span>{{ item.balance }}</span>
             </template>
           </v-data-table>
-           <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+           <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
           <div class="text-center pt-2" v-if="holderList.length > 0">
             <v-pagination v-model="page2" :length="pageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
           </div>
@@ -125,7 +125,6 @@ export default {
     return {
       poster: require('../assets/images/Genesis.png'),
       skeletonLoading:true,
-      boilerplate:true,
       page: 1,
       pageCount: 1,
       itemsPerPage: 18,
@@ -553,6 +552,9 @@ a:hover {
     background-color: transparent;
     cursor: pointer;
   }
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .theme--light.nftList {

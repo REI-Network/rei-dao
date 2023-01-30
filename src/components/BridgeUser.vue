@@ -90,7 +90,7 @@
                   <v-btn small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32"> Revoke </v-btn>
                 </template>
               </v-data-table>
-               <v-skeleton-loader :boilerplate="boilerplate" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+               <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
               <div class="text-pagination pt-2" v-if="bridgeList.length > 0">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
@@ -440,7 +440,6 @@ export default {
   data() {
     return {
       skeletonLoading:true,
-      boilerplate:true,
       tab: '1',
       radios: null,
       page: 1,
@@ -1353,6 +1352,9 @@ export default {
     margin-left: 8px;
     background-image: url('../assets/images/add_link_normal.svg') center center no-repeat;
   }
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .bridge-user {
