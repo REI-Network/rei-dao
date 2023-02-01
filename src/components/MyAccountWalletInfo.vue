@@ -94,6 +94,7 @@
                   <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
                 </template>
               </v-data-table>
+              <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
               <div class="text-center pt-2" v-if="holderList.length > 0 && id != 'REI'">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
@@ -152,6 +153,7 @@ export default {
   },
   data() {
     return {
+      skeletonLoading:true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 50,
@@ -476,6 +478,7 @@ export default {
       this.getListLoading = false;
 
       this.getAccountList();
+      this.skeletonLoading = false;
       this.loading = false;
     },
     async getAccountList() {
@@ -677,6 +680,9 @@ a {
 .link-dark{
   cursor: pointer;
   color: #FFF;
+}
+.skeleton{
+  margin-top:-68px;
 }
 @media screen and (max-width: 900px) {
   .wallet {

@@ -114,7 +114,7 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading"  :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+                  <v-data-table :headers="headers" :items="list" class="elevation-0 data-table" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading"  :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list" @click="assetsDetails(item)">
                         <div class="asset-logo">
@@ -138,6 +138,7 @@
                       <span>${{ item.value | asset(5) }}</span>
                     </template>
                   </v-data-table>
+                   <v-skeleton-loader v-if="nftSkeletonLoading == true" class="skeleton" :loading="nftSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                   <div class="text-center pt-2" v-if="assetList.length > 10">
                     <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
@@ -647,6 +648,7 @@ export default {
           count: count
         };
       });
+      this.nftSkeletonLoading = false;
     },
     assetsDetails(value) {
       console.log(value);

@@ -61,6 +61,7 @@
                             </v-btn>
                         </template>
                     </v-data-table>
+                    <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                     <div class="text-pagination pt-2" v-if="nodeList.length > 0">
                         <v-pagination
                             v-model="page"
@@ -286,6 +287,7 @@ export default {
   filters,
   data() {
     return {
+        skeletonLoading:true,
         symbol:'REI',
         isNode: false,
         totalAmount:0,
@@ -403,6 +405,7 @@ export default {
         //this.getUsedCrude();
         this.getDepositList();
         this.getMystakeByOther();
+        this.skeletonLoading =false;
         this.stakeListLoading = false;
     },
     async getDepositList() {
@@ -727,6 +730,9 @@ export default {
 }
 .theme--dark.v-application .text-center[data-v-b6724c44][data-v-b6724c44]{
     background-color:transparent;
+}
+.skeleton{
+  margin-top:-68px;
 }
     @media screen and (max-width: 900px) {
         .gas-list{

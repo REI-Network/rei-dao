@@ -188,6 +188,7 @@ export default {
       this.nftList = [];
       if(this.nftInfo.length>0){
         this.nftList = this.nftInfo;
+        this.skeletonLoading = false;
         this.loading = false;
         return;
       }

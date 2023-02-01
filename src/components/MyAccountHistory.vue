@@ -30,7 +30,7 @@
       </v-col>
     </v-row>
     <div>
-      <v-data-iterator :items="list" hide-default-footer :loading="loading" :loading-text="$t('msg.loading')" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
+      <v-data-iterator :items="list" hide-default-footer :loading="loading" loading-text="" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
         <template v-slot:item="{ item }">
           <h3>{{ item.date }}</h3>
           <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
@@ -76,7 +76,7 @@
           </v-card>
         </template>
       </v-data-iterator>
-      <v-card v-if="skeletonLoading == true" style="padding:20px;">
+      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:20px;">
          <v-row justify="space-between">
            <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
              <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
