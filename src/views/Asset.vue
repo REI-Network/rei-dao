@@ -152,7 +152,7 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage" :loading="getNftListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage" @page-count="nftPageCount = $event">
+                  <v-data-table :headers="nftHeaders" :items="nftList" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage" :loading="getNftListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="nftPage" @page-count="nftPageCount = $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list" @click="assetsNft(item)">
                         <div class="asset-logo">
@@ -171,7 +171,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
-                  <v-skeleton-loader class="skeleton" v-if="nftSkeletonLoading == true" :loading="nftSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+                  <v-skeleton-loader class="skeleton" v-if="nftSkeletonLoading2 == true" :loading="nftSkeletonLoading2" type="table-tbody,actions"></v-skeleton-loader>
                   <div class="text-center pt-2" v-if="nftList.length > 10">
                     <v-pagination v-model="nftPage" :length="nftPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
@@ -185,7 +185,7 @@
                     <v-icon size="16" class="wallet-icon font-grey">mdi-arrow-up-thin-circle-outline</v-icon>
                     <a class="font-grey" href="https://github.com/REI-Network/rei-dao/tree/main/info/rei-token-profile" target="_blank">Submit a token support here</a>
                   </div>
-                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNft721ListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
+                  <v-data-table :headers="nftHeaders2" :items="nftList2" class="elevation-0 data-table" hide-default-footer :items-per-page="nftPerPage2" :loading="getNft721ListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="nftPage2" @page-count="nftPageCount2= $event">
                     <template v-slot:item.assets="{ item }">
                       <v-row align="center" class="assets-list" @click="getNftCollection(item)">
                         <div class="asset-logo">
@@ -204,6 +204,7 @@
                       <span>{{ item.totalSupply }}</span>
                     </template>
                   </v-data-table>
+                  <v-skeleton-loader class="skeleton" v-if="nftSkeletonLoading3 == true" :loading="nftSkeletonLoading3" type="table-tbody,actions"></v-skeleton-loader>
                   <div class="text-center pt-2" v-if="nftList2.length > 10">
                     <v-pagination v-model="nftPage2" :length="nftPageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
                   </div>
@@ -244,6 +245,8 @@ export default {
       poster: require('../assets/images/Genesis.png'),
       skeletonLoading:true,
       nftSkeletonLoading:true,
+      nftSkeletonLoading2:true,
+      nftSkeletonLoading3:true,
       tab1: null,
       tab2: null,
       radios: null,
@@ -718,7 +721,7 @@ export default {
       }
       // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
-      this.nftSkeletonLoading = false;
+      this.nftSkeletonLoading2 = false;
       this.getNftListLoading = false;
     },
     async getNFTList721() {
@@ -771,6 +774,7 @@ export default {
       }
       // console.log('nftList2', this.nftList2);
       // console.log('nftList', this.nftList);
+      this.nftSkeletonLoading3 = false;
       this.getNft721ListLoading = false;
     },
     assetsNft(item) {

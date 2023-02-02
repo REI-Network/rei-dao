@@ -145,6 +145,7 @@
                   <v-btn small color="start_unstake" class="mr-2" @click="openRevoke(item)" height="32"> Revoke </v-btn>
                 </template>
               </v-data-table>
+              <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
               <div class="text-pagination pt-2" v-if="chainList.length > 0">
                 <v-pagination v-model="page2" :length="pageCount2" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>

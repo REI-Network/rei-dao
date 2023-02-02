@@ -470,7 +470,7 @@ export default {
           this.delegatorList.unshift(this.delegatorList.splice(index, 1)[0]);
         }
       });
-      this.stakeListLoading = false;
+      this.skeletonLoading = false;
       this.stakeListLoading = false;
     },
     async getMyVotesList() {

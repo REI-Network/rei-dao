@@ -15,7 +15,7 @@
                         hide-default-footer
                         :items-per-page="itemsPerPage"
                         :loading="stakeListLoading"
-                        :loading-text="$t('msg.loading')"
+                        loading-text=""
                         :page.sync="page"
                         @page-count="pageCount = $event"
                         :no-data-text="$t('msg.nodatatext')"
@@ -85,7 +85,7 @@
                         hide-default-footer
                         :items-per-page="itemsPerPage"
                         :loading="stakeListLoading"
-                        :loading-text="$t('msg.loading')"
+                        loading-text=""
                         :page.sync="page"
                         @page-count="pageCount = $event"
                         :no-data-text="$t('msg.nodatatext')"
@@ -105,6 +105,7 @@
                             {{ item.timestamp*1000 | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                         </template>
                     </v-data-table>
+                     <v-skeleton-loader class="skeleton" v-if="otherSkeletonLoading == true" :loading="otherSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
                     <div class="text-pagination pt-2" v-if="nodeListOther.length > 0">
                         <v-pagination
                             v-model="page"
@@ -288,6 +289,7 @@ export default {
   data() {
     return {
         skeletonLoading:true,
+        otherSkeletonLoading:true,
         symbol:'REI',
         isNode: false,
         totalAmount:0,
@@ -405,7 +407,8 @@ export default {
         //this.getUsedCrude();
         this.getDepositList();
         this.getMystakeByOther();
-        this.skeletonLoading =false;
+        this.skeletonLoading = false;
+        this.otherSkeletonLoading = false;
         this.stakeListLoading = false;
     },
     async getDepositList() {

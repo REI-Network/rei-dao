@@ -30,7 +30,7 @@
       </v-col>
     </v-row>
     <div>
-      <v-data-iterator :items="list" hide-default-footer :loading="loading" loading-text="" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
+      <v-data-iterator :items="list" hide-default-footer :loading="loading" no-data-text="No data" loading-text="" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
         <template v-slot:item="{ item }">
           <h3>{{ item.date }}</h3>
           <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
