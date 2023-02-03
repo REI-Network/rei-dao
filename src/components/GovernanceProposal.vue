@@ -4,7 +4,7 @@
         <h2 class="proposal-title">Proposal Overview</h2> 
         <v-row justify="space-between" align="start">
             <v-col cols="12" md="5" class="overview">
-                <v-row align="center" justify="flex-start">
+                <v-row align="center" justify="start">
                     <v-col cols="12" sm="3" align="center" style="padding-bottom:0;">
                         <v-img src="../assets/images/totalProposal.png" width="60px"/>
                     </v-col>
@@ -13,7 +13,7 @@
                         <div class="total">Total proposal</div>
                     </v-col>
                 </v-row>
-                <v-row align="center" justify="flex-start" style="margin-top:26px">
+                <v-row align="center" justify="start" style="margin-top:26px">
                     <v-col cols="12" sm="3" align="center" style="padding-bottom:0;">
                         <v-img src="../assets/images/amount.png" width="60px"/>
                     </v-col>
@@ -39,7 +39,7 @@
                             </v-row>
                         </v-card>
                         <v-card outlined class="overview-card">
-                            <v-row align="center" justify="flex-start" class="active-row">
+                            <v-row align="center" justify="start" class="active-row">
                                 <v-col cols="12" sm="3" align="center" style="padding-bottom:0;">
                                     <v-img v-if="dark" src="../assets/images/pending-dark.png" width="45px"/>
                                     <v-img v-else src="../assets/images/pending.png" width="45px"/>
@@ -53,7 +53,7 @@
                     </v-col>
                     <v-col cols="12" sm="6" style="padding-right:0;">
                         <v-card outlined class="overview-card">
-                            <v-row align="center" justify="flex-start" class="active-row">
+                            <v-row align="center" justify="start" class="active-row">
                                 <v-col cols="12" sm="3" align="center" style="padding-bottom:0;">
                                     <v-img v-if="dark" src="../assets/images/closed-dark.png" width="45px"/>
                                     <v-img v-else src="../assets/images/closed.png" width="45px"/>
@@ -65,7 +65,7 @@
                             </v-row>
                         </v-card>
                         <v-card outlined class="overview-card">
-                            <v-row align="center" justify="flex-start" class="active-row">
+                            <v-row align="center" justify="start" class="active-row">
                                 <v-col cols="12" sm="3" align="center" style="padding-bottom:0;">
                                     <v-img v-if="dark" src="../assets/images/core-dark.png" width="45px"/>
                                     <v-img v-else src="../assets/images/core.png" width="45px"/>

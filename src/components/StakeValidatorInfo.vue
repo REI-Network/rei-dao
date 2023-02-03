@@ -21,7 +21,7 @@
           <v-row class="validator-address">
             <span class="font-grey" v-if="detail && detail.nodeAddress">{{ detail && detail.nodeAddress }}</span>
             <span class="font-grey" v-else>{{ detailData && detailData.address }}</span>
-            <v-btn class="copy-btn" @click="copyAddr(detailData.address)">
+            <v-btn class="copy-btn" @click="copyAddr(detail.nodeAddress)">
               <v-icon small color="#868E9E">{{ addrCopying ? 'mdi-checkbox-marked-circle-outline' : 'mdi-content-copy' }}</v-icon>
             </v-btn>
           </v-row>
@@ -474,7 +474,6 @@ export default {
         this.detailData.commissionRate = res.commissionRate;
         this.votingPower = votingPower ? web3.utils.fromWei(web3.utils.toBN(votingPower)):0;
       }
-
       this.totalAmount = 0;
       for (let i = 0; i < this.activeInfoList.length; i++) {
         let power =  web3.utils.fromWei(web3.utils.toBN(this.activeInfoList[i].votingPower));
@@ -534,7 +533,6 @@ export default {
     },
     async handleClaim() {
       let address = this.$route.query.id;
-
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
