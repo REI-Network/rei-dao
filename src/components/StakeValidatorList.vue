@@ -39,7 +39,7 @@
         <v-divider class="faq_border" />
         <v-tabs-items v-model="tab1">
           <v-tab-item key="11">
-            <v-data-table :headers="headers" :items="delegatorList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+            <v-data-table :headers="headers" :items="delegatorList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.delegator="{ item }">
                 <span> {{ item.addressName }} </span>
                 <Address :val="item.delegator" :brackets="!!item.addressName"></Address>
@@ -49,6 +49,7 @@
                 <span>{{ item.amount | asset(2) }}</span>
               </template>
             </v-data-table>
+            <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <div class="text-center pt-2" v-if="delegatorList.length > 0">
               <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               <v-btn class="down" @click="handleDownload">Download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
@@ -285,6 +286,7 @@ export default {
   filters,
   data() {
     return {
+      skeletonLoading:true,
       tab1: null,
       page: 1,
       pageCount: 0,
@@ -468,7 +470,7 @@ export default {
           this.delegatorList.unshift(this.delegatorList.splice(index, 1)[0]);
         }
       });
-
+      this.skeletonLoading = false;
       this.stakeListLoading = false;
     },
     async getMyVotesList() {
@@ -665,6 +667,9 @@ export default {
   border-radius: 20px;
   margin-left: 8px;
   color: white;
+}
+.skeleton{
+  margin-top:-68px;
 }
 .total-light {
   background-color: #e2e4ea;

@@ -64,7 +64,7 @@
                   </span>
                 </v-col>
               </v-row>
-              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
+              <v-data-table :headers="headers" :items="assetList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="getListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.assets="{ item }">
                   <v-row align="center" class="assets-list" @click="walletDetails(item)">
                     <div class="asset-logo">
@@ -102,6 +102,9 @@
                   <span>${{ item.value | asset(5) }}</span>
                 </template>
               </v-data-table>
+              <v-sheet>
+                <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+              </v-sheet>
               <div class="text-center pt-2" v-if="assetList.length > 10">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
@@ -166,6 +169,7 @@ export default {
   filters,
   data() {
     return {
+      skeletonLoading:true,
       tab1: null,
       page: 1,
       pageCount: 0,
@@ -455,6 +459,7 @@ export default {
 
       this.totalAmount = totalAmount
       this.getListLoading = false;
+      this.skeletonLoading = false;
       // console.log('assetList',this.assetList)
 
     },
@@ -556,7 +561,9 @@ export default {
 .asset-logo {
   margin: 0 12px;
 }
-
+.skeleton{
+  margin-top:-68px;
+}
 @media screen and (max-width: 900px) {
   .myAccount {
     padding-left: 20px;
