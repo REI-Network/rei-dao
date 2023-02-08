@@ -61,22 +61,25 @@
           </v-card>
         </v-col>
       </v-row>
-       <h2 class="title" style="margin-top:40px;">List Of On-Chain Parameter</h2>
-       <v-row justify="space-between">
-         <v-col cols="12" sm="4">
+       <v-row class="list-title"  align="center" justify="space-between">
+        <h2 class="title">List Of On-Chain Parameter</h2>
+        <div class="font-grey">Participate in on-chain proposal governance ></div>
+       </v-row>
+       <v-row justify="space-between" align="start">
+         <v-col cols="12" sm="4" v-for="(item, index) in list" :key="index">
           <v-card :class="dark ? 'chip-dark chain-list' : 'chip-light elevation-0 chain-list'"> 
             <v-row justify="space-between">
-              <v-col cols="12" align-self="center" md="4">
+              <v-col cols="12" align-self="start" md="4"  style="padding:0;">
                 <div class="font-grey">Parameter</div>
-                <h4>Voting threshold</h4>
+                <h4> {{item.parameter}} </h4>
               </v-col>
-              <v-col cols="12" align-self="center" md="5">
+              <v-col cols="12" align-self="start" md="5" style="padding:0;">
                 <div class="font-grey">Default parameter</div>
-                <h4>6%</h4>
+                <h4>{{ item.default }}</h4>
               </v-col>
-              <v-col cols="12" align-self="center" md="3" style="padding:0;">
+              <v-col cols="12" align-self="start" md="3" style="padding:0;">
                 <div class="font-grey">Interval</div>
-                <h4>6%~10%</h4>
+                <h4>{{ item.interval }}</h4>
               </v-col>
             </v-row>
           </v-card>
@@ -279,7 +282,54 @@ export default {
   filters,
   data() {
     return {
-      width: ''
+      width: '',
+      list:[
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+        {
+            parameter:"Voting threshold",
+            default:"6%",
+            interval:"6%~10%"
+        },
+      ],
     };
   },
   watch: {},
@@ -394,10 +444,13 @@ a:hover {
   background-color: #f5f5f7;
 }
 .chain-list{
-    // height: 120px;
-    margin-top: 20px;
+    // margin-top: 20px;
     border-radius: 8px;
     padding:20px 12px;
+}
+.list-title{
+    margin-top: 40px;
+    padding: 0 12px;
 }
 .process {
   margin-top: 30px;
