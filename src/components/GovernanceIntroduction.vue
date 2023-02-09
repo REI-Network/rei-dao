@@ -69,17 +69,33 @@
          <v-col cols="12" sm="4" v-for="(item, index) in list" :key="index">
           <v-card :class="dark ? 'chip-dark chain-list' : 'chip-light elevation-0 chain-list'"> 
             <v-row justify="space-between">
-              <v-col cols="12" align-self="start" md="4"  style="padding:0;">
+              <v-col cols="12" align-self="start" md="4"  style="padding:0 0 0 12px;">
                 <div class="font-grey">Parameter</div>
-                <h4> {{item.parameter}} </h4>
+                <div class="parameter-data">
+                  <span>{{item.parameter}} </span>
+                  <v-tooltip right>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon size="14">mdi-help-circle-outline</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>
+                            {{item.parameter}}
+                        </span>
+                      </v-tooltip>
+                </div>
               </v-col>
               <v-col cols="12" align-self="start" md="5" style="padding:0;">
                 <div class="font-grey">Default parameter</div>
-                <h4>{{ item.default }}</h4>
+                <div class="parameter-data">{{ item.default }}</div>
               </v-col>
               <v-col cols="12" align-self="start" md="3" style="padding:0;">
                 <div class="font-grey">Interval</div>
-                <h4>{{ item.interval }}</h4>
+                <div class="parameter-data">{{ item.interval }}</div>
               </v-col>
             </v-row>
           </v-card>
@@ -438,15 +454,22 @@ a:hover {
     padding: 0;
 }
 .chip-dark {
-  background-color: #13112b;
+  background-color: #252243;
 }
 .chip-light {
   background-color: #f5f5f7;
 }
 .chain-list{
-    // margin-top: 20px;
     border-radius: 8px;
-    padding:20px 12px;
+    padding:28px 12px;
+}
+.parameter-data{
+  font-size:14px;
+  font-weight: bold;
+  margin-top: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 .list-title{
     margin-top: 40px;
