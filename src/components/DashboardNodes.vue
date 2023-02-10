@@ -224,6 +224,8 @@ Address,
             window.web3 = new Web3(window.ethereum);
         } else if (window.web3) {
             window.web3 = new Web3(window.web3.currentProvider);
+        } else {
+            window.web3 = new Web3('https://rpc.rei.network');
         }
     },
     getInterval(averageBlockTime){
@@ -452,6 +454,7 @@ Address,
         method:'eth_getBlockByNumber',
         params:["latest",true]
       });
+      console.log(res);
       return res;
     },
     async getBlock(){
