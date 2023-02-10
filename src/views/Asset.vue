@@ -458,6 +458,7 @@ export default {
     }
   },
   mounted() {
+    this.connect();
     this.getBalance();
     this.getNFTList();
     this.getNFTList721();
@@ -472,6 +473,8 @@ export default {
         window.web3 = new Web3(window.ethereum);
       } else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider);
+      } else {
+          window.web3 = new Web3('https://rpc.rei.network');
       }
     },
 
@@ -479,40 +482,28 @@ export default {
       this.loading = true;
       let asset = [],
         assetAllArr = [],
-        assetZeroArr = [],
         assetArr = [];
-      if (!this.connection.address) return;
       this.getListLoading = true;
       let _assetObj = {};
       for (let i = 0; i < this.tokenInfoList.length; i++) {
         let token = this.tokenInfoList[i];
         if (token.symbol == 'REI') {
-          let reiBalance = await web3.eth.getBalance(this.connection.address);
-          this.reiBalance = reiBalance;
-          let totalBalance = web3.utils.toBN(reiBalance).add(web3.utils.toBN(this.myTotalStake)).add(web3.utils.toBN(this.totalGasAmount));
-          let { data: priceList } = await getPrice({ symbols: 'REI' });
-          this.current_price = priceList.data[0].current_price;
           _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
-            balance: web3.utils.fromWei(totalBalance),
             price: 0,
-            address: token.erc20Address,
             decimals: token.decimals,
             totalSupply: 1000000000,
             value: 0
           };
         } else {
           let contract = new web3.eth.Contract(abiERC20, token.erc20Address);
-          let balance = await contract.methods.balanceOf(this.connection.address).call();
           let decimals = token.decimals;
-          let _balance = balance / 10 ** decimals;
           let total = await contract.methods.totalSupply().call();
           let totalSupply = total / 10 ** decimals;
           _assetObj = {
             symbol: token.symbol,
             logo: token.logo,
-            balance: _balance,
             price: 0,
             address: token.erc20Address,
             decimals: token.decimals,
@@ -524,53 +515,25 @@ export default {
         asset.push(_assetObj);
       }
       let { data: priceList } = await getPrice({ symbols: assetAllArr.join() });
-      let totalAmount = 0;
-
       for (let i = 0; i < asset.length; i++) {
         let item = asset[i];
         let _asset = find(priceList.data, (items) => items.symbol.toUpperCase() == item.symbol);
-        let value = _asset.current_price * item.balance;
-        totalAmount += value;
-        if (item.balance > 0) {
+        if(item.symbol == 'REI'){
+          this.current_price = _asset.current_price;
+        } else {
           assetArr.push({
             symbol: item.symbol,
             logo: item.logo,
-            balance: item.balance,
             price: _asset.current_price,
             address: item.address,
             decimals: item.decimals,
             totalSupply: item.totalSupply,
-            value
-          });
-        } else {
-          assetZeroArr.push({
-            symbol: item.symbol,
-            logo: item.logo,
-            balance: item.balance,
-            price: _asset.current_price,
-            address: item.address,
-            decimals: item.decimals,
-            totalSupply: item.totalSupply,
-            value
           });
         }
       }
 
-      if (!localStorage.getItem('hideAsset')) {
-        this.assetList = assetArr.concat(assetZeroArr);
-        this.checkStatus = false;
-      } else {
-        this.assetList = assetArr;
-        this.checkStatus = true;
-      }
-
-      this.assetNotZeroList = assetArr;
-      this.assetZeroList = assetZeroArr;
-
-      this.totalAmount = totalAmount;
       this.getListLoading = false;
-      this.list = this.assetList;
-      this.list.shift();
+      this.list = assetArr;
       this.getAccountList();
       this.getAddressCount();
       this.loading = false;
