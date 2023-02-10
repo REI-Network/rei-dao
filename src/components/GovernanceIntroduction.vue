@@ -26,7 +26,9 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+              <v-col cols="12" md="2" class="font-grey more" @click="stepClick1">
+                <div @click="stepClick1" class="more">More></div>
+              </v-col>
             </v-row>
           </v-card>
         </v-col>
@@ -34,7 +36,7 @@
           <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'"> 
             <v-row align="center">
               <v-col cols="12" md="10">
-                <h4>WHow do community users initiate on-chain parameter governance?</h4>
+                <h4>How do community users initiate on-chain parameter governance?</h4>
                 <v-list-item three-line>
                   <v-list-item-content>
                     <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
@@ -288,6 +290,17 @@
         </v-col>
       </v-row>
     </v-card>
+    <v-dialog v-model="stepDialog1" width="500">
+      <v-card class="step-dialog">
+        <v-row align="center" justify="space-between">
+          <h4>What Is The On-Chain Parameter Governance?</h4>
+          <div @click="cancelStepClick1">
+            <v-icon size="22">mdi-close</v-icon>
+          </div>
+        </v-row>
+        <div class="font-grey step-content">REI DAO on-chain parameterized governance allows community members to change REI...</div>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -299,6 +312,7 @@ export default {
   data() {
     return {
       width: '',
+      stepDialog1:false,
       list:[
         {
             parameter:"Voting threshold",
@@ -363,6 +377,12 @@ export default {
     ...mapActions({
       addTx: 'addTx'
     }),
+    stepClick1(){
+      this.stepDialog1 = true;
+    },
+    cancelStepClick1(){
+      this.stepDialog1 = false;
+    },
     windowWidth() {
       const that = this;
       that.width = window.innerWidth;
@@ -450,6 +470,12 @@ a:hover {
     padding: 20px 0;
   }
 }
+.step-dialog{
+  padding: 28px;
+}
+.step-content{
+  margin-top: 28px;
+}
 .v-list-item{
     padding: 0;
 }
@@ -469,7 +495,6 @@ a:hover {
   margin-top: 12px;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
 }
 .list-title{
     margin-top: 40px;
