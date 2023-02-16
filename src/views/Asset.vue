@@ -13,16 +13,16 @@
               <v-tabs v-model="tab1" align-with-title hide-slider class="erc-tabs" background-color="background">
                 <v-radio-group v-model="radios" mandatory row dense style="margin-top: 0" class="trend-tab">
                   <v-tab key="11">
-                    <v-radio label="REI" value="1" class="trends-radio"> </v-radio>
+                    <v-radio  value="1" class="trends-radio"> </v-radio> REI
                   </v-tab>
                   <v-tab key="12">
-                    <v-radio label="ERC20" value="2" class="trends-radio"> </v-radio>
+                    <v-radio  value="2" class="trends-radio"> </v-radio> ERC20
                   </v-tab>
                   <v-tab key="13">
-                    <v-radio label="ERC1155" value="3" class="trends-radio"> </v-radio>
+                    <v-radio value="3" class="trends-radio">  </v-radio> ERC1155
                   </v-tab>
                   <v-tab key="14">
-                    <v-radio label="ERC721" value="4" class="trends-radio"> </v-radio>
+                    <v-radio  value="4" class="trends-radio"> </v-radio> ERC721
                   </v-tab>
                 </v-radio-group>
               </v-tabs>
