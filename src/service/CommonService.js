@@ -48,10 +48,13 @@ export const getValidatorMinedInfo = (params) => http.get('https://gateway.rei.n
 });
 
 
-export const getHistoryData = (url,params) => http(`https://scan.rei.network/api?${url}`,{
+export const getHistoryData = (params) => http(`https://scan.rei.network/api?module=token&action=getTokenHolders`,{
   params
 });
-export const getTokenHolder = (url,params) => http(`https://gateway.rei.network/api/rei/holder${url}`,{
+export const getTokenHolder = (params) => http(`https://gateway.rei.network/api/rei/holder`,{
+  params
+});
+export const getTokenTransfer = (params) => http(`https://gateway.rei.network/api/token/transfer`,{
   params
 });
 export const getAssetTokenList = (params) => http(`https://gateway.rei.network/api/nft/tokenlist/`,{

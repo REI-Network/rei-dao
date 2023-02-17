@@ -58,7 +58,7 @@
                   <!-- <v-card class="card-list"> -->
                   <v-tabs v-model="tab2" align-with-title class="vote-list" background-color="background">
                     <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-                    <v-tab key="12" class="v-tab-left">Token Transfers</v-tab>
+                    <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
                   </v-tabs>
                   <v-divider class="faq_border" />
                   <v-tabs-items v-model="tab2">
@@ -568,7 +568,7 @@ export default {
     },
     async BackwardPage() {
       this.loading = true;
-      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      let data = await getTokenHolder({balance:this.lastBalance,hash:this.lastAddress,count:this.count});
       this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
@@ -614,7 +614,7 @@ export default {
       let countList = [];
       for (let i = 0; i < this.list.length; i++) {
         let item = this.list[i];
-        let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${item.address}&offset=1000`);
+        let data = await getHistoryData({contractaddress:item.address,offset:1000});
         let list = data.data.result;
         let _address = {
           address: item.address,
@@ -698,8 +698,6 @@ export default {
           this.nftList = nftItems;
         }
       }
-      // console.log('nftList2', this.nftList2);
-      // console.log('nftList', this.nftList);
       this.nftSkeletonLoading2 = false;
       this.getNftListLoading = false;
     },

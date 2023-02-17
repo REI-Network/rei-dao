@@ -68,7 +68,7 @@
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <v-tab key="12" class="v-tab-left">Token Transfers</v-tab>
+            <v-tab key="12" class="v-tab-left" v-if="id != 'REI'">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
@@ -111,24 +111,32 @@
             </v-tab-item>
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
-                <template v-slot:item.hash="{ item }">
-                  <span>{{ item.hash | addr }}</span>
+                <template v-slot:item.txhash="{ item }">
+                  <span>{{ item.txhash | addr }}</span>
                 </template>
-                <template v-slot:item.method="{ item }">
-                  <span :class="dark?'dark-method':'light-method'">{{ item.method }}</span>
+                <template v-slot:item.label="{ item }">
+                  <span :class="dark ? 'dark-method' : 'light-method'">{{ item.label }}</span>
                 </template>
-                <template v-slot:item.from="{ item }">
-                  <span>{{ item.hash | addr }}</span>
+                <template v-slot:item.fromAddress="{ item }">
+                  <span>{{ item.fromAddress | addr }}</span>
                 </template>
-                <template v-slot:item.to="{ item }">
-                  <span>{{ item.hash | addr }}</span>
+                <template v-slot:item.toAddress="{ item }">
+                  <span>{{ item.fromAddress | addr }}</span>
                 </template>
-                <template v-slot:item.amount="{ item }">
-                  <span>{{ item.amount | asset(2) }}</span>
+                <template v-slot:item.value="{ item }">
+                  <span>{{ item.value | asset(2) }}</span>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="transferList.length > 0">
+              <!-- <div class="text-center pt-2" v-if="transferList.length > 0">
                 <v-pagination v-model="transferPage" :length="transferCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+              </div> -->
+              <div class="turn-pages" align-content="end" v-if="transferList.length > 0">
+                <v-btn elevation="3" :disabled="transferDisabled" @click="transferForwardPage" class="turn-btn">
+                  <v-icon>mdi-chevron-left</v-icon>
+                </v-btn>
+                <v-btn elevation="3" @click="transferBackwardPage" class="turn-btn">
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
               </div>
             </v-tab-item>
           </v-tabs-items>
@@ -147,7 +155,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getTokenTransfer } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import AddressTag from '../components/AddressTag';
@@ -169,6 +177,9 @@ export default {
       transferPage: 1,
       transferCount: 0,
       transferPerPage: 50,
+      nextPage: {},
+      indexPage:0,
+      items_count:50,
       loading: false,
       transferLoading: false,
       addrCopying: false,
@@ -193,28 +204,20 @@ export default {
       count: 50,
       countPage: 0,
       disabled: true,
+      transferDisabled: false,
       totalList: [],
       accountList: [],
       tokenList: [],
       holderList: [],
       transferHeaders: [
-        { text: 'Txn Hash', value: 'hash' },
-        { text: 'Method', value: 'method' },
-        { text: 'Block', value: 'block' },
-        { text: 'From', value: 'from' },
-        { text: 'To', value: 'to' },
-        { text: 'Amount', value: 'amount' }
+        { text: 'Txn Hash', value: 'txhash' },
+        { text: 'Method', value: 'label' },
+        { text: 'Block', value: 'blockNumber' },
+        { text: 'From', value: 'fromAddress' },
+        { text: 'To', value: 'toAddress' },
+        { text: 'Amount', value: 'value' }
       ],
-      transferList: [
-        {
-          hash: '0xb52mns0opnhsbuuaxx49add',
-          method:"Approve",
-          block: '9746392',
-          from: '0xb52mns0opnhsbuuaxx49add',
-          to: '0xb52mns0opnhsbuuaxx49add',
-          amount: '20.0256'
-        }
-      ],
+      transferList: [],
       assetList: [],
       tokenInfoList: [
         {
@@ -302,6 +305,15 @@ export default {
       } else {
         this.disabled = true;
       }
+    },
+    indexPage(newVal, oldVal) {
+      this.getTransferData();
+      // if (oldVal > 50) {
+      //   this.transferDisabled = false;
+      // } else {
+      //   this.transferDisabled = true;
+      // }
+      console.log('nextPage', newVal, oldVal);
     }
   },
   mounted() {
@@ -503,6 +515,9 @@ export default {
       this.getListLoading = false;
 
       this.getAccountList();
+      if (this.id != 'REI') {
+        this.getTransferData();
+      }
       this.skeletonLoading = false;
       this.loading = false;
     },
@@ -520,7 +535,7 @@ export default {
       // console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
-      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      let data = await getTokenHolder({ balance: this.lastBalance, hash: this.lastAddress, count: this.count });
       this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
@@ -553,11 +568,14 @@ export default {
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
-        let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        let data = await getHistoryData({ contractaddress: this.details.address, offset: 1000 });
         this.tokenList = data.data.result;
         this.holderList = this.tokenList;
-        this.holderList = this.holderList.sort(sortArr('balance'));
+        if (this.holderList.length > 0) {
+          this.holderList = this.holderList.sort(sortArr('balance'));
+        }
       }
+
       // console.log('tokenList', this.tokenList);
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
@@ -580,6 +598,41 @@ export default {
           addressName: addressTags ? addressTags.addressName : ''
         };
       });
+    },
+    async getTransferData() {
+      let data = await getTokenTransfer({ token: this.details.address });
+      this.transferList = data.data.data;
+      this.nextPage = data.data.nextPage;
+      this.nextPage.index = parseInt(this.nextPage.index);
+      this.nextPage.items_count = parseInt(this.nextPage.items_count);
+      this.indexPage = this.nextPage.index;
+      // console.log('transferList', this.transferList);
+    },
+    async transferBackwardPage() {
+      let data = await getTokenTransfer({
+        token: this.details.address,
+        block_number: this.nextPage.block_number,
+        index: this.nextPage.index,
+        items_count: this.nextPage.items_count
+      });
+      this.transferList = data.data.data;
+      this.nextPage.index += 50;
+      this.nextPage.items_count += 50;
+      // console.log('data++', this.transferList);
+      console.log('nextPage+', this.nextPage.index, this.nextPage.items_count);
+    },
+    async transferForwardPage() {
+      let data = await getTokenTransfer({
+        token: this.details.address,
+        block_number: this.nextPage.block_number,
+        index: this.nextPage.index,
+        items_count: this.nextPage.items_count
+      });
+      this.transferList = data.data.data;
+      this.nextPage.index -= 50;
+      this.nextPage.items_count -= 50;
+      // console.log('data++', this.transferList);
+      console.log('nextPage-', this.nextPage.index, this.nextPage.items_count);
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
@@ -642,13 +695,13 @@ a {
   text-transform: none !important;
 }
 .light-method {
-  background: #F7F8FF;
-  padding:8px 12px;
+  background: #f7f8ff;
+  padding: 8px 12px;
   border-radius: 4px;
 }
 .dark-method {
   background: #595777;
-  padding:8px 12px;
+  padding: 8px 12px;
   border-radius: 4px;
 }
 .info-header {
