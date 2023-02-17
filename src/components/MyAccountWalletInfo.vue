@@ -68,7 +68,7 @@
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
+            <v-tab key="12" class="v-tab-left">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
@@ -99,7 +99,7 @@
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
               <div v-else>
-                <div class="turn-pages" align-content="end" v-if="holderList.length>0">
+                <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                   <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
@@ -111,11 +111,20 @@
             </v-tab-item>
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
-                <template v-slot:item.time="{ item }">
-                  <span>{{ (item.time * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
+                <template v-slot:item.hash="{ item }">
+                  <span>{{ item.hash | addr }}</span>
+                </template>
+                <template v-slot:item.method="{ item }">
+                  <span :class="dark?'dark-method':'light-method'">{{ item.method }}</span>
+                </template>
+                <template v-slot:item.from="{ item }">
+                  <span>{{ item.hash | addr }}</span>
+                </template>
+                <template v-slot:item.to="{ item }">
+                  <span>{{ item.hash | addr }}</span>
                 </template>
                 <template v-slot:item.amount="{ item }">
-                  <span>+{{ item.amount | asset(2) }}</span>
+                  <span>{{ item.amount | asset(2) }}</span>
                 </template>
               </v-data-table>
               <div class="text-center pt-2" v-if="transferList.length > 0">
@@ -153,7 +162,7 @@ export default {
   },
   data() {
     return {
-      skeletonLoading:true,
+      skeletonLoading: true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 50,
@@ -188,8 +197,24 @@ export default {
       accountList: [],
       tokenList: [],
       holderList: [],
-      transferHeaders: [],
-      transferList: [],
+      transferHeaders: [
+        { text: 'Txn Hash', value: 'hash' },
+        { text: 'Method', value: 'method' },
+        { text: 'Block', value: 'block' },
+        { text: 'From', value: 'from' },
+        { text: 'To', value: 'to' },
+        { text: 'Amount', value: 'amount' }
+      ],
+      transferList: [
+        {
+          hash: '0xb52mns0opnhsbuuaxx49add',
+          method:"Approve",
+          block: '9746392',
+          from: '0xb52mns0opnhsbuuaxx49add',
+          to: '0xb52mns0opnhsbuuaxx49add',
+          amount: '20.0256'
+        }
+      ],
       assetList: [],
       tokenInfoList: [
         {
@@ -545,7 +570,7 @@ export default {
         let percentage = (balance / this.details.totalSupply) * 100;
         let _address = web3.utils.toChecksumAddress(item.address);
         let addressTags = this.addressTags[_address];
-        
+
         return {
           ...item,
           address: item.address,
@@ -616,6 +641,16 @@ a {
 .v-tab {
   text-transform: none !important;
 }
+.light-method {
+  background: #F7F8FF;
+  padding:8px 12px;
+  border-radius: 4px;
+}
+.dark-method {
+  background: #595777;
+  padding:8px 12px;
+  border-radius: 4px;
+}
 .info-header {
   padding: 28px;
   .img {
@@ -665,24 +700,24 @@ a {
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
 }
-.link-light{
+.link-light {
   cursor: pointer;
-  color: #000 ;
+  color: #000;
 }
-.link-light:hover{
+.link-light:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark:hover{
+.link-dark:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark{
+.link-dark {
   cursor: pointer;
-  color: #FFF;
+  color: #fff;
 }
-.skeleton{
-  margin-top:-68px;
+.skeleton {
+  margin-top: -68px;
 }
 @media screen and (max-width: 900px) {
   .wallet {
