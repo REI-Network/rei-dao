@@ -127,6 +127,7 @@
                   <span>{{ item.value | asset(2) }}</span>
                 </template>
               </v-data-table>
+              <v-skeleton-loader v-if="transferSkeletonLoading == true" class="skeleton" :loading="transferSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
               <!-- <div class="text-center pt-2" v-if="transferList.length > 0">
                 <v-pagination v-model="transferPage" :length="transferCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div> -->
@@ -171,6 +172,7 @@ export default {
   data() {
     return {
       skeletonLoading: true,
+      transferSkeletonLoading: true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 50,
@@ -178,8 +180,8 @@ export default {
       transferCount: 0,
       transferPerPage: 50,
       nextPage: {},
-      indexPage:0,
-      items_count:50,
+      indexPage: 0,
+      items_count: 50,
       loading: false,
       transferLoading: false,
       addrCopying: false,
@@ -204,7 +206,7 @@ export default {
       count: 50,
       countPage: 0,
       disabled: true,
-      transferDisabled: false,
+      transferDisabled: true,
       totalList: [],
       accountList: [],
       tokenList: [],
@@ -306,14 +308,18 @@ export default {
         this.disabled = true;
       }
     },
-    indexPage(newVal, oldVal) {
-      this.getTransferData();
-      // if (oldVal > 50) {
-      //   this.transferDisabled = false;
-      // } else {
-      //   this.transferDisabled = true;
-      // }
-      console.log('nextPage', newVal, oldVal);
+    nextPage2: {
+      handler: function (newPage, oldPage) {
+        this.getTransferData();
+        console.log('nextPage', newPage, oldPage);
+        if (newPage.items_count > 50) {
+          this.transferDisabled = false;
+        } else {
+          this.transferDisabled = true;
+        }
+      },
+      // immediate:true,
+      deep: true
     }
   },
   mounted() {
@@ -328,7 +334,11 @@ export default {
       apiUrl: 'apiUrl',
       dark: 'dark',
       addressTags: 'addressTags'
-    })
+    }),
+    nextPage2() {
+      const { indexPage, items_count } = this;
+      return { indexPage, items_count };
+    }
   },
   methods: {
     routeLink() {
@@ -515,9 +525,9 @@ export default {
       this.getListLoading = false;
 
       this.getAccountList();
-      if (this.id != 'REI') {
+      // if (this.id != 'REI') {
         this.getTransferData();
-      }
+      // }
       this.skeletonLoading = false;
       this.loading = false;
     },
@@ -532,7 +542,6 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
-      // console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
       let data = await getTokenHolder({ balance: this.lastBalance, hash: this.lastAddress, count: this.count });
@@ -556,8 +565,6 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
-      // console.log('lastItem',this.count,this.countPage,this.totalList);
-      // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
       function sortArr(attr) {
@@ -600,39 +607,41 @@ export default {
       });
     },
     async getTransferData() {
+      this.transferLoading = true;
       let data = await getTokenTransfer({ token: this.details.address });
       this.transferList = data.data.data;
       this.nextPage = data.data.nextPage;
-      this.nextPage.index = parseInt(this.nextPage.index);
-      this.nextPage.items_count = parseInt(this.nextPage.items_count);
-      this.indexPage = this.nextPage.index;
-      // console.log('transferList', this.transferList);
+      // this.indexPage = parseInt(this.nextPage.index);
+      // this.items_count = parseInt(this.nextPage.items_count);
+      // console.log('nextPage+', this.nextPage.index,this.nextPage.items_count );
+      this.transferSkeletonLoading = false;
+      this.transferLoading = false;
     },
     async transferBackwardPage() {
+      this.indexPage ++;
+      this.items_count += 50;
+      console.log('++', this.nextPage.block_number, this.indexPage, this.items_count);
       let data = await getTokenTransfer({
         token: this.details.address,
         block_number: this.nextPage.block_number,
-        index: this.nextPage.index,
-        items_count: this.nextPage.items_count
+        index: this.indexPage,
+        items_count: this.items_count
       });
       this.transferList = data.data.data;
-      this.nextPage.index += 50;
-      this.nextPage.items_count += 50;
-      // console.log('data++', this.transferList);
-      console.log('nextPage+', this.nextPage.index, this.nextPage.items_count);
+      // console.log('nextPage+', this.nextPage);
     },
     async transferForwardPage() {
+      this.indexPage --;
+      this.items_count -= 50;
+      console.log('--', this.nextPage.block_number, this.indexPage, this.items_count);
       let data = await getTokenTransfer({
         token: this.details.address,
         block_number: this.nextPage.block_number,
-        index: this.nextPage.index,
-        items_count: this.nextPage.items_count
+        index: this.indexPage,
+        items_count: this.items_count
       });
       this.transferList = data.data.data;
-      this.nextPage.index -= 50;
-      this.nextPage.items_count -= 50;
-      // console.log('data++', this.transferList);
-      console.log('nextPage-', this.nextPage.index, this.nextPage.items_count);
+      // console.log('nextPage-', this.nextPage);
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
