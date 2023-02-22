@@ -11,18 +11,18 @@
           <v-row>
             <v-col>
               <v-tabs v-model="tab1" align-with-title hide-slider class="erc-tabs" background-color="background">
-                <v-radio-group v-model="radios" mandatory row dense style="margin-top: 0" class="trend-tab">
-                  <v-tab key="11">
-                    <v-radio label="REI" value="1" class="trends-radio"> </v-radio>
+                <v-radio-group mandatory row dense style="margin-top: 0" class="trend-tab" v-model="radios">
+                  <v-tab key="11" to="/asset/rei">
+                    <v-radio  value="1" class="trends-radio"> </v-radio> REI
                   </v-tab>
-                  <v-tab key="12">
-                    <v-radio label="ERC20" value="2" class="trends-radio"> </v-radio>
+                  <v-tab key="12" to="/asset/erc20">
+                    <v-radio  value="2" class="trends-radio"> </v-radio> ERC20
                   </v-tab>
-                  <v-tab key="13">
-                    <v-radio label="ERC1155" value="3" class="trends-radio"> </v-radio>
+                  <v-tab key="13" to="/asset/erc1155">
+                    <v-radio value="3" class="trends-radio">  </v-radio> ERC1155
                   </v-tab>
-                  <v-tab key="14">
-                    <v-radio label="ERC721" value="4" class="trends-radio"> </v-radio>
+                  <v-tab key="14" to="/asset/erc721">
+                    <v-radio  value="4" class="trends-radio"> </v-radio> ERC721
                   </v-tab>
                 </v-radio-group>
               </v-tabs>
@@ -31,7 +31,7 @@
               <v-text-field label="" outlined dense></v-text-field>
             </v-col> -->
           </v-row>
-          <v-tabs-items v-model="tab1">
+          <v-tabs-items v-model="tab2">
             <v-row>
               <v-col>
                 <v-tab-item key="11">
@@ -56,53 +56,35 @@
                     </v-row>
                   </v-card>
                   <!-- <v-card class="card-list"> -->
-                  <v-tabs v-model="tab2" align-with-title class="vote-list" background-color="background">
+                  <v-tabs  align-with-title class="vote-list" background-color="background">
                     <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
                     <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
                   </v-tabs>
                   <v-divider class="faq_border" />
-                  <v-tabs-items v-model="tab2">
-                    <v-tab-item key="11">
-                      <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="reiPage" @page-count="reiPageCount = $event">
-                        <template v-slot:item.rank="{ item }">
-                          <span>{{ item.rank }}</span>
-                        </template>
-                        <template v-slot:item.address="{ item }">
-                          <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address" :contractName="item.contractName"></AddressTag></a>
-                        </template>
-                        <template v-slot:item.balance="{ item }">
-                          <span>{{ item.balance | asset(5) }}</span>
-                        </template>
-                        <template v-slot:item.percentage="{ item }">
-                          <span>{{ item.percentage | asset(3) }} %</span>
-                          <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
-                        </template>
-                      </v-data-table>
-                      <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
-                      <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
-                        <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
-                          <v-icon>mdi-chevron-left</v-icon>
-                        </v-btn>
-                        <v-btn elevation="3" @click="BackwardPage" class="turn-btn">
-                          <v-icon>mdi-chevron-right</v-icon>
-                        </v-btn>
-                      </div>
-                    </v-tab-item>
-                    <v-tab-item key="12">
-                      <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
-                        <template v-slot:item.time="{ item }">
-                          <span>{{ (item.time * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
-                        </template>
-                        <template v-slot:item.amount="{ item }">
-                          <span>+{{ item.amount | asset(2) }}</span>
-                        </template>
-                      </v-data-table>
-                      <div class="text-center pt-2" v-if="transferList.length > 0">
-                        <v-pagination v-model="transferPage" :length="transferCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
-                      </div>
-                    </v-tab-item>
-                  </v-tabs-items>
-
+                    <v-data-table :headers="accountHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="reiPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="reiPage" @page-count="reiPageCount = $event">
+                      <template v-slot:item.rank="{ item }">
+                        <span>{{ item.rank }}</span>
+                      </template>
+                      <template v-slot:item.address="{ item }">
+                        <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address" :contractName="item.contractName"></AddressTag></a>
+                      </template>
+                      <template v-slot:item.balance="{ item }">
+                        <span>{{ item.balance | asset(5) }}</span>
+                      </template>
+                      <template v-slot:item.percentage="{ item }">
+                        <span>{{ item.percentage | asset(3) }} %</span>
+                        <v-progress-linear color="#2115E5" rounded :value="item.percentage"></v-progress-linear>
+                      </template>
+                    </v-data-table>
+                    <v-skeleton-loader class="skeleton" v-if="skeletonLoading == true" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+                    <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
+                      <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
+                        <v-icon>mdi-chevron-left</v-icon>
+                      </v-btn>
+                      <v-btn elevation="3" @click="BackwardPage" class="turn-btn">
+                        <v-icon>mdi-chevron-right</v-icon>
+                      </v-btn>
+                    </div>
                   <!-- </v-card> -->
                 </v-tab-item>
               </v-col>
@@ -247,9 +229,9 @@ export default {
       nftSkeletonLoading:true,
       nftSkeletonLoading2:true,
       nftSkeletonLoading3:true,
-      tab1: null,
-      tab2: null,
-      radios: null,
+      tab1: 0,
+      tab2: 1,
+      radios: 1,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
@@ -289,6 +271,24 @@ export default {
       list: [],
       accountList: [],
       holderList: [],
+      routerMap:{
+        'rei': {
+          index: 0,
+          value: '1'
+        },
+        'erc20': {
+          index: 1,
+          value: '2'
+        },
+        'erc1155': {
+          index: 2,
+          value: '3'
+        },
+        'erc721': {
+          index: 3,
+          value: '4'
+        }
+      },
       accountHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },
@@ -442,6 +442,16 @@ export default {
         this.getNFTList();
         this.getNFTList721();
       }
+    },
+    tab1: function(){
+        let type = this.$route.params.type;
+        if(!type){
+          this.tab2 = 0;
+          this.radios = '1';
+        } else {
+            this.tab2 = this.routerMap[type].index;
+            this.radios = this.routerMap[type].value;
+        }
     },
     count(newVal, oldVal) {
       this.getWalletInfo();
@@ -773,6 +783,10 @@ export default {
 }
 .night {
   background-color: #100d22;
+}
+.trends-radio {
+  margin-right: 0px !important;
+  font-size: 16px;
 }
 .v-tab {
   text-transform: none;
