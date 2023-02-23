@@ -112,16 +112,17 @@
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
                 <template v-slot:item.txhash="{ item }">
-                  <span>{{ item.txhash | addr }}</span>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.txhash}`" target="_blank"><span>{{ item.txhash | addr }}</span></a>
+                  
                 </template>
                 <template v-slot:item.label="{ item }">
                   <span :class="dark ? 'dark-method' : 'light-method'">{{ item.label }}</span>
                 </template>
                 <template v-slot:item.fromAddress="{ item }">
-                  <span>{{ item.fromAddress | addr }}</span>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.fromAddress}`" target="_blank"><AddressTag :val="item.fromAddress"></AddressTag></a>
                 </template>
                 <template v-slot:item.toAddress="{ item }">
-                  <span>{{ item.fromAddress | addr }}</span>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.toAddress}`" target="_blank"><AddressTag :val="item.toAddress"></AddressTag></a>
                 </template>
                 <template v-slot:item.value="{ item }">
                   <span>{{ item.value | asset(2) }}</span>
