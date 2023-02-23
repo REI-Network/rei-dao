@@ -135,7 +135,7 @@
                 <v-btn elevation="3" :disabled="transferDisabled" @click="transferForwardPage" class="turn-btn">
                   <v-icon>mdi-chevron-left</v-icon>
                 </v-btn>
-                <v-btn elevation="3" @click="transferBackwardPage" class="turn-btn">
+                <v-btn elevation="3" :disabled="transferDisabled2" @click="transferBackwardPage" class="turn-btn">
                   <v-icon>mdi-chevron-right</v-icon>
                 </v-btn>
               </div>
@@ -179,9 +179,11 @@ export default {
       transferPage: 1,
       transferCount: 0,
       transferPerPage: 50,
-      nextPage: {},
-      indexPage: 0,
-      items_count: 50,
+      nextPage: {
+        block_number:'',
+        index: 0,
+        items_count: 50,
+      },
       loading: false,
       transferLoading: false,
       addrCopying: false,
@@ -207,7 +209,9 @@ export default {
       countPage: 0,
       disabled: true,
       transferDisabled: true,
+      transferDisabled2: true,
       totalList: [],
+      totalTransferList: [],
       accountList: [],
       tokenList: [],
       holderList: [],
@@ -308,19 +312,6 @@ export default {
         this.disabled = true;
       }
     },
-    nextPage2: {
-      handler: function (newPage, oldPage) {
-        this.getTransferData();
-        console.log('nextPage', newPage, oldPage);
-        if (newPage.items_count > 50) {
-          this.transferDisabled = false;
-        } else {
-          this.transferDisabled = true;
-        }
-      },
-      // immediate:true,
-      deep: true
-    }
   },
   mounted() {
     this.connect();
@@ -336,8 +327,8 @@ export default {
       addressTags: 'addressTags'
     }),
     nextPage2() {
-      const { indexPage, items_count } = this;
-      return { indexPage, items_count };
+      const { index, items_count } = this;
+      return { index, items_count };
     }
   },
   methods: {
@@ -609,39 +600,61 @@ export default {
     async getTransferData() {
       this.transferLoading = true;
       let data = await getTokenTransfer({ token: this.details.address });
-      this.transferList = data.data.data;
-      this.nextPage = data.data.nextPage;
-      // this.indexPage = parseInt(this.nextPage.index);
+      let list = data.data;
+      this.transferList = list.data;
+      this.nextPage = list.nextPage;
+      // this.index = parseInt(this.nextPage.index);
       // this.items_count = parseInt(this.nextPage.items_count);
       // console.log('nextPage+', this.nextPage.index,this.nextPage.items_count );
+      this.totalTransferList.push(list);
+       if(Object.keys(this.nextPage).length === 0){
+         this.transferDisabled2 = true;
+      } else {
+         this.transferDisabled2 = false;
+      }
       this.transferSkeletonLoading = false;
       this.transferLoading = false;
     },
     async transferBackwardPage() {
-      this.indexPage ++;
-      this.items_count += 50;
-      console.log('++', this.nextPage.block_number, this.indexPage, this.items_count);
       let data = await getTokenTransfer({
         token: this.details.address,
         block_number: this.nextPage.block_number,
-        index: this.indexPage,
-        items_count: this.items_count
+        index: this.nextPage.index,
+        items_count: this.nextPage.items_count
       });
-      this.transferList = data.data.data;
-      // console.log('nextPage+', this.nextPage);
+      let list = data.data;
+      this.transferList =list.data;
+      this.nextPage.count += 50;
+      this.nextPage.countPage++;
+      this.nextPage = list.nextPage;
+      this.nextPage.index = parseInt(this.nextPage.index);
+      this.nextPage.items_count = parseInt(this.nextPage.items_count);
+      this.totalTransferList.push(list);
+      if(this.nextPage.items_count > 50){
+        this.transferDisabled = false;
+      }else{
+        this.transferDisabled = true;
+      }
+      if(Object.keys(this.nextPage).length === 0){
+         this.transferDisabled2 = true;
+      } else {
+         this.transferDisabled2 = false;
+      }
     },
     async transferForwardPage() {
-      this.indexPage --;
-      this.items_count -= 50;
-      console.log('--', this.nextPage.block_number, this.indexPage, this.items_count);
-      let data = await getTokenTransfer({
-        token: this.details.address,
-        block_number: this.nextPage.block_number,
-        index: this.indexPage,
-        items_count: this.items_count
-      });
-      this.transferList = data.data.data;
-      // console.log('nextPage-', this.nextPage);
+      this.nextPage.items_count -= 50;
+      this.totalTransferList.pop();
+      let index = this.totalTransferList.length -1;
+      let list = this.totalTransferList[ index ];
+      this.transferList = list.data;
+      this.nextPage = list.nextPage;
+      this.nextPage.index = parseInt(this.nextPage.index);
+      this.nextPage.items_count = parseInt(this.nextPage.items_count);
+      if(this.nextPage.items_count > 50){
+        this.transferDisabled = false;
+      }else{
+        this.transferDisabled = true;
+      }
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
