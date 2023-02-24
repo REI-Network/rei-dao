@@ -118,6 +118,9 @@
                 <template v-slot:item.label="{ item }">
                   <span :class="dark ? 'dark-method' : 'light-method'">{{ item.label }}</span>
                 </template>
+                <template v-slot:item.timestamp="{ item }">
+                  {{ item.timestamp | dateFormat('YYYY-MM-dd hh:mm:ss') }}
+                </template>
                 <template v-slot:item.fromAddress="{ item }">
                   <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.fromAddress}`" target="_blank"><AddressTag :val="item.fromAddress"></AddressTag></a>
                 </template>
@@ -219,7 +222,7 @@ export default {
       transferHeaders: [
         { text: 'Txn Hash', value: 'txhash' },
         { text: 'Method', value: 'label' },
-        { text: 'Block', value: 'blockNumber' },
+        { text: 'Timestamp', value: 'timestamp' },
         { text: 'From', value: 'fromAddress' },
         { text: 'To', value: 'toAddress' },
         { text: 'Amount', value: 'value' }

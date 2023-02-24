@@ -118,6 +118,11 @@ const routes = [
     name: 'AssetsTokenList',
     component: AssetsTokenList
   },
+  {
+    path: '/asset/:type',
+    name: 'Asset',
+    component: Asset
+  },
 ];
 
 const router = new VueRouter({
