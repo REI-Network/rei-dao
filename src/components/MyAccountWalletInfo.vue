@@ -68,7 +68,7 @@
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <!-- <v-tab key="12" class="v-tab-left">Token Transfers</v-tab> -->
+            <v-tab key="12" class="v-tab-left" v-if="id != 'REI'">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
@@ -99,7 +99,7 @@
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
               <div v-else>
-                <div class="turn-pages" align-content="end" v-if="holderList.length>0">
+                <div class="turn-pages" align-content="end" v-if="holderList.length > 0">
                   <v-btn elevation="3" :disabled="disabled" @click="ForwardPage" class="turn-btn">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
@@ -111,15 +111,37 @@
             </v-tab-item>
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
-                <template v-slot:item.time="{ item }">
-                  <span>{{ (item.time * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
+                <template v-slot:item.txhash="{ item }">
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.txhash}`" target="_blank"><span>{{ item.txhash | addr }}</span></a>
+                  
                 </template>
-                <template v-slot:item.amount="{ item }">
-                  <span>+{{ item.amount | asset(2) }}</span>
+                <template v-slot:item.label="{ item }">
+                  <span :class="dark ? 'dark-method' : 'light-method'">{{ item.label }}</span>
+                </template>
+                <template v-slot:item.timestamp="{ item }">
+                  {{ item.timestamp | dateFormat('YYYY-MM-dd hh:mm:ss') }}
+                </template>
+                <template v-slot:item.fromAddress="{ item }">
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.fromAddress}`" target="_blank"><AddressTag :val="item.fromAddress"></AddressTag></a>
+                </template>
+                <template v-slot:item.toAddress="{ item }">
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.toAddress}`" target="_blank"><AddressTag :val="item.toAddress"></AddressTag></a>
+                </template>
+                <template v-slot:item.value="{ item }">
+                  <span>{{ item.value | asset(2) }}</span>
                 </template>
               </v-data-table>
-              <div class="text-center pt-2" v-if="transferList.length > 0">
+              <v-skeleton-loader v-if="transferSkeletonLoading == true" class="skeleton" :loading="transferSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+              <!-- <div class="text-center pt-2" v-if="transferList.length > 0">
                 <v-pagination v-model="transferPage" :length="transferCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+              </div> -->
+              <div class="turn-pages" align-content="end" v-if="transferList.length > 0">
+                <v-btn elevation="3" :disabled="transferDisabled" @click="transferForwardPage" class="turn-btn">
+                  <v-icon>mdi-chevron-left</v-icon>
+                </v-btn>
+                <v-btn elevation="3" :disabled="transferDisabled2" @click="transferBackwardPage" class="turn-btn">
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
               </div>
             </v-tab-item>
           </v-tabs-items>
@@ -138,7 +160,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getTokenTransfer } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import AddressTag from '../components/AddressTag';
@@ -153,13 +175,19 @@ export default {
   },
   data() {
     return {
-      skeletonLoading:true,
+      skeletonLoading: true,
+      transferSkeletonLoading: true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 50,
       transferPage: 1,
       transferCount: 0,
       transferPerPage: 50,
+      nextPage: {
+        block_number:'',
+        index: 0,
+        items_count: 50,
+      },
       loading: false,
       transferLoading: false,
       addrCopying: false,
@@ -184,11 +212,21 @@ export default {
       count: 50,
       countPage: 0,
       disabled: true,
+      transferDisabled: true,
+      transferDisabled2: true,
       totalList: [],
+      totalTransferList: [],
       accountList: [],
       tokenList: [],
       holderList: [],
-      transferHeaders: [],
+      transferHeaders: [
+        { text: 'Txn Hash', value: 'txhash' },
+        { text: 'Method', value: 'label' },
+        { text: 'Timestamp', value: 'timestamp' },
+        { text: 'From', value: 'fromAddress' },
+        { text: 'To', value: 'toAddress' },
+        { text: 'Amount', value: 'value' }
+      ],
       transferList: [],
       assetList: [],
       tokenInfoList: [
@@ -277,7 +315,7 @@ export default {
       } else {
         this.disabled = true;
       }
-    }
+    },
   },
   mounted() {
     this.connect();
@@ -291,7 +329,11 @@ export default {
       apiUrl: 'apiUrl',
       dark: 'dark',
       addressTags: 'addressTags'
-    })
+    }),
+    nextPage2() {
+      const { index, items_count } = this;
+      return { index, items_count };
+    }
   },
   methods: {
     routeLink() {
@@ -478,6 +520,9 @@ export default {
       this.getListLoading = false;
 
       this.getAccountList();
+      // if (this.id != 'REI') {
+        this.getTransferData();
+      // }
       this.skeletonLoading = false;
       this.loading = false;
     },
@@ -492,10 +537,9 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
-      // console.log('totalList',this.count,this.accountList,this.lastBalance,this.lastAddress)
     },
     async BackwardPage() {
-      let data = await getTokenHolder(`?balance=${this.lastBalance}&hash=${this.lastAddress}&count=${this.count}`);
+      let data = await getTokenHolder({ balance: this.lastBalance, hash: this.lastAddress, count: this.count });
       this.accountList = data.data.data;
       for (let i = 0; i < this.accountList.length; i++) {
         let lastItem = this.accountList[this.accountList.length - 1];
@@ -516,8 +560,6 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
-      // console.log('lastItem',this.count,this.countPage,this.totalList);
-      // console.log('accountList',this.accountList);
     },
     async getWalletInfo() {
       function sortArr(attr) {
@@ -528,11 +570,14 @@ export default {
       if (this.id == 'REI') {
         this.holderList = this.accountList;
       } else {
-        let data = await getHistoryData(`module=token&action=getTokenHolders&contractaddress=${this.details.address}&offset=1000`);
+        let data = await getHistoryData({ contractaddress: this.details.address, offset: 1000 });
         this.tokenList = data.data.result;
         this.holderList = this.tokenList;
-        this.holderList = this.holderList.sort(sortArr('balance'));
+        if (this.holderList.length > 0) {
+          this.holderList = this.holderList.sort(sortArr('balance'));
+        }
       }
+
       // console.log('tokenList', this.tokenList);
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
@@ -545,7 +590,7 @@ export default {
         let percentage = (balance / this.details.totalSupply) * 100;
         let _address = web3.utils.toChecksumAddress(item.address);
         let addressTags = this.addressTags[_address];
-        
+
         return {
           ...item,
           address: item.address,
@@ -555,6 +600,65 @@ export default {
           addressName: addressTags ? addressTags.addressName : ''
         };
       });
+    },
+    async getTransferData() {
+      this.transferLoading = true;
+      let data = await getTokenTransfer({ token: this.details.address });
+      let list = data.data;
+      this.transferList = list.data;
+      this.nextPage = list.nextPage;
+      // this.index = parseInt(this.nextPage.index);
+      // this.items_count = parseInt(this.nextPage.items_count);
+      // console.log('nextPage+', this.nextPage.index,this.nextPage.items_count );
+      this.totalTransferList.push(list);
+       if(Object.keys(this.nextPage).length === 0){
+         this.transferDisabled2 = true;
+      } else {
+         this.transferDisabled2 = false;
+      }
+      this.transferSkeletonLoading = false;
+      this.transferLoading = false;
+    },
+    async transferBackwardPage() {
+      let data = await getTokenTransfer({
+        token: this.details.address,
+        block_number: this.nextPage.block_number,
+        index: this.nextPage.index,
+        items_count: this.nextPage.items_count
+      });
+      let list = data.data;
+      this.transferList =list.data;
+      this.nextPage.count += 50;
+      this.nextPage.countPage++;
+      this.nextPage = list.nextPage;
+      this.nextPage.index = parseInt(this.nextPage.index);
+      this.nextPage.items_count = parseInt(this.nextPage.items_count);
+      this.totalTransferList.push(list);
+      if(this.nextPage.items_count > 50){
+        this.transferDisabled = false;
+      }else{
+        this.transferDisabled = true;
+      }
+      if(Object.keys(this.nextPage).length === 0){
+         this.transferDisabled2 = true;
+      } else {
+         this.transferDisabled2 = false;
+      }
+    },
+    async transferForwardPage() {
+      this.nextPage.items_count -= 50;
+      this.totalTransferList.pop();
+      let index = this.totalTransferList.length -1;
+      let list = this.totalTransferList[ index ];
+      this.transferList = list.data;
+      this.nextPage = list.nextPage;
+      this.nextPage.index = parseInt(this.nextPage.index);
+      this.nextPage.items_count = parseInt(this.nextPage.items_count);
+      if(this.nextPage.items_count > 50){
+        this.transferDisabled = false;
+      }else{
+        this.transferDisabled = true;
+      }
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');
@@ -616,6 +720,16 @@ a {
 .v-tab {
   text-transform: none !important;
 }
+.light-method {
+  background: #f7f8ff;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+.dark-method {
+  background: #595777;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
 .info-header {
   padding: 28px;
   .img {
@@ -665,24 +779,24 @@ a {
 .theme--light.v-btn.v-btn--has-bg {
   background-color: transparent;
 }
-.link-light{
+.link-light {
   cursor: pointer;
-  color: #000 ;
+  color: #000;
 }
-.link-light:hover{
+.link-light:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark:hover{
+.link-dark:hover {
   color: #6979f8;
   text-decoration: underline;
 }
-.link-dark{
+.link-dark {
   cursor: pointer;
-  color: #FFF;
+  color: #fff;
 }
-.skeleton{
-  margin-top:-68px;
+.skeleton {
+  margin-top: -68px;
 }
 @media screen and (max-width: 900px) {
   .wallet {
