@@ -128,7 +128,7 @@
                   <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.toAddress}`" target="_blank"><AddressTag :val="item.toAddress"></AddressTag></a>
                 </template>
                 <template v-slot:item.value="{ item }">
-                  <span>{{ item.value | asset(2) }}</span>
+                  <span>{{ item.value | asset(5) }}</span>
                 </template>
               </v-data-table>
               <v-skeleton-loader v-if="transferSkeletonLoading == true" class="skeleton" :loading="transferSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
