@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.id
+      nodeName:this.$route.params.token?.toUpperCase()
     };
   },
   mounted(){

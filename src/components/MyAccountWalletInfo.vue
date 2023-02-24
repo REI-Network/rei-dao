@@ -199,7 +199,7 @@ export default {
       reiBalance: 0,
       details: '',
       totalSupply: 0,
-      id: this.$route.query.id,
+      id: this.$route.params.token,
       holderHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },

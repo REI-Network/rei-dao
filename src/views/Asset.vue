@@ -637,8 +637,8 @@ export default {
       console.log(value);
       this.$router.push({
         name: 'AssetsInfo',
-        query: {
-          id: value.symbol
+        params: {
+          token: value.address
         }
       });
     },
