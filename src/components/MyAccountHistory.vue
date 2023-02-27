@@ -1,16 +1,6 @@
 <template>
   <v-container class="stake_background" style="padding: 0">
-    <v-row>
-      <!-- <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items" label="All Types" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items2" label="All Tokens" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col> -->
+    <v-row justify="space-between">
       <v-col cols="12" md="3">
         <v-card outlined class="select-card">
           <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
@@ -28,12 +18,26 @@
           </v-menu>
         </v-card>
       </v-col>
+      <v-col cols="12" md="3">
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="items" label="All Types" item-text="state" item-value="val" outlined dense style="border-radius: 20px" v-model="typeFilter" @change="changeStateType"></v-select>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="items2" label="All Tokens" item-text="state" outlined item-value="val" dense style="border-radius: 20px" v-model="tokenFilter" @change="changeStateToken"></v-select>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
     </v-row>
     <div>
       <v-data-iterator :items="list" hide-default-footer :loading="loading" no-data-text="No data" loading-text="" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
         <template v-slot:item="{ item }">
           <h3>{{ item.date }}</h3>
-          <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
+          <v-card class="card-item" v-for="(info, index) in item.result" :key="item.date + '-' + index" @click="openDetails(info)">
             <v-row>
               <v-col cols="12" sm="3" class="left-item">
                 <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
@@ -50,21 +54,21 @@
               </v-col>
               <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
                 <div class="font-grey">To</div>
-                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.to | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3" v-else>
                 <div class="font-grey">From</div>
-                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.from | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
                 <h4>{{ info.value | asset(5) }}</h4>
-                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol}}</div>
+                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol }}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
               <v-col cols="12" sm="3">
-                <div class="font-grey gas-fee" >
+                <div class="font-grey gas-fee">
                   <span>Gas Fee</span>
                   <div class="img">
                     <v-img src="../assets/images/history-3.png" width="20" />
@@ -76,19 +80,19 @@
           </v-card>
         </template>
       </v-data-iterator>
-      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:20px;">
-         <v-row justify="space-between">
-           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
-             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
-           </v-col>
-         </v-row>
+      <v-card v-if="skeletonLoading == true" style="padding: 20px; margin-top: 20px">
+        <v-row justify="space-between">
+          <v-col cols="12" sm="2" v-for="n in 4" :key="n">
+            <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+          </v-col>
+        </v-row>
       </v-card>
-      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:28px;">
-         <v-row justify="space-between">
-           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
-             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
-           </v-col>
-         </v-row>
+      <v-card v-if="skeletonLoading == true" style="padding: 20px; margin-top: 28px">
+        <v-row justify="space-between">
+          <v-col cols="12" sm="2" v-for="n in 4" :key="n">
+            <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+          </v-col>
+        </v-row>
       </v-card>
     </div>
     <v-dialog v-model="dialog" width="600" class="dialog-card">
@@ -111,9 +115,9 @@
             <div class="item-data">{{ details.blockNumber }}</div>
           </v-row>
           <v-row justify="space-between" v-if="details.from == address" no-gutter class="item-content">
-                <div class="item-name">To</div>
-                <div class="item-data">{{ details.to }}</div>
-            </v-row>
+            <div class="item-name">To</div>
+            <div class="item-data">{{ details.to }}</div>
+          </v-row>
           <v-row justify="space-between" v-else no-gutter class="item-content">
             <div class="item-name">From</div>
             <div class="item-data">{{ details.from }}</div>
@@ -135,9 +139,9 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value | asset(5)}}</div>
-            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
-               <div v-else>&nbsp;&nbsp;REI</div>
+            <div class="price">{{ details.value | asset(5) }}</div>
+            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
+            <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
         </div>
       </v-card>
@@ -151,7 +155,7 @@
 import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
-import { getHistoryData } from '../service/CommonService'
+import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
@@ -162,23 +166,38 @@ export default {
     dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
-    skeletonLoading:true,
+    skeletonLoading: true,
     menu1: false,
     menu2: false,
-    items: [],
-    items2: [],
+    typeFilter: '',
+    tokenFilter: '',
+    sendList: [],
+    receiveList: [],
+    reiList:[],
+    usdtList:[],
+    totalList:[],
+    items: [
+      { state: 'All', val: '' },
+      { state: 'Receive', val: '1' },
+      { state: 'Send', val: '2' }
+    ],
+    items2: [
+      { state: 'All', val: '' },
+      { state: 'REI', val: '1' },
+      { state: 'USDT', val: '2' }
+    ],
     loading: false,
     setData: [],
-    sortDescVote:true,
+    sortDescVote: true,
     transactionsList: [],
     dialog: false,
     historyList: [],
     list: [],
-    rawDataList:[],
-    internalList:[],
+    rawDataList: [],
+    internalList: [],
     details: '',
-    address:'',
-    detailsList:[]
+    address: '',
+    detailsList: []
   }),
   mounted() {
     this.getData();
@@ -196,10 +215,10 @@ export default {
       return this.formatDate2(this.date2);
     },
     listenChange() {
-      const { date,date2} = this;
+      const { date, date2 } = this;
       return {
         date,
-        date2,
+        date2
       };
     }
   },
@@ -210,13 +229,13 @@ export default {
     date2() {
       this.dateFormatted2 = this.formatDate2(this.date2);
     },
-    listenChange(date,date2) {
+    listenChange(date, date2) {
       let startDate = Date.parse(this.date);
       let endDate = Date.parse(this.date2);
-      this.list = [].concat(this.rawDataList)
+      this.list = [].concat(this.rawDataList);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
-      })
+      });
     }
   },
   methods: {
@@ -250,56 +269,86 @@ export default {
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
-      })
-      
-      let addressTag = await getAddressTag();
-      this.detailsList = addressTag.data.data;
-      // console.log('addressTag',this.detailsList);
+      });
       this.historyList = this.historyList.map((item) => {
-        let name = "";
-        if(this.address == item.from.toLowerCase()){
+        let name = '';
+        if (this.address == item.from.toLowerCase()) {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
-          if(detail){
-            name = detail.addressName
+          if (detail) {
+            name = detail.addressName;
           }
-        }else{
+        } else {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
-          if(detail){
-            name = detail.addressName
+          if (detail) {
+            name = detail.addressName;
           }
         }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
-        let gasUsed = web3.utils.fromWei(item.gasUsed,'Gwei');
-        let gasPrice = item.gasPrice/1e9;
+        let gasUsed = web3.utils.fromWei(item.gasUsed, 'Gwei');
+        let gasPrice = item.gasPrice / 1e9;
         let value = 0;
-        if(item.tokenSymbol){
-          value = item.value/10**item.tokenDecimal;
-        }else{
-          value = item.value/1e18;
+        if (item.tokenSymbol) {
+          value = item.value / 10 ** item.tokenDecimal;
+        } else {
+          value = item.value / 1e18;
         }
-        let hash = "";
-        if(item.hash){
+        let hash = '';
+        if (item.hash) {
           hash = item.hash;
-        }else{
+        } else {
           hash = item.transactionHash;
         }
         return {
           ...item,
           date: date,
           gasUsed: gasUsed,
-          gasPrice:gasPrice,
+          gasPrice: gasPrice,
           value: value,
-          addressName:name,
-          hash:hash
+          addressName: name,
+          hash: hash
         };
       });
-      console.log('historyList',this.historyList)
-      function sortArr(attr){
-          return function(a,b){
-            return b[attr]-a[attr]
-          }
+      this.totalList = this.historyList;
+      let sendList = [];
+      let receiveList = [];
+      for (let i = 0; i < this.historyList.length; i++) {
+        let item = this.historyList[i];
+        if (item.to.toUpperCase() == this.connection.address.toUpperCase()) {
+          sendList.push(item);
+        } else {
+          receiveList.push(item);
         }
+      }
+      this.sendList = sendList;
+      this.receiveList = receiveList;
+
+      let reiList = [];
+      let usdtList = [];
+       for (let i = 0; i < this.historyList.length; i++) {
+        let item = this.historyList[i];
+        if (!item.tokenSymbol) {
+          reiList.push(item);
+        } else if(item.tokenSymbol == 'USDT'){
+          usdtList.push(item);
+        }
+      }
+      this.reiList = reiList;
+      this.usdtList = usdtList;
+      console.log('history',this.historyList)
+
+      this.getSortData();
+      this.rawDataList = this.list;
+      let addressTag = await getAddressTag();
+      this.detailsList = addressTag.data.data;
+      this.skeletonLoading = false;
+    },
+    getSortData() {
+      function sortArr(attr) {
+        return function (a, b) {
+          return b[attr] - a[attr];
+        };
+      }
       this.historyList = this.historyList.sort(sortArr('timeStamp'));
       let tempArr = [];
       for (let i = 0; i < this.historyList.length; i++) {
@@ -320,13 +369,33 @@ export default {
           }
         }
       }
-      this.rawDataList = this.list;
-      this.skeletonLoading = false;
+    },
+    changeStateType() {
+      this.list = [];
+      if (this.typeFilter == '1') {
+        this.historyList = this.sendList;
+      } else if(this.typeFilter == '2'){
+        this.historyList = this.receiveList;
+      }else{
+        this.historyList = this.receiveList.concat(this.sendList);
+      }
+      this.getSortData();
+    },
+    changeStateToken() {
+      this.list = [];
+      if (this.tokenFilter == '1') {
+      this.historyList = this.reiList;
+      } else if(this.tokenFilter == '2'){
+        this.historyList = this.usdtList;
+      }else{
+        this.historyList = this.totalList;
+      }
+      this.getSortData();
     },
     openDetails(value) {
       this.dialog = true;
       this.details = value;
-      console.log('value',value)
+      console.log('value', value);
     },
     cancelDetails() {
       this.dialog = false;
@@ -400,16 +469,16 @@ export default {
     font-weight: bold;
   }
 }
-.token-symbol{
-  width:100px;
-   overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+.token-symbol {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.value-symbol{
+.value-symbol {
   margin-left: 2px;
   font-weight: bold;
-  margin-top:2px;
+  margin-top: 2px;
 }
 .close-dialog {
   cursor: pointer;
