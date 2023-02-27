@@ -222,7 +222,7 @@ export default {
       transferHeaders: [
         { text: 'Txn Hash', value: 'txhash' },
         { text: 'Method', value: 'label' },
-        { text: 'Timestamp', value: 'timestamp' },
+        { text: 'Time', value: 'timestamp' },
         { text: 'From', value: 'fromAddress' },
         { text: 'To', value: 'toAddress' },
         { text: 'Amount', value: 'value' }
