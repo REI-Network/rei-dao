@@ -89,7 +89,7 @@ const routes = [
     component: MyNftCollection
   },
   {
-    path: '/myAccount/wallet',
+    path: '/myAccount/token/:token',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },

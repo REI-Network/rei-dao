@@ -232,13 +232,13 @@ export default {
     },
     async getData() {
       let data = await getHistoryData(`module=account&action=tokentx&address=${this.connection.address}`);
-      this.transferList = data.data.result;
+      this.transferList = data.data.result||[];
       this.getInternal();
       // console.log('transferList',this.transferList)
     },
     async getInternal() {
       let data = await getHistoryData(`module=account&action=txlistinternal&address=${this.connection.address}`);
-      let internalData = data.data.result;
+      let internalData = data.data.result||[];
       this.internalList = this.transferList.concat(internalData);
       // console.log('internalList',this.internalList)
       this.historyData();
@@ -246,7 +246,7 @@ export default {
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       let data = await getHistoryData(`module=account&action=txlist&address=${this.connection.address}`);
-      this.transactionsList = data.data.result;
+      this.transactionsList = data.data.result||[];
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
