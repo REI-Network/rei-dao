@@ -398,7 +398,8 @@ export default {
             logo: token.logo,
             balance: web3.utils.fromWei(totalBalance),
             price: 0,
-            value: 0
+            value: 0,
+            address:'rei'
           }
         } else {
           let contract = new web3.eth.Contract(abiERC20, token.erc20Address);
@@ -411,8 +412,10 @@ export default {
             logo: token.logo,
             balance: _balance,
             price: 0,
-            value: 0
+            value: 0,
+            address: token.erc20Address
           }
+
         }
         assetAllArr.push(token.symbol);
         asset.push(_assetObj);
@@ -433,7 +436,9 @@ export default {
             logo: item.logo,
             balance: item.balance,
             price: _asset.current_price,
-            value
+            address:item.address,
+            value,
+            
           })
         } else {
           assetZeroArr.push({
@@ -441,7 +446,8 @@ export default {
             logo: item.logo,
             balance: item.balance,
             price: _asset.current_price,
-            value
+            address:item.address,
+            value,
           })
         }
       }
@@ -470,8 +476,8 @@ export default {
       // this.validatorDialog = true;
       this.$router.push({
         name: 'MyAccountWallet',
-        query: {
-          id: value.symbol
+        params: {
+          token: value.address
         }
       });
     },
