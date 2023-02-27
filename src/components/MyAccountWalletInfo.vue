@@ -12,7 +12,7 @@
                 </div>
                 <div>
                   <h3>{{ details.symbol }}</h3>
-                  <div v-if="details.address">
+                  <div v-if="details.address&&details.address!='rei'">
                     <a :href="`https://scan.rei.network/token/${details.address}`" target="_blank">
                       <span class="font-grey">{{ details.address | addr }}</span>
                     </a>
@@ -34,7 +34,7 @@
                 <h3>${{ details.price | asset(5) }}</h3>
               </v-col>
               <v-col>
-                <div class="font-grey" v-if="id == 'REI'">Total Supply</div>
+                <div class="font-grey" v-if="id == 'rei'">Total Supply</div>
                 <div class="font-grey" v-else>
                   Circulation Supply
                   <v-tooltip right color="start_unstake">
@@ -46,7 +46,7 @@
                 </div>
                 <h3>{{ details.totalSupply | asset(2) }} {{ details.symbol }}</h3>
               </v-col>
-              <v-col v-if="id == 'REI'">
+              <v-col v-if="id == 'rei'">
                 <div class="font-grey">Holders</div>
                 <h3>{{ totalSupply | asset() }}</h3>
               </v-col>
@@ -68,7 +68,7 @@
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <v-tab key="12" class="v-tab-left" v-if="id != 'REI'">Token Transfers</v-tab>
+            <v-tab key="12" class="v-tab-left" v-if="id != 'rei'">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab1">
@@ -95,7 +95,7 @@
                 </template>
               </v-data-table>
               <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
-              <div class="text-center pt-2" v-if="holderList.length > 0 && id != 'REI'">
+              <div class="text-center pt-2" v-if="holderList.length > 0 && id != 'rei'">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
               </div>
               <div v-else>
@@ -199,7 +199,7 @@ export default {
       reiBalance: 0,
       details: '',
       totalSupply: 0,
-      id: this.$route.query.id,
+      id: this.$route.params.token,
       holderHeaders: [
         { text: 'Rank', value: 'rank' },
         { text: 'Address', value: 'address' },
@@ -446,7 +446,7 @@ export default {
             logo: token.logo,
             balance: web3.utils.fromWei(totalBalance),
             price: 0,
-            address: token.erc20Address,
+            address: token.erc20Address||'rei',
             decimals: token.decimals,
             totalSupply: 1000000000,
             value: 0
@@ -520,14 +520,14 @@ export default {
       this.getListLoading = false;
 
       this.getAccountList();
-      // if (this.id != 'REI') {
+      if (this.id != 'rei') {
         this.getTransferData();
-      // }
+      }
       this.skeletonLoading = false;
       this.loading = false;
     },
     async getAccountList() {
-      this.details = find(this.assetList, (items) => items.symbol == this.id);
+      this.details = find(this.assetList, (items) => items.address == this.id);
       let data = await getTokenHolder('');
       this.accountList = data.data.data;
       this.getWalletInfo();
@@ -567,7 +567,7 @@ export default {
           return b[attr] - a[attr];
         };
       }
-      if (this.id == 'REI') {
+      if (this.id == 'rei') {
         this.holderList = this.accountList;
       } else {
         let data = await getHistoryData({ contractaddress: this.details.address, offset: 1000 });
@@ -582,7 +582,7 @@ export default {
       this.holderList = this.holderList.map((item, index) => {
         let rank = index + 1;
         let balance = 0;
-        if (this.id == 'REI') {
+        if (this.id == 'rei') {
           balance = parseFloat(item.balance) / 10 ** this.details.decimals;
         } else {
           balance = parseFloat(item.value) / 10 ** this.details.decimals;

@@ -89,7 +89,7 @@ const routes = [
     component: MyNftCollection
   },
   {
-    path: '/myAccount/wallet',
+    path: '/myAccount/token/:token',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },
@@ -97,11 +97,6 @@ const routes = [
     path: '/asset',
     name: 'Asset',
     component: Asset
-  },
-  {
-    path: '/asset/assetInfo',
-    name: 'AssetsInfo',
-    component: AssetsInfo
   },
   {
     path: '/asset/assetNft',
@@ -119,10 +114,16 @@ const routes = [
     component: AssetsTokenList
   },
   {
+    path: '/asset/erc20/:token',
+    name: 'AssetsInfo',
+    component: AssetsInfo
+  },
+  {
     path: '/asset/:type',
     name: 'Asset',
     component: Asset
   },
+  
 ];
 
 const router = new VueRouter({
