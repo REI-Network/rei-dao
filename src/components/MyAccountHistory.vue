@@ -159,6 +159,7 @@ import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
+import { types } from 'util';
 export default {
   filters,
   data: (vm) => ({
@@ -173,18 +174,22 @@ export default {
     tokenFilter: '',
     sendList: [],
     receiveList: [],
-    reiList:[],
-    usdtList:[],
-    totalList:[],
+    reiList: [],
+    usdtList: [],
+    sendTokenList: [],
+    receiveTokenList: [],
+    sendTypeList: [],
+    receiveTypeList: [],
+    totalList: [],
     items: [
       { state: 'All', val: '' },
-      { state: 'Receive', val: '1' },
-      { state: 'Send', val: '2' }
+      { state: 'Receive', val: 'Receive' },
+      { state: 'Send', val: 'Send' }
     ],
     items2: [
       { state: 'All', val: '' },
-      { state: 'REI', val: '1' },
-      { state: 'USDT', val: '2' }
+      { state: 'REI', val: 'REI' },
+      { state: 'USDT', val: 'USDT' }
     ],
     loading: false,
     setData: [],
@@ -251,23 +256,23 @@ export default {
     },
     async getData() {
       let params = {
-        module:'account',
-        action:'tokentx',
-        address:this.connection.address,
-      }
+        module: 'account',
+        action: 'tokentx',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      this.transferList = data.data.result||[];
+      this.transferList = data.data.result || [];
       this.getInternal();
       // console.log('transferList',this.transferList)
     },
     async getInternal() {
-       let params = {
-        module:'account',
-        action:'txlistinternal',
-        address:this.connection.address,
-      }
+      let params = {
+        module: 'account',
+        action: 'txlistinternal',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      let internalData = data.data.result||[];
+      let internalData = data.data.result || [];
       this.internalList = this.transferList.concat(internalData);
       // console.log('internalList',this.internalList)
       this.historyData();
@@ -275,28 +280,37 @@ export default {
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       let params = {
-        module:'account',
-        action:'txlist',
-        address:this.connection.address,
-      }
+        module: 'account',
+        action: 'txlist',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      this.transactionsList = data.data.result||[];
+      this.transactionsList = data.data.result || [];
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       });
       this.historyList = this.historyList.map((item) => {
         let name = '';
+        let type = '';
+        let symbol = '';
         if (this.address == item.from.toLowerCase()) {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Send';
         } else {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Receive';
+        }
+        if (item.tokenSymbol) {
+          symbol = item.tokenSymbol;
+        } else {
+          symbol = 'REI';
         }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
@@ -321,37 +335,12 @@ export default {
           gasPrice: gasPrice,
           value: value,
           addressName: name,
+          type: type,
+          symbol: symbol,
           hash: hash
         };
       });
       this.totalList = this.historyList;
-      let sendList = [];
-      let receiveList = [];
-      for (let i = 0; i < this.historyList.length; i++) {
-        let item = this.historyList[i];
-        if (item.to.toUpperCase() == this.connection.address.toUpperCase()) {
-          sendList.push(item);
-        } else {
-          receiveList.push(item);
-        }
-      }
-      this.sendList = sendList;
-      this.receiveList = receiveList;
-
-      let reiList = [];
-      let usdtList = [];
-       for (let i = 0; i < this.historyList.length; i++) {
-        let item = this.historyList[i];
-        if (!item.tokenSymbol) {
-          reiList.push(item);
-        } else if(item.tokenSymbol == 'USDT'){
-          usdtList.push(item);
-        }
-      }
-      this.reiList = reiList;
-      this.usdtList = usdtList;
-      console.log('history',this.historyList)
-
       this.getSortData();
       this.rawDataList = this.list;
       let addressTag = await getAddressTag();
@@ -387,24 +376,40 @@ export default {
     },
     changeStateType() {
       this.list = [];
-      if (this.typeFilter == '1') {
-        this.historyList = this.sendList;
-      } else if(this.typeFilter == '2'){
-        this.historyList = this.receiveList;
-      }else{
-        this.historyList = this.receiveList.concat(this.sendList);
+      this.historyList = this.totalList;
+      if (this.typeFilter != '') {
+        if (this.tokenFilter != '') {
+          this.historyList = this.historyList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        }else{
+          this.historyList = this.historyList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
+      } else {
+        this.historyList = this.totalList;
       }
+      // console.log(this.typeFilter, this.tokenFilter);
       this.getSortData();
     },
     changeStateToken() {
       this.list = [];
-      if (this.tokenFilter == '1') {
-      this.historyList = this.reiList;
-      } else if(this.tokenFilter == '2'){
-        this.historyList = this.usdtList;
-      }else{
+      this.historyList = this.totalList;
+      if (this.tokenFilter != '') {
+        if (this.typeFilter != '') {
+          this.historyList = this.historyList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        }else{
+          this.historyList = this.historyList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
+      } else {
         this.historyList = this.totalList;
       }
+      // console.log(this.typeFilter, this.tokenFilter);
       this.getSortData();
     },
     openDetails(value) {
