@@ -1,16 +1,6 @@
 <template>
   <v-container class="stake_background" style="padding: 0">
-    <v-row>
-      <!-- <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items" label="All Types" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items2" label="All Tokens" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col> -->
+    <v-row justify="space-between">
       <v-col cols="12" md="3">
         <v-card outlined class="select-card">
           <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
@@ -27,6 +17,20 @@
             <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
           </v-menu>
         </v-card>
+      </v-col>
+      <v-col cols="12" md="3">
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="items" label="All Types" item-text="state" item-value="val" outlined dense style="border-radius: 20px" v-model="typeFilter" @change="changeStateType"></v-select>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="items2" label="All Tokens" item-text="state" outlined item-value="val" dense style="border-radius: 20px" v-model="tokenFilter" @change="changeStateToken"></v-select>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <div>
@@ -165,8 +169,23 @@ export default {
     skeletonLoading: true,
     menu1: false,
     menu2: false,
-    items: [],
-    items2: [],
+    typeFilter: '',
+    tokenFilter: '',
+    sendList: [],
+    receiveList: [],
+    reiList:[],
+    usdtList:[],
+    totalList:[],
+    items: [
+      { state: 'All', val: '' },
+      { state: 'Receive', val: '1' },
+      { state: 'Send', val: '2' }
+    ],
+    items2: [
+      { state: 'All', val: '' },
+      { state: 'REI', val: '1' },
+      { state: 'USDT', val: '2' }
+    ],
     loading: false,
     setData: [],
     sortDescVote: true,
@@ -232,23 +251,23 @@ export default {
     },
     async getData() {
       let params = {
-        module: 'account',
-        action: 'tokentx',
-        address: this.connection.address
-      };
+        module:'account',
+        action:'tokentx',
+        address:this.connection.address,
+      }
       let data = await getHistoryData(params);
-      this.transferList = data.data.result || [];
+      this.transferList = data.data.result||[];
       this.getInternal();
       // console.log('transferList',this.transferList)
     },
     async getInternal() {
-      let params = {
-        module: 'account',
-        action: 'txlistinternal',
-        address: this.connection.address
-      };
+       let params = {
+        module:'account',
+        action:'txlistinternal',
+        address:this.connection.address,
+      }
       let data = await getHistoryData(params);
-      let internalData = data.data.result || [];
+      let internalData = data.data.result||[];
       this.internalList = this.transferList.concat(internalData);
       // console.log('internalList',this.internalList)
       this.historyData();
@@ -256,20 +275,17 @@ export default {
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       let params = {
-        module: 'account',
-        action: 'txlist',
-        address: this.connection.address
-      };
+        module:'account',
+        action:'txlist',
+        address:this.connection.address,
+      }
       let data = await getHistoryData(params);
-      this.transactionsList = data.data.result || [];
+      this.transactionsList = data.data.result||[];
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       });
 
-      let addressTag = await getAddressTag();
-      this.detailsList = addressTag.data.data;
-      // console.log('addressTag',this.detailsList);
       this.historyList = this.historyList.map((item) => {
         let name = '';
         if (this.address == item.from.toLowerCase()) {
@@ -309,7 +325,41 @@ export default {
           hash: hash
         };
       });
-      console.log('historyList', this.historyList);
+      this.totalList = this.historyList;
+      let sendList = [];
+      let receiveList = [];
+      for (let i = 0; i < this.historyList.length; i++) {
+        let item = this.historyList[i];
+        if (item.to.toUpperCase() == this.connection.address.toUpperCase()) {
+          sendList.push(item);
+        } else {
+          receiveList.push(item);
+        }
+      }
+      this.sendList = sendList;
+      this.receiveList = receiveList;
+
+      let reiList = [];
+      let usdtList = [];
+       for (let i = 0; i < this.historyList.length; i++) {
+        let item = this.historyList[i];
+        if (!item.tokenSymbol) {
+          reiList.push(item);
+        } else if(item.tokenSymbol == 'USDT'){
+          usdtList.push(item);
+        }
+      }
+      this.reiList = reiList;
+      this.usdtList = usdtList;
+      console.log('history',this.historyList)
+
+      this.getSortData();
+      this.rawDataList = this.list;
+      let addressTag = await getAddressTag();
+      this.detailsList = addressTag.data.data;
+      this.skeletonLoading = false;
+    },
+    getSortData() {
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
@@ -335,8 +385,28 @@ export default {
           }
         }
       }
-      this.rawDataList = this.list;
-      this.skeletonLoading = false;
+    },
+    changeStateType() {
+      this.list = [];
+      if (this.typeFilter == '1') {
+        this.historyList = this.sendList;
+      } else if(this.typeFilter == '2'){
+        this.historyList = this.receiveList;
+      }else{
+        this.historyList = this.receiveList.concat(this.sendList);
+      }
+      this.getSortData();
+    },
+    changeStateToken() {
+      this.list = [];
+      if (this.tokenFilter == '1') {
+      this.historyList = this.reiList;
+      } else if(this.tokenFilter == '2'){
+        this.historyList = this.usdtList;
+      }else{
+        this.historyList = this.totalList;
+      }
+      this.getSortData();
     },
     openDetails(value) {
       this.dialog = true;
