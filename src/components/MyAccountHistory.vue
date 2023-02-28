@@ -33,7 +33,7 @@
       <v-data-iterator :items="list" hide-default-footer :loading="loading" no-data-text="No data" loading-text="" :class="this.historyList.length !== 0 ? 'data-this.list' : 'data-nft'">
         <template v-slot:item="{ item }">
           <h3>{{ item.date }}</h3>
-          <v-card class="card-item" v-for="(info,index) in item.result" :key="item.date+'-'+index" @click="openDetails(info)">
+          <v-card class="card-item" v-for="(info, index) in item.result" :key="item.date + '-' + index" @click="openDetails(info)">
             <v-row>
               <v-col cols="12" sm="3" class="left-item">
                 <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
@@ -50,21 +50,21 @@
               </v-col>
               <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
                 <div class="font-grey">To</div>
-                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.to | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3" v-else>
                 <div class="font-grey">From</div>
-                <h4 v-if="info.addressName"> {{ info.addressName }}</h4>
+                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.from | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
                 <h4>{{ info.value | asset(5) }}</h4>
-                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol}}</div>
+                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol }}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
               <v-col cols="12" sm="3">
-                <div class="font-grey gas-fee" >
+                <div class="font-grey gas-fee">
                   <span>Gas Fee</span>
                   <div class="img">
                     <v-img src="../assets/images/history-3.png" width="20" />
@@ -76,19 +76,19 @@
           </v-card>
         </template>
       </v-data-iterator>
-      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:20px;">
-         <v-row justify="space-between">
-           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
-             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
-           </v-col>
-         </v-row>
+      <v-card v-if="skeletonLoading == true" style="padding: 20px; margin-top: 20px">
+        <v-row justify="space-between">
+          <v-col cols="12" sm="2" v-for="n in 4" :key="n">
+            <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+          </v-col>
+        </v-row>
       </v-card>
-      <v-card v-if="skeletonLoading == true" style="padding:20px;margin-top:28px;">
-         <v-row justify="space-between">
-           <v-col cols="12" sm="2" v-for="n in 4" :key="n" >
-             <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
-           </v-col>
-         </v-row>
+      <v-card v-if="skeletonLoading == true" style="padding: 20px; margin-top: 28px">
+        <v-row justify="space-between">
+          <v-col cols="12" sm="2" v-for="n in 4" :key="n">
+            <v-skeleton-loader class="skeleton" :loading="skeletonLoading" type="text@2"></v-skeleton-loader>
+          </v-col>
+        </v-row>
       </v-card>
     </div>
     <v-dialog v-model="dialog" width="600" class="dialog-card">
@@ -111,9 +111,9 @@
             <div class="item-data">{{ details.blockNumber }}</div>
           </v-row>
           <v-row justify="space-between" v-if="details.from == address" no-gutter class="item-content">
-                <div class="item-name">To</div>
-                <div class="item-data">{{ details.to }}</div>
-            </v-row>
+            <div class="item-name">To</div>
+            <div class="item-data">{{ details.to }}</div>
+          </v-row>
           <v-row justify="space-between" v-else no-gutter class="item-content">
             <div class="item-name">From</div>
             <div class="item-data">{{ details.from }}</div>
@@ -135,9 +135,9 @@
           <div class="font-grey" v-if="details.from == address">Send</div>
           <div class="item-name" v-else>Received</div>
           <v-row align="center" class="value-symbol" no-gutters>
-            <div class="price">{{ details.value | asset(5)}}</div>
-            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol}}</div>
-               <div v-else>&nbsp;&nbsp;REI</div>
+            <div class="price">{{ details.value | asset(5) }}</div>
+            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
+            <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
         </div>
       </v-card>
@@ -151,7 +151,7 @@
 import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
-import { getHistoryData } from '../service/CommonService'
+import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
@@ -162,23 +162,23 @@ export default {
     dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
-    skeletonLoading:true,
+    skeletonLoading: true,
     menu1: false,
     menu2: false,
     items: [],
     items2: [],
     loading: false,
     setData: [],
-    sortDescVote:true,
+    sortDescVote: true,
     transactionsList: [],
     dialog: false,
     historyList: [],
     list: [],
-    rawDataList:[],
-    internalList:[],
+    rawDataList: [],
+    internalList: [],
     details: '',
-    address:'',
-    detailsList:[]
+    address: '',
+    detailsList: []
   }),
   mounted() {
     this.getData();
@@ -196,10 +196,10 @@ export default {
       return this.formatDate2(this.date2);
     },
     listenChange() {
-      const { date,date2} = this;
+      const { date, date2 } = this;
       return {
         date,
-        date2,
+        date2
       };
     }
   },
@@ -210,13 +210,13 @@ export default {
     date2() {
       this.dateFormatted2 = this.formatDate2(this.date2);
     },
-    listenChange(date,date2) {
+    listenChange(date, date2) {
       let startDate = Date.parse(this.date);
       let endDate = Date.parse(this.date2);
-      this.list = [].concat(this.rawDataList)
+      this.list = [].concat(this.rawDataList);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
-      })
+      });
     }
   },
   methods: {
@@ -231,75 +231,90 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
-      let data = await getHistoryData(`module=account&action=tokentx&address=${this.connection.address}`);
-      this.transferList = data.data.result||[];
+      let params = {
+        module: 'account',
+        action: 'tokentx',
+        address: this.connection.address
+      };
+      let data = await getHistoryData(params);
+      this.transferList = data.data.result || [];
       this.getInternal();
       // console.log('transferList',this.transferList)
     },
     async getInternal() {
-      let data = await getHistoryData(`module=account&action=txlistinternal&address=${this.connection.address}`);
-      let internalData = data.data.result||[];
+      let params = {
+        module: 'account',
+        action: 'txlistinternal',
+        address: this.connection.address
+      };
+      let data = await getHistoryData(params);
+      let internalData = data.data.result || [];
       this.internalList = this.transferList.concat(internalData);
       // console.log('internalList',this.internalList)
       this.historyData();
     },
     async historyData() {
       this.address = this.connection.address.toLowerCase();
-      let data = await getHistoryData(`module=account&action=txlist&address=${this.connection.address}`);
-      this.transactionsList = data.data.result||[];
+      let params = {
+        module: 'account',
+        action: 'txlist',
+        address: this.connection.address
+      };
+      let data = await getHistoryData(params);
+      this.transactionsList = data.data.result || [];
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
-      })
-      
+      });
+
       let addressTag = await getAddressTag();
       this.detailsList = addressTag.data.data;
       // console.log('addressTag',this.detailsList);
       this.historyList = this.historyList.map((item) => {
-        let name = "";
-        if(this.address == item.from.toLowerCase()){
+        let name = '';
+        if (this.address == item.from.toLowerCase()) {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
-          if(detail){
-            name = detail.addressName
+          if (detail) {
+            name = detail.addressName;
           }
-        }else{
+        } else {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
-          if(detail){
-            name = detail.addressName
+          if (detail) {
+            name = detail.addressName;
           }
         }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
-        let gasUsed = web3.utils.fromWei(item.gasUsed,'Gwei');
-        let gasPrice = item.gasPrice/1e9;
+        let gasUsed = web3.utils.fromWei(item.gasUsed, 'Gwei');
+        let gasPrice = item.gasPrice / 1e9;
         let value = 0;
-        if(item.tokenSymbol){
-          value = item.value/10**item.tokenDecimal;
-        }else{
-          value = item.value/1e18;
+        if (item.tokenSymbol) {
+          value = item.value / 10 ** item.tokenDecimal;
+        } else {
+          value = item.value / 1e18;
         }
-        let hash = "";
-        if(item.hash){
+        let hash = '';
+        if (item.hash) {
           hash = item.hash;
-        }else{
+        } else {
           hash = item.transactionHash;
         }
         return {
           ...item,
           date: date,
           gasUsed: gasUsed,
-          gasPrice:gasPrice,
+          gasPrice: gasPrice,
           value: value,
-          addressName:name,
-          hash:hash
+          addressName: name,
+          hash: hash
         };
       });
-      console.log('historyList',this.historyList)
-      function sortArr(attr){
-          return function(a,b){
-            return b[attr]-a[attr]
-          }
-        }
+      console.log('historyList', this.historyList);
+      function sortArr(attr) {
+        return function (a, b) {
+          return b[attr] - a[attr];
+        };
+      }
       this.historyList = this.historyList.sort(sortArr('timeStamp'));
       let tempArr = [];
       for (let i = 0; i < this.historyList.length; i++) {
@@ -326,7 +341,7 @@ export default {
     openDetails(value) {
       this.dialog = true;
       this.details = value;
-      console.log('value',value)
+      console.log('value', value);
     },
     cancelDetails() {
       this.dialog = false;
@@ -400,16 +415,16 @@ export default {
     font-weight: bold;
   }
 }
-.token-symbol{
-  width:100px;
-   overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+.token-symbol {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.value-symbol{
+.value-symbol {
   margin-left: 2px;
   font-weight: bold;
-  margin-top:2px;
+  margin-top: 2px;
 }
 .close-dialog {
   cursor: pointer;
