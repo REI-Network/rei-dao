@@ -472,6 +472,7 @@ export default {
         let res = await this.stakeManageInstance.methods.validators(address).call();
         this.detailData.active = 'jail';
         this.detailData.commissionRate = res.commissionRate;
+        this.detailData.address = address;
         this.votingPower = votingPower ? web3.utils.fromWei(web3.utils.toBN(votingPower)):0;
       }
       this.totalAmount = 0;
