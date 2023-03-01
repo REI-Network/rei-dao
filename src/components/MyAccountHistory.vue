@@ -377,28 +377,17 @@ export default {
     changeStateType() {
       this.list = [];
       this.historyList = this.totalList;
-      if (this.typeFilter != '') {
-        if (this.tokenFilter != '') {
-          this.historyList = this.historyList.filter((item) => {
-            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
-          });
+      if(this.tokenFilter == ''){
+        if (this.typeFilter == '') {
+          this.historyList = this.totalList;
         }else{
           this.historyList = this.historyList.filter((item) => {
             return item.type == this.typeFilter;
           });
         }
-      } else {
-        this.historyList = this.totalList;
-      }
-      // console.log(this.typeFilter, this.tokenFilter);
-      this.getSortData();
-    },
-    changeStateToken() {
-      this.list = [];
-      this.historyList = this.totalList;
-      if (this.tokenFilter != '') {
+      }else{
         if (this.typeFilter != '') {
-          this.historyList = this.historyList.filter((item) => {
+           this.historyList = this.historyList.filter((item) => {
             return item.type == this.typeFilter && item.symbol == this.tokenFilter;
           });
         }else{
@@ -406,8 +395,31 @@ export default {
             return item.symbol == this.tokenFilter;
           });
         }
-      } else {
-        this.historyList = this.totalList;
+      }
+      // console.log(this.typeFilter, this.tokenFilter);
+      this.getSortData();
+    },
+    changeStateToken() {
+      this.list = [];
+      this.historyList = this.totalList;
+      if (this.typeFilter == '') {
+        if(this.tokenFilter == ''){
+          this.historyList = this.totalList;
+        }else{
+           this.historyList = this.historyList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
+      }else{
+        if(this.tokenFilter != ''){
+            this.historyList = this.historyList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        }else{
+           this.historyList = this.historyList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
       }
       // console.log(this.typeFilter, this.tokenFilter);
       this.getSortData();
