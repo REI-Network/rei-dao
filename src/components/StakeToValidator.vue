@@ -864,7 +864,10 @@ export default {
       let minedInfoMap = {};
       for (let i = 0; i < minedInfo.data.length; i++) {
         let _data = minedInfo.data[i];
-        let _address = web3.utils.toChecksumAddress(_data.minerMessage.miner);
+        let _address = ''
+        if(_data.minerMessage){
+          _address = web3.utils.toChecksumAddress(_data.minerMessage.miner);
+        }
         let obj = {
           ..._data,
           minerMissRecordNumberDay1: minedInfoDay1.data[i].minerMissRecordNumber,
