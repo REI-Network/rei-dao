@@ -143,7 +143,7 @@
                 <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
               </template>
               <template v-slot:item.operation="{ item }">
-                <div v-if="item.address.toUpperCase() == connection.address.toUpperCase()">
+                <div v-if="item.address.toUpperCase() !== connection.address.toUpperCase()">
                   <v-btn tile small color="vote_button" class="mr-4 font-btn btn-radius" @click.stop="getPayFine(item)" height="32"> Pay Fine </v-btn>
                 </div>
                 <div v-else>-</div>
@@ -692,7 +692,7 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
-      unJailPayAmount: '20000',
+      unJailPayAmount: '20000000000000000000000',
       unJailAmount: 0,
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
@@ -1483,7 +1483,6 @@ export default {
           logo
         });
       }
-
       this.jailList = list;
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
