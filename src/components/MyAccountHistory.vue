@@ -40,19 +40,18 @@
           <v-card class="card-item" v-for="(info, index) in item.result" :key="item.date + '-' + index" @click="openDetails(info)">
             <v-row>
               <v-col cols="12" sm="3" class="left-item">
-                <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+                <div class="img" v-if="info.type == 'Send'">
                   <v-img src="../assets/images/history-4.png" width="40" />
                 </div>
                 <div class="img" v-else>
                   <v-img src="../assets/images/history-2.png" width="40" />
                 </div>
                 <div>
-                  <div class="font-grey" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">Send</div>
-                  <div class="font-grey" v-else>Receive</div>
+                  <div class="font-grey">{{ info.type  }}</div>
                   <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
                 </div>
               </v-col>
-              <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+              <v-col cols="12" sm="3" v-if="info.type == 'Send'">
                 <div class="font-grey">To</div>
                 <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.to | addr }}</h4>
@@ -136,8 +135,7 @@
           </v-row>
         </v-card>
         <div class="receive">
-          <div class="font-grey" v-if="details.from == address">Send</div>
-          <div class="item-name" v-else>Received</div>
+          <div class="font-grey">{{ details.type }}</div>
           <v-row align="center" class="value-symbol" no-gutters>
             <div class="price">{{ details.value | asset(5) }}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
@@ -160,6 +158,7 @@ import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
 import { types } from 'util';
+import { listenerCount } from 'events';
 export default {
   filters,
   data: (vm) => ({
@@ -237,10 +236,10 @@ export default {
     listenChange(date, date2) {
       let startDate = Date.parse(this.date);
       let endDate = Date.parse(this.date2);
-      this.list = [].concat(this.rawDataList);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
+      this.changeStateType();
     }
   },
   methods: {
@@ -342,7 +341,7 @@ export default {
       });
       this.totalList = this.historyList;
       this.getSortData();
-      this.rawDataList = this.list;
+      // console.log('list',this.list)
       let addressTag = await getAddressTag();
       this.detailsList = addressTag.data.data;
       this.skeletonLoading = false;
@@ -373,55 +372,75 @@ export default {
           }
         }
       }
+      this.rawDataList = this.list;
+      this.list = [].concat(this.rawDataList);
     },
     changeStateType() {
+      let startDate = Date.parse(this.date);
+      let endDate = Date.parse(this.date2);
       this.list = [];
+      let dateList = [];
       this.historyList = this.totalList;
-      if(this.tokenFilter == ''){
+      if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      } else {
+        dateList = this.totalList;
+      }
+      if (this.tokenFilter == '') {
         if (this.typeFilter == '') {
-          this.historyList = this.totalList;
-        }else{
-          this.historyList = this.historyList.filter((item) => {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
             return item.type == this.typeFilter;
           });
         }
-      }else{
+      } else {
         if (this.typeFilter != '') {
-           this.historyList = this.historyList.filter((item) => {
+          this.historyList = dateList.filter((item) => {
             return item.type == this.typeFilter && item.symbol == this.tokenFilter;
           });
-        }else{
-          this.historyList = this.historyList.filter((item) => {
+        } else {
+          this.historyList = dateList.filter((item) => {
             return item.symbol == this.tokenFilter;
           });
         }
       }
-      // console.log(this.typeFilter, this.tokenFilter);
       this.getSortData();
     },
     changeStateToken() {
+      let startDate = Date.parse(this.date);
+      let endDate = Date.parse(this.date2);
       this.list = [];
+      let dateList = [];
       this.historyList = this.totalList;
+      if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      } else {
+        dateList = this.totalList;
+      }
       if (this.typeFilter == '') {
-        if(this.tokenFilter == ''){
-          this.historyList = this.totalList;
-        }else{
-           this.historyList = this.historyList.filter((item) => {
+        if (this.tokenFilter == '') {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
             return item.symbol == this.tokenFilter;
           });
         }
-      }else{
-        if(this.tokenFilter != ''){
-            this.historyList = this.historyList.filter((item) => {
+      } else {
+        if (this.tokenFilter != '') {
+          this.historyList = dateList.filter((item) => {
             return item.type == this.typeFilter && item.symbol == this.tokenFilter;
           });
-        }else{
-           this.historyList = this.historyList.filter((item) => {
+        } else {
+          this.historyList = dateList.filter((item) => {
             return item.type == this.typeFilter;
           });
         }
       }
-      // console.log(this.typeFilter, this.tokenFilter);
       this.getSortData();
     },
     openDetails(value) {
