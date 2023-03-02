@@ -7,7 +7,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field v-model="dateFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+            <v-date-picker v-model="date" no-title @input="menu1 = false">{{ date }}</v-date-picker>
           </v-menu>
           <v-icon class="right-icon">mdi-menu-right</v-icon>
           <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
@@ -162,8 +162,8 @@ import { listenerCount } from 'events';
 export default {
   filters,
   data: (vm) => ({
-    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
+    date: '2022-01-01',
+    dateFormatted: '2022/01/01',
     date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     skeletonLoading: true,
@@ -381,13 +381,13 @@ export default {
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      if (startDate != endDate) {
+      // if (startDate != endDate) {
         dateList = this.historyList.filter((item) => {
           return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
         });
-      } else {
-        dateList = this.totalList;
-      }
+      // } else {
+      //   dateList = this.totalList;
+      // }
       if (this.tokenFilter == '') {
         if (this.typeFilter == '') {
           this.historyList = dateList;
@@ -415,13 +415,13 @@ export default {
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      if (startDate != endDate) {
+      // if (startDate != endDate) {
         dateList = this.historyList.filter((item) => {
           return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
         });
-      } else {
-        dateList = this.totalList;
-      }
+      // } else {
+      //   dateList = this.totalList;
+      // }
       if (this.typeFilter == '') {
         if (this.tokenFilter == '') {
           this.historyList = dateList;
