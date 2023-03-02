@@ -40,19 +40,18 @@
           <v-card class="card-item" v-for="(info, index) in item.result" :key="item.date + '-' + index" @click="openDetails(info)">
             <v-row>
               <v-col cols="12" sm="3" class="left-item">
-                <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+                <div class="img" v-if="info.type == 'Send'">
                   <v-img src="../assets/images/history-4.png" width="40" />
                 </div>
                 <div class="img" v-else>
                   <v-img src="../assets/images/history-2.png" width="40" />
                 </div>
                 <div>
-                  <div class="font-grey" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">Send</div>
-                  <div class="font-grey" v-else>Receive</div>
+                  <div class="font-grey">{{ info.type  }}</div>
                   <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
                 </div>
               </v-col>
-              <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+              <v-col cols="12" sm="3" v-if="info.type == 'Send'">
                 <div class="font-grey">To</div>
                 <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.to | addr }}</h4>
@@ -136,8 +135,7 @@
           </v-row>
         </v-card>
         <div class="receive">
-          <div class="font-grey" v-if="details.from == address">Send</div>
-          <div class="item-name" v-else>Received</div>
+          <div class="font-grey">{{ details.type }}</div>
           <v-row align="center" class="value-symbol" no-gutters>
             <div class="price">{{ details.value | asset(5) }}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
@@ -159,6 +157,8 @@ import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
+import { types } from 'util';
+import { listenerCount } from 'events';
 export default {
   filters,
   data: (vm) => ({
@@ -173,18 +173,22 @@ export default {
     tokenFilter: '',
     sendList: [],
     receiveList: [],
-    reiList:[],
-    usdtList:[],
-    totalList:[],
+    reiList: [],
+    usdtList: [],
+    sendTokenList: [],
+    receiveTokenList: [],
+    sendTypeList: [],
+    receiveTypeList: [],
+    totalList: [],
     items: [
       { state: 'All', val: '' },
-      { state: 'Receive', val: '1' },
-      { state: 'Send', val: '2' }
+      { state: 'Receive', val: 'Receive' },
+      { state: 'Send', val: 'Send' }
     ],
     items2: [
       { state: 'All', val: '' },
-      { state: 'REI', val: '1' },
-      { state: 'USDT', val: '2' }
+      { state: 'REI', val: 'REI' },
+      { state: 'USDT', val: 'USDT' }
     ],
     loading: false,
     setData: [],
@@ -232,10 +236,10 @@ export default {
     listenChange(date, date2) {
       let startDate = Date.parse(this.date);
       let endDate = Date.parse(this.date2);
-      this.list = [].concat(this.rawDataList);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
+      this.changeStateType();
     }
   },
   methods: {
@@ -251,23 +255,23 @@ export default {
     },
     async getData() {
       let params = {
-        module:'account',
-        action:'tokentx',
-        address:this.connection.address,
-      }
+        module: 'account',
+        action: 'tokentx',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      this.transferList = data.data.result||[];
+      this.transferList = data.data.result || [];
       this.getInternal();
       // console.log('transferList',this.transferList)
     },
     async getInternal() {
-       let params = {
-        module:'account',
-        action:'txlistinternal',
-        address:this.connection.address,
-      }
+      let params = {
+        module: 'account',
+        action: 'txlistinternal',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      let internalData = data.data.result||[];
+      let internalData = data.data.result || [];
       this.internalList = this.transferList.concat(internalData);
       // console.log('internalList',this.internalList)
       this.historyData();
@@ -275,12 +279,12 @@ export default {
     async historyData() {
       this.address = this.connection.address.toLowerCase();
       let params = {
-        module:'account',
-        action:'txlist',
-        address:this.connection.address,
-      }
+        module: 'account',
+        action: 'txlist',
+        address: this.connection.address
+      };
       let data = await getHistoryData(params);
-      this.transactionsList = data.data.result||[];
+      this.transactionsList = data.data.result || [];
       this.historyList = this.internalList.concat(this.transactionsList);
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
@@ -288,16 +292,25 @@ export default {
 
       this.historyList = this.historyList.map((item) => {
         let name = '';
+        let type = '';
+        let symbol = '';
         if (this.address == item.from.toLowerCase()) {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Send';
         } else {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Receive';
+        }
+        if (item.tokenSymbol) {
+          symbol = item.tokenSymbol;
+        } else {
+          symbol = 'REI';
         }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
@@ -322,39 +335,14 @@ export default {
           gasPrice: gasPrice,
           value: value,
           addressName: name,
+          type: type,
+          symbol: symbol,
           hash: hash
         };
       });
       this.totalList = this.historyList;
-      let sendList = [];
-      let receiveList = [];
-      for (let i = 0; i < this.historyList.length; i++) {
-        let item = this.historyList[i];
-        if (item.to.toUpperCase() == this.connection.address.toUpperCase()) {
-          sendList.push(item);
-        } else {
-          receiveList.push(item);
-        }
-      }
-      this.sendList = sendList;
-      this.receiveList = receiveList;
-
-      let reiList = [];
-      let usdtList = [];
-       for (let i = 0; i < this.historyList.length; i++) {
-        let item = this.historyList[i];
-        if (!item.tokenSymbol) {
-          reiList.push(item);
-        } else if(item.tokenSymbol == 'USDT'){
-          usdtList.push(item);
-        }
-      }
-      this.reiList = reiList;
-      this.usdtList = usdtList;
-      console.log('history',this.historyList)
-
       this.getSortData();
-      this.rawDataList = this.list;
+      // console.log('list',this.list)
       let addressTag = await getAddressTag();
       this.detailsList = addressTag.data.data;
       this.skeletonLoading = false;
@@ -385,26 +373,74 @@ export default {
           }
         }
       }
+      this.rawDataList = this.list;
+      this.list = [].concat(this.rawDataList);
     },
     changeStateType() {
+      let startDate = Date.parse(this.date);
+      let endDate = Date.parse(this.date2);
       this.list = [];
-      if (this.typeFilter == '1') {
-        this.historyList = this.sendList;
-      } else if(this.typeFilter == '2'){
-        this.historyList = this.receiveList;
-      }else{
-        this.historyList = this.receiveList.concat(this.sendList);
+      let dateList = [];
+      this.historyList = this.totalList;
+      if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      } else {
+        dateList = this.totalList;
+      }
+      if (this.tokenFilter == '') {
+        if (this.typeFilter == '') {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
+      } else {
+        if (this.typeFilter != '') {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
       }
       this.getSortData();
     },
     changeStateToken() {
+      let startDate = Date.parse(this.date);
+      let endDate = Date.parse(this.date2);
       this.list = [];
-      if (this.tokenFilter == '1') {
-      this.historyList = this.reiList;
-      } else if(this.tokenFilter == '2'){
-        this.historyList = this.usdtList;
-      }else{
-        this.historyList = this.totalList;
+      let dateList = [];
+      this.historyList = this.totalList;
+      if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      } else {
+        dateList = this.totalList;
+      }
+      if (this.typeFilter == '') {
+        if (this.tokenFilter == '') {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
+      } else {
+        if (this.tokenFilter != '') {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
       }
       this.getSortData();
     },
