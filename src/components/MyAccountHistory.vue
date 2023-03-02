@@ -163,7 +163,7 @@ export default {
   filters,
   data: (vm) => ({
     date: '2022-01-01',
-    dateFormatted: '2022/01/01',
+    dateFormatted: '01/01/2022',
     date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
     dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     skeletonLoading: true,
