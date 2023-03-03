@@ -3,18 +3,18 @@
     <v-row justify="space-between">
       <v-col cols="12" md="3">
         <v-card outlined class="select-card">
-          <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+          <v-menu ref="startMenu" v-model="startMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="startFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+            <v-date-picker v-model="startDate" no-title @input="startMenu = false">{{ startDate }}</v-date-picker>
           </v-menu>
           <v-icon class="right-icon">mdi-menu-right</v-icon>
-          <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+          <v-menu ref="endMenu" v-model="endMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted2" label="End Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="endFormatted" label="End Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
+            <v-date-picker v-model="endDate" no-title @input="endMenu = false"></v-date-picker>
           </v-menu>
         </v-card>
       </v-col>
@@ -22,12 +22,12 @@
         <v-row>
           <v-col cols="12" sm="6">
             <v-card outlined class="select-card">
-              <v-select class="d-select" :items="items" label="All Types" item-text="state" item-value="val" outlined dense style="border-radius: 20px" v-model="typeFilter" @change="changeStateType"></v-select>
+              <v-select class="d-select" :items="typeItems" label="All Types" item-text="state" item-value="val" outlined dense style="border-radius: 20px" v-model="typeFilter" @change="changeStateType"></v-select>
             </v-card>
           </v-col>
           <v-col cols="12" sm="6">
             <v-card outlined class="select-card">
-              <v-select class="d-select" :items="items2" label="All Tokens" item-text="state" outlined item-value="val" dense style="border-radius: 20px" v-model="tokenFilter" @change="changeStateToken"></v-select>
+              <v-select class="d-select" :items="tokenItems" label="All Tokens" item-text="state" outlined item-value="val" dense style="border-radius: 20px" v-model="tokenFilter" @change="changeStateToken"></v-select>
             </v-card>
           </v-col>
         </v-row>
@@ -157,18 +157,17 @@ import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
-import { types } from 'util';
-import { listenerCount } from 'events';
+
 export default {
   filters,
   data: (vm) => ({
-    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
-    date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-    dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
+    startDate: '2022-01-01',
+    startFormatted: '01/01/2022',
+    endDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+    endFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     skeletonLoading: true,
-    menu1: false,
-    menu2: false,
+    startMenu: false,
+    endMenu: false,
     typeFilter: '',
     tokenFilter: '',
     sendList: [],
@@ -180,12 +179,12 @@ export default {
     sendTypeList: [],
     receiveTypeList: [],
     totalList: [],
-    items: [
+    typeItems: [
       { state: 'All', val: '' },
       { state: 'Receive', val: 'Receive' },
       { state: 'Send', val: 'Send' }
     ],
-    items2: [
+    tokenItems: [
       { state: 'All', val: '' },
       { state: 'REI', val: 'REI' },
       { state: 'USDT', val: 'USDT' }
@@ -213,29 +212,29 @@ export default {
       dark: 'dark'
     }),
     computedDateFormatted() {
-      return this.formatDate(this.date);
+      return this.formatDate(this.startDate);
     },
     computedDateFormatted2() {
-      return this.formatDate2(this.date2);
+      return this.formatDate2(this.endDate);
     },
     listenChange() {
-      const { date, date2 } = this;
+      const { startDate, endDate } = this;
       return {
-        date,
-        date2
+        startDate,
+        endDate
       };
     }
   },
   watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.date);
+    startDate() {
+      this.startFormatted = this.formatDate(this.startDate);
     },
-    date2() {
-      this.dateFormatted2 = this.formatDate2(this.date2);
+    endDate() {
+      this.endFormatted = this.formatDate2(this.endDate);
     },
-    listenChange(date, date2) {
-      let startDate = Date.parse(this.date);
-      let endDate = Date.parse(this.date2);
+    listenChange(newDate, oldDate) {
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
@@ -243,14 +242,14 @@ export default {
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null;
-      const [year, month, day] = date.split('-');
+    formatDate(startDate) {
+      if (!startDate) return null;
+      const [year, month, day] = startDate.split('-');
       return `${month}/${day}/${year}`;
     },
-    formatDate2(date2) {
-      if (!date2) return null;
-      const [year, month, day] = date2.split('-');
+    formatDate2(endDate) {
+      if (!endDate) return null;
+      const [year, month, day] = endDate.split('-');
       return `${month}/${day}/${year}`;
     },
     async getData() {
@@ -377,18 +376,18 @@ export default {
       this.list = [].concat(this.rawDataList);
     },
     changeStateType() {
-      let startDate = Date.parse(this.date);
-      let endDate = Date.parse(this.date2);
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      if (startDate != endDate) {
+      // if (startDate != endDate) {
         dateList = this.historyList.filter((item) => {
           return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
         });
-      } else {
-        dateList = this.totalList;
-      }
+      // } else {
+      //   dateList = this.totalList;
+      // }
       if (this.tokenFilter == '') {
         if (this.typeFilter == '') {
           this.historyList = dateList;
@@ -411,18 +410,18 @@ export default {
       this.getSortData();
     },
     changeStateToken() {
-      let startDate = Date.parse(this.date);
-      let endDate = Date.parse(this.date2);
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      if (startDate != endDate) {
+      // if (startDate != endDate) {
         dateList = this.historyList.filter((item) => {
           return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
         });
-      } else {
-        dateList = this.totalList;
-      }
+      // } else {
+      //   dateList = this.totalList;
+      // }
       if (this.typeFilter == '') {
         if (this.tokenFilter == '') {
           this.historyList = dateList;
