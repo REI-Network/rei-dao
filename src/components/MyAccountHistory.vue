@@ -1,32 +1,36 @@
 <template>
   <v-container class="stake_background" style="padding: 0">
-    <v-row>
-      <!-- <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items" label="All Types" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="2">
-        <v-card outlined class="select-card">
-          <v-select class="d-select" :items="items2" label="All Tokens" outlined dense style="border-radius: 20px"></v-select>
-        </v-card>
-      </v-col> -->
+    <v-row justify="space-between">
       <v-col cols="12" md="3">
         <v-card outlined class="select-card">
-          <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+          <v-menu ref="startMenu" v-model="startMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="startFormatted" label="Start Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+            <v-date-picker v-model="startDate" no-title @input="startMenu = false">{{ startDate }}</v-date-picker>
           </v-menu>
           <v-icon class="right-icon">mdi-menu-right</v-icon>
-          <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+          <v-menu ref="endMenu" v-model="endMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field v-model="dateFormatted2" label="End Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
+              <v-text-field v-model="endFormatted" label="End Time" outlined dense v-bind="attrs" v-on="on" style="border-radius: 20px" class="font-grey"></v-text-field>
             </template>
-            <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
+            <v-date-picker v-model="endDate" no-title @input="endMenu = false"></v-date-picker>
           </v-menu>
         </v-card>
+      </v-col>
+      <v-col cols="12" md="3">
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="typeItems" label="All Types" item-text="state" item-value="val" outlined dense style="border-radius: 20px" v-model="typeFilter" @change="changeStateType"></v-select>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card outlined class="select-card">
+              <v-select class="d-select" :items="tokenItems" label="All Tokens" item-text="state" outlined item-value="val" dense style="border-radius: 20px" v-model="tokenFilter" @change="changeStateToken"></v-select>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <div>
@@ -36,19 +40,18 @@
           <v-card class="card-item" v-for="(info, index) in item.result" :key="item.date + '-' + index" @click="openDetails(info)">
             <v-row>
               <v-col cols="12" sm="3" class="left-item">
-                <div class="img" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+                <div class="img" v-if="info.type == 'Send'">
                   <v-img src="../assets/images/history-4.png" width="40" />
                 </div>
                 <div class="img" v-else>
                   <v-img src="../assets/images/history-2.png" width="40" />
                 </div>
                 <div>
-                  <div class="font-grey" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">Send</div>
-                  <div class="font-grey" v-else>Receive</div>
+                  <div class="font-grey">{{ info.type  }}</div>
                   <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
                 </div>
               </v-col>
-              <v-col cols="12" sm="3" v-if="info.from.toUpperCase() == connection.address.toUpperCase()">
+              <v-col cols="12" sm="3" v-if="info.type == 'Send'">
                 <div class="font-grey">To</div>
                 <h4 v-if="info.addressName">{{ info.addressName }}</h4>
                 <h4 v-else>{{ info.to | addr }}</h4>
@@ -132,8 +135,7 @@
           </v-row>
         </v-card>
         <div class="receive">
-          <div class="font-grey" v-if="details.from == address">Send</div>
-          <div class="item-name" v-else>Received</div>
+          <div class="font-grey">{{ details.type }}</div>
           <v-row align="center" class="value-symbol" no-gutters>
             <div class="price">{{ details.value | asset(5) }}</div>
             <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
@@ -155,18 +157,38 @@ import { getHistoryData } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
+
 export default {
   filters,
   data: (vm) => ({
-    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
-    date2: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-    dateFormatted2: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
+    startDate: '2022-01-01',
+    startFormatted: '01/01/2022',
+    endDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+    endFormatted: vm.formatDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10)),
     skeletonLoading: true,
-    menu1: false,
-    menu2: false,
-    items: [],
-    items2: [],
+    startMenu: false,
+    endMenu: false,
+    typeFilter: '',
+    tokenFilter: '',
+    sendList: [],
+    receiveList: [],
+    reiList: [],
+    usdtList: [],
+    sendTokenList: [],
+    receiveTokenList: [],
+    sendTypeList: [],
+    receiveTypeList: [],
+    totalList: [],
+    typeItems: [
+      { state: 'All', val: '' },
+      { state: 'Receive', val: 'Receive' },
+      { state: 'Send', val: 'Send' }
+    ],
+    tokenItems: [
+      { state: 'All', val: '' },
+      { state: 'REI', val: 'REI' },
+      { state: 'USDT', val: 'USDT' }
+    ],
     loading: false,
     setData: [],
     sortDescVote: true,
@@ -190,44 +212,44 @@ export default {
       dark: 'dark'
     }),
     computedDateFormatted() {
-      return this.formatDate(this.date);
+      return this.formatDate(this.startDate);
     },
     computedDateFormatted2() {
-      return this.formatDate2(this.date2);
+      return this.formatDate2(this.endDate);
     },
     listenChange() {
-      const { date, date2 } = this;
+      const { startDate, endDate } = this;
       return {
-        date,
-        date2
+        startDate,
+        endDate
       };
     }
   },
   watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.date);
+    startDate() {
+      this.startFormatted = this.formatDate(this.startDate);
     },
-    date2() {
-      this.dateFormatted2 = this.formatDate2(this.date2);
+    endDate() {
+      this.endFormatted = this.formatDate2(this.endDate);
     },
-    listenChange(date, date2) {
-      let startDate = Date.parse(this.date);
-      let endDate = Date.parse(this.date2);
-      this.list = [].concat(this.rawDataList);
+    listenChange(newDate, oldDate) {
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
       this.list = this.list.filter((item) => {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
+      this.changeStateType();
     }
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null;
-      const [year, month, day] = date.split('-');
+    formatDate(startDate) {
+      if (!startDate) return null;
+      const [year, month, day] = startDate.split('-');
       return `${month}/${day}/${year}`;
     },
-    formatDate2(date2) {
-      if (!date2) return null;
-      const [year, month, day] = date2.split('-');
+    formatDate2(endDate) {
+      if (!endDate) return null;
+      const [year, month, day] = endDate.split('-');
       return `${month}/${day}/${year}`;
     },
     async getData() {
@@ -266,22 +288,27 @@ export default {
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       });
-
-      let addressTag = await getAddressTag();
-      this.detailsList = addressTag.data.data;
-      // console.log('addressTag',this.detailsList);
       this.historyList = this.historyList.map((item) => {
         let name = '';
+        let type = '';
+        let symbol = '';
         if (this.address == item.from.toLowerCase()) {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Send';
         } else {
           let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
           if (detail) {
             name = detail.addressName;
           }
+          type = 'Receive';
+        }
+        if (item.tokenSymbol) {
+          symbol = item.tokenSymbol;
+        } else {
+          symbol = 'REI';
         }
         let timestamp = item.timeStamp * 1000;
         let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
@@ -306,10 +333,19 @@ export default {
           gasPrice: gasPrice,
           value: value,
           addressName: name,
+          type: type,
+          symbol: symbol,
           hash: hash
         };
       });
-      console.log('historyList', this.historyList);
+      this.totalList = this.historyList;
+      this.getSortData();
+      // console.log('list',this.list)
+      let addressTag = await getAddressTag();
+      this.detailsList = addressTag.data.data;
+      this.skeletonLoading = false;
+    },
+    getSortData() {
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
@@ -336,7 +372,75 @@ export default {
         }
       }
       this.rawDataList = this.list;
-      this.skeletonLoading = false;
+      this.list = [].concat(this.rawDataList);
+    },
+    changeStateType() {
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
+      this.list = [];
+      let dateList = [];
+      this.historyList = this.totalList;
+      // if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      // } else {
+      //   dateList = this.totalList;
+      // }
+      if (this.tokenFilter == '') {
+        if (this.typeFilter == '') {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
+      } else {
+        if (this.typeFilter != '') {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
+      }
+      this.getSortData();
+    },
+    changeStateToken() {
+      let startDate = Date.parse(this.startDate);
+      let endDate = Date.parse(this.endDate);
+      this.list = [];
+      let dateList = [];
+      this.historyList = this.totalList;
+      // if (startDate != endDate) {
+        dateList = this.historyList.filter((item) => {
+          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+        });
+      // } else {
+      //   dateList = this.totalList;
+      // }
+      if (this.typeFilter == '') {
+        if (this.tokenFilter == '') {
+          this.historyList = dateList;
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.symbol == this.tokenFilter;
+          });
+        }
+      } else {
+        if (this.tokenFilter != '') {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter && item.symbol == this.tokenFilter;
+          });
+        } else {
+          this.historyList = dateList.filter((item) => {
+            return item.type == this.typeFilter;
+          });
+        }
+      }
+      this.getSortData();
     },
     openDetails(value) {
       this.dialog = true;
