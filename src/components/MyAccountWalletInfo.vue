@@ -567,10 +567,16 @@ export default {
           return b[attr] - a[attr];
         };
       }
+      let params = {
+          module: 'token',
+          action: 'getTokenHolders',
+          contractaddress: this.details.address,
+          offset: 1000,
+        };
       if (this.id == 'rei') {
         this.holderList = this.accountList;
       } else {
-        let data = await getHistoryData({ contractaddress: this.details.address, offset: 1000 });
+        let data = await getHistoryData(params);
         this.tokenList = data.data.result;
         this.holderList = this.tokenList;
         if (this.holderList.length > 0) {
