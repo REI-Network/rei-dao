@@ -121,7 +121,7 @@ export default {
       pageVisible: 7,
       totalPage: 0,
       description: '',
-      nftConfig: this.$route.query.id,
+      nftConfig: this.$route.query.address,
       tokenId: this.$route.query.tokenid,
       totalSupply: 0,
       nftList: [],
@@ -227,7 +227,7 @@ export default {
     },
     async getHolderList() {
       let params = {
-        contract: this.$route.query.id,
+        contract: this.$route.query.address,
         tokenId: this.$route.query.tokenid,
       }
       this.getListLoading = true;

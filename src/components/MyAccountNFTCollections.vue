@@ -246,7 +246,7 @@ export default {
       this.$router.push({
         name: 'NftDetails',
         query: {
-          id: item.address,
+          address: item.address,
           tokenid: item.tokenid,
           standard: 'erc-721'
         }

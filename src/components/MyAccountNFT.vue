@@ -193,8 +193,6 @@ export default {
         return;
       }
 
-      
-
       for (let i = 0; i < this.nftConfig.length; i++) {
         if(this.nftConfig[i].token_standard == 'ERC-1155'){
           let contract = new web3.eth.Contract(abiBadgesNFT, this.nftConfig[i].address);
@@ -271,7 +269,7 @@ export default {
         this.$router.push({
           name: 'NftDetails',
           query: {
-            id: item.address,
+            address: item.address,
             tokenid: item.tokenId,
             standard: 'erc-1155',
             name:item.name

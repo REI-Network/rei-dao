@@ -37,6 +37,11 @@ const routes = [
     component: MyAccount
   },
   {
+    path: '/myAccount/:type',
+    name: 'My Account',
+    component: MyAccount
+  },
+  {
     path: '/stake',
     name: 'Stake',
     component: Stake,
@@ -79,7 +84,7 @@ const routes = [
     component: StakeValidator
   },
   {
-    path: '/myAccount/details',
+    path: '/myAccount/nfts',
     name: 'NftDetails',
     component: MyNftDetails
   },
@@ -89,7 +94,7 @@ const routes = [
     component: MyNftCollection
   },
   {
-    path: '/myAccount/token/:token',
+    path: '/myAccount/portfolio/:token',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },
