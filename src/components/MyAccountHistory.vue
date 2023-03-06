@@ -288,7 +288,7 @@ export default {
       this.historyList = this.historyList.filter((item) => {
         return item.value && item.value != 0;
       });
-
+      
       this.historyList = this.historyList.map((item) => {
         let name = '';
         let type = '';

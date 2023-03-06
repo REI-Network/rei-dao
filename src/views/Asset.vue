@@ -615,7 +615,13 @@ export default {
       let countList = [];
       for (let i = 0; i < this.list.length; i++) {
         let item = this.list[i];
-        let data = await getHistoryData({contractaddress:item.address,offset:1000});
+        let params = {
+          module: 'token',
+          action: 'getTokenHolders',
+          contractaddress: item.address,
+          offset: 1000,
+        };
+        let data = await getHistoryData(params);
         let list = data.data.result;
         let _address = {
           address: item.address,

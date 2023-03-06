@@ -692,7 +692,7 @@ export default {
       commissionRateInterval: 0,
       minIndexVotingPower: 0,
       unstakeDelay: 0,
-      unJailPayAmount: '20000',
+      unJailPayAmount: '20000000000000000000000',
       unJailAmount: 0,
       approved: true,
       calculateRules: [(v) => !!v || this.$t('msg.please_input_number')],
@@ -1483,7 +1483,6 @@ export default {
           logo
         });
       }
-
       this.jailList = list;
       this.unJailAmount = web3.utils.fromWei(web3.utils.toBN(this.unJailPayAmount));
       this.jailLoading = false;
