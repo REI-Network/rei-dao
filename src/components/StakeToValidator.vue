@@ -3,10 +3,10 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left">Validator List</v-tab>
-          <v-tab key="12">Jail</v-tab>
-          <v-tab key="13">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="14">My Voted Validators</v-tab>
+          <v-tab key="11" to="/stake/list" class="v-tab-left">Validator List</v-tab>
+          <v-tab key="12" to="/stake/jail">Jail</v-tab>
+          <v-tab key="13" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="14" to="/stake/vote">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
@@ -46,7 +46,7 @@
           </v-row>
         </div>
         <v-divider class="faq_border" />
-        <v-tabs-items v-model="tab1">
+        <v-tabs-items v-model="tab2">
           <v-tab-item key="11">
             <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
@@ -579,8 +579,8 @@ export default {
       listFilter: '',
       payFineDialog: false,
       isNode: false,
-      tab1: null,
-      tab2: null,
+      tab1: 0,
+      tab2: 1,
       stakeListLoading: false,
       jailLoading: false,
       myStakeListLoading: false,
@@ -603,7 +603,20 @@ export default {
       totalAmount: 0,
       calculationItems: [],
       nodeInfoList: [],
-
+      routerMap: {
+        'list': {
+          index: 0
+        },
+        'jail': {
+          index: 1
+        },
+        'pending': {
+          index: 2
+        },
+        'vote': {
+          index: 3
+        }
+      },
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -708,6 +721,14 @@ export default {
     },
     listenChange(stake, days) {
       this.Calculation();
+    },
+     tab1:function () {
+        let type = this.$route.params.type;
+        if (!type) {
+          this.tab2 = 0;
+        } else {
+          this.tab2 = this.routerMap[type].index;
+        }
     }
   },
   mounted() {
