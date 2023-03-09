@@ -1,0 +1,13 @@
+{
+  "nodeName": "Coinhub",
+  "nodeAddress": "0x32F0CdD0DfC8a2A1E26ACEc239f09bCE5D9f6300",
+  "logo": "bafkreia2bnunxxin3vqxbtthsmgqagfq646m4v24gr5nu346ot3zkhvmyy",
+  "nodeDesc": "Coinhub is a multi-chain decentralized wallet serving the DeFi ecosystem, which has supported 50+ public chains such as Bitcoin, ETH, BSC, Solana, Avalanche, Costom, Polygon, Arbitrum, Optimism and other Layer 2 public chains. There are 2000+ DApps listed on Coinhub Wallet now. And the users are distributed in 50+ countries and regions around the world. Right now, Coinhub covers 150W+ global we-media traffic and 200W + global ecological community.",
+  "website": "https://www.coinhub.org/",
+  "location": {
+    "country": "Republic of Singapore",
+    "city": "Singapore City",
+    "longitude": "103.830391822121",
+    "latitude": "1.340863"
+  }
+}
