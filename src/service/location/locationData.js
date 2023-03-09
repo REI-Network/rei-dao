@@ -123,6 +123,11 @@ const locationData = [
     name: "California", 
     value: [-44.0398, 122.7483],
     address:"0x66F6F8F219e84DF774D34414c86658Ce2deE617d"
+  },
+  { 
+    name: "Singapore", 
+    value: [680.8583, 221.2011],
+    address:"0x32F0CdD0DfC8a2A1E26ACEc239f09bCE5D9f6300"
   }
 ];
 
