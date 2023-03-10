@@ -3,12 +3,12 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left" to='/stake/validator/delegator'
+          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${url}/delegator`"
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
-          <v-tab key="12" class="v-tab-left" to='/stake/validator/vote'>My Votes</v-tab>
-          <v-tab key="13" class="v-tab-left" to='/stake/validator/withdrawals'>My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left" to='/stake/validator/jail'>
+          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -22,7 +22,7 @@
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left" to='/stake/validator/slash'>
+          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
             <v-row>
               <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>
@@ -289,6 +289,7 @@ export default {
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
+      url:'',
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -389,6 +390,8 @@ export default {
   },
   watch: {
     tab1: function () {
+      this.url = this.$route.query.id;
+      console.log('url',this.url)
       let type = this.$route.params.type;
       if (!type) {
         this.tab2 = 0;

@@ -29,7 +29,7 @@
     <v-tabs v-model="tab1" align-with-title background-color="background">
       <v-tab key="11" to="/myAccount/portfolio">Portfolio</v-tab>
       <v-tab key="12" to="/myAccount/nfts">NFTs</v-tab>
-      <v-tab key="13" to="/myAccount/DAOs">DAOs</v-tab>
+      <v-tab key="13" to="/myAccount/daos">DAOs</v-tab>
       <v-tab key="14" to="/myAccount/history">History</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab2">

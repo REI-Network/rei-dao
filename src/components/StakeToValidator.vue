@@ -3,10 +3,10 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" to="/stake/list" class="v-tab-left">Validator List</v-tab>
-          <v-tab key="12" to="/stake/jail">Jail</v-tab>
+          <v-tab key="11" to="/stake/validatorlist" class="v-tab-left">Validator List</v-tab>
+          <v-tab key="12" to="/stake/jaillist">Jail</v-tab>
           <v-tab key="13" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="14" to="/stake/vote">My Voted Validators</v-tab>
+          <v-tab key="14" to="/stake/myvote">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
@@ -604,16 +604,16 @@ export default {
       calculationItems: [],
       nodeInfoList: [],
       routerMap: {
-        'list': {
+        list: {
           index: 0
         },
-        'jail': {
+        jail: {
           index: 1
         },
-        'pending': {
+        pending: {
           index: 2
         },
-        'vote': {
+        vote: {
           index: 3
         }
       },

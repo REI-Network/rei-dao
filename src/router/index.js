@@ -59,7 +59,7 @@ const routes = [
     // component: () => import('../views/Stake.vue')
   },
   {
-    path: '/stake/validator/:type',
+    path: '/stake/validator/:token/:type',
     name: 'StakeInfo',
     component: StakeValidator,
   },
@@ -105,6 +105,11 @@ const routes = [
   },
   {
     path: '/myAccount/portfolio/:token',
+    name: 'MyAccountWallet',
+    component: MyAccountWallet
+  },
+  {
+    path: '/myAccount/portfolio/:token/:type',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },

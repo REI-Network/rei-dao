@@ -67,11 +67,11 @@
         </v-card>
         <v-card class="card-list">
           <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-            <v-tab style="margin-left: 0" key="11" class="v-tab-left">Token Holders</v-tab>
-            <v-tab key="12" class="v-tab-left" v-if="id != 'rei'">Token Transfers</v-tab>
+            <v-tab style="margin-left: 0" key="11" class="v-tab-left" :to="`/myAccount/portfolio/${url}/holder`">Token Holders</v-tab>
+            <v-tab key="12" class="v-tab-left" v-if="id != 'rei'" :to="`/myAccount/portfolio/${url}/transfer`">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
-          <v-tabs-items v-model="tab1">
+          <v-tabs-items v-model="tab2">
             <v-tab-item key="11">
               <v-data-table :headers="holderHeaders" :items="holderList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="loading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
                 <template v-slot:item.rank="{ item }">
@@ -192,6 +192,16 @@ export default {
       transferLoading: false,
       addrCopying: false,
       tab1: null,
+      tab2: 1,
+       routerMap: {
+        holder: {
+          index: 0
+        },
+        transfer: {
+          index: 1
+        },
+      },
+      url:'',
       stakeManagerContract: null,
       stakeManageInstance: null,
       myTotalStake: 0,
@@ -316,6 +326,15 @@ export default {
         this.disabled = true;
       }
     },
+    tab1:function () {
+        this.url = this.$route.params.token;
+        let type = this.$route.params.type;
+        if (!type) {
+          this.tab2 = 0;
+        } else {
+          this.tab2 = this.routerMap[type].index;
+        }
+    }
   },
   mounted() {
     this.connect();
