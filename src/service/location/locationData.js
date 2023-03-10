@@ -102,7 +102,7 @@ const locationData = [
   { 
       name: "Singapore", 
       value: [680.8583, 221.2011],
-      address:"0xcC83e1a34bF484A9e57aC9C3B960E19A0Dd519bf"
+      address:"0x0AF263757d3f439F198aC82Ce2535a8395f023aC"
   },
   {
       name: "Hong kong", 
