@@ -289,7 +289,7 @@ export default {
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
-      url:'',
+      url:this.$route.query.id,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -318,7 +318,7 @@ export default {
         delegator: {
           index: 0
         },
-        vote: {
+        myvote: {
           index: 1
         },
         withdrawals: {
@@ -390,7 +390,6 @@ export default {
   },
   watch: {
     tab1: function () {
-      this.url = this.$route.query.id;
       console.log('url',this.url)
       let type = this.$route.params.type;
       if (!type) {

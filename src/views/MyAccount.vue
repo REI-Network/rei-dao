@@ -185,7 +185,7 @@ export default {
         nfts: {
           index: 1
         },
-        DAOs: {
+        daos: {
           index: 2
         },
         history: {

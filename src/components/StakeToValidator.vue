@@ -604,16 +604,16 @@ export default {
       calculationItems: [],
       nodeInfoList: [],
       routerMap: {
-        list: {
+        validatorlist: {
           index: 0
         },
-        jail: {
+        jaillist: {
           index: 1
         },
         pending: {
           index: 2
         },
-        vote: {
+        myvote: {
           index: 3
         }
       },
