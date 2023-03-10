@@ -38,7 +38,7 @@ export default {
 
   methods:{
    routeLinkAccount(){
-      this.$router.push('/myAccount')
+      this.$router.push('/myAccount/nfts')
     }
   }
 };

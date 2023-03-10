@@ -69,12 +69,22 @@ const routes = [
     component: StakeForGas
   },
   {
+    path: '/stakeforgas/:type',
+    name: 'StakeForGas',
+    component: StakeForGas
+  },
+  {
     path: '/governance',
     name: 'Governance',
     component: Governance
   },
   {
     path: '/bridge',
+    name: 'Bridge',
+    component: Bridge
+  },
+  {
+    path: '/bridge/:type',
     name: 'Bridge',
     component: Bridge
   },

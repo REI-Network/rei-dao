@@ -34,7 +34,9 @@ export default {
 
   methods:{
     routeLink(){
-      this.$router.back()
+      this.$router.push({
+        name: 'My Account',
+      });
     },
     getData(){
 

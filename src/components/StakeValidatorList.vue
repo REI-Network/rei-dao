@@ -289,7 +289,7 @@ export default {
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
-      url:this.$route.query.id,
+      url:this.$route.query.address,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -426,8 +426,8 @@ export default {
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       this.stakeManageInstance = stake_contract;
-      if (this.$route.query.id) {
-        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
+      if (this.$route.query.address) {
+        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.address).call();
         this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
       }
 
@@ -444,7 +444,7 @@ export default {
       });
       const getStakeinfos = gql`
          query stakeInfos {
-            stakeInfos(first:1000, where: { validator: "${this.$route.query.id}" }) {
+            stakeInfos(first:1000, where: { validator: "${this.$route.query.address}" }) {
                 id
                 from
                 timestamp
@@ -511,7 +511,7 @@ export default {
       });
       const getMyVoteInfos = gql`
          query stakeInfoMores {
-            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.id}",from: "${this.connection.address}"  }) {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.address}",from: "${this.connection.address}"  }) {
                 id
                 from
                 timestamp
@@ -548,7 +548,7 @@ export default {
       });
       const getMyWithdrawInfos = gql`
          query unStakeInfos {
-            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.id}" }) {
+            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.address}" }) {
               id
               from
               to
@@ -597,7 +597,7 @@ export default {
       } catch (err) {
         console.error(err);
       }
-      let csvName = `${this.$route.query.id}.csv`;
+      let csvName = `${this.$route.query.address}.csv`;
       this.funDownload(this.createCsvFile, csvName);
     },
     funDownload(content, filename) {
@@ -632,7 +632,7 @@ export default {
 
       const getJailInfos = gql`
         query jailRecords {
-          jailRecords(where: { address: "${this.$route.query.id}" }) {
+          jailRecords(where: { address: "${this.$route.query.address}" }) {
             id
             address
             blockNumber
@@ -661,7 +661,7 @@ export default {
     },
     async getSlashData() {
       this.slashLoading = true;
-      let data = await getSlashRecords({ miner: this.$route.query.id });
+      let data = await getSlashRecords({ miner: this.$route.query.address });
       this.slashList = data.data;
       this.slashList = this.slashList.map((item) => {
         let amount = web3.utils.fromWei(web3.utils.toBN(item.slashAmount));

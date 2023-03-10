@@ -1381,7 +1381,7 @@ export default {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value.address
+          address: value.address
         }
       });
     },
@@ -1397,7 +1397,7 @@ export default {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value.address
+          address: value.address
         }
       });
     },
@@ -1545,7 +1545,7 @@ export default {
       this.$router.push({
         name: 'StakeInfo',
         query: {
-          id: value
+          address: value
         }
       });
     }
