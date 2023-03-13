@@ -39,8 +39,8 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.address,
-      token:this.$route.query.token,
+      nodeName:this.$route.params.address?.toUpperCase(),
+      id:this.$route.params.id,
     };
   },
   mounted(){
@@ -49,14 +49,14 @@ export default {
 
   methods:{
     routeLink(){
-       this.$router.push(`/stake/${this.token}`)
+       this.$router.push(`/stake/${this.id}`)
     },
     async getNodeName(){
       let validatorDetails = await getValidatorDetails();
-      let address = this.$route.query.address;
+      let address = this.$route.params.address;
       let validatorInfo = validatorDetails.data.data
       this.detail = find(validatorInfo, (item) => web3.utils.toChecksumAddress(item.nodeAddress) == web3.utils.toChecksumAddress(address));
-      this.nodeName = this.detail?this.detail.nodeName: this.$route.query.address
+      this.nodeName = this.detail?this.detail.nodeName: this.$route.params.address
     }
   }
 };

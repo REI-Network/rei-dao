@@ -53,13 +53,12 @@ const routes = [
     component: Stake,
   },
   {
-    path: '/stake/validator',
+    path: '/stake/validator/:id/:address',
     name: 'StakeInfo',
     component: StakeValidator,
-    // component: () => import('../views/Stake.vue')
   },
   {
-    path: '/stake/validator/:token/:type',
+    path: '/stake/validator/:id/:address/:token',
     name: 'StakeInfo',
     component: StakeValidator,
   },

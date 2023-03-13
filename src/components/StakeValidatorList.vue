@@ -3,12 +3,12 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${url}/delegator`"
+          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${id}/${url}/delegator`"
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
-          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
-          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
+          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${id}/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${id}/${url}/withdrawals`">My Withdrawals</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${id}/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -22,7 +22,7 @@
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
+          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${id}/${url}/slash`">
             <v-row>
               <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>
@@ -289,7 +289,8 @@ export default {
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
-      url:this.$route.query.address,
+      id:this.$route.params.id,
+      url:this.$route.params.address,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -390,12 +391,11 @@ export default {
   },
   watch: {
     tab1: function () {
-      console.log('url',this.url)
-      let type = this.$route.params.type;
-      if (!type) {
+      let token = this.$route.params.token;
+      if (!token) {
         this.tab2 = 0;
       } else {
-        this.tab2 = this.routerMap[type].index;
+        this.tab2 = this.routerMap[token].index;
       }
     }
   },
@@ -426,8 +426,8 @@ export default {
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       this.stakeManageInstance = stake_contract;
-      if (this.$route.query.address) {
-        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.address).call();
+      if (this.$route.params.address) {
+        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.params.address).call();
         this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
       }
 
@@ -444,7 +444,7 @@ export default {
       });
       const getStakeinfos = gql`
          query stakeInfos {
-            stakeInfos(first:1000, where: { validator: "${this.$route.query.address}" }) {
+            stakeInfos(first:1000, where: { validator: "${this.$route.params.address}" }) {
                 id
                 from
                 timestamp
@@ -511,7 +511,7 @@ export default {
       });
       const getMyVoteInfos = gql`
          query stakeInfoMores {
-            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.address}",from: "${this.connection.address}"  }) {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.params.address}",from: "${this.connection.address}"  }) {
                 id
                 from
                 timestamp
@@ -548,7 +548,7 @@ export default {
       });
       const getMyWithdrawInfos = gql`
          query unStakeInfos {
-            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.address}" }) {
+            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.params.address}" }) {
               id
               from
               to
@@ -597,7 +597,7 @@ export default {
       } catch (err) {
         console.error(err);
       }
-      let csvName = `${this.$route.query.address}.csv`;
+      let csvName = `${this.$route.params.address}.csv`;
       this.funDownload(this.createCsvFile, csvName);
     },
     funDownload(content, filename) {
@@ -632,7 +632,7 @@ export default {
 
       const getJailInfos = gql`
         query jailRecords {
-          jailRecords(where: { address: "${this.$route.query.address}" }) {
+          jailRecords(where: { address: "${this.$route.params.address}" }) {
             id
             address
             blockNumber
@@ -661,7 +661,7 @@ export default {
     },
     async getSlashData() {
       this.slashLoading = true;
-      let data = await getSlashRecords({ miner: this.$route.query.address });
+      let data = await getSlashRecords({ miner: this.$route.params.address });
       this.slashList = data.data;
       this.slashList = this.slashList.map((item) => {
         let amount = web3.utils.fromWei(web3.utils.toBN(item.slashAmount));

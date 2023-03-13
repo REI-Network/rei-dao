@@ -285,7 +285,7 @@ export default {
   data() {
     return {
       detail: '',
-      validatorAddress: this.$route.query.address,
+      validatorAddress: this.$route.params.address,
       detailData: '',
       dialog: false,
       claimDialog: false,
@@ -376,8 +376,8 @@ export default {
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       this.stakeManageInstance = stake_contract;
-      if (this.$route.query.address) {
-        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.address).call();
+      if (this.$route.params.address) {
+        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.params.address).call();
         this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
         let myCommissionShareBalance = await this.getBalanceOfShare();
         this.myCommissionShareBalance = web3.utils.fromWei(web3.utils.toBN(myCommissionShareBalance.balance));
@@ -436,7 +436,7 @@ export default {
     async getValidatorInfo() {
       let validatorDetails = await getValidatorDetails();
       
-      let address = this.$route.query.address;
+      let address = this.$route.params.address;
 
       // get validator response rate;
       let currentEndTime = localStorage.getItem('currentEndTime');
@@ -533,7 +533,7 @@ export default {
       };
     },
     async handleClaim() {
-      let address = this.$route.query.address;
+      let address = this.$route.params.address;
       this.$refs.claimform && this.$refs.claimform.reset();
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
@@ -652,7 +652,7 @@ export default {
       }
     },
     inDefaultList() {
-      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(this.$route.query.address));
+      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(this.$route.params.address));
     },
     setCalculation() {
       this.calculationDialog = true;

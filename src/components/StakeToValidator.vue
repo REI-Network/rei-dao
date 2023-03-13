@@ -6,7 +6,7 @@
           <v-tab key="11" to="/stake/validatorlist" class="v-tab-left">Validator List</v-tab>
           <v-tab key="12" to="/stake/jaillist">Jail</v-tab>
           <v-tab key="13" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="14" to="/stake/myvote">My Voted Validators</v-tab>
+          <v-tab key="14" to="/stake/vote">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
@@ -613,10 +613,11 @@ export default {
         pending: {
           index: 2
         },
-        myvote: {
+        vote: {
           index: 3
         }
       },
+      type:'',
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -724,6 +725,7 @@ export default {
     },
      tab1:function () {
         let type = this.$route.params.type;
+        this.type = type;
         if (!type) {
           this.tab2 = 0;
         } else {
@@ -1380,9 +1382,10 @@ export default {
       this.detailsItem = value;
       this.$router.push({
         name: 'StakeInfo',
-        query: {
+         params:{
+          id: this.type,
           address: value.address
-        }
+          }
       });
     },
 
@@ -1394,12 +1397,23 @@ export default {
     async validatorDetails(value) {
       // this.validatorDialog = true;
       this.detailsItem = value;
-      this.$router.push({
+      if(!this.type){
+        this.$router.push({
         name: 'StakeInfo',
-        query: {
+        params:{
+          id: 'validatorlist',
           address: value.address
-        }
+          }
       });
+      }else{
+        this.$router.push({
+        name: 'StakeInfo',
+        params:{
+          id: this.type,
+          address: value.address
+          }
+      });
+      }
     },
 
     closeDetails() {
@@ -1544,9 +1558,10 @@ export default {
     getJailRecords(value) {
       this.$router.push({
         name: 'StakeInfo',
-        query: {
+        params:{
+          id: this.type,
           address: value
-        }
+          }
       });
     }
   },
