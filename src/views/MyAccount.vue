@@ -167,6 +167,7 @@ export default {
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
+      type: '',
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
@@ -273,13 +274,14 @@ export default {
         this.getBalance();
       }
     },
-    tab1:function () {
-        let type = this.$route.params.type;
-        if (!type) {
-          this.tab2 = 0;
-        } else {
-          this.tab2 = this.routerMap[type].index;
-        }
+    tab1: function () {
+      let type = this.$route.params.type;
+      this.type = type;
+      if (!type) {
+        this.tab2 = 0;
+      } else {
+        this.tab2 = this.routerMap[type].index;
+      }
     }
   },
   computed: {
@@ -488,12 +490,23 @@ export default {
     },
     walletDetails(value) {
       // this.validatorDialog = true;
-      this.$router.push({
-        name: 'MyAccountWallet',
-        params: {
-          token: value.address
-        }
-      });
+      if (!this.type) {
+        this.$router.push({
+          name: 'MyAccountWallet',
+          params: {
+            type:'portfolio',
+            token: value.address
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'MyAccountWallet',
+          params: {
+            type:this.type,
+            token: value.address
+          }
+        });
+      }
     }
   }
 };

@@ -271,6 +271,7 @@ export default {
       list: [],
       accountList: [],
       holderList: [],
+      type:'',
       routerMap:{
         'rei': {
           index: 0,
@@ -452,6 +453,7 @@ export default {
     },
     tab1: function(){
         let type = this.$route.params.type;
+        this.type = type;
         if(!type){
           this.tab2 = 0;
           this.radios = '1';
@@ -644,7 +646,8 @@ export default {
       this.$router.push({
         name: 'AssetsInfo',
         params: {
-          token: value.address
+          token: value.address,
+          type: this.type,
         }
       });
     },

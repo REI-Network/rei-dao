@@ -66,9 +66,13 @@
           </v-card>
         </v-card>
         <v-card class="card-list">
-          <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
+          <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background" v-if="asset_url == 'portfolio'">
             <v-tab style="margin-left: 0" key="11" class="v-tab-left" :to="`/myAccount/portfolio/${url}/holder`">Token Holders</v-tab>
             <v-tab key="12" class="v-tab-left" v-if="id != 'rei'" :to="`/myAccount/portfolio/${url}/transfer`">Token Transfers</v-tab>
+          </v-tabs>
+          <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background" v-else>
+            <v-tab style="margin-left: 0" key="11" class="v-tab-left" :to="`/asset/erc20/${url}/holder`">Token Holders</v-tab>
+            <v-tab key="12" class="v-tab-left" v-if="id != 'rei'" :to="`/asset/erc20/${url}/transfer`">Token Transfers</v-tab>
           </v-tabs>
           <v-divider class="faq_border" />
           <v-tabs-items v-model="tab2">
@@ -201,7 +205,8 @@ export default {
           index: 1
         },
       },
-      url:'',
+      url:this.$route.params.token,
+      asset_url:this.$route.params.type,
       stakeManagerContract: null,
       stakeManageInstance: null,
       myTotalStake: 0,
@@ -327,13 +332,14 @@ export default {
       }
     },
     tab1:function () {
-        this.url = this.$route.params.token;
-        let type = this.$route.params.type;
-        if (!type) {
+        let id = this.$route.params.id;
+        console.log(this.$route.params.path)
+        if (!id) {
           this.tab2 = 0;
         } else {
-          this.tab2 = this.routerMap[type].index;
+          this.tab2 = this.routerMap[id].index;
         }
+        console.log(this.$route.params.type,this.$route.params.token,this.$route.params.id)
     }
   },
   mounted() {

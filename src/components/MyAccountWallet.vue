@@ -29,7 +29,6 @@ export default {
     };
   },
   mounted(){
-    this.getData();
   },
 
   methods:{
@@ -38,9 +37,6 @@ export default {
         name: 'My Account',
       });
     },
-    getData(){
-
-    }
   }
 };
 </script>

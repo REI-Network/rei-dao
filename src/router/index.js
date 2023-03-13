@@ -113,12 +113,12 @@ const routes = [
     component: MyNftCollection
   },
   {
-    path: '/myAccount/portfolio/:token',
+    path: '/myAccount/:type/:token',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },
   {
-    path: '/myAccount/portfolio/:token/:type',
+    path: '/myAccount/:type/:token/:id',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },
@@ -143,7 +143,12 @@ const routes = [
     component: AssetsTokenList
   },
   {
-    path: '/asset/erc20/:token',
+    path: '/asset/:type/:token',
+    name: 'AssetsInfo',
+    component: AssetsInfo
+  },
+  {
+    path: '/asset/:type/:token/:id',
     name: 'AssetsInfo',
     component: AssetsInfo
   },
