@@ -26,8 +26,8 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.name,
-      symbol:this.$route.query.symbol,
+      nodeName:this.$route.params.name,
+      symbol:this.$route.params.symbol,
     };
   },
    computed: {

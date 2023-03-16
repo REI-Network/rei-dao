@@ -3,12 +3,12 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${id}/${url}/delegator`"
+          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${url}/delegator`"
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
-          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${id}/${url}/myvote`">My Votes</v-tab>
-          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${id}/${url}/withdrawals`">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${id}/${url}/jail`">
+          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -22,7 +22,7 @@
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${id}/${url}/slash`">
+          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
             <v-row>
               <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>

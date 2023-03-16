@@ -53,12 +53,12 @@ const routes = [
     component: Stake,
   },
   {
-    path: '/stake/validator/:id/:address',
+    path: '/stake/validator/:address',
     name: 'StakeInfo',
     component: StakeValidator,
   },
   {
-    path: '/stake/validator/:id/:address/:token',
+    path: '/stake/validator/:address/:token',
     name: 'StakeInfo',
     component: StakeValidator,
   },
@@ -103,12 +103,12 @@ const routes = [
     component: StakeValidator
   },
   {
-    path: '/myAccount/nfts',
+    path: '/myAccount/nfts/:address',
     name: 'NftDetails',
     component: MyNftDetails
   },
   {
-    path: '/myAccount/collection',
+    path: '/myAccount/collection/:address',
     name: 'NftCollection',
     component: MyNftCollection
   },
@@ -128,17 +128,17 @@ const routes = [
     component: Asset
   },
   {
-    path: '/asset/assetNft',
+    path: '/asset/assetNft/:address',
     name: 'AssetNft',
     component: AssetNft
   },
   {
-    path: '/asset/collection',
+    path: '/asset/collection/:address',
     name: 'AssetsCollections',
     component: AssetsCollections
   },
   {
-    path: '/asset/details',
+    path: '/asset/details/:address',
     name: 'AssetsTokenList',
     component: AssetsTokenList
   },

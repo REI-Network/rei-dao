@@ -767,8 +767,8 @@ export default {
     assetsNft(item) {
       this.$router.push({
         name: 'AssetNft',
-        query: {
-          id: item.address,
+        params: {
+          address: item.address,
           tokenid: item.tokenId,
           standard: 'erc-1155',
           name: item.name
@@ -778,7 +778,7 @@ export default {
     getNftCollection(item) {
       this.$router.push({
         name: 'AssetsCollections',
-        query: {
+        params: {
           address: item.address
         }
       });

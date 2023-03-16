@@ -268,7 +268,7 @@ export default {
       if(item.token_standard == 'ERC-1155'){
         this.$router.push({
           name: 'NftDetails',
-          query: {
+          params: {
             address: item.address,
             tokenid: item.tokenId,
             standard: 'erc-1155',
@@ -278,7 +278,7 @@ export default {
       } else {
         this.$router.push({
           name: 'NftCollection',
-          query: {
+          params: {
             address: item.address
           }
         });
