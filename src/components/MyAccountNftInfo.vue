@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.query.name
+      nodeName:this.$route.params.name
     };
   },
    computed: {
@@ -38,7 +38,7 @@ export default {
 
   methods:{
    routeLinkAccount(){
-      this.$router.push('/myAccount')
+      this.$router.push('/myAccount/nfts')
     }
   }
 };

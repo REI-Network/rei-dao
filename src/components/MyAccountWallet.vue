@@ -29,16 +29,14 @@ export default {
     };
   },
   mounted(){
-    this.getData();
   },
 
   methods:{
     routeLink(){
-      this.$router.back()
+      this.$router.push({
+        name: 'My Account',
+      });
     },
-    getData(){
-
-    }
   }
 };
 </script>

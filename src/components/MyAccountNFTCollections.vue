@@ -186,11 +186,11 @@ export default {
     async init() {
       this.loading = true;
       
-      let contractAddress = this.$route.query.address;
+      let contractAddress = this.$route.params.address;
       
 
       let _myAddress = this.connection.address;
-      let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
+      let contract2 = new web3.eth.Contract(abiERC721, this.$route.params.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
       this.token.symbol = await contract2.methods.symbol().call();
 
@@ -218,7 +218,7 @@ export default {
             if (/(jpg|jpeg|png|GIF|JPG|PNG)$/.test(data.image)) {
               imageShow = true;
             }
-            let address = this.$route.query.address;
+            let address = this.$route.params.address;
             let nftDetail = {
               description: data.description,
               attributes: data.attributes,
@@ -246,7 +246,7 @@ export default {
       this.$router.push({
         name: 'NftDetails',
         query: {
-          id: item.address,
+          address: item.address,
           tokenid: item.tokenid,
           standard: 'erc-721'
         }
@@ -254,7 +254,7 @@ export default {
     },
     async getHolderList() {
       let params = {
-        contract: this.$route.query.address
+        contract: this.$route.params.address
       }
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);

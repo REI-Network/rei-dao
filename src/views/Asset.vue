@@ -271,6 +271,7 @@ export default {
       list: [],
       accountList: [],
       holderList: [],
+      type:'',
       routerMap:{
         'rei': {
           index: 0,
@@ -452,6 +453,7 @@ export default {
     },
     tab1: function(){
         let type = this.$route.params.type;
+        this.type = type;
         if(!type){
           this.tab2 = 0;
           this.radios = '1';
@@ -644,7 +646,8 @@ export default {
       this.$router.push({
         name: 'AssetsInfo',
         params: {
-          token: value.address
+          token: value.address,
+          type: this.type,
         }
       });
     },
@@ -764,8 +767,8 @@ export default {
     assetsNft(item) {
       this.$router.push({
         name: 'AssetNft',
-        query: {
-          id: item.address,
+        params: {
+          address: item.address,
           tokenid: item.tokenId,
           standard: 'erc-1155',
           name: item.name
@@ -775,7 +778,7 @@ export default {
     getNftCollection(item) {
       this.$router.push({
         name: 'AssetsCollections',
-        query: {
+        params: {
           address: item.address
         }
       });
