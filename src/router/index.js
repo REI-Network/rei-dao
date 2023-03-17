@@ -93,7 +93,7 @@ const routes = [
     component: Grants
   },
   {
-    path: '/grants/details',
+    path: '/grants/details/:name',
     name: 'GrantsDetails',
     component: GrantsDetails
   },

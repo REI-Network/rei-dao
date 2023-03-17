@@ -17,7 +17,7 @@
             {{ $t('stake.stake_to_other_node') }}
             <span class="iconfont">&#xe601;</span>
           </v-btn>
-          <div class="right-outline" v-if="this.tab1 == 0" style="margin-top: -14px">
+          <div class="right-outline" v-if="!this.type||this.type == 'validatorlist'" style="margin-top: -14px">
             <v-card outlined class="select-card">
               <v-select class="d-select" :items="items" item-text="state" outlined item-value="val" item-color="vote_button" dense style="margin-left: 18px" v-model="listFilter" @change="changeState"></v-select>
             </v-card>
@@ -113,7 +113,7 @@
             </v-data-table>
             <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
-              <div class="text-center pt-2">
+              <div class="pt-2 validator-list">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
               <div class="right-outline" v-if="this.tab1 == 0" style="padding-top: 16px">
@@ -1639,6 +1639,10 @@ export default {
 }
 .v-tab {
   text-transform: none !important;
+}
+.validator-list{
+  margin-bottom:20px;
+  margin-right:12px
 }
 .active {
   // width: 30px;
