@@ -3,10 +3,10 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left">Validator List</v-tab>
-          <v-tab key="12">Jail</v-tab>
-          <v-tab key="13">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="14">My Voted Validators</v-tab>
+          <v-tab key="11" to="/stake/validatorlist" class="v-tab-left">Validator List</v-tab>
+          <v-tab key="12" to="/stake/jaillist">Jail</v-tab>
+          <v-tab key="13" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="14" to="/stake/vote">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
@@ -17,7 +17,7 @@
             {{ $t('stake.stake_to_other_node') }}
             <span class="iconfont">&#xe601;</span>
           </v-btn>
-          <div class="right-outline" v-if="this.tab1 == 0" style="margin-top: -14px">
+          <div class="right-outline" v-if="!this.type||this.type == 'validatorlist'" style="margin-top: -14px">
             <v-card outlined class="select-card">
               <v-select class="d-select" :items="items" item-text="state" outlined item-value="val" item-color="vote_button" dense style="margin-left: 18px" v-model="listFilter" @change="changeState"></v-select>
             </v-card>
@@ -46,7 +46,7 @@
           </v-row>
         </div>
         <v-divider class="faq_border" />
-        <v-tabs-items v-model="tab1">
+        <v-tabs-items v-model="tab2">
           <v-tab-item key="11">
             <v-data-table :headers="headers" :items="nodeList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.address="{ item }">
@@ -113,7 +113,7 @@
             </v-data-table>
             <v-skeleton-loader v-if="skeletonLoading == true" class="skeleton" :loading="skeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
             <v-row justify="end" align="center" v-if="nodeList.length > 0">
-              <div class="text-center pt-2">
+              <div class="pt-2 validator-list">
                 <v-pagination v-model="page" :length="pageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
               </div>
               <div class="right-outline" v-if="this.tab1 == 0" style="padding-top: 16px">
@@ -579,8 +579,8 @@ export default {
       listFilter: '',
       payFineDialog: false,
       isNode: false,
-      tab1: null,
-      tab2: null,
+      tab1: 0,
+      tab2: 1,
       stakeListLoading: false,
       jailLoading: false,
       myStakeListLoading: false,
@@ -603,7 +603,21 @@ export default {
       totalAmount: 0,
       calculationItems: [],
       nodeInfoList: [],
-
+      routerMap: {
+        validatorlist: {
+          index: 0
+        },
+        jaillist: {
+          index: 1
+        },
+        pending: {
+          index: 2
+        },
+        vote: {
+          index: 3
+        }
+      },
+      type:'',
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -708,6 +722,15 @@ export default {
     },
     listenChange(stake, days) {
       this.Calculation();
+    },
+     tab1:function () {
+        let type = this.$route.params.type;
+        this.type = type;
+        if (!type) {
+          this.tab2 = 0;
+        } else {
+          this.tab2 = this.routerMap[type].index;
+        }
     }
   },
   mounted() {
@@ -1359,9 +1382,10 @@ export default {
       this.detailsItem = value;
       this.$router.push({
         name: 'StakeInfo',
-        query: {
-          id: value.address
-        }
+         params:{
+          id: this.type,
+          address: value.address
+          }
       });
     },
 
@@ -1373,12 +1397,23 @@ export default {
     async validatorDetails(value) {
       // this.validatorDialog = true;
       this.detailsItem = value;
-      this.$router.push({
+      if(!this.type){
+        this.$router.push({
         name: 'StakeInfo',
-        query: {
-          id: value.address
-        }
+        params:{
+          id: 'validatorlist',
+          address: value.address
+          }
       });
+      }else{
+        this.$router.push({
+        name: 'StakeInfo',
+        params:{
+          id: this.type,
+          address: value.address
+          }
+      });
+      }
     },
 
     closeDetails() {
@@ -1523,9 +1558,10 @@ export default {
     getJailRecords(value) {
       this.$router.push({
         name: 'StakeInfo',
-        query: {
-          id: value
-        }
+        params:{
+          id: this.type,
+          address: value
+          }
       });
     }
   },
@@ -1603,6 +1639,10 @@ export default {
 }
 .v-tab {
   text-transform: none !important;
+}
+.validator-list{
+  margin-bottom:20px;
+  margin-right:12px
 }
 .active {
   // width: 30px;

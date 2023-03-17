@@ -25,20 +25,16 @@ export default {
   data() {
     return {
       detail:'',
-      nodeName:this.$route.params.token?.toUpperCase()
+      nodeName:this.$route.params.token?.toUpperCase(),
     };
   },
   mounted(){
-    this.getData();
   },
 
   methods:{
     routeLink(){
-      this.$router.back()
+      this.$router.push('/asset/erc20');
     },
-    getData(){
-
-    }
   }
 };
 </script>

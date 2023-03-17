@@ -37,19 +37,38 @@ const routes = [
     component: MyAccount
   },
   {
+    path: '/myAccount/:type',
+    name: 'My Account',
+    component: MyAccount
+  },
+  {
     path: '/stake',
     name: 'Stake',
     component: Stake,
     // component: () => import('../views/Stake.vue')
   },
   {
-    path: '/stake/validator',
+    path: '/stake/:type',
+    name: 'Stake',
+    component: Stake,
+  },
+  {
+    path: '/stake/validator/:address',
     name: 'StakeInfo',
     component: StakeValidator,
-    // component: () => import('../views/Stake.vue')
+  },
+  {
+    path: '/stake/validator/:address/:token',
+    name: 'StakeInfo',
+    component: StakeValidator,
   },
   {
     path: '/stakeforgas',
+    name: 'StakeForGas',
+    component: StakeForGas
+  },
+  {
+    path: '/stakeforgas/:type',
     name: 'StakeForGas',
     component: StakeForGas
   },
@@ -64,12 +83,17 @@ const routes = [
     component: Bridge
   },
   {
+    path: '/bridge/:type',
+    name: 'Bridge',
+    component: Bridge
+  },
+  {
     path: '/grants',
     name: 'Grants',
     component: Grants
   },
   {
-    path: '/grants/details',
+    path: '/grants/details/:name',
     name: 'GrantsDetails',
     component: GrantsDetails
   },
@@ -79,17 +103,22 @@ const routes = [
     component: StakeValidator
   },
   {
-    path: '/myAccount/details',
+    path: '/myAccount/nfts/:address',
     name: 'NftDetails',
     component: MyNftDetails
   },
   {
-    path: '/myAccount/collection',
+    path: '/myAccount/collection/:address',
     name: 'NftCollection',
     component: MyNftCollection
   },
   {
-    path: '/myAccount/token/:token',
+    path: '/myAccount/:type/:token',
+    name: 'MyAccountWallet',
+    component: MyAccountWallet
+  },
+  {
+    path: '/myAccount/:type/:token/:id',
     name: 'MyAccountWallet',
     component: MyAccountWallet
   },
@@ -99,22 +128,27 @@ const routes = [
     component: Asset
   },
   {
-    path: '/asset/assetNft',
+    path: '/asset/assetNft/:address',
     name: 'AssetNft',
     component: AssetNft
   },
   {
-    path: '/asset/collection',
+    path: '/asset/collection/:address',
     name: 'AssetsCollections',
     component: AssetsCollections
   },
   {
-    path: '/asset/details',
+    path: '/asset/details/:address',
     name: 'AssetsTokenList',
     component: AssetsTokenList
   },
   {
-    path: '/asset/erc20/:token',
+    path: '/asset/:type/:token',
+    name: 'AssetsInfo',
+    component: AssetsInfo
+  },
+  {
+    path: '/asset/:type/:token/:id',
     name: 'AssetsInfo',
     component: AssetsInfo
   },

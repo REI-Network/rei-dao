@@ -165,7 +165,7 @@ export default {
     },
     async getProjects() {
       let list = projectsList.list;
-      let detail = find(list, (item) => item.id == this.$route.query.id);
+      let detail = find(list, (item) => item.id == this.$route.params.id);
       this.projectDetails = detail;
       let transferList = this.projectDetails.transfer_record;
       this.paymentList = [];

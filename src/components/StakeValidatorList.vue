@@ -3,12 +3,12 @@
     <v-row>
       <v-col cols="12" md="12" sm="12">
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
-          <v-tab key="11" class="v-tab-left"
+          <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${url}/delegator`"
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
-          <v-tab key="12" class="v-tab-left">My Votes</v-tab>
-          <v-tab key="13" class="v-tab-left">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left">
+          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -16,13 +16,13 @@
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
                 <v-list class="history-list">
-                  <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours. </p>
+                  <p class="history-help">According to the Jail Nechanism, the validator will be banned from producing blocks and be thrown into the Jail if it loses ≥300 blocks during 24 hours.</p>
                   <p class="history-help">The validator needs to pay a fine of 20,000 REI before re-participating in producing blocks .</p>
                 </v-list>
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left">
+          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
             <v-row>
               <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>
@@ -30,14 +30,14 @@
                   <v-icon size="14" v-bind="attrs" v-on="on">mdi-help-circle-outline</v-icon>
                 </template>
                 <v-list class="history-list">
-                  <p class="history-help">In the REI Network's Slash mechanism, if there is double signing behavior by validators, the penalty rate is 20%, which means that all users who voted for the penalized node and the node itself will lose 20% of the REI. </p>
+                  <p class="history-help">In the REI Network's Slash mechanism, if there is double signing behavior by validators, the penalty rate is 20%, which means that all users who voted for the penalized node and the node itself will lose 20% of the REI.</p>
                 </v-list>
               </v-menu>
             </v-row>
           </v-tab>
         </v-tabs>
         <v-divider class="faq_border" />
-        <v-tabs-items v-model="tab1">
+        <v-tabs-items v-model="tab2">
           <v-tab-item key="11">
             <v-data-table :headers="headers" :items="delegatorList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" loading-text="" :page.sync="page" @page-count="pageCount = $event">
               <template v-slot:item.delegator="{ item }">
@@ -92,7 +92,7 @@
                 <div v-if="!item.unjailedTimestamp">-</div>
               </template>
               <template v-slot:item.unjailedForfeit="{ item }">
-                <div>{{ item.unjailedForfeit | asset(2)}}</div>
+                <div>{{ item.unjailedForfeit | asset(2) }}</div>
               </template>
             </v-data-table>
             <div class="text-center pt-2" v-if="historyList.length > 10">
@@ -101,8 +101,8 @@
           </v-tab-item>
           <v-tab-item key="15">
             <v-data-table :headers="slashHeaders" :items="slashList" class="elevation-0" hide-default-footer :items-per-page="slashPerPage" :loading="slashLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
-               <template v-slot:item.slashBlockHeight="{ item }">
-                <a :class="dark?'block-dark block-link':'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
+              <template v-slot:item.slashBlockHeight="{ item }">
+                <a :class="dark ? 'block-dark block-link' : 'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
                   <span> {{ item.slashBlockHeight }}</span>
                 </a>
               </template>
@@ -111,7 +111,7 @@
               </template>
               <template v-slot:item.reason="{ item }">
                 <v-btn class="reason-list" @click="openProof(item)">
-                  <span style="font-size:12px;"> {{ item.reason }} ></span>
+                  <span style="font-size: 12px"> {{ item.reason }} ></span>
                 </v-btn>
               </template>
               <template v-slot:item.amount="{ item }">
@@ -171,7 +171,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <Address :val="voteAJson.hash" ></Address>
+                <Address :val="voteAJson.hash"></Address>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -189,7 +189,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <Address :val="voteAJson.signature" ></Address>
+                <Address :val="voteAJson.signature"></Address>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -233,8 +233,8 @@
               <v-list-item-title>Hash</v-list-item-title>
             </v-list-item-icon>
             <v-list-item-content>
-             <v-list-item-title>
-                <Address :val="voteBJson.hash" ></Address>
+              <v-list-item-title>
+                <Address :val="voteBJson.hash"></Address>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -252,7 +252,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <Address :val="voteBJson.signature" ></Address>
+                <Address :val="voteBJson.signature"></Address>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -286,8 +286,11 @@ export default {
   filters,
   data() {
     return {
-      skeletonLoading:true,
-      tab1: null,
+      skeletonLoading: true,
+      tab1: 0,
+      tab2: 1,
+      id:this.$route.params.id,
+      url:this.$route.params.address,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -312,6 +315,23 @@ export default {
       stakeManageInstance: '',
       commissionShareInstance: '',
       allStakeListLoading: false,
+      routerMap: {
+        delegator: {
+          index: 0
+        },
+        myvote: {
+          index: 1
+        },
+        withdrawals: {
+          index: 2
+        },
+        jail: {
+          index: 3
+        },
+         slash: {
+          index: 4
+        }
+      },
       allStakeList: [],
       delegator: '',
       fields: ['delegator', 'amount'],
@@ -326,8 +346,7 @@ export default {
         { text: 'Time of Paying fine', value: 'unjailedTimestamp' },
         { text: 'Amount ($REI)', value: 'unjailedForfeit' }
       ],
-      historyList: [
-      ],
+      historyList: [],
       delegatorList: [],
       myVotesHeaders: [
         { text: 'Time', value: 'time' },
@@ -370,6 +389,16 @@ export default {
       voteBJson: []
     };
   },
+  watch: {
+    tab1: function () {
+      let token = this.$route.params.token;
+      if (!token) {
+        this.tab2 = 0;
+      } else {
+        this.tab2 = this.routerMap[token].index;
+      }
+    }
+  },
   computed: {
     ...mapGetters({
       connection: 'connection',
@@ -397,8 +426,8 @@ export default {
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
       let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       this.stakeManageInstance = stake_contract;
-      if (this.$route.query.id) {
-        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.query.id).call();
+      if (this.$route.params.address) {
+        let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.params.address).call();
         this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
       }
 
@@ -415,7 +444,7 @@ export default {
       });
       const getStakeinfos = gql`
          query stakeInfos {
-            stakeInfos(first:1000, where: { validator: "${this.$route.query.id}" }) {
+            stakeInfos(first:1000, where: { validator: "${this.$route.params.address}" }) {
                 id
                 from
                 timestamp
@@ -482,7 +511,7 @@ export default {
       });
       const getMyVoteInfos = gql`
          query stakeInfoMores {
-            stakeInfoMores(first:1000, where: { validator: "${this.$route.query.id}",from: "${this.connection.address}"  }) {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.params.address}",from: "${this.connection.address}"  }) {
                 id
                 from
                 timestamp
@@ -519,7 +548,7 @@ export default {
       });
       const getMyWithdrawInfos = gql`
          query unStakeInfos {
-            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.query.id}" }) {
+            unStakeInfos(where: { from: "${this.connection.address}", validator: "${this.$route.params.address}" }) {
               id
               from
               to
@@ -568,7 +597,7 @@ export default {
       } catch (err) {
         console.error(err);
       }
-      let csvName = `${this.$route.query.id}.csv`;
+      let csvName = `${this.$route.params.address}.csv`;
       this.funDownload(this.createCsvFile, csvName);
     },
     funDownload(content, filename) {
@@ -603,7 +632,7 @@ export default {
 
       const getJailInfos = gql`
         query jailRecords {
-          jailRecords(where: { address: "${this.$route.query.id}" }) {
+          jailRecords(where: { address: "${this.$route.params.address}" }) {
             id
             address
             blockNumber
@@ -622,17 +651,17 @@ export default {
         fetchPolicy: 'cache-first'
       });
       this.historyList = jailRecords.map((item) => {
-        let unjailedForfeit = item.unjailedForfeit ? web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit)):0;
-        return{
+        let unjailedForfeit = item.unjailedForfeit ? web3.utils.fromWei(web3.utils.toBN(item.unjailedForfeit)) : 0;
+        return {
           ...item,
-          unjailedForfeit:unjailedForfeit,
-        }
-      })
-       this.jailLoading = false;
+          unjailedForfeit: unjailedForfeit
+        };
+      });
+      this.jailLoading = false;
     },
     async getSlashData() {
       this.slashLoading = true;
-      let data = await getSlashRecords({miner:this.$route.query.id});
+      let data = await getSlashRecords({ miner: this.$route.params.address });
       this.slashList = data.data;
       this.slashList = this.slashList.map((item) => {
         let amount = web3.utils.fromWei(web3.utils.toBN(item.slashAmount));
@@ -650,7 +679,7 @@ export default {
     },
     cancelProof() {
       this.setProofDialog = false;
-    },
+    }
   }
 };
 </script>
@@ -668,8 +697,8 @@ export default {
   margin-left: 8px;
   color: white;
 }
-.skeleton{
-  margin-top:-68px;
+.skeleton {
+  margin-top: -68px;
 }
 .total-light {
   background-color: #e2e4ea;
@@ -707,8 +736,8 @@ export default {
   color: #868e9e;
   font-size: 14px;
 }
-.history-help{
-  text-indent:2em;
+.history-help {
+  text-indent: 2em;
 }
 .reason-list {
   font-size: 14px !important;
@@ -750,23 +779,23 @@ h4 {
     cursor: pointer;
   }
 }
-.v-btn{
+.v-btn {
   font-weight: normal !important;
 }
-.block-dark{
-  color: #FFF;
+.block-dark {
+  color: #fff;
 }
-.block-light{
+.block-light {
   color: #000;
 }
-.block-light:hover{
+.block-light:hover {
   color: #6979f8 !important;
-  text-decoration:underline ;
+  text-decoration: underline;
 }
-.theme--dark.v-list{
-  background:#504985 !important;
+.theme--dark.v-list {
+  background: #504985 !important;
 }
-.v-tab{
-  padding:0 24px;
+.v-tab {
+  padding: 0 24px;
 }
 </style>

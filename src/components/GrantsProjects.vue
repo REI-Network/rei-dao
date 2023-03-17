@@ -91,8 +91,9 @@ export default {
     openGrants(value) {
       this.$router.push({
         name: 'GrantsDetails',
-        query: {
-          id: value.id
+        params: {
+          id: value.id,
+          name:value.project_name 
         }
       });
     },

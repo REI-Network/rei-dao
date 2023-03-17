@@ -304,9 +304,10 @@ export default {
       this.detailsItem = value;
       this.$router.push({
         name: 'StakeInfo',
-        query: {
-          id: value.validator
-        }
+        params:{
+          id: this.type,
+          address: value.address
+          }
       });
     },
     windowWidth() {

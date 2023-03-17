@@ -121,8 +121,8 @@ export default {
       pageVisible: 7,
       totalPage: 0,
       description: '',
-      nftConfig: this.$route.query.id,
-      tokenId: this.$route.query.tokenid,
+      nftConfig: this.$route.params.address,
+      tokenId: this.$route.params.tokenid,
       totalSupply: 0,
       nftList: [],
       nftName: '',
@@ -169,11 +169,11 @@ export default {
     },
     async init() {
       this.loading = true;
-      this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+      this.standard = this.$route.params.standard?this.$route.params.standard.toUpperCase():'';
 
-      if(this.$route.query.standard == 'erc-721'){
+      if(this.$route.params.standard == 'erc-721'){
           let contract = new web3.eth.Contract(abiERC721, this.nftConfig);
-          let tokenInfo = await contract.methods.tokenURI(this.$route.query.tokenid).call();
+          let tokenInfo = await contract.methods.tokenURI(this.$route.params.tokenid).call();
           this.symbol = await contract.methods.symbol().call();
 
           this.url = tokenInfo
@@ -187,7 +187,7 @@ export default {
             this.badgeNFTImg = this.$IpfsGateway(data.image);
             this.description = data.description;
             this.attributes = data.attributes;
-            this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+            this.standard = this.$route.params.standard?this.$route.params.standard.toUpperCase():'';
           this.loading = false;
       } else {
         if(this.nftInfo.length>0){
@@ -207,7 +207,7 @@ export default {
           this.badgeNFTBalance = await contract.methods.balanceOf(this.connection.address, this.tokenId).call();
           this.url = await contract.methods.uri(this.tokenId).call();
           this.totalSupply = await contract.methods.totalSupply(this.tokenId).call();
-          this.standard = this.$route.query.standard?this.$route.query.standard.toUpperCase():'';
+          this.standard = this.$route.params.standard?this.$route.params.standard.toUpperCase():'';
 
           // if (this.badgeNFTBalance > 0) {
             const { data } = await this.$axios.get(this.url);
@@ -227,8 +227,8 @@ export default {
     },
     async getHolderList() {
       let params = {
-        contract: this.$route.query.id,
-        tokenId: this.$route.query.tokenid,
+        contract: this.$route.params.address,
+        tokenId: this.$route.params.tokenid,
       }
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);

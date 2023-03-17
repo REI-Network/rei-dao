@@ -141,7 +141,7 @@ export default {
       nftConfig: '',
       totalSupply: 0,
       nftList: [],
-      contractAddress:this.$route.query.address,
+      contractAddress:this.$route.params.address,
       imageShow: false,
       tab1: '11',
       token: {
@@ -195,11 +195,11 @@ export default {
     },
     async init() {
       this.loading = true;
-      let contract2 = new web3.eth.Contract(abiERC721, this.$route.query.address);
+      let contract2 = new web3.eth.Contract(abiERC721, this.$route.params.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
       this.token.symbol = await contract2.methods.symbol().call();
       let params = {
-        id: this.$route.query.address
+        id: this.$route.params.address
       };
       let tokenList = await getAssetTokenList(params);
       this.nftList = tokenList.data.data;
@@ -218,8 +218,8 @@ export default {
       // this.badgeNFTDialog = true;
       this.$router.push({
         name: 'AssetsTokenList',
-        query: {
-          id: this.$route.query.address,
+        params: {
+          address: this.$route.params.address,
           tokenid: item.edition,
           name: item.name,
           symbol: this.token.symbol,
@@ -229,7 +229,7 @@ export default {
     },
     async getHolderList() {
       let params = {
-        contract: this.$route.query.address
+        contract: this.$route.params.address
       };
       this.getListLoading = true;
       const { data: holderList } = await getNftHolder(params);

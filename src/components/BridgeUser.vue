@@ -34,13 +34,13 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-tabs v-model="tab" align-with-title hide-slider class="vote-list" background-color="background">
+      <v-tabs v-model="tab1" align-with-title hide-slider class="vote-list" background-color="background">
         <v-radio-group v-model="radios" mandatory row dense style="margin-top: 0" class="trend-tab">
-          <v-tab key="1"> <v-radio label="cBridge" value="1" class="trends-radio"> </v-radio></v-tab>
-          <v-tab key="2"> <v-radio label="Multichain" value="2" class="trends-radio"> </v-radio></v-tab>
+          <v-tab key="1" to="/bridge/cbridge"> <v-radio label="cBridge" value="1" class="trends-radio"> </v-radio></v-tab>
+          <v-tab key="2" to="/bridge/multichain"> <v-radio label="Multichain" value="2" class="trends-radio"> </v-radio></v-tab>
         </v-radio-group>
       </v-tabs>
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab2">
         <v-tab-item key="1">
           <v-row class="background">
             <v-col>
@@ -441,8 +441,9 @@ export default {
   data() {
     return {
       skeletonLoading:true,
-      tab: '1',
-      radios: null,
+      tab1: 0,
+      tab2: 1,
+      radios: 1,
       page: 1,
       pageCount: 0,
       page2: 1,
@@ -483,6 +484,16 @@ export default {
       createLoading: false,
       grantBtnDisable: false,
       admin: '',
+      routerMap:{
+        cbridge: {
+          index: 0,
+          value: '1'
+        },
+        multichain: {
+          index: 1,
+          value: '2'
+        },
+      },
       headers: [
         { text: 'Symbol', value: 'symbol' },
         { text: 'Target Chain', value: 'target' },
@@ -553,7 +564,18 @@ export default {
       this.init();
       this.switchAccount();
       this.getdata();
-    }
+    },
+     tab1: function(){
+        let type = this.$route.params.type;
+        if(!type){
+          this.tab2 = 0;
+          this.radios = '1';
+        } else {
+            this.tab2 = this.routerMap[type].index;
+            this.radios = this.routerMap[type].value;
+        }
+        // console.log(type,this.tab1,this.tab2,this.radios)
+    },
   },
   mounted() {
     this.connect();
