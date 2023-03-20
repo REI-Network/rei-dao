@@ -1,339 +1,315 @@
 <template>
-   <v-container class="stake_background">
-     <v-card class="Introduction">
-         <v-row justify="space-between">
-            <v-col cols="12" md="8">
-                <h2>Introduction to REI Governance</h2>
-                <div class="introduction-text">$REI holders are responsible for managing the REI network, including adjusting the verification node incentive parameters, daily free gas parameters, etc., and improving the governance process itself. Anyone can become a $REI holder, and all are welcome to join us in creating the future of the REI network.
+  <v-container class="stake_background">
+    <v-card class="Introduction">
+      <v-row justify="space-between">
+        <v-col cols="12" md="8">
+          <h2>Introduction to REI Governance</h2>
+          <div class="introduction-text">$REI holders are responsible for managing the REI network, including adjusting the verification node incentive parameters, daily free gas parameters, etc., and improving the governance process itself. Anyone can become a $REI holder, and all are welcome to join us in creating the future of the REI network.</div>
+          <v-btn color="#6979F8" class="introduction-btn" height="44" href="https://docs.rei.network/rei-dao/guides/governance" target="_blank"> Learn More > </v-btn>
+        </v-col>
+        <v-col cols="12" md="4" align-self="end">
+          <v-img class="img" style="float: right" src="../assets/images/Introduction.png" width="336" height="209" />
+        </v-col>
+      </v-row>
+    </v-card>
+    <v-card class="Introduction" style="margin-top: 40px">
+      <h2 class="title">REI DAO Governance Committee</h2>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
+              <v-img v-else src="../assets/images/organization-dark.png" width="50" />
+              </div>
+              <div class="font-grey">What is the REI DAO Governance Committee? ></div>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
+                <v-img v-else src="../assets/images/apply-dark.png" width="50" />
+              </div>
+              <div class="font-grey">Apply to join the REI DAO Governance Committee ></div>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <h2 class="members-title title">Governance Committee Members</h2>
+      <v-row justify="space-between">
+        <v-col align-self="center" v-for="n in 10" :key="n">
+          <v-card class="step-content elevation-0 members">
+            <img src="../assets/images/active.png" width="72" />
+            <h4>Daviod</h4>
+            <span class="indonesia">Indonesia</span>
+            <v-row justify="space-between" class="icon-img" no-gutters>
+              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/active.png" width="32" />
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
+    <v-card class="Introduction" style="margin-top: 40px">
+      <h2 class="title">Governance Process</h2>
+      <v-row class="process">
+        <v-col cols="12" v-if="this.width > 900">
+          <v-tabs vertical hide-slider>
+            <div class="step">
+              <v-tab class="step-tab">
+                <div class="step-left process_step">
+                  <span class="iconfont">&#xe60b;</span>
+                  <div>STEP 1: Community consensus</div>
                 </div>
-                <v-btn 
-                    color="#6979F8"
-                    class="introduction-btn"
-                    height="44"
-                    href="https://docs.rei.network/rei-dao/guides/governance"
-                    target="_blank"
-                >
-                    Learn More >
-                </v-btn>
-            </v-col>
-            <v-col cols="12" md="4" align-self="end">
-                <v-img class="img" style="float:right" src="../assets/images/Introduction.png" width="336" height="209"/>
-            </v-col>
-        </v-row>
-        <h2 class="title">Governance Process</h2>
-        <v-row class="process">
-            <v-col cols="12" v-if="this.width>900">
-                    <v-tabs vertical hide-slider>
-                        <div class="step">
-                        <v-tab class="step-tab">
-                            <div class="step-left process_step">
-                                <span class="iconfont">&#xe60b;</span>
-                                <div>STEP 1: Community consensus</div>
-                            </div>
-                            <div class="triangle"></div>
-                        </v-tab>
-                        <v-tab class="step-tab">
-                            <div class="step-left process_step">
-                                <span class="iconfont">&#xe617;</span>
-                                 STEP 2: Consensus check
-                            </div>
-                            <div class="triangle"></div>
-                        </v-tab>
-                         <v-tab class="step-tab">
-                            <div class="step-left process_step">
-                                <span class="iconfont">&#xe60a;</span>
-                                 STEP 3: Proposal review
-                            </div>
-                            <div class="triangle"></div>
-                        </v-tab>
-                        <v-tab class="step-tab">
-                            <div class="step-left process_step">
-                                <span class="iconfont">&#xe609;</span>
-                                 STEP 4: Snapshot voting
-                            </div>
-                            <div class="triangle"></div>
-                        </v-tab>
+                <div class="triangle"></div>
+              </v-tab>
+              <v-tab class="step-tab">
+                <div class="step-left process_step">
+                  <span class="iconfont">&#xe617;</span>
+                  STEP 2: Consensus check
+                </div>
+                <div class="triangle"></div>
+              </v-tab>
+              <v-tab class="step-tab">
+                <div class="step-left process_step">
+                  <span class="iconfont">&#xe60a;</span>
+                  STEP 3: Proposal review
+                </div>
+                <div class="triangle"></div>
+              </v-tab>
+              <v-tab class="step-tab">
+                <div class="step-left process_step">
+                  <span class="iconfont">&#xe609;</span>
+                  STEP 4: Snapshot voting
+                </div>
+                <div class="triangle"></div>
+              </v-tab>
 
-                        <v-tab class="step-tab">
-                            <div class="step-left process_step">
-                                <span class="iconfont">&#xe608;</span>
-                                 STEP 5: Security mechanisms
-                            </div>
-                            <div class="triangle"></div>
-                        </v-tab>
-                        </div>
-                        <v-tab-item>
-                            <v-card flat class="step-content">
-                                <h2>Community Consensus</h2>
-                                <v-card-text>
-                                   The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space.
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-                        <v-tab-item>
-                            <v-card flat class="step-content">
-                                <h2>Consensus check</h2>
-                                <v-card-text>
-                                  You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal.
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-                        <v-tab-item>
-                            <v-card flat class="step-content">
-                                <h2>Proposal review</h2>
-                                <v-card-text>
-                                    Proposals will be reviewed by REI DAO Council.
-                                </v-card-text>
-                                <h4>What is the REI DAO Council?</h4>
-                                <v-card-text>
-                                    The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote.
-                                </v-card-text>
-                                <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more  ></a>
-                            </v-card>
-                        </v-tab-item>
-                        <v-tab-item>
-                            <v-card flat class="step-content">
-                                <h2>Snapshot voting</h2>
-                                <v-card-text>
-                                    Provide voting tools and multiple voting strategies for surveying community
-                                     sentiment on specific proposals or parameters, allowing every coin holder
-                                      to participate more fairly in community governance.
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-                        <v-tab-item>
-                            <v-card flat class="step-content">
-                                <h2>Security mechanisms</h2>
-                                <v-card-text>
-                                    The governance security mechanism mitigates or eliminates the negative
-                                     impact of harmful proposals on the REI Network or REI DAO community by
-                                      setting a time delay before formal implementation of the proposal.
-                                </v-card-text>
-                                <v-card-text style="padding-top:0;">
-                                    New code is reserved for a 24-hour public notice period before deployment
-                                     to REI Network, during which time all community members can review the
-                                      code to confirm the security of REI Network. If the code is reviewed 
-                                      and is deemed to have any negative impact on REI Network, the deployment
-                                       will be immediately cancelled.
-                                </v-card-text>
-                            </v-card>
-                        </v-tab-item>
-                    </v-tabs>
-            </v-col>
-            <v-expansion-panels accordion v-else class="process_step elevation-0">
-                <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 1: Community consensus</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                         <v-card flat class="step-content">
-                                <!-- <h2>Community Consensus</h2> -->
-                                <v-card-text>
-                                   The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space.
-                                </v-card-text>
-                            </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-                 <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 2: Consensus check</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                         <v-card flat class="step-content">
-                                <!-- <h2>Consensus check</h2> -->
-                                <v-card-text>
-                                   You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal.
-                                </v-card-text>
-                            </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-                 <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 3: Proposal review</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                         <v-card flat class="step-content">
-                                <!-- <h2>proposal review</h2> -->
-                                <v-card-text>
-                                    Proposals will be reviewed by REI DAO Council.
-                                </v-card-text>
-                                <h4>What is the REI DAO Council?</h4>
-                                <v-card-text>
-                                    The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote.
-                                </v-card-text>
-                                <a style="margin-left:20px;" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more ></a>
-                            </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-                 <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 4: Snapshot voting</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                         <v-card flat class="step-content">
-                                <!-- <h2>voting off-chain</h2> -->
-                                <v-card-text>
-                                    <v-card-text>
-                                    Provide voting tools and multiple voting strategies for surveying community
-                                     sentiment on specific proposals or parameters, allowing every coin holder
-                                      to participate more fairly in community governance.
-                                </v-card-text>
-                                </v-card-text>
-                            </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-                 <v-expansion-panel :class="dark?'expansion':''">
-                    <v-expansion-panel-header>STEP 5: Security mechanisms</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                         <v-card flat class="step-content">
-                                <!-- <h2>Security mechanisms</h2> -->
-                                <v-card-text>
-                                    The governance security mechanism mitigates or eliminates the negative
-                                     impact of harmful proposals on the REI Network or REI DAO community by
-                                      setting a time delay before formal implementation of the proposal.
-                                </v-card-text>
-                                <v-card-text>
-                                    New code is reserved for a 24-hour public notice period before deployment
-                                     to REI Network, during which time all community members can review the
-                                      code to confirm the security of REI Network. If the code is reviewed 
-                                      and is deemed to have any negative impact on REI Network, the deployment
-                                       will be immediately cancelled.
-                                </v-card-text>
-                            </v-card>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-            </v-expansion-panels>
-        </v-row>
-        <h2 class="title">Governance Tools</h2>
-        <v-row  class="tools" justify="space-between">
-            <v-col cols="12" sm="6">
-                <v-card outlined class="tool">
-                    <v-img v-if="dark" class="img" src="../assets/images/discord-dark.png" width="120" height="120"/>
-                    <v-img v-else class="img" src="../assets/images/Discord.png" width="120" height="120"/>
-                    <div class="right-content">
-                        <v-list three-line>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-title> <h3>Discord</h3></v-list-item-title>
-                                    <v-list-item-subtitle class="tools-text">
-                                        Join our discord, let us know your idea,  build influence in the
-                                        community, and talk to our community governance coordinator.
-                                    </v-list-item-subtitle>
-                                    <a href="https://discord.com/invite/zhwWkXYtJt" target="_blank"><div class="tools-link">Join REI DAO Discord ></div></a>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                    </div>
-                </v-card>
-                <v-card outlined class="tool">
-                    <v-img v-if="dark" class="img" src="../assets/images/forum-dark.png" width="120" height="120"/>
-                     <v-img v-else class="img" src="../assets/images/Forum.png" width="120" height="120"/>
-                     <div class="right-content">
-                          <v-list three-line>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-title> <h3>Snapshot</h3></v-list-item-title>
-                                    <v-list-item-subtitle class="tools-text">
-                                        Participate and follow the latest developments of the proposal,
-                                        express your opinion and exercise your right to vote
-                                    </v-list-item-subtitle>
-                                    <a href="https://snapshot.org/#/rei-network.eth" target="_blank"><div class="tools-link">View All Proposals On Snapshot ></div></a>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                     </div>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6">
-                <v-card outlined class="tool tool-forum">
-                    <v-img v-if="dark" class="img" src="../assets/images/snapshot-dark.png" width="120" height="120"/>
-                    <v-img v-else class="img" src="../assets/images/Snapshot.png" width="120" height="120"/>
-                    <div class="right-content">
-                        <v-list three-line>
-                            <v-list-item>
-                                <v-list-item-content>
-                                    <v-list-item-title> <h3>Governance Forum</h3></v-list-item-title>
-                                    <v-list-item-subtitle class="tools-text">
-                                       Proposal discussion, the venue for debate. Let everyone hear
-                                        your ideas and interact with the community.
-                                    </v-list-item-subtitle>
-                                    <a href="https://forum.rei.network/" target="_blank"><div class="tools-link">Enter The Forum ></div></a>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </v-list>
-                    </div>
-                </v-card>
-            </v-col>
-        </v-row>
-     </v-card>
-   </v-container>
+              <v-tab class="step-tab">
+                <div class="step-left process_step">
+                  <span class="iconfont">&#xe608;</span>
+                  STEP 5: Security mechanisms
+                </div>
+                <div class="triangle"></div>
+              </v-tab>
+            </div>
+            <v-tab-item>
+              <v-card flat class="step-content">
+                <h2>Community Consensus</h2>
+                <v-card-text> The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space. </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat class="step-content">
+                <h2>Consensus check</h2>
+                <v-card-text> You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal. </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat class="step-content">
+                <h2>Proposal review</h2>
+                <v-card-text> Proposals will be reviewed by REI DAO Council. </v-card-text>
+                <h4>What is the REI DAO Council?</h4>
+                <v-card-text> The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote. </v-card-text>
+                <a style="margin-left: 20px" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more ></a>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat class="step-content">
+                <h2>Snapshot voting</h2>
+                <v-card-text> Provide voting tools and multiple voting strategies for surveying community sentiment on specific proposals or parameters, allowing every coin holder to participate more fairly in community governance. </v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat class="step-content">
+                <h2>Security mechanisms</h2>
+                <v-card-text> The governance security mechanism mitigates or eliminates the negative impact of harmful proposals on the REI Network or REI DAO community by setting a time delay before formal implementation of the proposal. </v-card-text>
+                <v-card-text style="padding-top: 0"> New code is reserved for a 24-hour public notice period before deployment to REI Network, during which time all community members can review the code to confirm the security of REI Network. If the code is reviewed and is deemed to have any negative impact on REI Network, the deployment will be immediately cancelled. </v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        </v-col>
+        <v-expansion-panels accordion v-else class="process_step elevation-0">
+          <v-expansion-panel :class="dark ? 'expansion' : ''">
+            <v-expansion-panel-header>STEP 1: Community consensus</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat class="step-content">
+                <!-- <h2>Community Consensus</h2> -->
+                <v-card-text> The first step in participating in governance is to initiate a proposal that will benefit the REI network and build influence in the community so that more people will agree with your proposal. Get in touch with the REI Network Discord administrator and discuss your proposal on TG, forums, community calls and Twitter space. </v-card-text>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel :class="dark ? 'expansion' : ''">
+            <v-expansion-panel-header>STEP 2: Consensus check</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat class="step-content">
+                <!-- <h2>Consensus check</h2> -->
+                <v-card-text> You will need to create a forum proposal thread in the Consensus Check section while adhering to the forum rules, use your influence to let more community members know about your idea, create a poll in the proposal feedback, and receive timely community feedback to get the final proposal. </v-card-text>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel :class="dark ? 'expansion' : ''">
+            <v-expansion-panel-header>STEP 3: Proposal review</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat class="step-content">
+                <!-- <h2>proposal review</h2> -->
+                <v-card-text> Proposals will be reviewed by REI DAO Council. </v-card-text>
+                <h4>What is the REI DAO Council?</h4>
+                <v-card-text> The Council is composed of 21 deliberators, and the first members will be invited from nodes, community members, pioneers, and project parties who have contributed to REI Network before, and later will be decided by the Council itself. The discussion process will be moderated and recorded by the council members in three sessions: motion presentation, motion review, and motion vote. </v-card-text>
+                <a style="margin-left: 20px" href="https://forum.rei.network/t/introducing-the-governance-committee/41" target="_blank">Learn more ></a>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel :class="dark ? 'expansion' : ''">
+            <v-expansion-panel-header>STEP 4: Snapshot voting</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat class="step-content">
+                <!-- <h2>voting off-chain</h2> -->
+                <v-card-text>
+                  <v-card-text> Provide voting tools and multiple voting strategies for surveying community sentiment on specific proposals or parameters, allowing every coin holder to participate more fairly in community governance. </v-card-text>
+                </v-card-text>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel :class="dark ? 'expansion' : ''">
+            <v-expansion-panel-header>STEP 5: Security mechanisms</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-card flat class="step-content">
+                <!-- <h2>Security mechanisms</h2> -->
+                <v-card-text> The governance security mechanism mitigates or eliminates the negative impact of harmful proposals on the REI Network or REI DAO community by setting a time delay before formal implementation of the proposal. </v-card-text>
+                <v-card-text> New code is reserved for a 24-hour public notice period before deployment to REI Network, during which time all community members can review the code to confirm the security of REI Network. If the code is reviewed and is deemed to have any negative impact on REI Network, the deployment will be immediately cancelled. </v-card-text>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
+      <h2 class="title">Governance Tools</h2>
+      <v-row class="tools" justify="space-between">
+        <v-col cols="12" sm="6">
+          <v-card outlined class="tool">
+            <v-img v-if="dark" class="img" src="../assets/images/discord-dark.png" width="120" height="120" />
+            <v-img v-else class="img" src="../assets/images/Discord.png" width="120" height="120" />
+            <div class="right-content">
+              <v-list three-line>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title> <h3>Discord</h3></v-list-item-title>
+                    <v-list-item-subtitle class="tools-text"> Join our discord, let us know your idea, build influence in the community, and talk to our community governance coordinator. </v-list-item-subtitle>
+                    <a href="https://discord.com/invite/zhwWkXYtJt" target="_blank"><div class="tools-link">Join REI DAO Discord ></div></a>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </div>
+          </v-card>
+          <v-card outlined class="tool">
+            <v-img v-if="dark" class="img" src="../assets/images/forum-dark.png" width="120" height="120" />
+            <v-img v-else class="img" src="../assets/images/Forum.png" width="120" height="120" />
+            <div class="right-content">
+              <v-list three-line>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title> <h3>Snapshot</h3></v-list-item-title>
+                    <v-list-item-subtitle class="tools-text"> Participate and follow the latest developments of the proposal, express your opinion and exercise your right to vote </v-list-item-subtitle>
+                    <a href="https://snapshot.org/#/rei-network.eth" target="_blank"><div class="tools-link">View All Proposals On Snapshot ></div></a>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-card outlined class="tool tool-forum">
+            <v-img v-if="dark" class="img" src="../assets/images/snapshot-dark.png" width="120" height="120" />
+            <v-img v-else class="img" src="../assets/images/Snapshot.png" width="120" height="120" />
+            <div class="right-content">
+              <v-list three-line>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title> <h3>Governance Forum</h3></v-list-item-title>
+                    <v-list-item-subtitle class="tools-text"> Proposal discussion, the venue for debate. Let everyone hear your ideas and interact with the community. </v-list-item-subtitle>
+                    <a href="https://forum.rei.network/" target="_blank"><div class="tools-link">Enter The Forum ></div></a>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
 </template>
 <script>
-
 import { mapGetters, mapActions } from 'vuex';
 import filters from '../filters';
 /* eslint-disable no-undef */
 export default {
   filters,
   data() {
-    return {   
-       width:'', 
-    }
+    return {
+      width: ''
+    };
   },
-  watch: {
-
-  },
+  watch: {},
   mounted() {
-      this.windowWidth();
+    this.windowWidth();
   },
   computed: {
-
-
-...mapGetters({
+    ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
       dark: 'dark'
-    }),
+    })
   },
   methods: {
     ...mapActions({
-      addTx: 'addTx',
+      addTx: 'addTx'
     }),
-     windowWidth(){
-        const that = this;  
-        that.width = window.innerWidth;
-     }
-  },
+    windowWidth() {
+      const that = this;
+      that.width = window.innerWidth;
+    }
+  }
 };
 </script>
 
 <style scoped lang="scss">
-.v-tab{
-    display: flex;
-    justify-content: flex-start;
-    padding-left:0 !important;
-    text-transform: none !important;
-    height: 60px !important;
+.v-tab {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 0 !important;
+  text-transform: none !important;
+  height: 60px !important;
 }
-a:hover{
-        text-decoration: underline;
-        color:#6979f8;
-    }
- .step-left{
-        padding-left: 16px;
-        height: 100%;
-        line-height: 60px;
-        width: 300px;
-        text-align: left;
-        display: flex;
-        align-items: center;
-    }
-    .iconfont{
-        font-size: 24px;
-        margin-right: 12px;
-    }
-.v-tab--active{
-    .step-left{
-        color: #FFF;
-        background-color:#6979f8 !important;
-
-    }
-    .v-icon{
-        color: #FFF;
-    }
-    .triangle {
+a:hover {
+  text-decoration: underline;
+  color: #6979f8;
+}
+.step-left {
+  padding-left: 16px;
+  height: 100%;
+  line-height: 60px;
+  width: 300px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+.iconfont {
+  font-size: 24px;
+  margin-right: 12px;
+}
+.v-tab--active {
+  .step-left {
+    color: #fff;
+    background-color: #6979f8 !important;
+  }
+  .v-icon {
+    color: #fff;
+  }
+  .triangle {
     width: 0;
     height: 0;
     transform: rotate(135deg);
@@ -342,126 +318,159 @@ a:hover{
     border-style: solid;
     border-top-left-radius: 6px;
     margin-left: -22px;
+  }
 }
-    
+.right-arrow {
+  display: flex;
 }
-.right-arrow{
-    display: flex;
+.theme--light.v-tabs-items {
+  background: #f7f8ff !important;
 }
-.theme--light.v-tabs-items{
-    background:#F7F8FF !important;
+.font-grey {
+  color: #868e9e;
 }
-.Introduction{
-    padding: 30px 20px;
-    .introduction-text{
-        margin: 20px 0;
+.Introduction {
+  padding: 30px 20px;
+  .introduction-text {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #868e9e;
+    line-height: 28px;
+  }
+  .introduction-btn {
+    color: #fff;
+    text-transform: none !important;
+  }
+  .img {
+    border-radius: 4px;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .members-title {
+    margin-top: 40px;
+  }
+  .process {
+    margin-top: 30px;
+    .step {
+      height: 300px;
+      border-radius: 8px;
+    }
+    .theme--light.step {
+      background: #f7f8ff;
+    }
+    .theme--dark.step {
+      background: #f7f8ff !important;
+    }
+    .step-content {
+      height: 350px;
+      padding-top: 20px;
+      padding-left: 20px;
+      h2 {
+        padding-left: 12px;
+      }
+      h4 {
+        padding-left: 12px;
+      }
+    }
+  }
+  .theme--light.step-content {
+    background-color: #f7f8ff;
+  }
+  .theme--dark.step-content {
+    background: #252243;
+  }
+  a {
+    color: #6979f8;
+  }
+  .tools {
+    .tool {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      .img {
+        margin: 20px;
+      }
+      .tools-text {
         font-size: 14px;
-        color: #868E9E;
-        line-height: 28px;
+        color: #868e9e;
+        line-height: 20px;
+        margin-top: 20px;
+      }
+      .right-content {
+        margin: 15px;
+      }
+      .tools-link {
+        font-size: 14px;
+        color: #6979f8;
+        line-height: 20px;
+        margin-top: 12px;
+      }
     }
-    .introduction-btn{
-        color: #FFF;
-        text-transform: none !important;
-    }
-    .img{
-        border-radius: 4px;
-    }
-    .title{
-        margin-top: 60px;
-    }
-    .process{
-        margin-top: 30px;
-        .step{
-            height: 300px;
-            border-radius: 8px;
-        }
-        .theme--light.step{
-            background: #F7F8FF;
-        }
-        .theme--dark.step{
-            background: #F7F8FF !important;
-        }
-        .step-content{
-            height:350px;
-            padding-top: 20px;
-            padding-left:20px;
-            h2{
-                padding-left: 12px;
-            }
-            h4{
-                padding-left: 12px;
-            }
-        }
-        .theme--light.step-content{
-            background-color:#F7F8FF;
-        }
-        .theme--dark.step-content{
-            background: #5C5A7A;
-        }
-    }
-    a{
-        color: #6979F8;
-    }
-    .tools{
-        .tool{
-            margin-top:28px;
-            display: flex;
-            align-items: center;
-            .img{
-                margin: 20px;
-            }
-            .tools-text{
-                font-size: 14px;
-                color: #868E9E;
-                line-height: 20px;
-                margin-top: 20px;
-            }
-            .right-content{
-                margin: 15px;
-            }
-            .tools-link{
-                font-size: 14px;
-                color: #6979F8;
-                line-height: 20px;
-                margin-top: 12px;
-            }
-        }
-    }
+  }
 }
-  .expansion{
-        background-color: #100D22 !important;
-        opacity: 0.6;
-    }
+.expansion {
+  background-color: #100d22 !important;
+  opacity: 0.6;
+}
+.committee {
+  padding: 20px;
+  margin-top: 20px;
+//   height: 180px;
+  .img-size{
+    width:75px;
+    height: 75px;
+    text-align: center;
+    padding-top:10px;
+  }
+}
+.members {
+  width: 184px !important;
+  height: 220px;
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  .indonesia {
+    font-size: 10px;
+    color: #ff8c41;
+    border: 1px #ff8c41 solid;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+  .icon-img {
+    margin-top: 20px;
+  }
+}
 @media screen and (max-width: 900px) {
-    .v-list-item{
-        padding: 0 !important;
+  .v-list-item {
+    padding: 0 !important;
+  }
+  .step-content {
+    height: auto !important;
+    padding: 0 !important;
+  }
+  .title {
+    margin-top: 40px !important;
+  }
+  .tools {
+    .img {
+      width: 80px !important;
+      height: 80px !important;
+      margin: 32px 8px !important;
     }
-    .step-content{
-        height: auto !important;
-        padding: 0 !important;
+    .tools-text {
+      margin-top: 8px !important;
     }
-    .title{
-        margin-top: 40px !important;
+    .tools-link {
+      margin-top: 8px !important;
     }
-    .tools{
-        .img{
-            width: 80px !important;
-            height: 80px !important;
-            margin: 32px 8px !important;
-        }
-        .tools-text{
-            margin-top: 8px !important;
-        }
-        .tools-link{
-             margin-top: 8px !important;
-        }
-    }
-     .right-content{
-        margin:0 8px 0 0 !important;
-    }
-    .tool-forum{
-        margin-top: 8px !important;
-    }
+  }
+  .right-content {
+    margin: 0 8px 0 0 !important;
+  }
+  .tool-forum {
+    margin-top: 8px !important;
+  }
 }
-
 </style>
