@@ -47,7 +47,7 @@
                   <v-img src="../assets/images/history-2.png" width="40" />
                 </div>
                 <div>
-                  <div class="font-grey">{{ info.type  }}</div>
+                  <div class="font-grey">{{ info.type }}</div>
                   <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
                 </div>
               </v-col>
@@ -223,7 +223,7 @@ export default {
         startDate,
         endDate
       };
-    }
+    },
   },
   watch: {
     startDate() {
@@ -239,7 +239,7 @@ export default {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
       this.changeStateType();
-    }
+    },
   },
   methods: {
     formatDate(startDate) {
@@ -380,13 +380,9 @@ export default {
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      // if (startDate != endDate) {
-        dateList = this.historyList.filter((item) => {
-          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
-        });
-      // } else {
-      //   dateList = this.totalList;
-      // }
+      dateList = this.historyList.filter((item) => {
+        return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+      });
       if (this.tokenFilter == '') {
         if (this.typeFilter == '') {
           this.historyList = dateList;
@@ -407,6 +403,17 @@ export default {
         }
       }
       this.getSortData();
+      var _this = this,
+        obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+        if(this.typeFilter){
+          Object.assign(obj, { type: this.typeFilter });
+        }else{
+          Object.assign(obj, { type: 'all' });
+        }
+      _this.$router.push({
+        query: obj
+      });
+      // console.log('obj',obj,this.$route.path)
     },
     changeStateToken() {
       let startDate = Date.parse(this.startDate);
@@ -414,13 +421,9 @@ export default {
       this.list = [];
       let dateList = [];
       this.historyList = this.totalList;
-      // if (startDate != endDate) {
-        dateList = this.historyList.filter((item) => {
-          return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
-        });
-      // } else {
-      //   dateList = this.totalList;
-      // }
+      dateList = this.historyList.filter((item) => {
+        return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
+      });
       if (this.typeFilter == '') {
         if (this.tokenFilter == '') {
           this.historyList = dateList;
@@ -441,6 +444,16 @@ export default {
         }
       }
       this.getSortData();
+      var _this = this,
+        obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+        if(this.tokenFilter){
+      Object.assign(obj, { token: this.tokenFilter });
+        }else{
+          Object.assign(obj, { token: 'all' });
+        }
+      _this.$router.push({
+        query: obj
+      });
     },
     openDetails(value) {
       this.dialog = true;
