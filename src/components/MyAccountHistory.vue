@@ -403,8 +403,8 @@ export default {
         }
       }
       this.getSortData();
-      var _this = this,
-        obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      var _this = this;
+        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
         if(this.typeFilter){
           Object.assign(obj, { type: this.typeFilter });
         }else{
@@ -444,8 +444,8 @@ export default {
         }
       }
       this.getSortData();
-      var _this = this,
-        obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      var _this = this;
+       let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
         if(this.tokenFilter){
       Object.assign(obj, { token: this.tokenFilter });
         }else{

@@ -138,6 +138,11 @@ const routes = [
     component: AssetsCollections
   },
   {
+    path: '/asset/collection/:address/:type',
+    name: 'AssetsCollections',
+    component: AssetsCollections
+  },
+  {
     path: '/asset/details/:address',
     name: 'AssetsTokenList',
     component: AssetsTokenList

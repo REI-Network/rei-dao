@@ -575,9 +575,10 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList);
-      var _this = this,
-      obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-      Object.assign(obj, { page:this.countPage,count: this.count });
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
       _this.$router.push({
         query: obj
       });
@@ -592,9 +593,10 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
-      var _this = this,
-      obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-      Object.assign(obj, { page:this.countPage,count: this.count });
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
       _this.$router.push({
         query: obj
       });
