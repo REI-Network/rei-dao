@@ -62,7 +62,7 @@ export default new Vuetify({
         right_icon:'#5c5a7a',
         header_account:'#6979F8',
         faq_border:"#504985",
-        process_step:"#5C5A7A"
+        process_step:"#252243"
       },
     },
     options: {

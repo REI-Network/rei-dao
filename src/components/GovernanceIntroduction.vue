@@ -1,6 +1,6 @@
 <template>
   <v-container class="stake_background">
-    <v-card class="Introduction" style="margin-bottom: 40px">
+    <v-card class="Introduction">
       <v-row justify="space-between">
         <v-col cols="12" md="8">
           <h2>Introduction to REI Governance</h2>
@@ -12,99 +12,49 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-card class="Introduction" style="margin-bottom: 40px">
-      <h2 class="title">On-Chain Parameter Governance</h2>
-      <v-row justify="space-between">
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>What Is The On-Chain Parameter Governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO On-Chain Parameterized Governance Allows Community Members To Change REI</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more" @click="stepClick1">
-                <div @click="stepClick1" class="more">More></div>
-              </v-col>
+    <v-card class="Introduction" style="margin-top: 40px">
+      <h2 class="title">REI DAO Governance Committee</h2>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
+              <v-img v-else src="../assets/images/organization-dark.png" width="50" />
+              </div>
+              <div class="font-grey">What is the REI DAO Governance Committee? ></div>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'"> 
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>How do community users initiate on-chain parameter governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'"> 
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>Why launch the on-chain parameter governance model?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
+                <v-img v-else src="../assets/images/apply-dark.png" width="50" />
+              </div>
+              <div class="font-grey">Apply to join the REI DAO Governance Committee ></div>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
-       <v-row class="list-title"  align="center" justify="space-between">
-        <h2 class="title">List Of On-Chain Parameter</h2>
-        <div class="font-grey">Participate in on-chain proposal governance ></div>
-       </v-row>
-       <v-row justify="space-between" align="start">
-         <v-col cols="12" sm="4" v-for="(item, index) in list" :key="index">
-          <v-card :class="dark ? 'chip-dark chain-list' : 'chip-light elevation-0 chain-list'"> 
-            <v-row justify="space-between">
-              <v-col cols="12" align-self="start" md="4"  style="padding:0 0 0 12px;">
-                <div class="font-grey">Parameter</div>
-                <div class="parameter-data">
-                  <span>{{item.parameter}} </span>
-                  <v-tooltip right>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            icon
-                            v-bind="attrs"
-                            v-on="on"
-                          >
-                            <v-icon size="14">mdi-help-circle-outline</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>
-                            {{item.parameter}}
-                        </span>
-                      </v-tooltip>
-                </div>
-              </v-col>
-              <v-col cols="12" align-self="start" md="5" style="padding:0;">
-                <div class="font-grey">Default parameter</div>
-                <div class="parameter-data">{{ item.default }}</div>
-              </v-col>
-              <v-col cols="12" align-self="start" md="3" style="padding:0;">
-                <div class="font-grey">Interval</div>
-                <div class="parameter-data">{{ item.interval }}</div>
-              </v-col>
+      <h2 class="members-title title">Governance Committee Members</h2>
+      <v-row justify="space-between">
+        <v-col align-self="center" v-for="n in 10" :key="n">
+          <v-card class="step-content elevation-0 members">
+            <img src="../assets/images/active.png" width="72" />
+            <h4>Daviod</h4>
+            <span class="indonesia">Indonesia</span>
+            <v-row justify="space-between" class="icon-img" no-gutters>
+              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/active.png" width="32" />
             </v-row>
           </v-card>
         </v-col>
-       </v-row>
+      </v-row>
     </v-card>
-    <v-card class="Introduction">
+    <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">Governance Process</h2>
       <v-row class="process">
         <v-col cols="12" v-if="this.width > 900">
@@ -290,17 +240,6 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-dialog v-model="stepDialog1" width="500">
-      <v-card class="step-dialog">
-        <v-row align="center" justify="space-between">
-          <h4>What Is The On-Chain Parameter Governance?</h4>
-          <div @click="cancelStepClick1">
-            <v-icon size="22">mdi-close</v-icon>
-          </div>
-        </v-row>
-        <div class="font-grey step-content">REI DAO on-chain parameterized governance allows community members to change REI...</div>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -311,55 +250,7 @@ export default {
   filters,
   data() {
     return {
-      width: '',
-      stepDialog1:false,
-      list:[
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-        {
-            parameter:"Voting threshold",
-            default:"6%",
-            interval:"6%~10%"
-        },
-      ],
+      width: ''
     };
   },
   watch: {},
@@ -377,12 +268,6 @@ export default {
     ...mapActions({
       addTx: 'addTx'
     }),
-    stepClick1(){
-      this.stepDialog1 = true;
-    },
-    cancelStepClick1(){
-      this.stepDialog1 = false;
-    },
     windowWidth() {
       const that = this;
       that.width = window.innerWidth;
@@ -398,10 +283,6 @@ export default {
   padding-left: 0 !important;
   text-transform: none !important;
   height: 60px !important;
-}
-.font-grey {
-  font-size: 14px;
-  color: #868e9e;
 }
 a:hover {
   text-decoration: underline;
@@ -445,122 +326,121 @@ a:hover {
 .theme--light.v-tabs-items {
   background: #f7f8ff !important;
 }
+.font-grey {
+  color: #868e9e;
+}
 .Introduction {
   padding: 30px 20px;
-}
-.introduction-text {
-  margin: 20px 0;
-  font-size: 14px;
-  color: #868e9e;
-  line-height: 28px;
-}
-.introduction-btn {
-  color: #fff;
-  text-transform: none !important;
-}
-.img {
-  border-radius: 4px;
-}
-.parameter {
-  padding: 20px;
-  margin-top: 20px;
-  border-radius: 8px;
-  height: 180px;
-  .more {
-    padding: 20px 0;
+  .introduction-text {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #868e9e;
+    line-height: 28px;
   }
-}
-.step-dialog{
-  padding: 28px;
-}
-.step-content{
-  margin-top: 28px;
-}
-.v-list-item{
-    padding: 0;
-}
-.chip-dark {
-  background-color: #252243;
-}
-.chip-light {
-  background-color: #f5f5f7;
-}
-.chain-list{
-    border-radius: 8px;
-    padding:28px 12px;
-}
-.parameter-data{
-  font-size:14px;
-  font-weight: bold;
-  margin-top: 12px;
-  display: flex;
-  align-items: flex-end;
-}
-.list-title{
+  .introduction-btn {
+    color: #fff;
+    text-transform: none !important;
+  }
+  .img {
+    border-radius: 4px;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .members-title {
     margin-top: 40px;
-    padding: 0 12px;
-}
-.process {
-  margin-top: 30px;
-  .step {
-    height: 300px;
-    border-radius: 8px;
   }
-  .theme--light.step {
-    background: #f7f8ff;
-  }
-  .theme--dark.step {
-    background: #f7f8ff !important;
-  }
-  .step-content {
-    height: 350px;
-    padding-top: 20px;
-    padding-left: 20px;
-    h2 {
-      padding-left: 12px;
+  .process {
+    margin-top: 30px;
+    .step {
+      height: 300px;
+      border-radius: 8px;
     }
-    h4 {
-      padding-left: 12px;
+    .theme--light.step {
+      background: #f7f8ff;
+    }
+    .theme--dark.step {
+      background: #f7f8ff !important;
+    }
+    .step-content {
+      height: 350px;
+      padding-top: 20px;
+      padding-left: 20px;
+      h2 {
+        padding-left: 12px;
+      }
+      h4 {
+        padding-left: 12px;
+      }
     }
   }
   .theme--light.step-content {
     background-color: #f7f8ff;
   }
   .theme--dark.step-content {
-    background: #5c5a7a;
+    background: #252243;
   }
-}
-a {
-  color: #6979f8;
-}
-.tools {
-  .tool {
-    margin-top: 28px;
-    display: flex;
-    align-items: center;
-    .img {
-      margin: 20px;
-    }
-    .tools-text {
-      font-size: 14px;
-      color: #868e9e;
-      line-height: 20px;
-      margin-top: 20px;
-    }
-    .right-content {
-      margin: 15px;
-    }
-    .tools-link {
-      font-size: 14px;
-      color: #6979f8;
-      line-height: 20px;
-      margin-top: 12px;
+  a {
+    color: #6979f8;
+  }
+  .tools {
+    .tool {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      .img {
+        margin: 20px;
+      }
+      .tools-text {
+        font-size: 14px;
+        color: #868e9e;
+        line-height: 20px;
+        margin-top: 20px;
+      }
+      .right-content {
+        margin: 15px;
+      }
+      .tools-link {
+        font-size: 14px;
+        color: #6979f8;
+        line-height: 20px;
+        margin-top: 12px;
+      }
     }
   }
 }
 .expansion {
   background-color: #100d22 !important;
   opacity: 0.6;
+}
+.committee {
+  padding: 20px;
+  margin-top: 20px;
+//   height: 180px;
+  .img-size{
+    width:75px;
+    height: 75px;
+    text-align: center;
+    padding-top:10px;
+  }
+}
+.members {
+  width: 184px !important;
+  height: 220px;
+  margin-top: 20px;
+  padding: 20px;
+  text-align: center;
+  .indonesia {
+    font-size: 10px;
+    color: #ff8c41;
+    border: 1px #ff8c41 solid;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+  .icon-img {
+    margin-top: 20px;
+  }
 }
 @media screen and (max-width: 900px) {
   .v-list-item {
