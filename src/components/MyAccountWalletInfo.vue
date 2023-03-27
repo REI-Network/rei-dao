@@ -452,6 +452,7 @@ export default {
       this.totalGasAmount = res.data.result;
     },
     async getBalance() {
+      this.$router.replace({query:{}})
       this.loading = true;
       let asset = [],
         assetAllArr = [],

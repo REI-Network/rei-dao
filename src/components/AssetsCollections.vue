@@ -231,6 +231,7 @@ export default {
       }
     },
     async init() {
+      this.$router.replace({query:{}})
       this.loading = true;
       let contract2 = new web3.eth.Contract(abiERC721, this.$route.params.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();

@@ -253,6 +253,7 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
+      this.$router.replace({query:{}})
       let params = {
         module: 'account',
         action: 'tokentx',
@@ -403,7 +404,7 @@ export default {
         }
       }
       this.getSortData();
-      var _this = this;
+       var _this = this;
         let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
         if(this.typeFilter){
           Object.assign(obj, { type: this.typeFilter });
@@ -413,7 +414,6 @@ export default {
       _this.$router.push({
         query: obj
       });
-      // console.log('obj',obj,this.$route.path)
     },
     changeStateToken() {
       let startDate = Date.parse(this.startDate);

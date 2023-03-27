@@ -753,6 +753,7 @@ export default {
     },
 
     async init() {
+      this.$router.replace({query:{}})
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
@@ -1354,13 +1355,26 @@ export default {
       }
       this.activeList = activeList;
       this.notActiveList = notActiveList;
+      let validatorFilter = '';
       if (this.listFilter == '1') {
         this.nodeList = this.activeList;
+        validatorFilter = 'Active'
       } else if (this.listFilter == '2') {
         this.nodeList = this.notActiveList;
+        validatorFilter = 'Inactive'
       } else {
         this.nodeList = this.activeList.concat(this.notActiveList);
       }
+       var _this = this;
+        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+        if(validatorFilter){
+          Object.assign(obj, { validator: validatorFilter});
+        }else{
+          Object.assign(obj, { validator: 'all' });
+        }
+      _this.$router.push({
+        query: obj
+      });
     },
     windowWidth() {
       const that = this;
