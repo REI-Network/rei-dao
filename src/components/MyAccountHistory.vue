@@ -233,6 +233,12 @@ export default {
       this.endFormatted = this.formatDate2(this.endDate);
     },
     listenChange(newDate, oldDate) {
+       var _this = this;
+       let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+          Object.assign(obj, { startTime: this.startDate,endTime: this.endDate });
+      _this.$router.push({
+        query: obj
+      });
       let startDate = Date.parse(this.startDate);
       let endDate = Date.parse(this.endDate);
       this.list = this.list.filter((item) => {
