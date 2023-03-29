@@ -259,7 +259,10 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
-      this.$router.replace({query:{}})
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0){
+         this.$router.replace({query:{}})
+      }
       let params = {
         module: 'account',
         action: 'tokentx',

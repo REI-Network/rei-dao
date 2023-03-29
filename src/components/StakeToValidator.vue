@@ -753,7 +753,10 @@ export default {
     },
 
     async init() {
-      this.$router.replace({query:{}})
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0){
+         this.$router.replace({query:{}})
+      }
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
@@ -1358,7 +1361,7 @@ export default {
       let validatorFilter = '';
       if (this.listFilter == '1') {
         this.nodeList = this.activeList;
-        validatorFilter = 'Active'
+        validatorFilter = 'active'
       } else if (this.listFilter == '2') {
         this.nodeList = this.notActiveList;
         validatorFilter = 'Inactive'
