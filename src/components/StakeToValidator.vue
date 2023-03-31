@@ -5,8 +5,9 @@
         <v-tabs v-model="tab1" align-with-title class="vote-list" background-color="background">
           <v-tab key="11" to="/stake/validatorlist" class="v-tab-left">Validator List</v-tab>
           <v-tab key="12" to="/stake/jaillist">Jail</v-tab>
-          <v-tab key="13" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
-          <v-tab key="14" to="/stake/vote">My Voted Validators</v-tab>
+          <v-tab key="13" to="/stake/slashlist">slash</v-tab>
+          <v-tab key="14" to="/stake/pending">{{ $t('unstake.title') }}</v-tab>
+          <v-tab key="15" to="/stake/vote">My Voted Validators</v-tab>
         </v-tabs>
         <v-row class="btn-div" v-if="this.width > 900" style="margin-top: 15px">
           <v-btn text outlined color="validator" v-if="isNode" @click="setRate">
@@ -17,7 +18,7 @@
             {{ $t('stake.stake_to_other_node') }}
             <span class="iconfont">&#xe601;</span>
           </v-btn>
-          <div class="right-outline" v-if="!this.type||this.type == 'validatorlist'" style="margin-top: -14px">
+          <div class="right-outline" v-if="!this.type || this.type == 'validatorlist'" style="margin-top: -14px">
             <v-card outlined class="select-card">
               <v-select class="d-select" :items="items" item-text="state" outlined item-value="val" item-color="vote_button" dense style="margin-left: 18px" v-model="listFilter" @change="changeState"></v-select>
             </v-card>
@@ -156,9 +157,44 @@
             </v-row>
           </v-tab-item>
           <v-tab-item key="13">
-            <UnstakeToValidator></UnstakeToValidator>
+            <v-data-table :headers="slashHeaders" :items="slashList" :items-per-page="slashPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="slashLoading" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
+              <template v-slot:item.validators="{ item }">
+                <v-row align="center" class="jail-head">
+                  <v-lazy class="logoWrap">
+                    <v-img src="../assets/images/rei.svg" width="24" height="24" class="logo-image"></v-img>
+                  </v-lazy>
+                  <span class="nodeName name-hover">{{ item.validators }}</span>
+                  <div :class="dark ? 'dark-nodes on-jail' : 'light-nodes on-jail'">Frozen</div>
+                </v-row>
+              </template>
+              <template v-slot:item.power="{ item }">
+                <v-row>
+                  <div>{{ item.power }}</div>
+                  <v-icon size="14" class="help-icon"> mdi-help-circle-outline </v-icon>
+                </v-row>
+              </template>
+              <template v-slot:item.reason="{ item }">
+                <v-row>
+                  <div class="reason-list">{{ item.reason }}></div>
+                </v-row>
+              </template>
+              <template v-slot:item.amount="{ item }">
+                <v-row>
+                  <div>{{ item.amount }}</div>
+                  <v-icon size="14" class="help-icon"> mdi-help-circle-outline </v-icon>
+                </v-row>
+              </template>
+            </v-data-table>
+            <v-row justify="end" align="center" v-if="slashList.length > 10" style="margin-bottom: 20px">
+              <div class="text-center pt-2">
+                <v-pagination v-model="slashPage" :length="slashPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"></v-pagination>
+              </div>
+            </v-row>
           </v-tab-item>
           <v-tab-item key="14">
+            <UnstakeToValidator></UnstakeToValidator>
+          </v-tab-item>
+          <v-tab-item key="15">
             <v-data-table :headers="myStakeHeaders" :items="myStakeList" :items-per-page="itemsMyVotedPerPage" class="elevation-0" hide-default-footer :no-data-text="$t('msg.nodatatext')" :loading="myStakeListLoading" :loading-text="$t('msg.loading')" :page.sync="pageMyVoted" @page-count="pageMyVotedCount = $event">
               <template v-slot:item.address="{ item }">
                 <div @click="myVoteDetails(item)">
@@ -566,7 +602,7 @@ export default {
   filters,
   data() {
     return {
-      skeletonLoading:true,
+      skeletonLoading: true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -576,6 +612,9 @@ export default {
       jailPage: 1,
       jailPageCount: 0,
       jailPerPage: 20,
+      slashPage: 1,
+      slashPageCount: 0,
+      slashPerPage: 20,
       listFilter: '',
       payFineDialog: false,
       isNode: false,
@@ -583,6 +622,7 @@ export default {
       tab2: 1,
       stakeListLoading: false,
       jailLoading: false,
+      slashLoading: false,
       myStakeListLoading: false,
       dialog: false,
       claimDialog: false,
@@ -610,14 +650,17 @@ export default {
         jaillist: {
           index: 1
         },
-        pending: {
+        slashlist: {
           index: 2
         },
-        vote: {
+        pending: {
           index: 3
+        },
+        vote: {
+          index: 4
         }
       },
-      type:'',
+      type: '',
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -660,6 +703,24 @@ export default {
         { text: 'Operation', value: 'operation' }
       ],
       jailList: [],
+      slashHeaders: [
+        { text: 'Validators', value: 'validators' },
+        { text: 'Voting Power', value: 'power' },
+        { text: 'Block Height', value: 'block' },
+        { text: 'Time', value: 'time' },
+        { text: 'Reason', value: 'reason' },
+        { text: 'Slash Amount($REI)', value: 'amount' }
+      ],
+      slashList: [
+        {
+          validators: 'REI Fans',
+          power: '312,323,212.00',
+          block: '5631987',
+          time: '2022/12/03 12:26:18',
+          reason: 'Double Signatures',
+          amount: '-'
+        }
+      ],
       status: {
         true: this.$t('stake.isActive'),
         false: this.$t('stake.notActive')
@@ -723,14 +784,14 @@ export default {
     listenChange(stake, days) {
       this.Calculation();
     },
-     tab1:function () {
-        let type = this.$route.params.type;
-        this.type = type;
-        if (!type) {
-          this.tab2 = 0;
-        } else {
-          this.tab2 = this.routerMap[type].index;
-        }
+    tab1: function () {
+      let type = this.$route.params.type;
+      this.type = type;
+      if (!type) {
+        this.tab2 = 0;
+      } else {
+        this.tab2 = this.routerMap[type].index;
+      }
     }
   },
   mounted() {
@@ -748,7 +809,7 @@ export default {
       } else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider);
       } else {
-          window.web3 = new Web3('https://rpc.rei.network');
+        window.web3 = new Web3('https://rpc.rei.network');
       }
     },
 
@@ -761,11 +822,11 @@ export default {
 
       let blockHeight = await web3.eth.getBlockNumber();
       let currentBlockHeight = localStorage.getItem('currentBlockHeight') || blockHeight;
-      if((blockHeight-currentBlockHeight) < 60){
+      if (blockHeight - currentBlockHeight < 60) {
         blockHeight = currentBlockHeight;
       }
       let url = this.apiUrl.graph;
-      if(!client){
+      if (!client) {
         client = new ApolloClient({
           uri: `${url}chainMonitorBetterPos`,
           cache: new InMemoryCache()
@@ -803,7 +864,7 @@ export default {
         localStorage.setItem('currentBlockHeight', blockHeight);
         if (!_validator.length) {
           _validator = await getValidatorList(blockHeight - 1);
-          localStorage.setItem('currentBlockHeight', blockHeight-1);
+          localStorage.setItem('currentBlockHeight', blockHeight - 1);
         }
         return _validator;
       };
@@ -872,8 +933,8 @@ export default {
       // get validator response rate;
       let currentEndTime = localStorage.getItem('currentEndTime');
       let endTimestamp = dayjs().unix();
-      if((endTimestamp - currentEndTime) < 180 ){
-        endTimestamp = currentEndTime
+      if (endTimestamp - currentEndTime < 180) {
+        endTimestamp = currentEndTime;
       } else {
         localStorage.setItem('currentEndTime', endTimestamp);
       }
@@ -887,8 +948,8 @@ export default {
       let minedInfoMap = {};
       for (let i = 0; i < minedInfo.data.length; i++) {
         let _data = minedInfo.data[i];
-        let _address = ''
-        if(_data.minerMessage){
+        let _address = '';
+        if (_data.minerMessage) {
           _address = web3.utils.toChecksumAddress(_data.minerMessage.miner);
         }
         let obj = {
@@ -954,7 +1015,7 @@ export default {
     async getMinedInfo() {},
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
-      if(!clientStake){
+      if (!clientStake) {
         clientStake = new ApolloClient({
           uri: `${url}chainMonitorOnlyForStake`,
           cache: new InMemoryCache()
@@ -982,7 +1043,7 @@ export default {
     },
     async getMyStakeRewardList() {
       let url = this.apiUrl.graph;
-      if(!clientReward){
+      if (!clientReward) {
         clientReward = new ApolloClient({
           uri: `${url}voteReward`,
           cache: new InMemoryCache()
@@ -1382,10 +1443,10 @@ export default {
       this.detailsItem = value;
       this.$router.push({
         name: 'StakeInfo',
-         params:{
+        params: {
           id: this.type,
           address: value.address
-          }
+        }
       });
     },
 
@@ -1397,22 +1458,22 @@ export default {
     async validatorDetails(value) {
       // this.validatorDialog = true;
       this.detailsItem = value;
-      if(!this.type){
+      if (!this.type) {
         this.$router.push({
-        name: 'StakeInfo',
-        params:{
-          id: 'validatorlist',
-          address: value.address
+          name: 'StakeInfo',
+          params: {
+            id: 'validatorlist',
+            address: value.address
           }
-      });
-      }else{
+        });
+      } else {
         this.$router.push({
-        name: 'StakeInfo',
-        params:{
-          id: this.type,
-          address: value.address
+          name: 'StakeInfo',
+          params: {
+            id: this.type,
+            address: value.address
           }
-      });
+        });
       }
     },
 
@@ -1471,7 +1532,7 @@ export default {
     async getJailList() {
       this.jailLoading = true;
       let url = this.apiUrl.graph;
-      if(!client){
+      if (!client) {
         client = new ApolloClient({
           uri: `${url}chainMonitorBetterPos`,
           cache: new InMemoryCache()
@@ -1558,10 +1619,10 @@ export default {
     getJailRecords(value) {
       this.$router.push({
         name: 'StakeInfo',
-        params:{
+        params: {
           id: this.type,
           address: value
-          }
+        }
       });
     }
   },
@@ -1640,9 +1701,17 @@ export default {
 .v-tab {
   text-transform: none !important;
 }
-.validator-list{
-  margin-bottom:20px;
-  margin-right:12px
+.help-icon{
+  margin-left: 8px;
+}
+.reason-list {
+  font-size: 14px !important;
+  background-color: #ffcdcd !important;
+  padding: 4px 10px;
+}
+.validator-list {
+  margin-bottom: 20px;
+  margin-right: 12px;
 }
 .active {
   // width: 30px;
@@ -1935,8 +2004,8 @@ export default {
 .jail-head:hover {
   cursor: pointer;
 }
-.skeleton{
-  margin-top:-68px;
+.skeleton {
+  margin-top: -68px;
 }
 @keyframes metronome-example {
   from {
