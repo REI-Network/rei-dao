@@ -17,7 +17,7 @@
             {{ $t('stake.stake_to_other_node') }}
             <span class="iconfont">&#xe601;</span>
           </v-btn>
-          <div class="right-outline" v-if="!this.type||this.type == 'validatorlist'" style="margin-top: -14px">
+          <div class="right-outline" v-if="!this.type || this.type == 'validatorlist'" style="margin-top: -14px">
             <v-card outlined class="select-card">
               <v-select class="d-select" :items="items" item-text="state" outlined item-value="val" item-color="vote_button" dense style="margin-left: 18px" v-model="listFilter" @change="changeState"></v-select>
             </v-card>
@@ -566,7 +566,7 @@ export default {
   filters,
   data() {
     return {
-      skeletonLoading:true,
+      skeletonLoading: true,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -617,7 +617,7 @@ export default {
           index: 3
         }
       },
-      type:'',
+      type: '',
       items: [
         { state: 'All', val: '' },
         { state: 'Active Validator', val: '1' },
@@ -723,14 +723,14 @@ export default {
     listenChange(stake, days) {
       this.Calculation();
     },
-     tab1:function () {
-        let type = this.$route.params.type;
-        this.type = type;
-        if (!type) {
-          this.tab2 = 0;
-        } else {
-          this.tab2 = this.routerMap[type].index;
-        }
+    tab1: function () {
+      let type = this.$route.params.type;
+      this.type = type;
+      if (!type) {
+        this.tab2 = 0;
+      } else {
+        this.tab2 = this.routerMap[type].index;
+      }
     }
   },
   mounted() {
@@ -748,15 +748,11 @@ export default {
       } else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider);
       } else {
-          window.web3 = new Web3('https://rpc.rei.network');
+        window.web3 = new Web3('https://rpc.rei.network');
       }
     },
 
     async init() {
-      let parameter = Object.keys(this.$route.query).length;
-      if(parameter > 0){
-         this.$router.replace({query:{}})
-      }
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
@@ -765,11 +761,11 @@ export default {
 
       let blockHeight = await web3.eth.getBlockNumber();
       let currentBlockHeight = localStorage.getItem('currentBlockHeight') || blockHeight;
-      if((blockHeight-currentBlockHeight) < 60){
+      if (blockHeight - currentBlockHeight < 60) {
         blockHeight = currentBlockHeight;
       }
       let url = this.apiUrl.graph;
-      if(!client){
+      if (!client) {
         client = new ApolloClient({
           uri: `${url}chainMonitorBetterPos`,
           cache: new InMemoryCache()
@@ -807,7 +803,7 @@ export default {
         localStorage.setItem('currentBlockHeight', blockHeight);
         if (!_validator.length) {
           _validator = await getValidatorList(blockHeight - 1);
-          localStorage.setItem('currentBlockHeight', blockHeight-1);
+          localStorage.setItem('currentBlockHeight', blockHeight - 1);
         }
         return _validator;
       };
@@ -876,8 +872,8 @@ export default {
       // get validator response rate;
       let currentEndTime = localStorage.getItem('currentEndTime');
       let endTimestamp = dayjs().unix();
-      if((endTimestamp - currentEndTime) < 180 ){
-        endTimestamp = currentEndTime
+      if (endTimestamp - currentEndTime < 180) {
+        endTimestamp = currentEndTime;
       } else {
         localStorage.setItem('currentEndTime', endTimestamp);
       }
@@ -891,8 +887,8 @@ export default {
       let minedInfoMap = {};
       for (let i = 0; i < minedInfo.data.length; i++) {
         let _data = minedInfo.data[i];
-        let _address = ''
-        if(_data.minerMessage){
+        let _address = '';
+        if (_data.minerMessage) {
           _address = web3.utils.toChecksumAddress(_data.minerMessage.miner);
         }
         let obj = {
@@ -943,7 +939,32 @@ export default {
         };
       });
       this.nodeListRaw = [].concat(this.nodeList);
-
+      let parameter = Object.keys(this.$route.query).length;
+      if (parameter > 0) {
+        let activelist = [];
+        let notActivelist = [];
+        for (let i = 0; i < this.nodeListRaw.length; i++) {
+          let _node = this.nodeListRaw[i];
+          if (_node.active) {
+            activelist.push(_node);
+          } else {
+            notActivelist.push(_node);
+          }
+        }
+        this.activeList = activelist;
+        this.notActiveList = notActivelist;
+        let validator = this.$route.query.validator;
+        if (validator == 'active') {
+          this.listFilter = '1';
+          this.nodeList = this.activeList;
+        } else if (validator == 'Inactive') {
+          this.listFilter = '2';
+          this.nodeList = this.notActiveList;
+        }else{
+          this.listFilter = '';
+          this.nodeList = this.activeList.concat(this.notActiveList);
+        }
+      }
       this.unJailPayAmount = await contract.methods.forfeit().call();
       this.commissionRateInterval = await contract.methods.setCommissionRateInterval().call();
       this.unstakeDelay = await contract.methods.unstakeDelay().call();
@@ -958,7 +979,7 @@ export default {
     async getMinedInfo() {},
     async getMyStakeListData() {
       let url = this.apiUrl.graph;
-      if(!clientStake){
+      if (!clientStake) {
         clientStake = new ApolloClient({
           uri: `${url}chainMonitorOnlyForStake`,
           cache: new InMemoryCache()
@@ -986,7 +1007,7 @@ export default {
     },
     async getMyStakeRewardList() {
       let url = this.apiUrl.graph;
-      if(!clientReward){
+      if (!clientReward) {
         clientReward = new ApolloClient({
           uri: `${url}voteReward`,
           cache: new InMemoryCache()
@@ -1361,20 +1382,20 @@ export default {
       let validatorFilter = '';
       if (this.listFilter == '1') {
         this.nodeList = this.activeList;
-        validatorFilter = 'active'
+        validatorFilter = 'active';
       } else if (this.listFilter == '2') {
         this.nodeList = this.notActiveList;
-        validatorFilter = 'Inactive'
+        validatorFilter = 'Inactive';
       } else {
         this.nodeList = this.activeList.concat(this.notActiveList);
       }
-       var _this = this;
-        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-        if(validatorFilter){
-          Object.assign(obj, { validator: validatorFilter});
-        }else{
-          Object.assign(obj, { validator: 'all' });
-        }
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      if (validatorFilter) {
+        Object.assign(obj, { validator: validatorFilter });
+      } else {
+        Object.assign(obj, { validator: 'all' });
+      }
       _this.$router.push({
         query: obj
       });
@@ -1399,10 +1420,10 @@ export default {
       this.detailsItem = value;
       this.$router.push({
         name: 'StakeInfo',
-         params:{
+        params: {
           id: this.type,
           address: value.address
-          }
+        }
       });
     },
 
@@ -1414,22 +1435,22 @@ export default {
     async validatorDetails(value) {
       // this.validatorDialog = true;
       this.detailsItem = value;
-      if(!this.type){
+      if (!this.type) {
         this.$router.push({
-        name: 'StakeInfo',
-        params:{
-          id: 'validatorlist',
-          address: value.address
+          name: 'StakeInfo',
+          params: {
+            id: 'validatorlist',
+            address: value.address
           }
-      });
-      }else{
+        });
+      } else {
         this.$router.push({
-        name: 'StakeInfo',
-        params:{
-          id: this.type,
-          address: value.address
+          name: 'StakeInfo',
+          params: {
+            id: this.type,
+            address: value.address
           }
-      });
+        });
       }
     },
 
@@ -1488,7 +1509,7 @@ export default {
     async getJailList() {
       this.jailLoading = true;
       let url = this.apiUrl.graph;
-      if(!client){
+      if (!client) {
         client = new ApolloClient({
           uri: `${url}chainMonitorBetterPos`,
           cache: new InMemoryCache()
@@ -1575,10 +1596,10 @@ export default {
     getJailRecords(value) {
       this.$router.push({
         name: 'StakeInfo',
-        params:{
+        params: {
           id: this.type,
           address: value
-          }
+        }
       });
     }
   },
@@ -1657,9 +1678,9 @@ export default {
 .v-tab {
   text-transform: none !important;
 }
-.validator-list{
-  margin-bottom:20px;
-  margin-right:12px
+.validator-list {
+  margin-bottom: 20px;
+  margin-right: 12px;
 }
 .active {
   // width: 30px;
@@ -1952,8 +1973,8 @@ export default {
 .jail-head:hover {
   cursor: pointer;
 }
-.skeleton{
-  margin-top:-68px;
+.skeleton {
+  margin-top: -68px;
 }
 @keyframes metronome-example {
   from {

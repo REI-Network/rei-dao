@@ -259,10 +259,6 @@ export default {
       return `${month}/${day}/${year}`;
     },
     async getData() {
-      let parameter = Object.keys(this.$route.query).length;
-      if(parameter > 0){
-         this.$router.replace({query:{}})
-      }
       let params = {
         module: 'account',
         action: 'tokentx',
@@ -350,7 +346,11 @@ export default {
       });
       this.totalList = this.historyList;
       this.getSortData();
-      // console.log('list',this.list)
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0 ){
+        this.typeFilter = this.$route.query.type;
+        this.tokenFilter = this.$route.query.token;
+      }
       let addressTag = await getAddressTag();
       this.detailsList = addressTag.data.data;
       this.skeletonLoading = false;

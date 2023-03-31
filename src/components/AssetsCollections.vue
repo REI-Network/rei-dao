@@ -231,10 +231,6 @@ export default {
       }
     },
     async init() {
-      let parameter = Object.keys(this.$route.query).length;
-      if(parameter > 0){
-         this.$router.replace({query:{}})
-      }
       this.loading = true;
       let contract2 = new web3.eth.Contract(abiERC721, this.$route.params.address);
       this.token.totalSupply = await contract2.methods.totalSupply().call();
@@ -251,7 +247,11 @@ export default {
           this.imageShow = true;
         }
       }
-      // console.log('nftList', this.nftList);
+       let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0){
+         let page = this.$route.query.page;
+         this.page = page;
+      }
       this.loading = false;
     },
 

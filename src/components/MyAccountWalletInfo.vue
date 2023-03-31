@@ -452,10 +452,6 @@ export default {
       this.totalGasAmount = res.data.result;
     },
     async getBalance() {
-      let parameter = Object.keys(this.$route.query).length;
-      if(parameter > 0){
-         this.$router.replace({query:{}})
-      }
       this.loading = true;
       let asset = [],
         assetAllArr = [],
@@ -567,6 +563,11 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0 ){
+        this.count = this.$route.query.count;
+        this.countPage = this.$route.query.page-1;
+      }
     },
     async BackwardPage() {
       let data = await getTokenHolder({ balance: this.lastBalance, hash: this.lastAddress, count: this.count });
