@@ -46,9 +46,9 @@
             <h4>Daviod</h4>
             <span class="indonesia">Indonesia</span>
             <v-row justify="space-between" class="icon-img" no-gutters>
-              <img src="../assets/images/active.png" width="32" />
-              <img src="../assets/images/active.png" width="32" />
-              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/telegram.png" width="24" />
+              <img src="../assets/images/twitter 2.png" width="24" />
+              <img src="../assets/images/discord 2.png" width="24" />
             </v-row>
           </v-card>
         </v-col>
