@@ -568,6 +568,11 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0 ){
+        this.count = this.$route.query.count;
+        this.countPage = this.$route.query.page-1;
+      }
     },
     async BackwardPage() {
       this.loading = true;
@@ -582,6 +587,13 @@ export default {
       this.countPage++;
       this.totalList.push(this.accountList);
       this.loading = false;
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
+      _this.$router.push({
+        query: obj
+      });
       this.skeletonLoading = false;
     },
     ForwardPage() {
@@ -594,6 +606,13 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
+      _this.$router.push({
+        query: obj
+      });
     },
     async getWalletInfo() {
       this.holderList = this.accountList.map((item, index) => {
