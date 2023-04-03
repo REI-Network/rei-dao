@@ -45,10 +45,10 @@
       </v-row>
     </div>
     <v-tabs v-model="tab1" align-with-title :class="dark ? 'tab-dark' : 'tab-light'" background-color="background">
-      <v-tab key="11">All Holders</v-tab>
-      <v-tab key="12">Token ID List</v-tab>
+      <v-tab key="11" :to="`/asset/collection/${contractAddress}/holder`">All Holders</v-tab>
+      <v-tab key="12" :to="`/asset/collection/${contractAddress}/tokenlist`">Token ID List</v-tab>
     </v-tabs>
-    <v-tabs-items v-model="tab1">
+    <v-tabs-items v-model="tab2">
       <v-tab-item key="11">
         <v-card class="wallet-table">
           <v-row justify="space-between">
@@ -143,7 +143,16 @@ export default {
       nftList: [],
       contractAddress:this.$route.params.address,
       imageShow: false,
-      tab1: '11',
+      tab1: 0,
+      tab2: 1,
+      routerMap: {
+        holder: {
+          index: 0
+        },
+        tokenlist: {
+          index: 1
+        }
+      },
       token: {
         balance: 0,
         symbol: '',
@@ -176,7 +185,35 @@ export default {
       apiUrl: 'apiUrl',
       dark: 'dark',
       nftCollect: 'nftCollect'
-    })
+    }),
+     pageChange() {
+      const { page, itemsPerPage } = this;
+      return {
+        page,
+        itemsPerPage
+      };
+    },
+  },
+  watch:{
+     tab1: function(){
+        let type = this.$route.params.type;
+        this.type = type;
+        if(!type){
+          this.tab2 = 0;
+          this.radios = '1';
+        } else {
+            this.tab2 = this.routerMap[type].index;
+            this.radios = this.routerMap[type].value;
+        }
+    },
+    pageChange(){
+      var _this = this,
+        obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+          Object.assign(obj, { page: this.page,count:this.itemsPerPage * this.page });
+      _this.$router.push({
+        query: obj
+      });
+    }
   },
   methods: {
     ...mapActions({
@@ -210,7 +247,11 @@ export default {
           this.imageShow = true;
         }
       }
-      // console.log('nftList', this.nftList);
+       let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0){
+         let page = this.$route.query.page;
+         this.page = page;
+      }
       this.loading = false;
     },
 

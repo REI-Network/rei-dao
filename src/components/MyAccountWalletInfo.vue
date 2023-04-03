@@ -12,7 +12,7 @@
                 </div>
                 <div>
                   <h3>{{ details.symbol }}</h3>
-                  <div v-if="details.address&&details.address!='rei'">
+                  <div v-if="details.address && details.address != 'rei'">
                     <a :href="`https://scan.rei.network/token/${details.address}`" target="_blank">
                       <span class="font-grey">{{ details.address | addr }}</span>
                     </a>
@@ -116,8 +116,9 @@
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
                 <template v-slot:item.txhash="{ item }">
-                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.txhash}`" target="_blank"><span>{{ item.txhash | addr }}</span></a>
-                  
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.txhash}`" target="_blank"
+                    ><span>{{ item.txhash | addr }}</span></a
+                  >
                 </template>
                 <template v-slot:item.label="{ item }">
                   <span :class="dark ? 'dark-method' : 'light-method'">{{ item.label }}</span>
@@ -188,25 +189,25 @@ export default {
       transferCount: 0,
       transferPerPage: 50,
       nextPage: {
-        block_number:'',
+        block_number: '',
         index: 0,
-        items_count: 50,
+        items_count: 50
       },
       loading: false,
       transferLoading: false,
       addrCopying: false,
       tab1: null,
       tab2: 1,
-       routerMap: {
+      routerMap: {
         holder: {
           index: 0
         },
         transfer: {
           index: 1
-        },
+        }
       },
-      url:this.$route.params.token,
-      asset_url:this.$route.params.type,
+      url: this.$route.params.token,
+      asset_url: this.$route.params.type,
       stakeManagerContract: null,
       stakeManageInstance: null,
       myTotalStake: 0,
@@ -331,15 +332,15 @@ export default {
         this.disabled = true;
       }
     },
-    tab1:function () {
-        let id = this.$route.params.id;
-        console.log(this.$route.params.path)
-        if (!id) {
-          this.tab2 = 0;
-        } else {
-          this.tab2 = this.routerMap[id].index;
-        }
-        console.log(this.$route.params.type,this.$route.params.token,this.$route.params.id)
+    tab1: function () {
+      let id = this.$route.params.id;
+      console.log(this.$route.params.path);
+      if (!id) {
+        this.tab2 = 0;
+      } else {
+        this.tab2 = this.routerMap[id].index;
+      }
+      console.log(this.$route.params.type, this.$route.params.token, this.$route.params.id);
     }
   },
   mounted() {
@@ -471,7 +472,7 @@ export default {
             logo: token.logo,
             balance: web3.utils.fromWei(totalBalance),
             price: 0,
-            address: token.erc20Address||'rei',
+            address: token.erc20Address || 'rei',
             decimals: token.decimals,
             totalSupply: 1000000000,
             value: 0
@@ -562,6 +563,11 @@ export default {
       this.lastAddress = lastItem.address;
       this.lastBalance = lastItem.balance;
       this.totalList.push(this.accountList);
+      let parameter = Object.keys(this.$route.query).length;
+      if(parameter > 0 ){
+        this.count = this.$route.query.count;
+        this.countPage = this.$route.query.page-1;
+      }
     },
     async BackwardPage() {
       let data = await getTokenHolder({ balance: this.lastBalance, hash: this.lastAddress, count: this.count });
@@ -574,6 +580,13 @@ export default {
       this.count += 50;
       this.countPage++;
       this.totalList.push(this.accountList);
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
+      _this.$router.push({
+        query: obj
+      });
     },
     ForwardPage() {
       this.count -= 50;
@@ -585,6 +598,13 @@ export default {
         this.lastAddress = lastItem.address;
         this.lastBalance = lastItem.balance;
       }
+      let urlPage = this.countPage+1;
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { page:urlPage,count: this.count });
+      _this.$router.push({
+        query: obj
+      });
     },
     async getWalletInfo() {
       function sortArr(attr) {
@@ -593,11 +613,11 @@ export default {
         };
       }
       let params = {
-          module: 'token',
-          action: 'getTokenHolders',
-          contractaddress: this.details.address,
-          offset: 1000,
-        };
+        module: 'token',
+        action: 'getTokenHolders',
+        contractaddress: this.details.address,
+        offset: 1000
+      };
       if (this.id == 'rei') {
         this.holderList = this.accountList;
       } else {
@@ -642,10 +662,10 @@ export default {
       // this.items_count = parseInt(this.nextPage.items_count);
       // console.log('nextPage+', this.nextPage.index,this.nextPage.items_count );
       this.totalTransferList.push(list);
-       if(Object.keys(this.nextPage).length === 0){
-         this.transferDisabled2 = true;
+      if (Object.keys(this.nextPage).length === 0) {
+        this.transferDisabled2 = true;
       } else {
-         this.transferDisabled2 = false;
+        this.transferDisabled2 = false;
       }
       this.transferSkeletonLoading = false;
       this.transferLoading = false;
@@ -658,36 +678,36 @@ export default {
         items_count: this.nextPage.items_count
       });
       let list = data.data;
-      this.transferList =list.data;
+      this.transferList = list.data;
       this.nextPage.count += 50;
       this.nextPage.countPage++;
       this.nextPage = list.nextPage;
       this.nextPage.index = parseInt(this.nextPage.index);
       this.nextPage.items_count = parseInt(this.nextPage.items_count);
       this.totalTransferList.push(list);
-      if(this.nextPage.items_count > 50){
+      if (this.nextPage.items_count > 50) {
         this.transferDisabled = false;
-      }else{
+      } else {
         this.transferDisabled = true;
       }
-      if(Object.keys(this.nextPage).length === 0){
-         this.transferDisabled2 = true;
+      if (Object.keys(this.nextPage).length === 0) {
+        this.transferDisabled2 = true;
       } else {
-         this.transferDisabled2 = false;
+        this.transferDisabled2 = false;
       }
     },
     async transferForwardPage() {
       this.nextPage.items_count -= 50;
       this.totalTransferList.pop();
-      let index = this.totalTransferList.length -1;
-      let list = this.totalTransferList[ index ];
+      let index = this.totalTransferList.length - 1;
+      let list = this.totalTransferList[index];
       this.transferList = list.data;
       this.nextPage = list.nextPage;
       this.nextPage.index = parseInt(this.nextPage.index);
       this.nextPage.items_count = parseInt(this.nextPage.items_count);
-      if(this.nextPage.items_count > 50){
+      if (this.nextPage.items_count > 50) {
         this.transferDisabled = false;
-      }else{
+      } else {
         this.transferDisabled = true;
       }
     },
