@@ -350,6 +350,8 @@ export default {
       if(parameter > 0 ){
         this.typeFilter = this.$route.query.type;
         this.tokenFilter = this.$route.query.token;
+        this.startDate = this.$route.query.startTime;
+        this.endDate = this.$route.query.endTime;
       }
       let addressTag = await getAddressTag();
       this.detailsList = addressTag.data.data;
