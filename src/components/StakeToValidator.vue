@@ -736,14 +736,16 @@ export default {
         validatorFilter = 'active';
       }else if (this.listFilter == '2') {
         validatorFilter = 'Inactive';
+      }else{
+        validatorFilter = 'all'
       }
       if(type == 'validatorlist'){
-         var _this = this;
-        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-        Object.assign(obj, { validator: validatorFilter });
-      _this.$router.push({
-        query: obj
-      });
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { validator: validatorFilter });
+        _this.$router.push({
+          query: obj
+        });
       }
     }
   },
