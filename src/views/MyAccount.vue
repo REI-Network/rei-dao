@@ -122,7 +122,7 @@
           <v-tab-item key="14">
             <v-row>
               <v-col>
-                <MyAccountHistory></MyAccountHistory>
+                <MyAccountHistory ref="child"></MyAccountHistory>
               </v-col>
             </v-row>
           </v-tab-item>
@@ -264,7 +264,11 @@ export default {
           name: 'HONEY Token',
           symbol: 'HONEY'
         }
-      ]
+      ],
+      typeFilter:'',
+      tokenFilter:'',
+      startDate:'',
+      endDate:''
     };
   },
   watch: {
@@ -281,6 +285,31 @@ export default {
         this.tab2 = 0;
       } else {
         this.tab2 = this.routerMap[type].index;
+      }
+      if (type == 'history') {
+      const childComponent = this.$refs.child;
+      this.typeFilter = childComponent.typeFilter
+      this.tokenFilter = childComponent.tokenFilter;
+      this.startDate = childComponent.startDate;
+      this.endDate = childComponent.endDate;
+      console.log(childComponent.typeFilter, childComponent.tokenFilter)
+        var _this = this;
+        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+        if (this.typeFilter) {
+          Object.assign(obj, { type: this.typeFilter});
+        }
+        if (this.tokenFilter) {
+          Object.assign(obj, { token: this.tokenFilter});
+        }
+        if (this.startDate) {
+          Object.assign(obj, { startTime: this.startDate});
+        }
+        if (this.endDate) {
+          Object.assign(obj, { endTime: this.endDate});
+        }
+        _this.$router.push({
+          query: obj
+        });
       }
     }
   },
@@ -494,7 +523,7 @@ export default {
         this.$router.push({
           name: 'MyAccountWallet',
           params: {
-            type:'portfolio',
+            type: 'portfolio',
             token: value.address
           }
         });
@@ -502,7 +531,7 @@ export default {
         this.$router.push({
           name: 'MyAccountWallet',
           params: {
-            type:this.type,
+            type: this.type,
             token: value.address
           }
         });

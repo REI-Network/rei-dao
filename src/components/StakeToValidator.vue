@@ -731,6 +731,22 @@ export default {
       } else {
         this.tab2 = this.routerMap[type].index;
       }
+      let validatorFilter = ''
+      if (this.listFilter == '1') {
+        validatorFilter = 'active';
+      }else if (this.listFilter == '2') {
+        validatorFilter = 'Inactive';
+      }else{
+        validatorFilter = 'all'
+      }
+      if(type == 'validatorlist'){
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { validator: validatorFilter });
+        _this.$router.push({
+          query: obj
+        });
+      }
     }
   },
   mounted() {
