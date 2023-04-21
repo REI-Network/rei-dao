@@ -12,6 +12,114 @@
         </v-col>
       </v-row>
     </v-card>
+    <v-card class="Introduction" style="margin: 40px 0">
+      <h2 class="title">On-Chain Parameter Governance</h2>
+      <v-row justify="space-between">
+        <v-col cols="12" sm="4">
+          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
+            <v-row align="center">
+              <v-col cols="12" md="10">
+                <h4>What Is The On-Chain Parameter Governance?</h4>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <v-list-item-subtitle class="font-grey">REI DAO On-Chain Parameterized Governance Allows Community Members To Change REI</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+              <v-col cols="12" md="2" class="font-grey more" @click="stepClick1">
+                <div @click="stepClick1" class="more">More></div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
+            <v-row align="center">
+              <v-col cols="12" md="10">
+                <h4>How do community users initiate on-chain parameter governance?</h4>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
+            <v-row align="center">
+              <v-col cols="12" md="10">
+                <h4>Why launch the on-chain parameter governance model?</h4>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="list-title" align="center" justify="space-between">
+        <h2 class="title">List Of On-Chain Parameter</h2>
+        <div class="font-grey">Participate in on-chain proposal governance ></div>
+      </v-row>
+      <v-row justify="start" align="start">
+        <v-col cols="12" sm="4" v-for="(item, index) in parameterList" :key="index">
+          <v-card :class="dark ? 'chip-dark chain-list' : 'chip-light elevation-0 chain-list'">
+            <v-row justify="space-between">
+              <v-col cols="12" align-self="start" md="6" style="padding: 0 0 0 12px">
+                <div class="font-grey">Parameter</div>
+                <div class="parameter-data">
+                  <!-- <div style="margin-bottom:8px;">{{ item.parameter }} </div> -->
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn class="param-name" v-bind="attrs" v-on="on">
+                        <span class="overflow" style="margin-bottom:16px;">{{ item.parameter }} </span>
+                      </v-btn>
+                    </template>
+                    <span>
+                      {{ item.parameter }}
+                    </span>
+                  </v-tooltip>
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon size="14" style="margin-bottom:16px;">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>
+                      {{ item.description }}
+                    </span>
+                  </v-tooltip>
+                </div>
+              </v-col>
+              <v-col cols="12" align-self="start" md="3" style="padding: 0">
+                <div class="font-grey">Default</div>
+                 <v-tooltip top v-if="index == 11">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn class="param-name" v-bind="attrs" v-on="on">
+                        <span class="overflow" style="width:68px">{{ item.default }} </span>
+                      </v-btn>
+                    </template>
+                    <span>
+                      {{ item.default }}
+                    </span>
+                  </v-tooltip>
+                <div class="parameter-data" v-else>{{ item.default }}</div>
+              </v-col>
+              <v-col cols="12" align-self="start" md="3" style="padding: 0">
+                <div class="font-grey">Interval</div>
+                <div class="parameter-data">{{ item.interval }}</div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
     <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">REI DAO Governance Committee</h2>
       <v-row>
@@ -20,7 +128,7 @@
             <v-row no-gutters align="center">
               <div class="img-size">
                 <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
-              <v-img v-else src="../assets/images/organization-dark.png" width="50" />
+                <v-img v-else src="../assets/images/organization-dark.png" width="50" />
               </div>
               <div class="font-grey">What is the REI DAO Governance Committee? ></div>
             </v-row>
@@ -46,9 +154,9 @@
             <h4>Daviod</h4>
             <span class="indonesia">Indonesia</span>
             <v-row justify="space-between" class="icon-img" no-gutters>
-              <img src="../assets/images/active.png" width="32" />
-              <img src="../assets/images/active.png" width="32" />
-              <img src="../assets/images/active.png" width="32" />
+              <img src="../assets/images/telegram.png" width="24" />
+              <img src="../assets/images/twitter 2.png" width="24" />
+              <img src="../assets/images/discord 2.png" width="24" />
             </v-row>
           </v-card>
         </v-col>
@@ -250,7 +358,95 @@ export default {
   filters,
   data() {
     return {
-      width: ''
+      width: '',
+      stepDialog1: false,
+      parameterList: [
+        {
+          parameter: 'unstakeDelay',
+          description: 'The locked time required after unstaking',
+          default: '7 days',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'withdrawDelay',
+          description: 'The locked time required to obtain free gas after unstaking',
+          default: '3 days',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'minIndexVotingPower',
+          description: 'The minimum votingpower required to become an index validator ',
+          default: '10w REI',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'setCommissionRateInterval',
+          description: ' The interval of validator to set the interval of commission ratio ',
+          default: '1 day',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'feePoolInterval',
+          description: 'The interval for reward distribution by the fee pool',
+          default: '1 day',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'forfeit',
+          description: ' The amount of fines a validator needs to pay before getting out of the jail',
+          default: '20000 REI',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'jailThreshold',
+          description: 'The block loss threshold for being locked in the jail',
+          default: '6%',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'maxEvidenceCount',
+          description: 'Maximum evidence recorded per block (double-layer signature)',
+          default: '2',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'maxValidatorsCount',
+          description: 'Maximum number of validator',
+          default: '21',
+          interval: '6%~10%'
+        },
+
+        {
+          parameter: 'minValidatorsCount',
+          description: 'Minimum number of validator',
+          default: '21',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'minTotalLockedAmount',
+          description: 'The minimum number of staking to maintain the operation of REI Network',
+          default: '100 million',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'minerReward',
+          description: 'Miner rewards',
+          default: '0.951293759512937595 REI',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'dailyFee',
+          description:'The total amount of free gas per day',
+          default: '1400 REI',
+          interval: '6%~10%'
+        },
+        {
+          parameter: 'minerRewardFactor',
+          description: 'Proportion of gad obtained by block producers',
+          default: '90%',
+          interval: '6%~10%'
+        }
+      ]
     };
   },
   watch: {},
@@ -268,6 +464,12 @@ export default {
     ...mapActions({
       addTx: 'addTx'
     }),
+    stepClick1() {
+      this.stepDialog1 = true;
+    },
+    cancelStepClick1() {
+      this.stepDialog1 = false;
+    },
     windowWidth() {
       const that = this;
       that.width = window.innerWidth;
@@ -348,6 +550,58 @@ a:hover {
     font-size: 24px;
     font-weight: bold;
   }
+  .parameter {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    height: 180px;
+    .more {
+      padding: 20px 0;
+    }
+  }
+  .step-dialog {
+    padding: 28px;
+  }
+  .step-content {
+    margin-top: 28px;
+  }
+  .v-list-item {
+    padding: 0;
+  }
+  .chip-dark {
+    background-color: #252243;
+  }
+  .chip-light {
+    background-color: #f5f5f7;
+  }
+  .chain-list {
+    border-radius: 8px;
+    padding: 28px 12px;
+  }
+  .parameter-data {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 6px;
+    display: flex;
+    align-items: flex-end;
+  }
+  .param-name {
+    .overflow {
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .param-name.v-btn {
+    font-weight: 700;
+    text-transform: lowercase;
+    padding: 0;
+  }
+  .list-title {
+    margin-top: 40px;
+    padding: 0 12px;
+  }
   .members-title {
     margin-top: 40px;
   }
@@ -417,12 +671,12 @@ a:hover {
 .committee {
   padding: 20px;
   margin-top: 20px;
-//   height: 180px;
-  .img-size{
-    width:75px;
+  //   height: 180px;
+  .img-size {
+    width: 75px;
     height: 75px;
     text-align: center;
-    padding-top:10px;
+    padding-top: 10px;
   }
 }
 .members {
