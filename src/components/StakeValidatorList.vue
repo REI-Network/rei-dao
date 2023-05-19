@@ -6,9 +6,10 @@
           <v-tab key="11" class="v-tab-left" :to="`/stake/validator/${url}/delegator`"
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
-          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
-          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
-          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
+          <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/nodereward`">Node Reward Withdrawals</v-tab>
+          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
+          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
               <v-menu open-on-hover top offset-y>
@@ -55,7 +56,14 @@
               <v-btn class="down" @click="handleDownload">Download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
             </div>
           </v-tab-item>
-          <v-tab-item key="12">
+           <v-tab-item key="12">
+            <v-data-table :headers="nodeHeaders" :items="nodeRewardsList" class="elevation-0" hide-default-footer :items-per-page="nodePerPage" :loading="nodeRewardsLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nodePage" @page-count="nodeCount = $event">
+            </v-data-table>
+            <div class="text-center pt-2" v-if="nodeRewardsList.length > 0">
+              <v-pagination v-model="nodePage" :length="nodeCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+            </div>
+          </v-tab-item>
+          <v-tab-item key="13">
             <v-data-table :headers="myVotesHeaders" :items="myVotesList" class="elevation-0" hide-default-footer :items-per-page="votePerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :sort-by.sync="sortByVote" :sort-desc.sync="sortDescVote" :page.sync="votePage" @page-count="votePageCount = $event">
               <template v-slot:item.time="{ item }">
                 <span>{{ (item.time * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
@@ -68,7 +76,7 @@
               <v-pagination v-model="votePage" :length="votePageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
-          <v-tab-item key="13">
+          <v-tab-item key="14">
             <v-data-table :headers="myWithHeaders" :items="myWithdrawalsList" class="elevation-0" hide-default-footer :items-per-page="withdrawalsPerPage" :loading="stakeListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :sort-by.sync="sortByWithdrawals" :sort-desc.sync="sortDescWithdrawals" :page.sync="withdrawalsPage" @page-count="withdrawalsPageCount = $event">
               <template v-slot:item.time="{ item }">
                 <v-img :src="item.img" weight="24" height="24" />
@@ -82,7 +90,7 @@
               <v-pagination v-model="withdrawalsPage" :length="withdrawalsPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
-          <v-tab-item key="14">
+          <v-tab-item key="15">
             <v-data-table :headers="historyHeaders" :items="historyList" class="elevation-0" hide-default-footer :items-per-page="historyPerPage" :loading="jailLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="historyPage" @page-count="historyPageCount = $event">
               <template v-slot:item.timestamp="{ item }">
                 <div>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
@@ -294,6 +302,9 @@ export default {
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
+      nodePage: 1,
+      nodeCount: 0,
+      nodePerPage: 20,
       votePage: 1,
       votePageCount: 0,
       votePerPage: 20,
@@ -306,6 +317,7 @@ export default {
       stakeListLoading: false,
       voteListLoading: false,
       jailLoading: false,
+      nodeRewardsLoading:false,
       slashPage: 1,
       slashPageCount: 0,
       slashPerPage: 20,
@@ -319,23 +331,32 @@ export default {
         delegator: {
           index: 0
         },
-        myvote: {
+        nodereward: {
           index: 1
         },
-        withdrawals: {
+        myvote: {
           index: 2
         },
-        jail: {
+        withdrawals: {
           index: 3
         },
-         slash: {
+        jail: {
           index: 4
+        },
+         slash: {
+          index: 5
         }
       },
       allStakeList: [],
       delegator: '',
       fields: ['delegator', 'amount'],
       createCsvFile: '',
+      nodeHeaders:[
+        { text: 'TimeStamp', value: 'timestamp' },
+        { text: 'Tx', value: 'tx' },
+        { text: 'Amount ($REI)', value: 'amount' }
+      ],
+      nodeRewardsList:[],
       headers: [
         { text: 'Delegators', value: 'delegator' },
         { text: 'Amount ($REI)', value: 'amount' }
