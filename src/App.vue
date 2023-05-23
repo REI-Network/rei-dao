@@ -62,7 +62,7 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 @font-face {
   font-family: Bebas-Regular;
   src: url(./assets/fonts/Bebas-Regular.ttf);
@@ -138,6 +138,11 @@ a{
 } */
 .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > td:not(.v-data-table__mobile-row), .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr:not(:last-child) > th:not(.v-data-table__mobile-row){
   border-color: #504985;
+}
+.v-dialog {
+  .theme--dark.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+    background-color: #595777;
+  }
 }
 .v-text-field--outlined.v-input--dense .v-label{
     font-size: 13px !important;

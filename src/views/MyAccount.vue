@@ -137,7 +137,7 @@
         </v-col>
       </v-row>
     </v-tabs-items>
-    <v-dialog v-model="dialog" width="650" class="dialog-card">
+    <v-dialog v-model="dialog" width="650" class="register-key">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
           <v-card-title class="dialog-title">Register BLS public key</v-card-title>
@@ -146,24 +146,24 @@
         <v-list rounded class="ma-dialog start_unstake public-field">
           <div class="font-grey">Please enter the BLS public key</div>
           <v-form ref="claimRewardForm" lazy-validation>
-            <v-text-field label="" required outlined background-color="input_other"> </v-text-field>
+            <v-text-field label="" dense required outlined background-color="input_other"> </v-text-field>
           </v-form>
-          <div class="register">
+          <div class="dialog-btn">
             <v-btn>Register BLS public key</v-btn>
           </div>
           <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :loading="blsListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
             <template v-slot:item.key="{ item }">
               <Address :val="item.key"></Address>
             </template>
-             <template v-slot:item.tx="{ item }">
+            <template v-slot:item.tx="{ item }">
               <span>{{ item.tx | addr }}</span>
             </template>
-             <template v-slot:item.status="{ item }">
+            <template v-slot:item.status="{ item }">
               <div class="active-bls" v-if="item.status == 'Active'">{{ item.status }}</div>
-              <div class="inactive-bls" v-else>{{ item.status }}</div>
+              <div :class="dark?'inactive-dark':'inactive-light'" v-else>{{ item.status }}</div>
             </template>
           </v-data-table>
-          <div class="text-center pt-2" v-if="blsList.length > 0">
+          <div class="text-center pt-2" v-if="blsList.length > 10">
             <v-pagination v-model="blsPage" :length="blsCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
           </div>
         </v-list>
@@ -710,10 +710,25 @@ export default {
   text-align: center;
   margin-left: -24px;
   margin-top: 16px;
-  .v-btn {
+  .theme--light.v-btn {
     text-transform: initial !important;
     color: #4696eb;
     background-color: #dde5fc;
+  }
+  .theme--dark.v-btn {
+    text-transform: initial !important;
+    color: #868e9e;
+    background-color: #4c4a68;
+  }
+}
+.dialog-btn {
+  text-align: center;
+  .v-btn {
+    text-transform: initial !important;
+    color: #fff;
+    background-color: #6979f8;
+    border-radius: 20px;
+    padding: 0 20px;
   }
 }
 .validator-tag {
@@ -745,15 +760,22 @@ export default {
 .bls-public-list {
   margin-top: 30px;
 }
-.active-bls{
-  background-color:#D6F9D0 ;
-  border-radius:4px;
-  padding:6px 18px;
+.active-bls {
+  background-color: #fd9557;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 18px;
 }
-.inactive-bls{
-  background-color:#F2F2F2 ;
-  border-radius:4px;
-  padding:6px 18px;
+.inactive-light {
+  background-color: #f2f2f2 !important;
+  border-radius: 4px;
+  padding: 6px 18px;
+}
+.inactive-dark {
+  background-color: #adadad;
+  color: #FFF;
+  border-radius: 4px;
+  padding: 6px 18px;
 }
 @media screen and (max-width: 900px) {
   .myAccount {
