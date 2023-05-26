@@ -48,16 +48,20 @@
     </div>
     <v-card outlined class="vote-number">
       <v-row justify="space-between">
-        <v-col cols="12" sm="3">
+        <v-col>
           <div class="font-grey">Voting Power ($REI)</div>
           <h2>{{ votingPower | asset(2) }}</h2>
         </v-col>
-        <v-col cols="12" sm="3">
+        <v-col>
           <div class="font-grey">Commission Rate</div>
           <h2 v-if="detailData.commissionRate">{{ detailData.commissionRate }}%</h2>
           <h2 v-else>0%</h2>
         </v-col>
-        <v-col cols="12" sm="3">
+         <v-col>
+          <div class="font-grey">Node Rewards</div>
+          <h2>{{ allRewards | asset(2) }}</h2>
+        </v-col>
+        <v-col>
           <div class="font-grey">
             APR
              <v-tooltip left color="start_unstake">
@@ -69,7 +73,7 @@
           </div>
           <h2>{{ apr | asset(2) }}%</h2>
         </v-col>
-         <v-col cols="12" sm="3">
+         <v-col>
           <div class="font-grey">Response Rate <v-tooltip right v-if="minedInfo">
                     <template v-slot:activator="{ on, attrs }">
                       <v-icon
@@ -269,7 +273,7 @@ import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
-import { getValidatorDetails, getValidatorMinedInfo } from '../service/CommonService';
+import { getValidatorDetails, getValidatorMinedInfo,getMinerRewards } from '../service/CommonService';
 import abiCommissionShare from '../abis/abiCommissionShare';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -287,6 +291,7 @@ export default {
       detail: '',
       validatorAddress: this.$route.params.address,
       detailData: '',
+      allRewards:0,
       dialog: false,
       claimDialog: false,
       stakeLoading: false,
@@ -432,6 +437,9 @@ export default {
         }  
       }
       this.getValidatorInfo();
+      let minerRewards = await getMinerRewards({ validatorAddr: this.validatorAddress });
+      let data = minerRewards.data.data;
+      this.allRewards = web3.utils.fromWei(web3.utils.toBN(data.allReward));
     },
     async getValidatorInfo() {
       let validatorDetails = await getValidatorDetails();

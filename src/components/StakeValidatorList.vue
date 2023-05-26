@@ -23,7 +23,7 @@
               </v-menu>
             </v-row>
           </v-tab>
-          <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
+          <v-tab key="16" class="v-tab-left" :to="`/stake/validator/${url}/slash`">
             <v-row>
               <div>History of Slash</div>
               <v-menu open-on-hover top offset-y>
@@ -56,10 +56,29 @@
               <v-btn class="down" @click="handleDownload">Download <v-icon size="16">mdi-tray-arrow-down</v-icon></v-btn>
             </div>
           </v-tab-item>
-           <v-tab-item key="12">
-            <v-data-table :headers="nodeHeaders" :items="nodeRewardsList" class="elevation-0" hide-default-footer :items-per-page="nodePerPage" :loading="nodeRewardsLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nodePage" @page-count="nodeCount = $event">
+          <v-tab-item key="12">
+            <v-data-table :headers="nodeHeaders" :items="nodeRewardsList" class="elevation-0 nodeRewards" hide-default-footer :items-per-page="nodePerPage" :loading="nodeRewardsLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nodePage" @page-count="nodeCount = $event">
+              <template v-slot:item.createdAt="{ item }">
+                <span>{{ (item.withdrawalTime * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</span>
+              </template>
+              <template v-slot:item.updatedAt="{ item }">
+                <span>{{ item.availableTime | dateFormat('YYYY-MM-dd hh:ss:mm') }}</span>
+              </template>
+              <template v-slot:item.rewards="{ item }">
+                <span>{{ item.claimValue | asset(2) }}</span>
+              </template>
+              <template v-slot:item.status="{ item }">
+                <v-row align="center" class="available" v-if="item.currentStatus == 0"><div></div>Available</v-row>
+                <v-row align="center" class="done" v-else-if="item.currentStatus == 1"><div></div>Done</v-row>
+                <v-row align="center" class="pending" v-else><div></div>Pending</v-row> 
+              </template>
+              <template v-slot:item.operation="{ item }">
+                <v-btn v-if="item.disabled" @click="submitClaimReward(item)">Withdraw</v-btn>
+                <v-btn v-else disabled @click="submitClaimReward(item)">Withdraw</v-btn>
+              </template>
             </v-data-table>
-            <div class="text-center pt-2" v-if="nodeRewardsList.length > 0">
+            <v-skeleton-loader class="skeleton" v-if="nodeSkeletonLoading == true" :loading="nodeSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
+            <div class="text-center pt-2" v-if="nodeRewardsList.length > 10">
               <v-pagination v-model="nodePage" :length="nodeCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
@@ -107,7 +126,7 @@
               <v-pagination v-model="historyPage" :length="historyPageCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
             </div>
           </v-tab-item>
-          <v-tab-item key="15">
+          <v-tab-item key="16">
             <v-data-table :headers="slashHeaders" :items="slashList" class="elevation-0" hide-default-footer :items-per-page="slashPerPage" :loading="slashLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
               <template v-slot:item.slashBlockHeight="{ item }">
                 <a :class="dark ? 'block-dark block-link' : 'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
@@ -278,11 +297,13 @@ import { mapActions, mapGetters } from 'vuex';
 import filters from '../filters';
 import Address from '../components/Address';
 import abiConfig from '../abis/abiConfig';
+import util from '../utils/util';
 import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
+import abiValidatorRewardPool from '../abis/abiValidatorRewardPool';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import Papa from 'papaparse';
-import { getAddressTag, getSlashRecords } from '../service/CommonService';
+import { getAddressTag, getSlashRecords, getMinerRewards } from '../service/CommonService';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 let client = null;
@@ -294,11 +315,13 @@ export default {
   filters,
   data() {
     return {
+      currentStatus:0,
+      disabled: false,
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
-      id:this.$route.params.id,
-      url:this.$route.params.address,
+      id: this.$route.params.id,
+      url: this.$route.params.address,
       page: 1,
       pageCount: 0,
       itemsPerPage: 20,
@@ -317,7 +340,8 @@ export default {
       stakeListLoading: false,
       voteListLoading: false,
       jailLoading: false,
-      nodeRewardsLoading:false,
+      nodeRewardsLoading: false,
+      nodeSkeletonLoading: false,
       slashPage: 1,
       slashPageCount: 0,
       slashPerPage: 20,
@@ -343,7 +367,7 @@ export default {
         jail: {
           index: 4
         },
-         slash: {
+        slash: {
           index: 5
         }
       },
@@ -351,12 +375,14 @@ export default {
       delegator: '',
       fields: ['delegator', 'amount'],
       createCsvFile: '',
-      nodeHeaders:[
-        { text: 'TimeStamp', value: 'timestamp' },
-        { text: 'Tx', value: 'tx' },
-        { text: 'Amount ($REI)', value: 'amount' }
+      nodeHeaders: [
+        { text: 'Withdrawal Time', value: 'createdAt' },
+        { text: 'Available Time', value: 'updatedAt' },
+        { text: 'Withdrawal Rewards', value: 'rewards' },
+        { text: 'Status', value: 'status' },
+        { text: 'Operation', value: 'operation' }
       ],
-      nodeRewardsList:[],
+      nodeRewardsList: [],
       headers: [
         { text: 'Delegators', value: 'delegator' },
         { text: 'Amount ($REI)', value: 'amount' }
@@ -434,6 +460,9 @@ export default {
     this.getSlashData();
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     connect() {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -451,10 +480,12 @@ export default {
         let commissionShareAdd = await this.stakeManageInstance.methods.validators(this.$route.params.address).call();
         this.commissionShareInstance = new web3.eth.Contract(abiCommissionShare, commissionShareAdd[1]);
       }
-
+      let validatorRewardPool = await contract.methods.validatorRewardPool().call();
+      this.validatorRewardPoolContract = new web3.eth.Contract(abiValidatorRewardPool, validatorRewardPool);
       this.getAllStakeList();
       this.getMyVotesList();
       this.getMyWithdrawList();
+      this.getNodeRewards();
     },
     async getAllStakeList() {
       this.stakeListLoading = true;
@@ -693,6 +724,80 @@ export default {
       });
       this.slashLoading = false;
     },
+    async getNodeRewards() {
+      this.nodeRewardsLoading = true;
+      this.nodeSkeletonLoading = true;
+      let minerRewards = await getMinerRewards({ validatorAddr: this.url });
+      let data = minerRewards.data.data.claimedRecords;
+      this.nodeRewardsList = data;
+      let unstakeDelay = parseInt(this.unstakeDelay);
+      this.nodeRewardsList = this.nodeRewardsList.map((item) => {
+        let claimValue = web3.utils.fromWei(web3.utils.toBN(item.claimValue));
+        let availableTime = (item.timestamp + unstakeDelay) * 1000;
+        let nowDate = new Date().getTime();
+        console.log(availableTime, nowDate, item.isUnstaked);
+        // let status = 0;
+        if( nowDate >= availableTime){
+          if(!item.isUnstaked){
+            this.currentStatus = 0
+            this.disabled = true;
+          }else{
+            this.currentStatus = 1
+            this.disabled = false;
+          }
+          console.log('status', this.currentStatus),item.isUnstaked;
+        }else{
+         this.currentStatus = 2
+         this.disabled = false;
+         
+        }
+        console.log('status', this.currentStatus,this.disabled,item.isUnstaked);
+        return {
+          withdrawalTime: item.timestamp,
+          availableTime: availableTime,
+          isUnstaked: item.isUnstaked,
+          unstakeId: item.unstakeId,
+          currentStatus: this.currentStatus,
+          disabled:this.disabled,
+          claimValue
+        };
+      });
+      console.log('milliseconds', this.nodeRewardsList);
+      this.nodeSkeletonLoading = false;
+      this.nodeRewardsLoading = false;
+    },
+    async submitClaimReward(value) {
+      // console.log('value',value)
+      // console.log('----',value.unstakeId,value.claimValue,this.connection.address)
+      try {
+        let contract = new web3.eth.Contract(abiConfig, config_contract);
+        this.stakeManagerContract = await contract.methods.stakeManager().call();
+        let stake_contract = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
+        const res = await stake_contract.methods.unstake(value.unstakeId).send({
+          from: this.connection.address
+        });
+        if (res.transactionHash) {
+          this.addTx({
+            tx: {
+              txid: res.transactionHash,
+              type: 'unstake',
+              status: 'PENDING',
+              data: {
+                amount: value.claimValue,
+                symbol: 'REI',
+                to: util.addr(this.connection.address)
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+        }
+
+        console.log();
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      }
+    },
     openProof(value) {
       this.setProofDialog = true;
       this.voteAJson = value.voteAJson;
@@ -818,5 +923,59 @@ h4 {
 }
 .v-tab {
   padding: 0 24px;
+}
+.pending {
+  width: 100px;
+  font-size: 14px;
+  padding: 2px 12px;
+  border-radius: 20px;
+  color: #ffbe72;
+  background-color: #ffe7cb;
+   text-align: center;
+  div {
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: #ffbe72;
+    margin-right: 6px;
+  }
+}
+.done {
+  width: 100px;
+  font-size: 14px;
+  padding: 2px 12px;
+  border-radius: 20px;
+  color: #61a06f;
+  background-color: #caedce;
+   text-align: center;
+  div {
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: #78c389;
+    margin-right: 6px;
+  }
+}
+.available {
+  width: 100px;
+  font-size: 14px;
+  padding: 2px 12px;
+  border-radius: 20px;
+  color: #73abed;
+  background-color: #d4e8ff;
+  text-align: center;
+  div {
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    background-color: #8bbaf2;
+    margin-right: 6px;
+  }
+}
+.nodeRewards {
+  .v-btn.v-btn--has-bg {
+    background-color: #6979f8;
+    color: #fff;
+  }
 }
 </style>
