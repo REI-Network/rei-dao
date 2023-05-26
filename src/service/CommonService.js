@@ -66,6 +66,9 @@ export const getSlashRecords= (params) => http(`https://gateway.rei.network/api/
 export const getAddressTag = (params) => http('/data/address/address-tag-list.json',{
   params
 });
+export const getMinerRewards = (params) => http('https://gateway.rei.network/api/minerRewards',{
+  params
+});
 
 export const getIpfsGateway = (cid) => {
   let ipfsgateway = localStorage.getItem('ipfsGatewayUrl');
