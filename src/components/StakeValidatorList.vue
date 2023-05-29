@@ -7,8 +7,8 @@
             >All Delegators<span :class="dark ? 'total-dark total' : 'total-light total'">{{ delegatorList.length }}</span></v-tab
           >
           <v-tab key="12" class="v-tab-left" :to="`/stake/validator/${url}/nodereward`">Node Reward Withdrawals</v-tab>
-          <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
-          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab>
+          <!-- <v-tab key="13" class="v-tab-left" :to="`/stake/validator/${url}/myvote`">My Votes</v-tab>
+          <v-tab key="14" class="v-tab-left" :to="`/stake/validator/${url}/withdrawals`">My Withdrawals</v-tab> -->
           <v-tab key="15" class="v-tab-left" :to="`/stake/validator/${url}/jail`">
             <v-row>
               <div>History of Jail</div>
@@ -57,7 +57,7 @@
             </div>
           </v-tab-item>
           <v-tab-item key="12">
-            <v-data-table :headers="nodeHeaders" :items="nodeRewardsList" class="elevation-0 nodeRewards" hide-default-footer :items-per-page="nodePerPage" :loading="nodeRewardsLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nodePage" @page-count="nodeCount = $event">
+            <v-data-table :headers="nodeHeaders" :items="nodeRewardsList" class="elevation-0 nodeRewards" hide-default-footer :items-per-page="nodePerPage" :loading="nodeRewardsLoading" :sort-by.sync="sortByRewards" :sort-desc.sync="sortDescRewards" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="nodePage" @page-count="nodeCount = $event">
               <template v-slot:item.createdAt="{ item }">
                 <span>{{ (item.withdrawalTime * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</span>
               </template>
@@ -68,13 +68,25 @@
                 <span>{{ item.claimValue | asset(2) }}</span>
               </template>
               <template v-slot:item.status="{ item }">
-                <v-row align="center" class="available" v-if="item.currentStatus == 0"><div></div>Available</v-row>
-                <v-row align="center" class="done" v-else-if="item.currentStatus == 1"><div></div>Done</v-row>
-                <v-row align="center" class="pending" v-else><div></div>Pending</v-row> 
+                <v-row align="center" class="available" v-if="item.currentStatus == 0"
+                  ><div></div>
+                  Available</v-row
+                >
+                <v-row align="center" class="done" v-else-if="item.currentStatus == 1"
+                  ><div></div>
+                  Done</v-row
+                >
+                <v-row align="center" class="pending" v-else
+                  ><div></div>
+                  Pending</v-row
+                >
               </template>
               <template v-slot:item.operation="{ item }">
-                <v-btn v-if="item.disabled" @click="submitClaimReward(item)">Withdraw</v-btn>
-                <v-btn v-else disabled @click="submitClaimReward(item)">Withdraw</v-btn>
+                <div v-if="connection.address.toLowerCase() == url">
+                  <v-btn v-if="item.disabled" @click="submitClaimReward(item)">Withdraw</v-btn>
+                  <v-btn v-else disabled>Withdraw</v-btn>
+                </div>
+                <span v-else style="margin-left:20px">-</span>
               </template>
             </v-data-table>
             <v-skeleton-loader class="skeleton" v-if="nodeSkeletonLoading == true" :loading="nodeSkeletonLoading" type="table-tbody,actions"></v-skeleton-loader>
@@ -315,9 +327,10 @@ export default {
   filters,
   data() {
     return {
-      currentStatus:0,
+      currentStatus: 0,
       disabled: false,
       skeletonLoading: true,
+      hideLastColumn: true,
       tab1: 0,
       tab2: 1,
       id: this.$route.params.id,
@@ -351,6 +364,8 @@ export default {
       stakeManageInstance: '',
       commissionShareInstance: '',
       allStakeListLoading: false,
+      sortByRewards: 'withdrawalTime',
+      sortDescRewards: true,
       routerMap: {
         delegator: {
           index: 0
@@ -381,6 +396,12 @@ export default {
         { text: 'Withdrawal Rewards', value: 'rewards' },
         { text: 'Status', value: 'status' },
         { text: 'Operation', value: 'operation' }
+      ],
+       rewardHeaders: [
+        { text: 'Withdrawal Time', value: 'createdAt' },
+        { text: 'Available Time', value: 'updatedAt' },
+        { text: 'Withdrawal Rewards', value: 'rewards' },
+        { text: 'Status', value: 'status' },
       ],
       nodeRewardsList: [],
       headers: [
@@ -451,7 +472,7 @@ export default {
       connection: 'connection',
       dark: 'dark',
       apiUrl: 'apiUrl'
-    })
+    }),
   },
   mounted() {
     this.connect();
@@ -735,40 +756,35 @@ export default {
         let claimValue = web3.utils.fromWei(web3.utils.toBN(item.claimValue));
         let availableTime = (item.timestamp + unstakeDelay) * 1000;
         let nowDate = new Date().getTime();
-        console.log(availableTime, nowDate, item.isUnstaked);
+        // console.log(availableTime, nowDate, item.isUnstaked);
         // let status = 0;
-        if( nowDate >= availableTime){
-          if(!item.isUnstaked){
-            this.currentStatus = 0
+        if (nowDate >= availableTime) {
+          if (!item.isUnstaked) {
+            this.currentStatus = 0;
             this.disabled = true;
-          }else{
-            this.currentStatus = 1
+          } else {
+            this.currentStatus = 1;
             this.disabled = false;
           }
-          console.log('status', this.currentStatus),item.isUnstaked;
-        }else{
-         this.currentStatus = 2
-         this.disabled = false;
-         
+        } else {
+          this.currentStatus = 2;
+          this.disabled = false;
         }
-        console.log('status', this.currentStatus,this.disabled,item.isUnstaked);
         return {
           withdrawalTime: item.timestamp,
           availableTime: availableTime,
           isUnstaked: item.isUnstaked,
           unstakeId: item.unstakeId,
           currentStatus: this.currentStatus,
-          disabled:this.disabled,
+          disabled: this.disabled,
           claimValue
         };
       });
-      console.log('milliseconds', this.nodeRewardsList);
+      // console.log('milliseconds', this.nodeRewardsList);
       this.nodeSkeletonLoading = false;
       this.nodeRewardsLoading = false;
     },
     async submitClaimReward(value) {
-      // console.log('value',value)
-      // console.log('----',value.unstakeId,value.claimValue,this.connection.address)
       try {
         let contract = new web3.eth.Contract(abiConfig, config_contract);
         this.stakeManagerContract = await contract.methods.stakeManager().call();
@@ -931,7 +947,7 @@ h4 {
   border-radius: 20px;
   color: #ffbe72;
   background-color: #ffe7cb;
-   text-align: center;
+  text-align: center;
   div {
     width: 6px;
     height: 6px;
@@ -947,7 +963,7 @@ h4 {
   border-radius: 20px;
   color: #61a06f;
   background-color: #caedce;
-   text-align: center;
+  text-align: center;
   div {
     width: 6px;
     height: 6px;
