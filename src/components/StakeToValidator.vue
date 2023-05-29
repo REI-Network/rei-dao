@@ -1456,7 +1456,8 @@ export default {
           name: 'StakeInfo',
           params: {
             id: 'validatorlist',
-            address: value.address
+            address: value.address,
+            rewardItem:this.detailsItem,
           }
         });
       } else {
