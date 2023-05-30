@@ -47,8 +47,7 @@ export default {
   },
   watch: {},
   mounted() {
-    this.myCharts();
-    this.toggleTheme();
+    this.myCharts()
   },
   methods: {
     ...mapActions({
@@ -147,36 +146,6 @@ export default {
         };
 
         this.myChart.setOption(option);
-        if (this.dark) {
-          this.myChart.setOption({
-            theme: {
-              tooltip: {
-                backgroundColor: 'red'
-              }
-            }
-          });
-          console.log('this.dark', this.dark);
-        } else {
-          this.myChart.setOption({
-            theme: {
-              tooltip: {
-                show: true,
-                trigger: 'item',
-                enterable: true,
-                backgroundColor: 'rgb(255,255,255)',
-                extraCssText: 'box-shadow: 0 0 20px #ddd;',
-                padding: 12,
-                textStyle: {
-                  color: '#000',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: 14
-                }
-              }
-            }
-          });
-          console.log('this.dark', this.dark);
-        }
         window.addEventListener('resize', () => {
           this.myChart.resize();
         });
@@ -187,7 +156,6 @@ export default {
         });
       });
     },
-    toggleTheme() {}
   }
 };
 </script>
