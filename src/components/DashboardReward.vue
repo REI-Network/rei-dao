@@ -120,7 +120,7 @@ export default {
               }
             }
           },
-          color: ['#030b9a', '#0411fa', '#1b16f0', '#343ffb', '#423ef3', '#5448ff', '#2179ff', '#3d8bff', '#5498ff', '#189ef1', '#3699e5', '#21affd', '#3862bc', '#399bdc', '#46bdfd', '#59b9f9', '#5cb0cf', '#6bcafe', '#82b4ff', '#64c7fe', '#87cefa'],
+          color: ['#1D4EE4', '#2554E6', '#3561E9', '#456EEC', '#6587F2', '#3070FE', '#2179ff', '#3d8bff', '#5498ff', '#189ef1', '#3699e5', '#21affd', '#90CBFF', '#399bdc', '#46bdfd', '#59b9f9', '#5cb0cf', '#6bcafe', '#82b4ff', '#64c7fe', '#87cefa'],
           series: [
             {
               type: 'treemap',
