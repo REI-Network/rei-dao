@@ -146,21 +146,24 @@
         <v-list rounded class="ma-dialog start_unstake public-field">
           <div class="font-grey">Please enter the BLS public key</div>
           <v-form ref="claimRewardForm" lazy-validation>
-            <v-text-field label="" dense required outlined background-color="input_other"> </v-text-field>
+            <v-text-field :rules="blsRules" v-model="publicKey" dense required outlined background-color="input_other"> </v-text-field>
           </v-form>
           <div class="dialog-btn">
-            <v-btn>Register BLS public key</v-btn>
+            <v-btn @click="getRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
           </div>
           <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :loading="blsListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
             <template v-slot:item.key="{ item }">
-              <Address :val="item.key"></Address>
+              <Address :val="item.lastBLSPublicKey"></Address>
+            </template>
+              <template v-slot:item.timestamp="{ item }">
+              <span>{{ item.setTime }}</span>
             </template>
             <template v-slot:item.tx="{ item }">
-              <span>{{ item.tx | addr }}</span>
+              <span>{{ item.id | addr }}</span>
             </template>
             <template v-slot:item.status="{ item }">
               <div class="active-bls" v-if="item.status == 'Active'">{{ item.status }}</div>
-              <div :class="dark?'inactive-dark':'inactive-light'" v-else>{{ item.status }}</div>
+              <div :class="dark ? 'inactive-dark' : 'inactive-light'" v-else>{{ item.status }}</div>
             </template>
           </v-data-table>
           <div class="text-center pt-2" v-if="blsList.length > 10">
@@ -182,14 +185,16 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import MyAccountNFT from '../components/MyAccountNFT';
-import { getPrice, postRpcRequest } from '../service/CommonService';
+import { getPrice, postRpcRequest, getAddressTag } from '../service/CommonService';
 import Address from '../components/Address';
 import { mapGetters } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
 import find from 'lodash/find';
+import abiBlsRegister from '../abis/abiBlsRegister';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+const bls_contract = process.env.VUE_APP_BLS_CONTRACT;
 let client = null;
 
 import filters from '../filters';
@@ -204,6 +209,7 @@ export default {
   filters,
   data() {
     return {
+      isNode:false,
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
@@ -214,9 +220,11 @@ export default {
       blsPage: 1,
       blsCount: 0,
       blsPerPage: 10,
+      publicKey: '',
       dialog: false,
       getListLoading: false,
       blsListLoading: false,
+      registerLoading: false,
       totalAmount: 0,
       checkStatus: false,
       myTotalStake: 0,
@@ -333,7 +341,8 @@ export default {
       typeFilter: '',
       tokenFilter: '',
       startDate: '',
-      endDate: ''
+      endDate: '',
+      blsRules: [(v) => !!v || this.$t('msg.please_input_bls')]
     };
   },
   watch: {
@@ -357,7 +366,7 @@ export default {
         this.tokenFilter = childComponent.tokenFilter;
         this.startDate = childComponent.startDate;
         this.endDate = childComponent.endDate;
-        console.log(childComponent.typeFilter, childComponent.tokenFilter);
+        // console.log(childComponent.typeFilter, childComponent.tokenFilter);
         var _this = this;
         let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
         if (this.typeFilter) {
@@ -410,6 +419,12 @@ export default {
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       await this.getMyStakeInfo();
       await this.getTotalGasStake();
+      let data = await getAddressTag();
+      let nodeList = data.data.data;
+      let _address = find(nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.connection.address));
+      if(_address){
+        this.isNode = true;
+      }
     },
     handleHideAsset() {
       if (this.checkStatus == false) {
@@ -604,6 +619,70 @@ export default {
     },
     openRegister() {
       this.dialog = true;
+      this.getPublicBls();
+    },
+    async getRegisterbls() {
+      // console.log('publicKey', this.publicKey);
+      this.registerLoading = true;
+      try {
+        let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
+        console.log('contract', contract, contract.address, bls_contract);
+        const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
+          from: this.connection.address
+        });
+        console.log('res', res);
+        //  if (res.transactionHash) {
+        //   this.addTx({
+        //     tx: {
+        //       txid: res.transactionHash,
+        //       type: 'setBLSPublicKey',
+        //       status: 'PENDING',
+        //       data: {
+        //         to: util.addr(this.connection.address)
+        //       },
+        //       timestamp: new Date().getTime()
+        //     }
+        //   });
+        // }
+        this.registerLoading = false;
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+        this.registerLoading = false;
+      }
+    },
+    async getPublicBls() {
+      let url = this.apiUrl.graph;
+      if (!client) {
+        client = new ApolloClient({
+          uri: `${url}bls`,
+          cache: new InMemoryCache()
+        });
+      }
+      const getBlsInfos = gql`
+        query blsValidators{
+          blsValidators (orderBy: setTime, orderDirection: desc){
+            id
+            lastBLSPublicKey
+            lastSetBlockNumber
+            setTime
+            setRecord {
+              id
+              validator
+              blsPublicKey
+              blockNumber
+              transactionHash
+            }
+          }
+        }
+      `;
+      const { data : blsData } = await client.query({
+        query: getBlsInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      this.blsList = blsData.blsValidators;
+      console.log('blsData', this.blsList);
     },
     cancelRegister() {
       this.dialog = false;
@@ -763,17 +842,19 @@ export default {
 .active-bls {
   background-color: #fd9557;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 20px;
   padding: 6px 18px;
+  text-align: center;
 }
 .inactive-light {
   background-color: #f2f2f2 !important;
-  border-radius: 4px;
+  border-radius: 20px;
   padding: 6px 18px;
+  text-align: center;
 }
 .inactive-dark {
   background-color: #adadad;
-  color: #FFF;
+  color: #fff;
   border-radius: 4px;
   padding: 6px 18px;
 }
