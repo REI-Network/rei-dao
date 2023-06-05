@@ -47,7 +47,8 @@ export default {
     revokeRole: 'Revoke {role} for {to}',
     setMintCap: 'Set Mint Cap to {to}',
     issue: 'Issue a new contract {name}',
-    unjail: 'Pay {amount}{symbol} for forfeit'
+    unjail: 'Pay {amount}{symbol} for forfeit',
+    setBLSPublicKey:'Set BLS publicKey to {publicKey}'
   },
   stake: {
     node_list: 'Validator List',

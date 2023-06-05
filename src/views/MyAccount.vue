@@ -15,9 +15,9 @@
             <div>
               <v-row>
                 <Address class="my-address" :val="this.connection.address"></Address>
-                <div class="validator-tag">Validator</div>
+                <div class="validator-tag" v-if="isNode">Validator</div>
               </v-row>
-              <div class="register">
+              <div class="register" v-if="isNode">
                 <v-btn @click="openRegister()"> Register BLS public key </v-btn>
               </div>
             </div>
@@ -151,21 +151,22 @@
           <div class="dialog-btn">
             <v-btn @click="getRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
           </div>
-          <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :loading="blsListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
+          <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
             <template v-slot:item.key="{ item }">
-              <Address :val="item.lastBLSPublicKey"></Address>
+              <Address :val="item.blsPublicKey"></Address>
             </template>
-              <template v-slot:item.timestamp="{ item }">
-              <span>{{ item.setTime }}</span>
+            <template v-slot:item.timestamp="{ item }">
+              <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</span>
             </template>
             <template v-slot:item.tx="{ item }">
-              <span>{{ item.id | addr }}</span>
+              <span>{{ item.transactionHash | addr }}</span>
             </template>
             <template v-slot:item.status="{ item }">
               <div class="active-bls" v-if="item.status == 'Active'">{{ item.status }}</div>
               <div :class="dark ? 'inactive-dark' : 'inactive-light'" v-else>{{ item.status }}</div>
             </template>
           </v-data-table>
+          <v-skeleton-loader v-if="blsListLoading == true" class="skeleton" :loading="blsListLoading" type="table-tbody,actions"></v-skeleton-loader>
           <div class="text-center pt-2" v-if="blsList.length > 10">
             <v-pagination v-model="blsPage" :length="blsCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
           </div>
@@ -187,10 +188,11 @@ import abiCommissionShare from '../abis/abiCommissionShare';
 import MyAccountNFT from '../components/MyAccountNFT';
 import { getPrice, postRpcRequest, getAddressTag } from '../service/CommonService';
 import Address from '../components/Address';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
 import find from 'lodash/find';
 import abiBlsRegister from '../abis/abiBlsRegister';
+import util from '../utils/util';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
@@ -209,12 +211,13 @@ export default {
   filters,
   data() {
     return {
-      isNode:false,
+      isNode: false,
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
       type: '',
       page: 1,
+      status: 'Active',
       pageCount: 0,
       itemsPerPage: 10,
       blsPage: 1,
@@ -406,6 +409,9 @@ export default {
     this.getBalance();
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     connect() {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -422,7 +428,7 @@ export default {
       let data = await getAddressTag();
       let nodeList = data.data.data;
       let _address = find(nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.connection.address));
-      if(_address){
+      if (_address) {
         this.isNode = true;
       }
     },
@@ -438,12 +444,13 @@ export default {
       }
     },
     async getMyStakeInfo() {
-      let url = this.apiUrl.graph;
-      client = new ApolloClient({
-        uri: `${url}chainMonitorOnlyForStake`,
-        cache: new InMemoryCache()
-      });
-      const myStakesInfo = gql`
+      try {
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+          uri: `${url}chainMonitorOnlyForStake`,
+          cache: new InMemoryCache()
+        });
+        const myStakesInfo = gql`
             query stakeInfos {
             stakeInfos(where:{
                 from:"${this.connection.address}"
@@ -454,28 +461,32 @@ export default {
                 validator
             }
         }`;
-      const {
-        data: { stakeInfos }
-      } = await client.query({
-        query: myStakesInfo,
-        variables: {},
-        fetchPolicy: 'cache-first'
-      });
-      if (stakeInfos.length > 0) {
-        let myStakeValidatorMap = stakeInfos.map((item) => {
-          return this.stakeManageInstance.methods.validators(item.validator).call();
+        const {
+          data: { stakeInfos }
+        } = await client.query({
+          query: myStakesInfo,
+          variables: {},
+          fetchPolicy: 'cache-first'
         });
+        if (stakeInfos.length > 0) {
+          let myStakeValidatorMap = stakeInfos.map((item) => {
+            return this.stakeManageInstance.methods.validators(item.validator).call();
+          });
 
-        let validators = await Promise.all(myStakeValidatorMap);
-        let balanceOfShareMap = validators.map((item) => {
-          return this.getBalanceOfShare(item);
-        });
-        let balanceOfShare = await Promise.all(balanceOfShareMap);
-        let total = 0;
-        for (let i = 0; i < balanceOfShare.length; i++) {
-          total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount));
+          let validators = await Promise.all(myStakeValidatorMap);
+          let balanceOfShareMap = validators.map((item) => {
+            return this.getBalanceOfShare(item);
+          });
+          let balanceOfShare = await Promise.all(balanceOfShareMap);
+          let total = 0;
+          for (let i = 0; i < balanceOfShare.length; i++) {
+            total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount));
+          }
+          this.myTotalStake = total;
         }
-        this.myTotalStake = total;
+      } catch (e) {
+          console.log(e)
+          this.$dialog.notify.warning(e.message);
       }
     },
     async getBalanceOfShare(activeValidatorsShare) {
@@ -622,28 +633,26 @@ export default {
       this.getPublicBls();
     },
     async getRegisterbls() {
-      // console.log('publicKey', this.publicKey);
       this.registerLoading = true;
       try {
         let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
-        console.log('contract', contract, contract.address, bls_contract);
+        // console.log('contract', contract, contract.address, bls_contract);
         const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
           from: this.connection.address
         });
-        console.log('res', res);
-        //  if (res.transactionHash) {
-        //   this.addTx({
-        //     tx: {
-        //       txid: res.transactionHash,
-        //       type: 'setBLSPublicKey',
-        //       status: 'PENDING',
-        //       data: {
-        //         to: util.addr(this.connection.address)
-        //       },
-        //       timestamp: new Date().getTime()
-        //     }
-        //   });
-        // }
+        if (res.transactionHash) {
+          this.addTx({
+            tx: {
+              txid: res.transactionHash,
+              type: 'setBLSPublicKey',
+              status: 'PENDING',
+              data: {
+                publicKey: util.addr(this.publicKey)
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+        }
         this.registerLoading = false;
       } catch (e) {
         console.log(e);
@@ -652,6 +661,7 @@ export default {
       }
     },
     async getPublicBls() {
+      this.blsListLoading = true;
       let url = this.apiUrl.graph;
       if (!client) {
         client = new ApolloClient({
@@ -659,15 +669,17 @@ export default {
           cache: new InMemoryCache()
         });
       }
+      let address = this.connection.address.toLowerCase();
       const getBlsInfos = gql`
         query blsValidators{
-          blsValidators (orderBy: setTime, orderDirection: desc){
+          blsValidators (where: { id: "${address}"}){
             id
             lastBLSPublicKey
             lastSetBlockNumber
             setTime
-            setRecord {
+            setRecord (orderBy: timestamp, orderDirection: desc){
               id
+              timestamp
               validator
               blsPublicKey
               blockNumber
@@ -676,13 +688,31 @@ export default {
           }
         }
       `;
-      const { data : blsData } = await client.query({
+      const { data: blsData } = await client.query({
         query: getBlsInfos,
         variables: {},
         fetchPolicy: 'cache-first'
       });
-      this.blsList = blsData.blsValidators;
-      console.log('blsData', this.blsList);
+      let list = blsData.blsValidators;
+      if (list.length > 0) {
+        this.blsList = list[0].setRecord;
+        let max = this.blsList.map((elem) => elem.timestamp).reduce((a, b) => Math.max(a, b));
+        this.blsList = this.blsList.map((item) => {
+          if (item.timestamp == max) {
+            this.status = 'Active';
+          } else {
+            this.status = 'inActive';
+          }
+          return {
+            blsPublicKey: item.blsPublicKey,
+            timestamp: item.timestamp,
+            transactionHash: item.transactionHash,
+            status: this.status
+          };
+        });
+      }
+      console.log('blsData', list, this.blsList);
+      this.blsListLoading = false;
     },
     cancelRegister() {
       this.dialog = false;
@@ -857,6 +887,9 @@ export default {
   color: #fff;
   border-radius: 4px;
   padding: 6px 18px;
+}
+.skeleton{
+  margin-top:40px;
 }
 @media screen and (max-width: 900px) {
   .myAccount {
