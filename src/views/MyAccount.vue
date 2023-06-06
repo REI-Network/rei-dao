@@ -145,11 +145,11 @@
         </div>
         <v-list rounded class="ma-dialog start_unstake public-field">
           <div class="font-grey">Please enter the BLS public key</div>
-          <v-form ref="claimRewardForm" lazy-validation>
+          <v-form ref="blsForm" lazy-validation>
             <v-text-field :rules="blsRules" v-model="publicKey" dense required outlined background-color="input_other"> </v-text-field>
           </v-form>
           <div class="dialog-btn">
-            <v-btn @click="getRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
+            <v-btn @click="setRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
           </div>
           <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
             <template v-slot:item.key="{ item }">
@@ -632,9 +632,10 @@ export default {
       this.dialog = true;
       this.getPublicBls();
     },
-    async getRegisterbls() {
-      this.registerLoading = true;
+    async setRegisterbls() {
       try {
+        if(!this.$refs.blsForm.validate()) return;
+        this.registerLoading = true;
         let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
         // console.log('contract', contract, contract.address, bls_contract);
         const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
@@ -659,6 +660,7 @@ export default {
         this.$dialog.notify.warning(e.message);
         this.registerLoading = false;
       }
+      this.registerLoading = false;
     },
     async getPublicBls() {
       this.blsListLoading = true;
