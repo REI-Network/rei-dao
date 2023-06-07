@@ -88,7 +88,7 @@ export default {
   },
   msg: {
     please_input_number: 'Please enter the number',
-    please_input_bls:'Please enter the correct BLS',
+    please_input_bls:'Please enter the correct BLS public key',
     please_input_1_100_num: 'Please enter an integer from 1-100',
     please_input_amount: 'Please enter amount',
     please_input_correct_num: 'Please enter the correct number',

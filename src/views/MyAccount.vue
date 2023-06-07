@@ -485,8 +485,8 @@ export default {
           this.myTotalStake = total;
         }
       } catch (e) {
-          console.log(e)
-          this.$dialog.notify.warning(e.message);
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
       }
     },
     async getBalanceOfShare(activeValidatorsShare) {
@@ -633,11 +633,13 @@ export default {
       this.getPublicBls();
     },
     async setRegisterbls() {
+      if (this.publicKey.slice(0, 2) !== '0x') {
+        this.publicKey = '0x' + this.publicKey;
+      }
       try {
-        if(!this.$refs.blsForm.validate()) return;
+        if (!this.$refs.blsForm.validate()) return;
         this.registerLoading = true;
         let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
-        // console.log('contract', contract, contract.address, bls_contract);
         const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
           from: this.connection.address
         });
@@ -819,7 +821,7 @@ export default {
 }
 .register {
   text-align: center;
-  margin-left: -24px;
+  margin-left: 10px;
   margin-top: 16px;
   .theme--light.v-btn {
     text-transform: initial !important;
@@ -890,8 +892,8 @@ export default {
   border-radius: 4px;
   padding: 6px 18px;
 }
-.skeleton{
-  margin-top:40px;
+.skeleton {
+  margin-top: 40px;
 }
 @media screen and (max-width: 900px) {
   .myAccount {
