@@ -198,6 +198,7 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
 const bls_contract = process.env.VUE_APP_BLS_CONTRACT;
 let client = null;
+let client_bls = null;
 
 import filters from '../filters';
 export default {
@@ -261,20 +262,7 @@ export default {
         { text: 'Tx', value: 'tx' },
         { text: 'Status', value: 'status' }
       ],
-      blsList: [
-        {
-          key: '0x71d31fA3E07146dsdw234511E2550Be302FB3de15a228',
-          timestamp: '2022/12/03 12:26:18',
-          tx: '0x1511...24fd18',
-          status: 'Active'
-        },
-        {
-          key: '0x71d31fA3E07146dsdw234511E2550Be302FB3de15a228',
-          timestamp: '2022/12/03 12:26:18',
-          tx: '0x1511...24fd18',
-          status: 'Inactive'
-        }
-      ],
+      blsList: [],
       assetList: [],
       assetNotZeroList: [],
       assetZeroList: [],
@@ -633,11 +621,11 @@ export default {
       this.getPublicBls();
     },
     async setRegisterbls() {
-      if (this.publicKey.slice(0, 2) !== '0x') {
-        this.publicKey = '0x' + this.publicKey;
-      }
       try {
         if (!this.$refs.blsForm.validate()) return;
+        if (this.publicKey.slice(0, 2) !== '0x') {
+          this.publicKey = '0x' + this.publicKey;
+        }
         this.registerLoading = true;
         let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
         const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
@@ -667,8 +655,8 @@ export default {
     async getPublicBls() {
       this.blsListLoading = true;
       let url = this.apiUrl.graph;
-      if (!client) {
-        client = new ApolloClient({
+      if (!client_bls) {
+        client_bls = new ApolloClient({
           uri: `${url}bls`,
           cache: new InMemoryCache()
         });
@@ -692,7 +680,7 @@ export default {
           }
         }
       `;
-      const { data: blsData } = await client.query({
+      const { data: blsData } = await client_bls.query({
         query: getBlsInfos,
         variables: {},
         fetchPolicy: 'cache-first'
@@ -715,7 +703,7 @@ export default {
           };
         });
       }
-      console.log('blsData', list, this.blsList);
+      // console.log('blsData', list, this.blsList);
       this.blsListLoading = false;
     },
     cancelRegister() {
