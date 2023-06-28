@@ -146,7 +146,7 @@
         <v-list rounded class="ma-dialog start_unstake public-field">
           <div class="font-grey">Please enter the BLS public key</div>
           <v-form ref="blsForm" lazy-validation>
-            <v-text-field :rules="blsRules" v-model="publicKey" dense required outlined background-color="input_other"> </v-text-field>
+            <v-text-field :rules="blsRules" v-model="publicKey" dense required outlined clearable background-color="input_other"> </v-text-field>
           </v-form>
           <div class="dialog-btn">
             <v-btn @click="setRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
@@ -156,7 +156,7 @@
               <Address :val="item.blsPublicKey"></Address>
             </template>
             <template v-slot:item.timestamp="{ item }">
-              <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</span>
+              <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
             </template>
             <template v-slot:item.tx="{ item }">
               <span>{{ item.transactionHash | addr }}</span>
@@ -650,6 +650,7 @@ export default {
         this.$dialog.notify.warning(e.message);
         this.registerLoading = false;
       }
+      this.dialog = false;
       this.registerLoading = false;
     },
     async getPublicBls() {
