@@ -159,7 +159,9 @@
               <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
             </template>
             <template v-slot:item.tx="{ item }">
-              <span>{{ item.transactionHash | addr }}</span>
+               <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.transactionHash}`" target="_blank"
+                    > <span>{{ item.transactionHash | addr }}</span></a
+                  >
             </template>
             <template v-slot:item.status="{ item }">
               <div class="active-bls" v-if="item.status == 'Active'">{{ item.status }}</div>
@@ -881,8 +883,21 @@ export default {
   border-radius: 4px;
   padding: 6px 18px;
 }
-.skeleton {
-  margin-top: 40px;
+.link-light {
+  cursor: pointer;
+  color: #000;
+}
+.link-light:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark {
+  cursor: pointer;
+  color: #fff;
 }
 @media screen and (max-width: 900px) {
   .myAccount {
