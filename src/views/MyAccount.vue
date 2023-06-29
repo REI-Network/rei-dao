@@ -15,9 +15,8 @@
             <div>
               <v-row>
                 <Address class="my-address" :val="this.connection.address"></Address>
-                <div class="validator-tag" v-if="isNode">Validator</div>
               </v-row>
-              <div class="register" v-if="isNode">
+              <div class="register">
                 <v-btn @click="openRegister()"> Register BLS public key </v-btn>
               </div>
             </div>
@@ -188,7 +187,7 @@ import abiConfig from '../abis/abiConfig';
 import abiStakeManager from '../abis/abiStakeManager';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import MyAccountNFT from '../components/MyAccountNFT';
-import { getPrice, postRpcRequest, getAddressTag } from '../service/CommonService';
+import { getPrice, postRpcRequest } from '../service/CommonService';
 import Address from '../components/Address';
 import { mapGetters, mapActions } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
@@ -214,7 +213,6 @@ export default {
   filters,
   data() {
     return {
-      isNode: false,
       skeletonLoading: true,
       tab1: 0,
       tab2: 1,
@@ -415,12 +413,6 @@ export default {
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
       await this.getMyStakeInfo();
       await this.getTotalGasStake();
-      let data = await getAddressTag();
-      let nodeList = data.data.data;
-      let _address = find(nodeList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(this.connection.address));
-      if (_address) {
-        this.isNode = true;
-      }
     },
     handleHideAsset() {
       if (this.checkStatus == false) {
@@ -834,14 +826,6 @@ export default {
     border-radius: 20px;
     padding: 0 20px;
   }
-}
-.validator-tag {
-  padding: 4px 16px 0 16px;
-  color: #68bd75;
-  background: #beeec6;
-  border-radius: 20px;
-  vertical-align: middle;
-  font-size: 14px;
 }
 .dialog-validator {
   display: flex;
