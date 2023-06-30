@@ -187,7 +187,7 @@ export default {
     async getdata(){
         let url = this.apiUrl.graph;
         client = new ApolloClient({
-            uri: `${url}chainMonitorBetterPos`,
+            uri: `${url}chainMonitorBlock`,
             cache: new InMemoryCache(),
         })
         let data30d = [];
