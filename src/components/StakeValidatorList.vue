@@ -510,7 +510,7 @@ export default {
       this.stakeListLoading = true;
       let url = this.apiUrl.graph;
       client = new ApolloClient({
-        uri: `${url}chainMonitorOnlyForStake`,
+        uri: `${url}chainMonitorEvent`,
         cache: new InMemoryCache()
       });
       const getStakeinfos = gql`
@@ -577,7 +577,7 @@ export default {
       this.voteListLoading = true;
       let url = this.apiUrl.graph;
       let client = new ApolloClient({
-        uri: `${url}chainMonitorOnlyForStake`,
+        uri: `${url}chainMonitorEvent`,
         cache: new InMemoryCache()
       });
       const getMyVoteInfos = gql`
@@ -614,7 +614,7 @@ export default {
       this.withdrawListLoading = true;
       let url = this.apiUrl.graph;
       let client = new ApolloClient({
-        uri: `${url}chainMonitorOnlyForStake`,
+        uri: `${url}chainMonitorEvent`,
         cache: new InMemoryCache()
       });
       const getMyWithdrawInfos = gql`
@@ -697,7 +697,7 @@ export default {
       let url = this.apiUrl.graph;
 
       client = new ApolloClient({
-        uri: `${url}chainMonitorBetterPos`,
+        uri: `${url}chainMonitorPrison`,
         cache: new InMemoryCache()
       });
 
@@ -747,7 +747,7 @@ export default {
       this.nodeRewardsLoading = true;
       this.nodeSkeletonLoading = true;
       let minerRewards = await getMinerRewards({ validatorAddr: this.url });
-      let data = minerRewards.data.data.claimedRecords;
+      let data = minerRewards.data?.data?.claimedRecords || [];
       this.nodeRewardsList = data;
       let unstakeDelay = parseInt(this.unstakeDelay);
       this.nodeRewardsList = this.nodeRewardsList.map((item) => {
