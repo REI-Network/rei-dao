@@ -12,7 +12,14 @@
               <!-- <v-img src="../assets/images/rei.svg" width="80" height="80"></v-img> -->
               <jazzicon class="identicon" :address="connection.address" :diameter="60"></jazzicon>
             </div>
-            <Address class="my-address" :val="this.connection.address"></Address>
+            <div>
+              <v-row>
+                <Address class="my-address" :val="this.connection.address"></Address>
+              </v-row>
+              <div class="register">
+                <v-btn @click="openRegister()"> Register BLS public key </v-btn>
+              </div>
+            </div>
           </div>
         </div>
         <div class="balance">
@@ -129,6 +136,44 @@
         </v-col>
       </v-row>
     </v-tabs-items>
+    <v-dialog v-model="dialog" width="650" class="register-key">
+      <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
+        <div class="dialog-validator">
+          <v-card-title class="dialog-title">Register BLS public key</v-card-title>
+          <div @click="cancelRegister()" class="close-btn"><v-icon>mdi-close</v-icon></div>
+        </div>
+        <v-list rounded class="ma-dialog start_unstake public-field">
+          <div class="font-grey">Please enter the BLS public key</div>
+          <v-form ref="blsForm" lazy-validation>
+            <v-text-field :rules="blsRules" v-model="publicKey" dense required outlined clearable background-color="input_other"> </v-text-field>
+          </v-form>
+          <div class="dialog-btn">
+            <v-btn @click="setRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
+          </div>
+          <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
+            <template v-slot:item.key="{ item }">
+              <Address :val="item.blsPublicKey"></Address>
+            </template>
+            <template v-slot:item.timestamp="{ item }">
+              <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
+            </template>
+            <template v-slot:item.tx="{ item }">
+               <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.transactionHash}`" target="_blank"
+                    > <span>{{ item.transactionHash | addr }}</span></a
+                  >
+            </template>
+            <template v-slot:item.status="{ item }">
+              <div class="active-bls" v-if="item.status == 'Active'">{{ item.status }}</div>
+              <div :class="dark ? 'inactive-dark' : 'inactive-light'" v-else>{{ item.status }}</div>
+            </template>
+          </v-data-table>
+          <v-skeleton-loader v-if="blsListLoading == true" class="skeleton" :loading="blsListLoading" type="table-tbody,actions"></v-skeleton-loader>
+          <div class="text-center pt-2" v-if="blsList.length > 10">
+            <v-pagination v-model="blsPage" :length="blsCount" color="vote_button" background-color="start_unstake" class="v-pagination" total-visible="6"> </v-pagination>
+          </div>
+        </v-list>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -144,13 +189,17 @@ import abiCommissionShare from '../abis/abiCommissionShare';
 import MyAccountNFT from '../components/MyAccountNFT';
 import { getPrice, postRpcRequest } from '../service/CommonService';
 import Address from '../components/Address';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Jazzicon from 'vue-jazzicon';
 import find from 'lodash/find';
+import abiBlsRegister from '../abis/abiBlsRegister';
+import util from '../utils/util';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
+const bls_contract = process.env.VUE_APP_BLS_CONTRACT;
 let client = null;
+let client_bls = null;
 
 import filters from '../filters';
 export default {
@@ -169,9 +218,17 @@ export default {
       tab2: 1,
       type: '',
       page: 1,
+      status: 'Active',
       pageCount: 0,
       itemsPerPage: 10,
+      blsPage: 1,
+      blsCount: 0,
+      blsPerPage: 10,
+      publicKey: '',
+      dialog: false,
       getListLoading: false,
+      blsListLoading: false,
+      registerLoading: false,
       totalAmount: 0,
       checkStatus: false,
       myTotalStake: 0,
@@ -199,6 +256,13 @@ export default {
         { text: 'Balance', value: 'balance' },
         { text: 'Value', value: 'value' }
       ],
+      blsHeaders: [
+        { text: 'BLS public key', value: 'key' },
+        { text: 'Timestamp', value: 'timestamp' },
+        { text: 'Tx', value: 'tx' },
+        { text: 'Status', value: 'status' }
+      ],
+      blsList: [],
       assetList: [],
       assetNotZeroList: [],
       assetZeroList: [],
@@ -265,10 +329,11 @@ export default {
           symbol: 'HONEY'
         }
       ],
-      typeFilter:'',
-      tokenFilter:'',
-      startDate:'',
-      endDate:''
+      typeFilter: '',
+      tokenFilter: '',
+      startDate: '',
+      endDate: '',
+      blsRules: [(v) => !!v || this.$t('msg.please_input_bls')]
     };
   },
   watch: {
@@ -287,25 +352,25 @@ export default {
         this.tab2 = this.routerMap[type].index;
       }
       if (type == 'history') {
-      const childComponent = this.$refs.child;
-      this.typeFilter = childComponent.typeFilter
-      this.tokenFilter = childComponent.tokenFilter;
-      this.startDate = childComponent.startDate;
-      this.endDate = childComponent.endDate;
-      console.log(childComponent.typeFilter, childComponent.tokenFilter)
+        const childComponent = this.$refs.child;
+        this.typeFilter = childComponent.typeFilter;
+        this.tokenFilter = childComponent.tokenFilter;
+        this.startDate = childComponent.startDate;
+        this.endDate = childComponent.endDate;
+        // console.log(childComponent.typeFilter, childComponent.tokenFilter);
         var _this = this;
         let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
         if (this.typeFilter) {
-          Object.assign(obj, { type: this.typeFilter});
+          Object.assign(obj, { type: this.typeFilter });
         }
         if (this.tokenFilter) {
-          Object.assign(obj, { token: this.tokenFilter});
+          Object.assign(obj, { token: this.tokenFilter });
         }
         if (this.startDate) {
-          Object.assign(obj, { startTime: this.startDate});
+          Object.assign(obj, { startTime: this.startDate });
         }
         if (this.endDate) {
-          Object.assign(obj, { endTime: this.endDate});
+          Object.assign(obj, { endTime: this.endDate });
         }
         _this.$router.push({
           query: obj
@@ -332,6 +397,9 @@ export default {
     this.getBalance();
   },
   methods: {
+    ...mapActions({
+      addTx: 'addTx'
+    }),
     connect() {
       if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
@@ -358,12 +426,13 @@ export default {
       }
     },
     async getMyStakeInfo() {
-      let url = this.apiUrl.graph;
-      client = new ApolloClient({
-        uri: `${url}chainMonitorEvent`,
-        cache: new InMemoryCache()
-      });
-      const myStakesInfo = gql`
+      try {
+        let url = this.apiUrl.graph;
+        client = new ApolloClient({
+          uri: `${url}chainMonitorEvent`,
+          cache: new InMemoryCache()
+        });
+        const myStakesInfo = gql`
             query stakeInfos {
             stakeInfos(where:{
                 from:"${this.connection.address}"
@@ -374,28 +443,32 @@ export default {
                 validator
             }
         }`;
-      const {
-        data: { stakeInfos }
-      } = await client.query({
-        query: myStakesInfo,
-        variables: {},
-        fetchPolicy: 'cache-first'
-      });
-      if (stakeInfos.length > 0) {
-        let myStakeValidatorMap = stakeInfos.map((item) => {
-          return this.stakeManageInstance.methods.validators(item.validator).call();
+        const {
+          data: { stakeInfos }
+        } = await client.query({
+          query: myStakesInfo,
+          variables: {},
+          fetchPolicy: 'cache-first'
         });
+        if (stakeInfos.length > 0) {
+          let myStakeValidatorMap = stakeInfos.map((item) => {
+            return this.stakeManageInstance.methods.validators(item.validator).call();
+          });
 
-        let validators = await Promise.all(myStakeValidatorMap);
-        let balanceOfShareMap = validators.map((item) => {
-          return this.getBalanceOfShare(item);
-        });
-        let balanceOfShare = await Promise.all(balanceOfShareMap);
-        let total = 0;
-        for (let i = 0; i < balanceOfShare.length; i++) {
-          total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount));
+          let validators = await Promise.all(myStakeValidatorMap);
+          let balanceOfShareMap = validators.map((item) => {
+            return this.getBalanceOfShare(item);
+          });
+          let balanceOfShare = await Promise.all(balanceOfShareMap);
+          let total = 0;
+          for (let i = 0; i < balanceOfShare.length; i++) {
+            total = web3.utils.toBN(total).add(web3.utils.toBN(balanceOfShare[i].amount));
+          }
+          this.myTotalStake = total;
         }
-        this.myTotalStake = total;
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
       }
     },
     async getBalanceOfShare(activeValidatorsShare) {
@@ -536,6 +609,100 @@ export default {
           }
         });
       }
+    },
+    openRegister() {
+      this.dialog = true;
+      this.getPublicBls();
+    },
+    async setRegisterbls() {
+      try {
+        if (!this.$refs.blsForm.validate()) return;
+        if (this.publicKey.slice(0, 2) !== '0x') {
+          this.publicKey = '0x' + this.publicKey;
+        }
+        this.registerLoading = true;
+        let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
+        const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
+          from: this.connection.address
+        });
+        if (res.transactionHash) {
+          this.addTx({
+            tx: {
+              txid: res.transactionHash,
+              type: 'setBLSPublicKey',
+              status: 'PENDING',
+              data: {
+                publicKey: util.addr(this.publicKey)
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+        }
+        this.registerLoading = false;
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+        this.registerLoading = false;
+      }
+      this.dialog = false;
+      this.registerLoading = false;
+    },
+    async getPublicBls() {
+      this.blsListLoading = true;
+      let url = this.apiUrl.graph;
+      if (!client_bls) {
+        client_bls = new ApolloClient({
+          uri: `${url}bls`,
+          cache: new InMemoryCache()
+        });
+      }
+      let address = this.connection.address.toLowerCase();
+      const getBlsInfos = gql`
+        query blsValidators{
+          blsValidators (where: { id: "${address}"}){
+            id
+            lastBLSPublicKey
+            lastSetBlockNumber
+            setTime
+            setRecord (orderBy: timestamp, orderDirection: desc){
+              id
+              timestamp
+              validator
+              blsPublicKey
+              blockNumber
+              transactionHash
+            }
+          }
+        }
+      `;
+      const { data: blsData } = await client_bls.query({
+        query: getBlsInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      let list = blsData.blsValidators;
+      if (list.length > 0) {
+        this.blsList = list[0].setRecord;
+        let max = this.blsList.map((elem) => elem.timestamp).reduce((a, b) => Math.max(a, b));
+        this.blsList = this.blsList.map((item) => {
+          if (item.timestamp == max) {
+            this.status = 'Active';
+          } else {
+            this.status = 'inActive';
+          }
+          return {
+            blsPublicKey: item.blsPublicKey,
+            timestamp: item.timestamp,
+            transactionHash: item.transactionHash,
+            status: this.status
+          };
+        });
+      }
+      // console.log('blsData', list, this.blsList);
+      this.blsListLoading = false;
+    },
+    cancelRegister() {
+      this.dialog = false;
     }
   }
 };
@@ -556,6 +723,14 @@ export default {
 }
 .night {
   background-color: #100d22;
+}
+.dialog-night {
+  background-color: #595777;
+  padding: 20px 0;
+}
+.dialog-daytime {
+  background-color: #fff;
+  padding: 20px 0;
 }
 .theme--light.v-slide-group__content {
   background-color: #f3f4fa !important;
@@ -583,7 +758,8 @@ export default {
     align-items: center;
     .my-address {
       font-weight: bold;
-      margin: 0 10px;
+      margin-right: 12px;
+      margin-left: 20px;
     }
   }
   .balance {
@@ -625,6 +801,87 @@ export default {
 }
 .skeleton {
   margin-top: -68px;
+}
+.register {
+  text-align: center;
+  margin-left: 10px;
+  margin-top: 16px;
+  .theme--light.v-btn {
+    text-transform: initial !important;
+    color: #4696eb;
+    background-color: #dde5fc;
+  }
+  .theme--dark.v-btn {
+    text-transform: initial !important;
+    color: #868e9e;
+    background-color: #4c4a68;
+  }
+}
+.dialog-btn {
+  text-align: center;
+  .v-btn {
+    text-transform: initial !important;
+    color: #fff;
+    background-color: #6979f8;
+    border-radius: 20px;
+    padding: 0 20px;
+  }
+}
+.dialog-validator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .dialog-title {
+    margin-left: 12px;
+  }
+  .close-btn {
+    margin-right: 16px;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+  }
+}
+.public-field {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+.bls-public-list {
+  margin-top: 30px;
+}
+.active-bls {
+  background-color: #fd9557;
+  color: #fff;
+  border-radius: 20px;
+  padding: 6px 18px;
+  text-align: center;
+}
+.inactive-light {
+  background-color: #f2f2f2 !important;
+  border-radius: 20px;
+  padding: 6px 18px;
+  text-align: center;
+}
+.inactive-dark {
+  background-color: #adadad;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 18px;
+}
+.link-light {
+  cursor: pointer;
+  color: #000;
+}
+.link-light:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark:hover {
+  color: #6979f8;
+  text-decoration: underline;
+}
+.link-dark {
+  cursor: pointer;
+  color: #fff;
 }
 @media screen and (max-width: 900px) {
   .myAccount {
