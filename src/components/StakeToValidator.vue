@@ -557,6 +557,7 @@ const ONE_DAY_UNIX = 24 * 60 * 60;
 let client = null;
 let clientStake = null;
 let clientReward = null;
+let clientPrison = null;
 
 export default {
   components: {
@@ -783,7 +784,7 @@ export default {
       let url = this.apiUrl.graph;
       if (!client) {
         client = new ApolloClient({
-          uri: `${url}chainMonitorBetterPos`,
+          uri: `${url}chainMonitorBlock`,
           cache: new InMemoryCache()
         });
       }
@@ -997,7 +998,7 @@ export default {
       let url = this.apiUrl.graph;
       if (!clientStake) {
         clientStake = new ApolloClient({
-          uri: `${url}chainMonitorOnlyForStake`,
+          uri: `${url}chainMonitorEvent`,
           cache: new InMemoryCache()
         });
       }
@@ -1456,7 +1457,8 @@ export default {
           name: 'StakeInfo',
           params: {
             id: 'validatorlist',
-            address: value.address
+            address: value.address,
+            rewardItem:this.detailsItem,
           }
         });
       } else {
@@ -1525,9 +1527,9 @@ export default {
     async getJailList() {
       this.jailLoading = true;
       let url = this.apiUrl.graph;
-      if (!client) {
-        client = new ApolloClient({
-          uri: `${url}chainMonitorBetterPos`,
+      if (!clientPrison) {
+        clientPrison = new ApolloClient({
+          uri: `${url}chainMonitorPrison`,
           cache: new InMemoryCache()
         });
       }
@@ -1547,7 +1549,7 @@ export default {
       `;
       const {
         data: { jailRecords }
-      } = await client.query({
+      } = await clientPrison.query({
         query: getJailInfos,
         fetchPolicy: 'cache-first'
       });
