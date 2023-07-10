@@ -652,7 +652,7 @@ export default {
       let url = this.apiUrl.graph;
       if (!client_bls) {
         client_bls = new ApolloClient({
-          uri: `${url}bls`,
+          uri: `${url}chainMonitorEvent`,
           cache: new InMemoryCache()
         });
       }
