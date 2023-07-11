@@ -128,5 +128,10 @@ export default {
   },
   isUrl(val){
     return /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/.test(val);
+  },
+  sleep(timestamp) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timestamp);
+    });
   }
 };

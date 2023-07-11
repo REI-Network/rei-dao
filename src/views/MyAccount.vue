@@ -197,7 +197,7 @@ import util from '../utils/util';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 
 const config_contract = process.env.VUE_APP_CONFIG_CONTRACT;
-const bls_contract = process.env.VUE_APP_BLS_CONTRACT;
+let bls_contract = process.env.VUE_APP_BLS_CONTRACT;
 let client = null;
 let client_bls = null;
 
@@ -621,6 +621,15 @@ export default {
           this.publicKey = '0x' + this.publicKey;
         }
         this.registerLoading = true;
+        if (this.connection && this.connection.network){
+          if (this.connection.network == 'REI Testnet') {
+            let blockHeight = await web3.eth.getBlockNumber();
+            if(blockHeight > process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET){
+              bls_contract = process.env.VUE_APP_BLS_HARDFORK_CONTRACT;
+            }
+            
+          }
+        }
         let contract = new web3.eth.Contract(abiBlsRegister, bls_contract);
         const res = await contract.methods.setBLSPublicKey(this.publicKey).send({
           from: this.connection.address
