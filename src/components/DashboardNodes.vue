@@ -273,6 +273,7 @@ Address,
         }
         let _validator = await getData(blockHeight);
         if(!_validator.length){
+          await util.sleep(500);
           _validator = await getValidatorList(blockHeight-1);
         }
         return _validator
