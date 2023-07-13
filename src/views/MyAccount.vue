@@ -139,7 +139,9 @@
     <v-dialog v-model="dialog" width="650" class="register-key">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
         <div class="dialog-validator">
-          <v-card-title class="dialog-title">Register BLS public key</v-card-title>
+          <v-card-title class="dialog-title">Register BLS public key
+            <a href="https://docs.rei.network/rei-dao/guides/about-bls-public-key-registration" target="_blank"  class="tutorial-link">Tutorial ></a>
+          </v-card-title>
           <div @click="cancelRegister()" class="close-btn"><v-icon>mdi-close</v-icon></div>
         </div>
         <v-list rounded class="ma-dialog start_unstake public-field">
@@ -150,7 +152,13 @@
           <div class="dialog-btn">
             <v-btn @click="setRegisterbls" :loading="registerLoading">Register BLS public key</v-btn>
           </div>
-          <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :items-per-page="blsPerPage" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
+           <div class="update-list">
+            <v-btn icon :loading="blsListLoading" @click="getPublicBls()">
+              <v-icon color="">mdi-sync</v-icon>
+            </v-btn>
+            <span class="font-grey">update</span>
+           </div>
+          <v-data-table :headers="blsHeaders" :items="blsList" class="elevation-0 bls-public-list" hide-default-footer :loading="blsListLoading" :items-per-page="blsPerPage" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="blsPage" @page-count="blsCount = $event">
             <template v-slot:item.key="{ item }">
               <Address :val="item.blsPublicKey"></Address>
             </template>
@@ -687,7 +695,7 @@ export default {
       const { data: blsData } = await client_bls.query({
         query: getBlsInfos,
         variables: {},
-        fetchPolicy: 'cache-first'
+        fetchPolicy: 'network-only'
       });
       let list = blsData.blsValidators;
       if (list.length > 0) {
@@ -793,6 +801,10 @@ export default {
   color: #4856c0;
   text-decoration: underline;
 }
+.update-list{
+  text-align: right;
+  margin-bottom:-20px;
+}
 .hideButton {
   cursor: pointer;
 }
@@ -825,6 +837,16 @@ export default {
     color: #868e9e;
     background-color: #4c4a68;
   }
+}
+.tutorial-link{
+  color: #868e9e;
+  font-size:14px;
+  font-weight: normal;
+  margin-left:12px;
+}
+.tutorial-link:hover{
+  color: #4696eb;
+  text-decoration: underline;
 }
 .dialog-btn {
   text-align: center;
