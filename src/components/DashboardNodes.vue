@@ -169,7 +169,8 @@ export default {
       detailsList: [],
       locationData: [],
       myChart: null,
-      intervalNode: null
+      intervalNode: null,
+      forkedBlock: null
     };
   },
   computed: {
@@ -441,15 +442,19 @@ export default {
         method: 'eth_getBlockByNumber',
         params: ['latest', true]
       });
-      console.log(res);
       return res;
     },
     async getBlock() {
+      if (this.connection && this.connection.network){
+          if (this.connection.network == 'REI Testnet') {
+            this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET;
+          }
+      }
       let { data: resBlock } = await this.getBlockNumberInfo();
       let blockHeight = web3.utils.hexToNumber(resBlock.result.number);
       let block = resBlock.result;
 
-      let _miner = recoverMinerAddress(blockHeight, block.hash, block.extraData);
+      let _miner = recoverMinerAddress(blockHeight, block.hash, block.extraData,this.forkedBlock);
       let miner = web3.utils.toChecksumAddress(_miner);
       return {
         blockHeight,
