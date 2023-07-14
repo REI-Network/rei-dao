@@ -510,8 +510,17 @@ export default {
       this.getListLoading = true;
       let _assetObj = {};
       await this.init();
-      for (let i = 0; i < this.tokenInfoList.length; i++) {
-        let token = this.tokenInfoList[i];
+
+      let tokenInfoList = this.tokenInfoList;
+      if (this.connection && this.connection.network){
+          if (this.connection.network == 'REI Testnet') {
+            let _arr = [];
+            _arr.push(tokenInfoList[0]);
+            tokenInfoList = _arr;
+          }
+      }
+      for (let i = 0; i < tokenInfoList.length; i++) {
+        let token = tokenInfoList[i];
         if (token.symbol == 'REI') {
           let reiBalance = await web3.eth.getBalance(this.connection.address);
           this.reiBalance = reiBalance;

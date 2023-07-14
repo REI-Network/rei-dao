@@ -721,6 +721,10 @@ export default {
     '$store.state.finishedTxs': function () {
       this.init();
     },
+    '$store.state.connection': function () {
+      this.init();
+    },
+    
     listenChange(stake, days) {
       this.Calculation();
     },
@@ -770,6 +774,7 @@ export default {
     },
 
     async init() {
+      let self = this;
       this.stakeListLoading = true;
       let contract = new web3.eth.Contract(abiConfig, config_contract);
 
@@ -777,17 +782,18 @@ export default {
       this.stakeManageInstance = new web3.eth.Contract(abiStakeManager, this.stakeManagerContract);
 
       let blockHeight = await web3.eth.getBlockNumber();
-      let currentBlockHeight = localStorage.getItem('currentBlockHeight') || blockHeight;
+      let currentBlockHeight = localStorage.getItem(`${this.connection.network}_currentBlockHeight`) || blockHeight;
       if (blockHeight - currentBlockHeight < 60) {
         blockHeight = currentBlockHeight;
       }
       let url = this.apiUrl.graph;
-      if (!client) {
+      
+      //if (!client) {
         client = new ApolloClient({
           uri: `${url}chainMonitorBlock`,
           cache: new InMemoryCache()
         });
-      }
+     // }
       const getValidatorsInfos = gql`
         query validators($blockHeight: String) {
           validators(where: { id: $blockHeight }) {
@@ -817,10 +823,12 @@ export default {
           return validators;
         };
         let _validator = await getData(blockHeight);
-        localStorage.setItem('currentBlockHeight', blockHeight);
+        
+        localStorage.setItem(`${self.connection.network}_currentBlockHeight`, blockHeight);
         if (!_validator.length) {
+           await util.sleep(500);
           _validator = await getValidatorList(blockHeight - 1);
-          localStorage.setItem('currentBlockHeight', blockHeight - 1);
+          localStorage.setItem(`${self.connection.network}_currentBlockHeight`, blockHeight - 1);
         }
         return _validator;
       };
