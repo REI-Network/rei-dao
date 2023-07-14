@@ -705,7 +705,7 @@ export default {
           if (item.timestamp == max) {
             this.status = 'Active';
           } else {
-            this.status = 'inActive';
+            this.status = 'Inactive';
           }
           return {
             blsPublicKey: item.blsPublicKey,
