@@ -58,7 +58,7 @@
                   <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                   <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                   <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
-                  <span class="register-bls" v-if="item.bls==1">BLS</span>
+                  <span class="register-bls" v-if="item.bls == 1">BLS</span>
                   <v-btn v-if="item.active" text outlined color="validator" @click.stop="setCalculation(item)">
                     <span class="iconfont">&#xe619;</span>
                   </v-btn>
@@ -683,7 +683,7 @@ export default {
       rateForm: {
         amount: 0
       },
-      blsList:[],
+      blsList: [],
       currentItem: '',
       currentAddress: {},
       stakeManagerContract: '',
@@ -879,6 +879,7 @@ export default {
       this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
+      await this.getBlsList();
 
       this.stakeListLoading = false;
       this.skeletonLoading = false;
@@ -920,38 +921,13 @@ export default {
         };
         minedInfoMap[_address] = obj;
       }
-
       this.totalAmount = 0;
       for (let i = 0; i < this.activeList.length; i++) {
         let item = this.activeList[i];
         this.totalAmount += parseFloat(item.power);
       }
-       let blsUrl = this.apiUrl.graph;
-      if (!client_bls) {
-        client_bls = new ApolloClient({
-          uri: `${blsUrl}chainMonitorEvent`,
-          cache: new InMemoryCache()
-        });
-      }
-      const getBlsInfos = gql`
-        query blsValidators {
-          blsValidators{
-            id
-            lastBLSPublicKey
-            lastSetBlockNumber
-            setTime
-          }
-        }
-      `;
-       const { data: blsData } = await client_bls.query({
-        query: getBlsInfos,
-        variables: {},
-        fetchPolicy: 'cache-first'
-      });
-      this.blsList =  blsData.blsValidators;
       this.nodeList = this.nodeList.map((item) => {
         let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
-        let detailBls = find(this.blsList, (items) => web3.utils.toChecksumAddress(items.id) == web3.utils.toChecksumAddress(item.address));
         if (detail) {
           var nodeName = detail.nodeName;
           var logo = detail.logo;
@@ -959,8 +935,8 @@ export default {
           var nodeDesc = detail.nodeDesc;
         }
         let bls = 0;
-        if(detailBls){
-          bls = 1
+        if (this.blsList.some((value) => web3.utils.toChecksumAddress(value.id) === web3.utils.toChecksumAddress(item.address))) {
+           bls = 1;
         }
         let apr = 0;
         let votingPowerPercent = 0;
@@ -980,12 +956,13 @@ export default {
           website: website,
           nodeDesc: nodeDesc,
           apr: apr,
-          bls:bls,
+          bls: bls,
           minerInfo: minedInfoMap[_miner],
           votingPowerPercent,
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
+      // console.log('nodeList', this.nodeList);
       this.nodeListRaw = [].concat(this.nodeList);
       let parameter = Object.keys(this.$route.query).length;
       if (parameter > 0) {
@@ -1023,6 +1000,32 @@ export default {
       this.getMessage();
       this.getMyStakeList();
       this.Calculation();
+    },
+    async getBlsList() {
+      let newArray = this.nodeList.map((item) => item.address);
+      let blsUrl = this.apiUrl.graph;
+      if (!client_bls) {
+        client_bls = new ApolloClient({
+          uri: `${blsUrl}chainMonitorEvent`,
+          cache: new InMemoryCache()
+        });
+      }
+      const getBlsInfos = gql`
+        query blsValidators {
+          blsValidators (where: { id_in: [${newArray.map((id) => `"${id}"`).join(', ')}] }){
+            id
+            lastBLSPublicKey
+            lastSetBlockNumber
+            setTime
+          }
+        }
+      `;
+      const { data: blsData } = await client_bls.query({
+        query: getBlsInfos,
+        variables: {},
+        fetchPolicy: 'cache-first'
+      });
+      this.blsList = blsData.blsValidators;
     },
     async getMinedInfo() {},
     async getMyStakeListData() {
