@@ -1011,8 +1011,8 @@ export default {
         });
       }
       const getBlsInfos = gql`
-        query blsValidators {
-          blsValidators (where: { id_in: [${newArray.map((id) => `"${id}"`).join(', ')}] }){
+        query blsValidators($arrId: [String]) {
+          blsValidators (where: { id_in: $arrId }){
             id
             lastBLSPublicKey
             lastSetBlockNumber
@@ -1022,7 +1022,9 @@ export default {
       `;
       const { data: blsData } = await client_bls.query({
         query: getBlsInfos,
-        variables: {},
+        variables: {
+          arrId: newArray
+        },
         fetchPolicy: 'cache-first'
       });
       this.blsList = blsData.blsValidators;
