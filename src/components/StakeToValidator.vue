@@ -58,6 +58,7 @@
                   <span class="nodeName name-hover" v-if="item.nodeName">{{ item.nodeName }}</span>
                   <span class="nodeName name-hover" v-else>{{ item.address | addr }}</span>
                   <span :class="status[item.active] == 'Active' ? 'active' : 'not-active'">{{ status[item.active] }}</span>
+                  <span class="register-bls" v-if="item.bls == 1">BLS</span>
                   <v-btn v-if="item.active" text outlined color="validator" @click.stop="setCalculation(item)">
                     <span class="iconfont">&#xe619;</span>
                   </v-btn>
@@ -94,7 +95,7 @@
                   <span> Voting Power Rate: {{ item.votingPowerPercent }}% </span>
                 </v-tooltip>
               </template>
-              <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template>
+              <!-- <template v-slot:item.commissionRate="{ item }"> {{ item.commissionRate }}% </template> -->
               <!-- <template v-slot:item.balanceOfShare="{ item }">
                 {{ item.balanceOfShare | asset(2) }}
               </template> -->
@@ -558,6 +559,7 @@ let client = null;
 let clientStake = null;
 let clientReward = null;
 let clientPrison = null;
+let client_bls = null;
 
 export default {
   components: {
@@ -635,7 +637,7 @@ export default {
         { text: 'APR', value: 'apr' },
         { text: 'Response Rate', value: 'responseRate' },
         { text: this.$t('stake.voting_power'), value: 'power' },
-        { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
+        // { text: this.$t('stake.commission_rate'), value: 'commissionRate' },
         // { text: this.$t('stake.share_balance'), value: 'balanceOfShare' },
         { text: this.$t('stake.operation'), value: 'actions', sortable: false }
       ],
@@ -681,6 +683,7 @@ export default {
       rateForm: {
         amount: 0
       },
+      blsList: [],
       currentItem: '',
       currentAddress: {},
       stakeManagerContract: '',
@@ -736,18 +739,18 @@ export default {
       } else {
         this.tab2 = this.routerMap[type].index;
       }
-      let validatorFilter = ''
+      let validatorFilter = '';
       if (this.listFilter == '1') {
         validatorFilter = 'active';
-      }else if (this.listFilter == '2') {
+      } else if (this.listFilter == '2') {
         validatorFilter = 'Inactive';
-      }else{
-        validatorFilter = 'all'
+      } else {
+        validatorFilter = 'all';
       }
-      if(type == 'validatorlist'){
-      var _this = this;
-      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-      Object.assign(obj, { validator: validatorFilter });
+      if (type == 'validatorlist') {
+        var _this = this;
+        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+        Object.assign(obj, { validator: validatorFilter });
         _this.$router.push({
           query: obj
         });
@@ -884,6 +887,7 @@ export default {
       this.indexedNodeList = validatorArr;
       this.nodeList = activeList.concat(notActiveList);
       this.notActiveList = notActiveList;
+      await this.getBlsList();
 
       this.stakeListLoading = false;
       this.skeletonLoading = false;
@@ -925,13 +929,11 @@ export default {
         };
         minedInfoMap[_address] = obj;
       }
-
       this.totalAmount = 0;
       for (let i = 0; i < this.activeList.length; i++) {
         let item = this.activeList[i];
         this.totalAmount += parseFloat(item.power);
       }
-
       this.nodeList = this.nodeList.map((item) => {
         let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
         if (detail) {
@@ -939,6 +941,10 @@ export default {
           var logo = detail.logo;
           var website = detail.website;
           var nodeDesc = detail.nodeDesc;
+        }
+        let bls = 0;
+        if (this.blsList.some((value) => web3.utils.toChecksumAddress(value.id) === web3.utils.toChecksumAddress(item.address))) {
+           bls = 1;
         }
         let apr = 0;
         let votingPowerPercent = 0;
@@ -958,11 +964,13 @@ export default {
           website: website,
           nodeDesc: nodeDesc,
           apr: apr,
+          bls: bls,
           minerInfo: minedInfoMap[_miner],
           votingPowerPercent,
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
+      // console.log('nodeList', this.nodeList);
       this.nodeListRaw = [].concat(this.nodeList);
       let parameter = Object.keys(this.$route.query).length;
       if (parameter > 0) {
@@ -985,7 +993,7 @@ export default {
         } else if (validator == 'Inactive') {
           this.listFilter = '2';
           this.nodeList = this.notActiveList;
-        }else{
+        } else {
           this.listFilter = '';
           this.nodeList = this.activeList.concat(this.notActiveList);
         }
@@ -1000,6 +1008,34 @@ export default {
       this.getMessage();
       this.getMyStakeList();
       this.Calculation();
+    },
+    async getBlsList() {
+      let newArray = this.nodeList.map((item) => item.address);
+      let blsUrl = this.apiUrl.graph;
+      if (!client_bls) {
+        client_bls = new ApolloClient({
+          uri: `${blsUrl}chainMonitorEvent`,
+          cache: new InMemoryCache()
+        });
+      }
+      const getBlsInfos = gql`
+        query blsValidators($arrId: [String]) {
+          blsValidators (where: { id_in: $arrId }){
+            id
+            lastBLSPublicKey
+            lastSetBlockNumber
+            setTime
+          }
+        }
+      `;
+      const { data: blsData } = await client_bls.query({
+        query: getBlsInfos,
+        variables: {
+          arrId: newArray
+        },
+        fetchPolicy: 'cache-first'
+      });
+      this.blsList = blsData.blsValidators;
     },
     async getMinedInfo() {},
     async getMyStakeListData() {
@@ -1466,7 +1502,7 @@ export default {
           params: {
             id: 'validatorlist',
             address: value.address,
-            rewardItem:this.detailsItem,
+            rewardItem: this.detailsItem
           }
         });
       } else {
@@ -1930,6 +1966,14 @@ export default {
   .v-btn.v-btn--has-bg {
     background-color: transparent;
   }
+}
+.register-bls {
+  background-color: #faad5d;
+  color: #fff;
+  line-height: 20px;
+  border-radius: 15px;
+  margin-left: 8px;
+  padding: 2px 8px;
 }
 .info-item {
   padding: 0;
