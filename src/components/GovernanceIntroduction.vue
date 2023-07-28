@@ -61,7 +61,7 @@
                 <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
                 <v-img v-else src="../assets/images/apply-dark.png" width="50" />
               </div>
-              <div class="font-grey">How do community users initiate on-chain parameter governance?</div>
+              <div class="font-grey">How to initiate on-chain parameter governance changes?</div>
             </v-row>
           </v-card>
         </v-col>
