@@ -14,10 +14,7 @@
     </v-card>
     <v-card class="Introduction" style="margin: 40px 0">
       <h2 class="title">On-Chain Parameter Governance</h2>
-      <v-row justify="space-between">
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
-            <v-row align="center">
+      <!-- <v-row align="center">
               <v-col cols="12" md="10">
                 <h4>What Is The On-Chain Parameter Governance?</h4>
                 <v-list-item three-line>
@@ -44,27 +41,33 @@
                 </v-list-item>
               </v-col>
               <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+            </v-row>-->
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
+                <v-img v-else src="../assets/images/organization-dark.png" width="50" />
+              </div>
+              <div class="font-grey">What Is The On-Chain Parameter Governance?</div>
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>Why launch the on-chain parameter governance model?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
+        <v-col cols="12" sm="6">
+          <v-card class="step-content elevation-0 committee">
+            <v-row no-gutters align="center" style="flex-wrap:nowrap">
+              <div class="img-size">
+                <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
+                <v-img v-else src="../assets/images/apply-dark.png" width="50" />
+              </div>
+              <div class="font-grey">How do community users initiate on-chain parameter governance?</div>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
       <v-row class="list-title" align="center" justify="space-between">
-        <h2 class="title">List Of On-Chain Parameter</h2>
+        <h2 class="title">On-Chain Parameter</h2>
         <div class="font-grey">Participate in on-chain proposal governance ></div>
       </v-row>
       <v-row justify="start" align="start">
@@ -78,7 +81,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn class="param-name" v-bind="attrs" v-on="on">
-                        <span class="overflow" style="margin-bottom:16px;">{{ item.parameter }} </span>
+                        <span class="overflow" style="margin-bottom: 16px">{{ item.parameter }} </span>
                       </v-btn>
                     </template>
                     <span>
@@ -88,7 +91,7 @@
                   <v-tooltip right>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon size="14" style="margin-bottom:16px;">mdi-help-circle-outline</v-icon>
+                        <v-icon size="14" style="margin-bottom: 16px">mdi-help-circle-outline</v-icon>
                       </v-btn>
                     </template>
                     <span>
@@ -99,22 +102,22 @@
               </v-col>
               <v-col cols="12" align-self="start" md="3" style="padding: 0">
                 <div class="font-grey">Default</div>
-                 <v-tooltip top v-if="index == 11">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn class="param-name" v-bind="attrs" v-on="on">
-                        <span class="overflow" style="width:68px">{{ item.default }} </span>
-                      </v-btn>
-                    </template>
-                    <span>
-                      {{ item.default }}
-                    </span>
-                  </v-tooltip>
-                <div class="parameter-data" v-else>{{ item.default }}</div>
+                <v-tooltip top v-if="index == 5 || index == 9">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn class="param-name" v-bind="attrs" v-on="on">
+                      <span class="overflow" style="width: 68px">{{ item.default }} </span>
+                    </v-btn>
+                  </template>
+                  <span>
+                    {{ item.default }}
+                  </span>
+                </v-tooltip>
+                <div class="parameter-data item-default" v-else>{{ item.default }}</div>
               </v-col>
-              <v-col cols="12" align-self="start" md="3" style="padding: 0">
+              <!-- <v-col cols="12" align-self="start" md="3" style="padding: 0">
                 <div class="font-grey">Interval</div>
                 <div class="parameter-data">{{ item.interval }}</div>
-              </v-col>
+              </v-col> -->
             </v-row>
           </v-card>
         </v-col>
@@ -146,7 +149,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <h2 class="members-title title">Governance Committee Members</h2>
+      <h2 class="members-title title">Governance Committee Members<span class="progress">Election in progress</span></h2>
       <v-row justify="space-between">
         <v-col align-self="center" v-for="n in 10" :key="n">
           <v-card class="step-content elevation-0 members">
@@ -362,87 +365,75 @@ export default {
       stepDialog1: false,
       parameterList: [
         {
-          parameter: 'unstakeDelay',
-          description: 'The locked time required after unstaking',
+          parameter: 'UnstakeDelay',
+          description: 'The lock time required to withdraw the staked',
           default: '7 days',
           interval: '6%~10%'
         },
         {
-          parameter: 'withdrawDelay',
-          description: 'The locked time required to obtain free gas after unstaking',
+          parameter: 'WithdrawDelay',
+          description: 'The lock time required to withdraw the staked to get free gas',
           default: '3 days',
           interval: '6%~10%'
         },
         {
-          parameter: 'minIndexVotingPower',
-          description: 'The minimum votingpower required to become an index validator ',
-          default: '10w REI',
-          interval: '6%~10%'
-        },
-        {
-          parameter: 'setCommissionRateInterval',
-          description: ' The interval of validator to set the interval of commission ratio ',
+          parameter: 'CommissionRateInterval',
+          description: 'Validator setting allocation ratio interval',
           default: '1 day',
           interval: '6%~10%'
         },
         {
-          parameter: 'feePoolInterval',
-          description: 'The interval for reward distribution by the fee pool',
+          parameter: 'FeePoolInterval',
+          description: ' 	The interval for reward distribution by the gas pool',
           default: '1 day',
           interval: '6%~10%'
         },
         {
-          parameter: 'forfeit',
-          description: ' The amount of fines a validator needs to pay before getting out of the jail',
+          parameter: 'Forfeit',
+          description: ' The amount of penalty required for the validator to come out of the jail',
           default: '20000 REI',
           interval: '6%~10%'
         },
         {
-          parameter: 'jailThreshold',
+          parameter: 'JailThreshold',
           description: 'The block loss threshold for being locked in the jail',
-          default: '6%',
+          default: '	300 every 21,600 blocks',
           interval: '6%~10%'
         },
         {
-          parameter: 'maxEvidenceCount',
-          description: 'Maximum evidence recorded per block (double-layer signature)',
-          default: '2',
-          interval: '6%~10%'
-        },
-        {
-          parameter: 'maxValidatorsCount',
-          description: 'Maximum number of validator',
+          parameter: 'MaxValidatorsCount',
+          description: 'Maximum number of validators',
           default: '21',
           interval: '6%~10%'
         },
 
         {
-          parameter: 'minValidatorsCount',
-          description: 'Minimum number of validator',
+          parameter: 'MinValidatorsCount',
+          description: 'Minimum number of validators',
           default: '21',
           interval: '6%~10%'
         },
         {
-          parameter: 'minTotalLockedAmount',
-          description: 'The minimum number of staking to maintain the operation of REI Network',
+          parameter: 'MinTotalLockedAmount',
+          description: '	Total minimum staked',
           default: '100 million',
           interval: '6%~10%'
         },
         {
-          parameter: 'minerReward',
+          parameter: 'MinerReward',
           description: 'Miner rewards',
           default: '0.951293759512937595 REI',
           interval: '6%~10%'
         },
         {
-          parameter: 'dailyFee',
-          description:'The total amount of free gas per day',
+          parameter: 'DailyFee',
+          description: 'The total amount of free gas per day',
           default: '1400 REI',
           interval: '6%~10%'
         },
         {
-          parameter: 'minerRewardFactor',
-          description: 'Proportion of gad obtained by block producers',
+          parameter: 'MinerRewardFactor',
+          description: 'Proportion of rewards for block producers',
           default: '90%',
           interval: '6%~10%'
         }
@@ -585,6 +576,9 @@ a:hover {
     display: flex;
     align-items: flex-end;
   }
+  .item-default {
+    width: 72px;
+  }
   .param-name {
     .overflow {
       width: 100px;
@@ -595,7 +589,8 @@ a:hover {
   }
   .param-name.v-btn {
     font-weight: 700;
-    text-transform: lowercase;
+    text-transform: inherit;
+    text-align: left;
     padding: 0;
   }
   .list-title {
@@ -680,6 +675,7 @@ a:hover {
   }
 }
 .members {
+  filter: blur(4px);
   width: 184px !important;
   height: 220px;
   margin-top: 20px;
@@ -695,6 +691,15 @@ a:hover {
   .icon-img {
     margin-top: 20px;
   }
+}
+.progress{
+  background-color: #FAAD5D;
+  color:#FFF;
+  font-weight: normal;
+  padding: 4px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-left: 12px
 }
 @media screen and (max-width: 900px) {
   .v-list-item {
