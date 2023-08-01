@@ -14,34 +14,6 @@
     </v-card>
     <v-card class="Introduction" style="margin: 40px 0">
       <h2 class="title">On-Chain Parameter Governance</h2>
-      <!-- <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>What Is The On-Chain Parameter Governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO On-Chain Parameterized Governance Allows Community Members To Change REI</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more" @click="stepClick1">
-                <div @click="stepClick1" class="more">More></div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>How do community users initiate on-chain parameter governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
-            </v-row>-->
       <v-row>
         <v-col cols="12" sm="6">
           <v-card class="step-content elevation-0 committee">
@@ -88,7 +60,7 @@
                       {{ item.parameter }}
                     </span>
                   </v-tooltip>
-                  <v-tooltip right>
+                  <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
                         <v-icon size="14" style="margin-bottom: 16px">mdi-help-circle-outline</v-icon>
@@ -581,7 +553,7 @@ a:hover {
   }
   .param-name {
     .overflow {
-      width: 100px;
+      // width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
