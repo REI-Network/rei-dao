@@ -65,7 +65,7 @@
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`https://scan.rei.network/address/${connection.address}`"><v-icon small class="account-icon">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
+              <v-btn color="secondary" :text="!dark" depressed small target="_blank" :href="`${scanUrl}address/${connection.address}`"><v-icon small class="account-icon">mdi-open-in-new</v-icon>{{ $t('account.view_on_etherscan') }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>
@@ -83,7 +83,7 @@
                     <div>
                     <div class="name-pri">
                         <div>{{ $t(`txs.${tx.type}`, tx.data) }}</div>
-                        <a class="text-body-2 text-decoration-none" :href="`https://scan.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+                        <a class="text-body-2 text-decoration-none" :href="`${scanUrl}tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
                     </div>
                     <div>{{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }}</div>
                     </div>
@@ -130,7 +130,8 @@ export default {
       pendingTxs: 'pendingTxs',
       connection: 'connection',
       apiUrl: 'apiUrl',
-      dark: 'dark'
+      dark: 'dark',
+      scanUrl: 'scanUrl'
     }),
     networkPrefix() {
       return this.connection.network == 'mainnet' ? '' : `${this.connection.network}.`;
@@ -169,7 +170,8 @@ export default {
       setConnection: 'setConnection',
       setFinishedTxs: 'setFinishedTxs',
       setAssetInfo: 'setAssetInfo',
-      setApiUrl: 'setApiUrl'
+      setApiUrl: 'setApiUrl',
+      setScanUrl: 'setScanUrl'
     }),
     tryLastConnection() {
       let lastConect = localStorage.getItem(LAST_CONNECTION);
@@ -282,19 +284,22 @@ export default {
       }
     },
     getApiUrl(){
-        let rpcApi = '',graphqlApi = '', chartApi='';
+        let rpcApi = '',graphqlApi = '', chartApi='',scanUrl='';
         if(this.connection.network == 'REI Devnet'){
             chartApi = process.env.VUE_APP_DEV_SERVER_API;
             graphqlApi = process.env.VUE_APP_DEV_GRAPHQL_SERVER;
             rpcApi = process.env.VUE_APP_DEV_RPC_SERVER;
+            scanUrl = process.env.VUE_APP_SCAN_SERVER; 
         } else if(this.connection.network == 'REI Testnet'){
             chartApi = process.env.VUE_APP_TEST_SERVER_API;
             graphqlApi = process.env.VUE_APP_TEST_GRAPHQL_SERVER;
             rpcApi = process.env.VUE_APP_TEST_RPC_SERVER;
+            scanUrl = process.env.VUE_APP_SCAN_SERVER; 
         } else {
             chartApi = process.env.VUE_APP_SERVER_API;
             graphqlApi = process.env.VUE_APP_MAIN_GRAPHQL_SERVER;
             rpcApi = process.env.VUE_APP_MAIN_RPC_SERVER;
+            scanUrl = process.env.VUE_APP_SCAN_SERVER; 
         }
         this.setApiUrl({
             apiUrl: {
@@ -303,6 +308,7 @@ export default {
                 chart: chartApi
             }
         })
+        this.setScanUrl({ scanUrl })
     },
     async loadAsset(){
         let { data: { data:chartInfoData}} = await getAssetInfo(this.apiUrl.chart);

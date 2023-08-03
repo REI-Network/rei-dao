@@ -166,7 +166,7 @@
               <span>{{ (item.timestamp * 1000) | dateFormat('YYYY-MM-dd hh:mm:ss') }}</span>
             </template>
             <template v-slot:item.tx="{ item }">
-               <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.transactionHash}`" target="_blank"
+               <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}tx/${item.transactionHash}`" target="_blank"
                     > <span>{{ item.transactionHash | addr }}</span></a
                   >
             </template>
@@ -390,7 +390,8 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
-      dark: 'dark'
+      dark: 'dark',
+      scanUrl: 'scanUrl'
     }),
     checkStatusColor() {
       if (this.checkStatus) {

@@ -128,7 +128,7 @@
           <div class="block">
             <div class="font-grey">Total Token Number</div>
             <div class="node-number">
-              <a :class="dark ? 'dark-link' : 'light-link'" href="https://scan.rei.network/tokens" target="_blank">{{ stats.totalToken | asset(0) }}</a>
+              <a :class="dark ? 'dark-link' : 'light-link'" href="${scanUrl}tokens" target="_blank">{{ stats.totalToken | asset(0) }}</a>
               <!-- <span class="font-green">+117</span> -->
             </div>
           </div>
@@ -177,7 +177,8 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
-      dark: 'dark'
+      dark: 'dark',
+      scanUrl: 'scanUrl'
     })
   },
   beforeDestroy() {

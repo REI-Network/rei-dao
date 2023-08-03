@@ -66,7 +66,7 @@
                         <span>{{ item.rank }}</span>
                       </template>
                       <template v-slot:item.address="{ item }">
-                        <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address" :contractName="item.contractName"></AddressTag></a>
+                        <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.address}`" target="_blank"><AddressTag :val="item.address" :contractName="item.contractName"></AddressTag></a>
                       </template>
                       <template v-slot:item.balance="{ item }">
                         <span>{{ item.balance | asset(5) }}</span>
@@ -109,7 +109,7 @@
                       <span>${{ item.price | asset(5) }}</span>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                      <a :href="`${scanUrl}token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
                         ><div>{{ item.address | addr }}</div></a
                       >
                     </template>
@@ -145,7 +145,7 @@
                       </v-row>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                      <a :href="`${scanUrl}token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
                         ><div>{{ item.address | addr }}</div></a
                       >
                     </template>
@@ -178,7 +178,7 @@
                       </v-row>
                     </template>
                     <template v-slot:item.address="{ item }">
-                      <a :href="`https://scan.rei.network/token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
+                      <a :href="`${scanUrl}token/${item.address}`" target="_blank" :class="dark ? 'link-dark' : 'link-light'"
                         ><div>{{ item.address | addr }}</div></a
                       >
                     </template>
@@ -439,7 +439,8 @@ export default {
       connection: 'connection',
       nftInfo: 'nftInfo',
       apiUrl: 'apiUrl',
-      addressTags: 'addressTags'
+      addressTags: 'addressTags',
+      scanUrl:'scanUrl'
     })
   },
   watch: {

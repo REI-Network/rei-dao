@@ -38,6 +38,7 @@ const state = {
     graph:'https://api-graphql-main.rei.network/',
     chart: 'https://api-market-main.rei.network/'
   },
+  scanUrl:'https://scan.rei.network/',
   nftInfo:[],
   nftCollect:{},
   addressTags:{}
@@ -76,6 +77,7 @@ const getters = {
   usedCrudePercent: (state) => state.usedCrudePercent,
   assetInfo: (state) => state.assetInfo,
   apiUrl: (state) => state.apiUrl,
+  scanUrl: (state) => state.scanUrl,
   nftInfo:  (state) => state.nftInfo,
   nftCollect: (state) => state.nftCollect,
   addressTags: (state) => state.addressTags
@@ -154,6 +156,9 @@ const mutations = {
   setApiUrl: (state, payload) => {
     state.apiUrl = payload.apiUrl;
   },
+  setScanUrl: (state, payload) => {
+    state.scanUrl = payload.scanUrl;
+  },
   setNftInfo: (state, payload) => {
     state.nftInfo = payload.nftInfo;
   },
@@ -209,6 +214,9 @@ const actions = {
   },
   setApiUrl: ({ commit }, payload) => {
     commit('setApiUrl', payload);
+  },
+  setScanUrl: ({ commit }, payload) => {
+    commit('setScanUrl', payload);
   },
   setNftInfo: ({ commit }, payload) => {
     commit('setNftInfo', payload);

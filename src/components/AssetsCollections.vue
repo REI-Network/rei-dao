@@ -15,7 +15,7 @@
           <div>{{ token.description }}</div>
           <v-row style="margin-left:1px;margin-top:20px;" align="center">
             <span class="font-grey">Contract Address:</span>
-            <a :href="`https://scan.rei.network/token/${contractAddress}`" target="_blank">
+            <a :href="`${scanUrl}token/${contractAddress}`" target="_blank">
               <span class="address-link" > {{ contractAddress | addr }}</span>
             </a>
             <v-btn class="copy-btn" @click="copyAddr(contractAddress)">
@@ -62,7 +62,7 @@
                 <div class="asset-logo">
                   <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
                 </div>
-                <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
+                <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
 
               </v-row>
             </template>
@@ -184,7 +184,8 @@ export default {
       connection: 'connection',
       apiUrl: 'apiUrl',
       dark: 'dark',
-      nftCollect: 'nftCollect'
+      nftCollect: 'nftCollect',
+      scanUrl:'scanUrl'
     }),
      pageChange() {
       const { page, itemsPerPage } = this;

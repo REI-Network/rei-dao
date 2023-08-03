@@ -99,7 +99,7 @@
         <v-row justify="space-between" align="center" no-gutters>
           <div class="gas-fee">
             <h3>Transaction Details</h3>
-            <a :href="`https://scan.rei.network/tx/${details.hash}`" target="_blank" class="img">
+            <a :href="`${scanUrl}tx/${details.hash}`" target="_blank" class="img">
               <v-img src="../assets/images/history-1.png" width="20" />
             </a>
           </div>
@@ -209,7 +209,8 @@ export default {
     ...mapGetters({
       connection: 'connection',
       apiUrl: 'apiUrl',
-      dark: 'dark'
+      dark: 'dark',
+      scanUrl: 'scanUrl'
     }),
     computedDateFormatted() {
       return this.formatDate(this.startDate);

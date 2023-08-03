@@ -49,7 +49,7 @@
                   v-if="projectDetails.project_token && projectDetails.project_token.contract_address"
                   :class="dark?'dark-token':'light-token'"
                   target="_blank"
-                  :href="`https://scan.rei.network/address/${projectDetails.project_token.contract_address}`">
+                  :href="`${scanUrl}address/${projectDetails.project_token.contract_address}`">
                     <h2 v-if="projectDetails.project_token && projectDetails.project_token.symbol">{{ projectDetails.project_token.symbol }}</h2>
                   </a>
                   <div class="font-grey">Token</div>
@@ -89,7 +89,7 @@
           <v-data-table :headers="headers" :items="paymentList" class="elevation-0" hide-default-footer :items-per-page="itemsPerPage" :loading="paymentListLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="page" @page-count="pageCount = $event">
             <template v-slot:item.hash="{ item }">
               <v-row align="center">
-                <a target="_blank" :class="dark?'dark-token':'light-token'" :href="`https://scan.rei.network/tx/${item.hash}`">
+                <a target="_blank" :class="dark?'dark-token':'light-token'" :href="`${scanUrl}tx/${item.hash}`">
                   <div>{{ item.hash | addr }}</div>
                 </a>
               </v-row>
@@ -153,7 +153,8 @@ export default {
   computed: {
     ...mapGetters({
       dark: 'dark',
-      connection: 'connection'
+      connection: 'connection',
+      scanUrl: 'scanUrl'
     })
   },
   mounted() {
@@ -170,7 +171,7 @@ export default {
       let transferList = this.projectDetails.transfer_record;
       this.paymentList = [];
       for (let i = 0; i < transferList.length; i++) {
-        const { data } = await this.$axios.get(`https://scan.rei.network/api?module=transaction&action=gettxinfo&txhash=${transferList[i].tx_id}`);
+        const { data } = await this.$axios.get(`${scanUrl}api?module=transaction&action=gettxinfo&txhash=${transferList[i].tx_id}`);
         let result = data.result;
         (result.rounds = transferList[i].name), this.paymentList.push(result);
         (this.sponsored = 0),

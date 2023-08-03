@@ -382,7 +382,7 @@
           <v-row justify="space-between" class="title-row" no-gutters>
             <strong>
               {{ tokenResult.contractAddress }}
-              <a class="text-body-2 text-decoration-none" :href="`https://scan.rei.network/address/${tokenResult.contractAddress}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+              <a class="text-body-2 text-decoration-none" :href="`${scanUrl}address/${tokenResult.contractAddress}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
             </strong>
           </v-row>
           <div class="text-center">
@@ -589,7 +589,8 @@ export default {
   computed: {
     ...mapGetters({
       connection: 'connection',
-      apiUrl: 'apiUrl'
+      apiUrl: 'apiUrl',
+      scanUrl: 'scanUrl'
     })
   },
   methods: {

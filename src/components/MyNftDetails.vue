@@ -28,7 +28,7 @@
             <v-col cols="12" sm="6" class="details-right">
               <v-row justify="space-between" no-gutters class="detail">
             <div class="font-grey">Contract address</div>
-            <a :href="`https://scan.rei.network/address/${nftConfig}`" target="_blank">
+            <a :href="`${scanUrl}address/${nftConfig}`" target="_blank">
               <div class="right-content">{{ nftConfig | addr }}</div></a
             >
           </v-row>
@@ -76,7 +76,7 @@
             <div class="asset-logo">
               <v-img src="../assets/images/rei.svg" width="30" height="30"></v-img>
             </div>
-             <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
+             <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
           </v-row>
         </template>
         <template v-slot:item.balance="{ item }">
@@ -153,7 +153,8 @@ export default {
       connection: 'connection',
       apiUrl: 'apiUrl',
       dark: 'dark',
-      nftInfo: 'nftInfo'
+      nftInfo: 'nftInfo',
+      scanUrl: 'scanUrl'
     })
   },
   methods: {

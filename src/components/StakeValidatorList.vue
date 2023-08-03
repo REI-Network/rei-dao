@@ -141,7 +141,7 @@
           <v-tab-item key="16">
             <v-data-table :headers="slashHeaders" :items="slashList" class="elevation-0" hide-default-footer :items-per-page="slashPerPage" :loading="slashLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="slashPage" @page-count="slashPageCount = $event">
               <template v-slot:item.slashBlockHeight="{ item }">
-                <a :class="dark ? 'block-dark block-link' : 'block-light block-link'" :href="`https://scan.rei.network/block/${item.slashBlockHeight}/transactions`" target="_blank">
+                <a :class="dark ? 'block-dark block-link' : 'block-light block-link'" :href="`${scanUrl}block/${item.slashBlockHeight}/transactions`" target="_blank">
                   <span> {{ item.slashBlockHeight }}</span>
                 </a>
               </template>
@@ -471,7 +471,8 @@ export default {
     ...mapGetters({
       connection: 'connection',
       dark: 'dark',
-      apiUrl: 'apiUrl'
+      apiUrl: 'apiUrl',
+      scanUrl: 'scanUrl'
     }),
   },
   mounted() {

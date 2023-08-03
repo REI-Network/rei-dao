@@ -13,7 +13,7 @@
                 <div>
                   <h3>{{ details.symbol }}</h3>
                   <div v-if="details.address && details.address != 'rei'">
-                    <a :href="`https://scan.rei.network/token/${details.address}`" target="_blank">
+                    <a :href="`${scanUrl}token/${details.address}`" target="_blank">
                       <span class="font-grey">{{ details.address | addr }}</span>
                     </a>
                     <v-btn class="copy-btn" @click="copyAddr(details.address)">
@@ -82,7 +82,7 @@
                   <span>{{ item.rank }}</span>
                 </template>
                 <template v-slot:item.address="{ item }">
-                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.address}`" target="_blank"><AddressTag :val="item.address"></AddressTag></a>
                 </template>
                 <template v-slot:item.balance="{ item }">
                   <span>{{ item.balance | asset(5) }}</span>
@@ -116,7 +116,7 @@
             <v-tab-item key="12">
               <v-data-table :headers="transferHeaders" :items="transferList" class="elevation-0" hide-default-footer :items-per-page="transferPerPage" :loading="transferLoading" :no-data-text="$t('msg.nodatatext')" :loading-text="$t('msg.loading')" :page.sync="transferPage" @page-count="transferCount = $event">
                 <template v-slot:item.txhash="{ item }">
-                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/tx/${item.txhash}`" target="_blank"
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}tx/${item.txhash}`" target="_blank"
                     ><span>{{ item.txhash | addr }}</span></a
                   >
                 </template>
@@ -127,10 +127,10 @@
                   {{ item.timestamp | dateFormat('YYYY-MM-dd hh:mm:ss') }}
                 </template>
                 <template v-slot:item.fromAddress="{ item }">
-                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.fromAddress}`" target="_blank"><AddressTag :val="item.fromAddress"></AddressTag></a>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.fromAddress}`" target="_blank"><AddressTag :val="item.fromAddress"></AddressTag></a>
                 </template>
                 <template v-slot:item.toAddress="{ item }">
-                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`https://scan.rei.network/address/${item.toAddress}`" target="_blank"><AddressTag :val="item.toAddress"></AddressTag></a>
+                  <a :class="dark ? 'link-dark' : 'link-light'" :href="`${scanUrl}address/${item.toAddress}`" target="_blank"><AddressTag :val="item.toAddress"></AddressTag></a>
                 </template>
                 <template v-slot:item.value="{ item }">
                   <span>{{ item.value | asset(5) }}</span>
@@ -354,7 +354,8 @@ export default {
       assetInfo: 'assetInfo',
       apiUrl: 'apiUrl',
       dark: 'dark',
-      addressTags: 'addressTags'
+      addressTags: 'addressTags',
+      scanUrl:'scanUrl'
     }),
     nextPage2() {
       const { index, items_count } = this;
