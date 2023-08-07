@@ -727,7 +727,7 @@ export default {
     '$store.state.connection': function () {
       this.init();
     },
-    
+
     listenChange(stake, days) {
       this.Calculation();
     },
@@ -790,13 +790,13 @@ export default {
         blockHeight = currentBlockHeight;
       }
       let url = this.apiUrl.graph;
-      
+
       //if (!client) {
-        client = new ApolloClient({
-          uri: `${url}chainMonitorBlock`,
-          cache: new InMemoryCache()
-        });
-     // }
+      client = new ApolloClient({
+        uri: `${url}chainMonitorBlock`,
+        cache: new InMemoryCache()
+      });
+      // }
       const getValidatorsInfos = gql`
         query validators($blockHeight: String) {
           validators(where: { id: $blockHeight }) {
@@ -826,10 +826,10 @@ export default {
           return validators;
         };
         let _validator = await getData(blockHeight);
-        
+
         localStorage.setItem(`${self.connection.network}_currentBlockHeight`, blockHeight);
         if (!_validator.length) {
-           await util.sleep(500);
+          await util.sleep(500);
           _validator = await getValidatorList(blockHeight - 1);
           localStorage.setItem(`${self.connection.network}_currentBlockHeight`, blockHeight - 1);
         }
@@ -934,17 +934,21 @@ export default {
         let item = this.activeList[i];
         this.totalAmount += parseFloat(item.power);
       }
+      // console.log('nodeList', this.nodeList);
       this.nodeList = this.nodeList.map((item) => {
         let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.nodeAddress) == web3.utils.toChecksumAddress(item.address));
+        let bls = 0;
         if (detail) {
           var nodeName = detail.nodeName;
           var logo = detail.logo;
           var website = detail.website;
           var nodeDesc = detail.nodeDesc;
+          if (nodeName && nodeName.includes('Default')) {
+             bls = 1;
+          }
         }
-        let bls = 0;
         if (this.blsList.some((value) => web3.utils.toChecksumAddress(value.id) === web3.utils.toChecksumAddress(item.address))) {
-           bls = 1;
+          bls = 1;
         }
         let apr = 0;
         let votingPowerPercent = 0;
@@ -970,7 +974,6 @@ export default {
           responseRate: this.calResponseRate(minedInfoMap[_miner])
         };
       });
-      // console.log('nodeList', this.nodeList);
       this.nodeListRaw = [].concat(this.nodeList);
       let parameter = Object.keys(this.$route.query).length;
       if (parameter > 0) {
@@ -1020,7 +1023,7 @@ export default {
       }
       const getBlsInfos = gql`
         query blsValidators($arrId: [String]) {
-          blsValidators (where: { id_in: $arrId }){
+          blsValidators(where: { id_in: $arrId }) {
             id
             lastBLSPublicKey
             lastSetBlockNumber
