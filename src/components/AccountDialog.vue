@@ -294,7 +294,7 @@ export default {
             chartApi = process.env.VUE_APP_TEST_SERVER_API;
             graphqlApi = process.env.VUE_APP_TEST_GRAPHQL_SERVER;
             rpcApi = process.env.VUE_APP_TEST_RPC_SERVER;
-            scanUrl = process.env.VUE_APP_SCAN_SERVER; 
+            scanUrl = process.env.VUE_APP_SCAN_TEST_SERVER; 
         } else {
             chartApi = process.env.VUE_APP_SERVER_API;
             graphqlApi = process.env.VUE_APP_MAIN_GRAPHQL_SERVER;
