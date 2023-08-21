@@ -644,6 +644,11 @@ export default {
             if(blockHeight > process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET){
               bls_contract = process.env.VUE_APP_BLS_HARDFORK_CONTRACT;
             }
+          } else if (this.connection.network == 'REI Network') {
+            let blockHeight = await web3.eth.getBlockNumber();
+            if(blockHeight > process.env.VUE_APP_BLS_HARDFORK_HEIGHT_MAINNET){
+              bls_contract = process.env.VUE_APP_BLS_HARDFORK_CONTRACT;
+            }
             
           }
         }
