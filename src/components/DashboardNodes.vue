@@ -448,6 +448,8 @@ export default {
       if (this.connection && this.connection.network){
           if (this.connection.network == 'REI Testnet') {
             this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET;
+          } else if (this.connection.network == 'REI Network') {
+            this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_MAINNET;
           }
       }
       let { data: resBlock } = await this.getBlockNumberInfo();
