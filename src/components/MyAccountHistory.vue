@@ -48,22 +48,20 @@
                 </div>
                 <div>
                   <div class="font-grey">{{ info.type }}</div>
-                  <h4>{{ (info.timeStamp * 1000) | dateFormat('hh:ss:mm') }}</h4>
+                  <h4>{{ info.timestamp | dateFormat('hh:mm:ss') }}</h4>
                 </div>
               </v-col>
               <v-col cols="12" sm="3" v-if="info.type == 'Send'">
                 <div class="font-grey">To</div>
-                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
-                <h4 v-else>{{ info.to | addr }}</h4>
+                <h4>{{ info.to_address_hash | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3" v-else>
                 <div class="font-grey">From</div>
-                <h4 v-if="info.addressName">{{ info.addressName }}</h4>
-                <h4 v-else>{{ info.from | addr }}</h4>
+                <h4>{{ info.from_address_hash | addr }}</h4>
               </v-col>
               <v-col cols="12" sm="3">
-                <h4>{{ info.value | asset(5) }}</h4>
-                <div class="font-grey token-symbol" v-if="info.tokenSymbol">{{ info.tokenSymbol }}</div>
+                <h4>{{ info.amount | asset(5) }}</h4>
+                <div class="font-grey token-symbol" v-if="info.symbol">{{ info.symbol }}</div>
                 <div class="font-grey" v-else>REI</div>
               </v-col>
               <v-col cols="12" sm="3">
@@ -73,7 +71,7 @@
                     <v-img src="../assets/images/history-3.png" width="20" />
                   </div>
                 </div>
-                <h4>{{ info.gasUsed }} REI</h4>
+                <h4>{{ info.gas }} REI</h4>
               </v-col>
             </v-row>
           </v-card>
@@ -93,6 +91,9 @@
           </v-col>
         </v-row>
       </v-card>
+      <div class="more-btn">
+        <v-btn @click="loadingMore" depressed rounded class="load-more" :loading="isLoading">load more></v-btn>
+      </div>
     </div>
     <v-dialog v-model="dialog" width="600" class="dialog-card">
       <v-card :class="dark ? 'dialog-night' : 'dialog-daytime'">
@@ -107,25 +108,25 @@
             <v-icon size="22">mdi-close</v-icon>
           </div>
         </v-row>
-        <div class="font-grey">{{ (details.timeStamp * 1000) | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
+        <div class="font-grey">{{ details.timestamp | dateFormat('YYYY-MM-dd hh:ss:mm') }}</div>
         <v-card :class="dark ? 'chip-dark' : 'chip-light elevation-0 '">
           <v-row justify="space-between" no-gutter class="item-content">
             <div class="item-name">Block number</div>
-            <div class="item-data">{{ details.blockNumber }}</div>
+            <div class="item-data">{{ details.block_number }}</div>
           </v-row>
           <v-row justify="space-between" v-if="details.from == address" no-gutter class="item-content">
             <div class="item-name">To</div>
-            <div class="item-data">{{ details.to }}</div>
+            <div class="item-data">{{ details.to_address_hash }}</div>
           </v-row>
           <v-row justify="space-between" v-else no-gutter class="item-content">
             <div class="item-name">From</div>
-            <div class="item-data">{{ details.from }}</div>
+            <div class="item-data">{{ details.from_address_hash }}</div>
           </v-row>
           <v-row justify="space-between" no-gutter class="item-content">
             <div class="item-name">Transaction fee</div>
-            <div class="item-data">{{ details.gasUsed }} REI</div>
+            <div class="item-data">{{ details.amount }} REI</div>
           </v-row>
-          <v-row justify="space-between" no-gutter class="item-content" v-if="details.gasPrice">
+          <v-row justify="space-between" no-gutter class="item-content" v-if="details.gas_price">
             <div class="item-name">Gas Price</div>
             <div class="item-data">{{ details.gasPrice }} Gwei</div>
           </v-row>
@@ -138,7 +139,7 @@
           <div class="font-grey">{{ details.type }}</div>
           <v-row align="center" class="value-symbol" no-gutters>
             <div class="price">{{ details.value | asset(5) }}</div>
-            <div class="token-symbol" v-if="details.tokenSymbol">&nbsp;&nbsp;{{ details.tokenSymbol }}</div>
+            <div class="token-symbol" v-if="details.symbol">&nbsp;&nbsp;{{ details.symbol }}</div>
             <div v-else>&nbsp;&nbsp;REI</div>
           </v-row>
         </div>
@@ -153,7 +154,7 @@
 import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
-import { getHistoryData } from '../service/CommonService';
+import { getHistoryData, getHistoryTransactions, getHistoryTransfer, getHistoryInternal} from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
@@ -194,7 +195,14 @@ export default {
     sortDescVote: true,
     transactionsList: [],
     dialog: false,
+    offset: 0,
+    limit: 20,
+    transferTotal: 0,
+    transactionsTotal: 0,
+    internalTotal:0,
+    isLoading: false,
     historyList: [],
+    itemsList: [],
     list: [],
     rawDataList: [],
     internalList: [],
@@ -203,7 +211,8 @@ export default {
     detailsList: []
   }),
   mounted() {
-    this.getData();
+    // this.getData();
+    this.getTransferData();
   },
   computed: {
     ...mapGetters({
@@ -224,7 +233,7 @@ export default {
         startDate,
         endDate
       };
-    },
+    }
   },
   watch: {
     startDate() {
@@ -234,9 +243,9 @@ export default {
       this.endFormatted = this.formatDate2(this.endDate);
     },
     listenChange(newDate, oldDate) {
-       var _this = this;
-       let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-          Object.assign(obj, { startTime: this.startDate,endTime: this.endDate });
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      Object.assign(obj, { startTime: this.startDate, endTime: this.endDate });
       _this.$router.push({
         query: obj
       });
@@ -246,7 +255,7 @@ export default {
         return Date.parse(item.date) >= startDate && Date.parse(item.date) <= endDate;
       });
       this.changeStateType();
-    },
+    }
   },
   methods: {
     formatDate(startDate) {
@@ -259,16 +268,52 @@ export default {
       const [year, month, day] = endDate.split('-');
       return `${month}/${day}/${year}`;
     },
-    async getData() {
-      let params = {
-        module: 'account',
-        action: 'tokentx',
-        address: this.connection.address
-      };
-      let data = await getHistoryData(params);
-      this.transferList = data.data.result || [];
-      this.getInternal();
-      // console.log('transferList',this.transferList)
+    async getTransferData() {
+      let transferData = await getHistoryTransfer({ user_addr: this.connection.address, offset: 0, limit: this.limit });
+      this.transferList = transferData.data.data;
+      this.transferTotal = transferData.data.total;
+      this.getTransferList();
+      this.getTransactionsData();
+      this.skeletonLoading = false;
+      console.log('transferList', this.transferList);
+    },
+    getTransferList() {
+      this.transferList = this.transferList.map((item) => {
+        let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
+        let tokenDecimals = item.tokenInfo.tokenDecimals;
+        let amount = item.amount / 10 ** tokenDecimals;
+        let type = '';
+        let address = web3.utils.toChecksumAddress(this.connection.address);
+        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let to_address, from_address;
+        if (address == from) {
+          type = 'Send';
+          to_address = web3.utils.toChecksumAddress(item.to_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.from_address_hash);
+        } else {
+          type = 'Receive';
+          to_address = web3.utils.toChecksumAddress(item.from_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.to_address_hash);
+        }
+        let gas = 0;
+        if (item.gas_used && item.gas_price) {
+          gas = item.gas_used * item.gas_price;
+        } else {
+          gas = 0;
+        }
+        return {
+          date: date,
+          timestamp: item.timestamp,
+          block_number: item.block_number,
+          amount: amount,
+          type: type,
+          to_address_hash: to_address,
+          from_address_hash: from_address,
+          gas: gas,
+          hash: item.transaction_hash,
+          symbol: item.tokenInfo.tokenSymbol
+        };
+      });
     },
     async getInternal() {
       let params = {
@@ -348,7 +393,7 @@ export default {
       this.totalList = this.historyList;
       this.getSortData();
       let parameter = Object.keys(this.$route.query).length;
-      if(parameter > 0 ){
+      if (parameter > 0) {
         this.typeFilter = this.$route.query.type;
         this.tokenFilter = this.$route.query.token;
         this.startDate = this.$route.query.startTime;
@@ -358,13 +403,127 @@ export default {
       this.detailsList = addressTag.data.data;
       this.skeletonLoading = false;
     },
+    async getTransactionsData() {
+      let data = await getHistoryTransactions({ user_addr: this.connection.address, offset: 0, limit: this.limit });
+      this.transactionsList = data.data.data;
+      this.transactionsTotal = data.data.total;
+      this.getTransactionsList();
+      this.itemsList = this.transferList.concat(this.transactionsList);
+      this.getInternalData();
+    },
+    getTransactionsList() {
+      this.transactionsList = this.transactionsList.map((item) => {
+        let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
+        let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
+        let type = '';
+        let address = web3.utils.toChecksumAddress(this.connection.address);
+        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let to_address, from_address;
+        if (address == from) {
+          type = 'Send';
+          to_address = web3.utils.toChecksumAddress(item.to_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.from_address_hash);
+        } else {
+          type = 'Receive';
+          to_address = web3.utils.toChecksumAddress(item.from_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.to_address_hash);
+        }
+        let gas = item.gas_used * item.gas_price;
+        return {
+          date: date,
+          timestamp: item.timestamp,
+          block_number: item.block_number,
+          amount: amount,
+          type: type,
+          to_address_hash: to_address,
+          from_address_hash: from_address,
+          gas: web3.utils.fromWei(web3.utils.toBN(gas)),
+          hash: item.hash,
+          symbol: 'REI'
+        };
+      });
+    },
+    async getInternalData() {
+      let data = await getHistoryInternal({ user_addr: this.connection.address, offset: 0, limit: this.limit });
+      this.internalList = data.data.data;
+      this.internalTotal = data.data.total;
+      this.getInternalList();
+      this.historyList = this.itemsList.concat(this.internalList);
+      this.getSortData()
+      this.totalList = this.historyList;
+    },
+    getInternalList() {
+       this.internalList = this.internalList.map((item) => {
+        let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
+        let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
+        let type = '';
+        let address = web3.utils.toChecksumAddress(this.connection.address);
+        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let to_address, from_address;
+        if (address == from) {
+          type = 'Send';
+          to_address = web3.utils.toChecksumAddress(item.to_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.from_address_hash);
+        } else {
+          type = 'Receive';
+          to_address = web3.utils.toChecksumAddress(item.from_address_hash);
+          from_address = web3.utils.toChecksumAddress(item.to_address_hash);
+        }
+        let gas = 0;
+        if (item.gas_used && item.gas_price) {
+          gas = item.gas_used * item.gas_price;
+        } else {
+          gas = 0;
+        }
+        return {
+          date: date,
+          timestamp: item.timestamp,
+          block_number: item.block_number,
+          amount: amount,
+          type: type,
+          to_address_hash: to_address,
+          from_address_hash: from_address,
+          gas: gas,
+          hash: item.block_hash,
+          symbol: 'REI'
+        };
+      });
+    },
+    async loadingMore() {
+      this.isLoading = true;
+      this.offset++;
+      this.transferList = [], this.transactionsList = [];this.internalList = []
+      let total = this.offset * this.limit;
+      if (this.transactionsTotal > total) {
+        let data = await getTransactionsList({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
+        this.transactionsList = data.data.data;
+        this.getTransactionsList();
+      }
+      if (this.transferTotal > total) {
+        let transferData = await getTransferList({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
+        this.transferList = transferData.data.data;
+        this.getTransferList();
+      }
+       if (this.internalTotal > total) {
+        let internalData= await getHistoryInternal({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
+        this.internalList = internalData.data.data;
+        this.getInternalList();
+      }
+      let itemsList = this.transferList.concat(this.transactionsList);
+      let historyList = itemsList.concat( this.internalList);
+      this.historyList = this.historyList.concat(historyList);
+      // console.log('historyList', this.historyList);
+      this.getSortData();
+      this.isLoading = false;
+    },
     getSortData() {
+      console.log('historyList', this.historyList);
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
         };
       }
-      this.historyList = this.historyList.sort(sortArr('timeStamp'));
+      this.historyList = this.historyList.sort(sortArr('timestamp'));
       let tempArr = [];
       for (let i = 0; i < this.historyList.length; i++) {
         let item = this.historyList[i];
@@ -416,16 +575,17 @@ export default {
         }
       }
       this.getSortData();
-       var _this = this;
-        let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-        if(this.typeFilter){
-          Object.assign(obj, { type: this.typeFilter });
-        }else{
-          Object.assign(obj, { type: 'all' });
-        }
+      var _this = this;
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      if (this.typeFilter) {
+        Object.assign(obj, { type: this.typeFilter });
+      } else {
+        Object.assign(obj, { type: 'all' });
+      }
       _this.$router.push({
         query: obj
       });
+      console.log(this.tokenFilter, this.typeFilter);
     },
     changeStateToken() {
       let startDate = Date.parse(this.startDate);
@@ -457,12 +617,12 @@ export default {
       }
       this.getSortData();
       var _this = this;
-       let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
-        if(this.tokenFilter){
-      Object.assign(obj, { token: this.tokenFilter });
-        }else{
-          Object.assign(obj, { token: 'all' });
-        }
+      let obj = JSON.parse(JSON.stringify(_this.$router.currentRoute.query));
+      if (this.tokenFilter) {
+        Object.assign(obj, { token: this.tokenFilter });
+      } else {
+        Object.assign(obj, { token: 'all' });
+      }
       _this.$router.push({
         query: obj
       });
@@ -542,6 +702,16 @@ export default {
   .price {
     font-size: 20px;
     font-weight: bold;
+  }
+}
+.more-btn {
+  text-align: center;
+  margin: 20px 0;
+  .load-more {
+    background-color: #6979f8 !important;
+    padding: 12px 20px;
+    color: #fff;
+    text-transform: initial !important;
   }
 }
 .token-symbol {

@@ -51,6 +51,15 @@ export const getValidatorMinedInfo = (params) => http.get('https://gateway.rei.n
 export const getHistoryData = (params) => http(`https://scan.rei.network/api`,{
   params
 });
+export const getHistoryTransactions = (params) => http(`https://api-explorer.rei.network/api/v1/rei/transactions`,{
+  params
+});
+export const getHistoryTransfer = (params) => http(`https://api-explorer.rei.network/api/v1/rei/token-transfer`,{
+  params
+});
+export const getHistoryInternal = (params) => http(`https://api-explorer.rei.network/api/v1/rei/intertxlist`,{
+  params
+});
 export const getTokenHolder = (params) => http(`https://gateway.rei.network/api/rei/holder`,{
   params
 });

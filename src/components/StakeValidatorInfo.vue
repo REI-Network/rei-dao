@@ -496,6 +496,7 @@ export default {
       this.getValidatorInfo();
       let minerRewards = await getMinerRewards({ validatorAddr: this.validatorAddress });
       let data = minerRewards.data.data;
+      console.log('data.allReward',data.allReward)
       this.allRewards = web3.utils.fromWei(web3.utils.toBN(data.allReward));
     },
     async getValidatorInfo() {
