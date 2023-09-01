@@ -91,7 +91,7 @@
           </v-col>
         </v-row>
       </v-card>
-      <div class="more-btn">
+      <div class="more-btn" v-if="data != 1">
         <v-btn @click="loadingMore" depressed rounded class="load-more" :loading="isLoading">load more></v-btn>
       </div>
     </div>
@@ -154,7 +154,7 @@
 import Web3 from 'web3';
 import { mapGetters } from 'vuex';
 import filters from '../filters';
-import { getHistoryData, getHistoryTransactions, getHistoryTransfer, getHistoryInternal} from '../service/CommonService';
+import { getHistoryData, getHistoryTransactions, getHistoryTransfer, getHistoryInternal } from '../service/CommonService';
 import util from '../utils/util';
 import { getAddressTag } from '../service/CommonService';
 import find from 'lodash/find';
@@ -195,11 +195,12 @@ export default {
     sortDescVote: true,
     transactionsList: [],
     dialog: false,
+    data: 0,
     offset: 0,
     limit: 20,
     transferTotal: 0,
     transactionsTotal: 0,
-    internalTotal:0,
+    internalTotal: 0,
     isLoading: false,
     historyList: [],
     itemsList: [],
@@ -275,7 +276,7 @@ export default {
       this.getTransferList();
       this.getTransactionsData();
       this.skeletonLoading = false;
-      console.log('transferList', this.transferList);
+      // console.log('transferList', this.transferList);
     },
     getTransferList() {
       this.transferList = this.transferList.map((item) => {
@@ -449,11 +450,11 @@ export default {
       this.internalTotal = data.data.total;
       this.getInternalList();
       this.historyList = this.itemsList.concat(this.internalList);
-      this.getSortData()
+      this.getSortData();
       this.totalList = this.historyList;
     },
     getInternalList() {
-       this.internalList = this.internalList.map((item) => {
+      this.internalList = this.internalList.map((item) => {
         let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
         let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
         let type = '';
@@ -492,7 +493,8 @@ export default {
     async loadingMore() {
       this.isLoading = true;
       this.offset++;
-      this.transferList = [], this.transactionsList = [];this.internalList = []
+      (this.transferList = []), (this.transactionsList = []);
+      this.internalList = [];
       let total = this.offset * this.limit;
       if (this.transactionsTotal > total) {
         let data = await getTransactionsList({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
@@ -504,20 +506,23 @@ export default {
         this.transferList = transferData.data.data;
         this.getTransferList();
       }
-       if (this.internalTotal > total) {
-        let internalData= await getHistoryInternal({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
+      if (this.internalTotal > total) {
+        let internalData = await getHistoryInternal({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
         this.internalList = internalData.data.data;
         this.getInternalList();
       }
       let itemsList = this.transferList.concat(this.transactionsList);
-      let historyList = itemsList.concat( this.internalList);
+      let historyList = itemsList.concat(this.internalList);
       this.historyList = this.historyList.concat(historyList);
       // console.log('historyList', this.historyList);
       this.getSortData();
       this.isLoading = false;
     },
     getSortData() {
-      console.log('historyList', this.historyList);
+      let total = (this.offset + 1) * this.limit;
+      if (this.transactionsTotal < total && this.transferTotal < total && this.internalTotal < total) {
+        this.data = 1;
+      }
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];

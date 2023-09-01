@@ -214,7 +214,7 @@ import abiERC20 from '../abis/abiERC20';
 import abiBadgesNFT from '../abis/abiBadgesNFT';
 import abiCommissionShare from '../abis/abiCommissionShare';
 import abiERC721 from '../abis/abiERC721';
-import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getNftHolder } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getAssetTokenHolder,getNftHolder } from '../service/CommonService';
 import find from 'lodash/find';
 
 export default {
@@ -637,14 +637,9 @@ export default {
       let countList = [];
       for (let i = 0; i < this.list.length; i++) {
         let item = this.list[i];
-        let params = {
-          module: 'token',
-          action: 'getTokenHolders',
-          contractaddress: item.address,
-          offset: 1000,
-        };
-        let data = await getHistoryData(params);
-        let list = data.data.result;
+        let data = await getAssetTokenHolder({contract_addr: item.address});
+        let list = data.data.data;
+        // console.log('list',list)
         let _address = {
           address: item.address,
           data: list

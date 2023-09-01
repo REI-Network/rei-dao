@@ -165,7 +165,7 @@ import { mapGetters } from 'vuex';
 import filters from '../filters';
 import abiERC20 from '../abis/abiERC20';
 import abiCommissionShare from '../abis/abiCommissionShare';
-import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getHistoryData, getTokenTransfer } from '../service/CommonService';
+import { getPrice, postRpcRequest, getReiSatistic, getTokenHolder, getTokenTransfer, getAssetTokenHolder } from '../service/CommonService';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client/core';
 import find from 'lodash/find';
 import AddressTag from '../components/AddressTag';
@@ -613,17 +613,17 @@ export default {
           return b[attr] - a[attr];
         };
       }
-      let params = {
-        module: 'token',
-        action: 'getTokenHolders',
-        contractaddress: this.details.address,
-        offset: 1000
-      };
+      // let params = {
+      //   module: 'token',
+      //   action: 'getTokenHolders',
+      //   contractaddress: this.details.address,
+      //   offset: 1000
+      // };
       if (this.id == 'rei') {
         this.holderList = this.accountList;
       } else {
-        let data = await getHistoryData(params);
-        this.tokenList = data.data.result;
+        let data = await getAssetTokenHolder({contract_addr: this.details.address});
+        this.tokenList = data.data.data;
         this.holderList = this.tokenList;
         if (this.holderList.length > 0) {
           this.holderList = this.holderList.sort(sortArr('balance'));

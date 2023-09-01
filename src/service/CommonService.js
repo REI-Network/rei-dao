@@ -51,13 +51,16 @@ export const getValidatorMinedInfo = (params) => http.get('https://gateway.rei.n
 export const getHistoryData = (params) => http(`https://scan.rei.network/api`,{
   params
 });
-export const getHistoryTransactions = (params) => http(`https://api-explorer.rei.network/api/v1/rei/transactions`,{
+export const getHistoryTransactions = (params) => http(`${process.env.VUE_APP_EXPLORER_SERVER}api/v1/rei/transactions`,{
   params
 });
-export const getHistoryTransfer = (params) => http(`https://api-explorer.rei.network/api/v1/rei/token-transfer`,{
+export const getHistoryTransfer = (params) => http(`${process.env.VUE_APP_EXPLORER_SERVER}api/v1/rei/token-transfer`,{
   params
 });
-export const getHistoryInternal = (params) => http(`https://api-explorer.rei.network/api/v1/rei/intertxlist`,{
+export const getHistoryInternal = (params) => http(`${process.env.VUE_APP_EXPLORER_SERVER}api/v1/rei/intertxlist`,{
+  params
+});
+export const getAssetTokenHolder = (params) => http(`${process.env.VUE_APP_EXPLORER_SERVER}api/v1/rei/tokenholder`,{
   params
 });
 export const getTokenHolder = (params) => http(`https://gateway.rei.network/api/rei/holder`,{
