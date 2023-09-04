@@ -284,8 +284,13 @@ export default {
         let tokenDecimals = item.tokenInfo.tokenDecimals;
         let amount = item.amount / 10 ** tokenDecimals;
         let type = '';
-        let address = web3.utils.toChecksumAddress(this.connection.address);
-        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let address = '',from = '';
+        if(this.connection.address){
+          address = web3.utils.toChecksumAddress(this.connection.address);
+        }
+        if(item.from_address_hash){
+          from = web3.utils.toChecksumAddress(item.from_address_hash);
+        }
         let to_address, from_address;
         if (address == from) {
           type = 'Send';
@@ -328,82 +333,6 @@ export default {
       // console.log('internalList',this.internalList)
       this.historyData();
     },
-    async historyData() {
-      this.address = this.connection.address.toLowerCase();
-      let params = {
-        module: 'account',
-        action: 'txlist',
-        address: this.connection.address
-      };
-      let data = await getHistoryData(params);
-      this.transactionsList = data.data.result || [];
-      this.historyList = this.internalList.concat(this.transactionsList);
-      this.historyList = this.historyList.filter((item) => {
-        return item.value && item.value != 0;
-      });
-      this.historyList = this.historyList.map((item) => {
-        let name = '';
-        let type = '';
-        let symbol = '';
-        if (this.address == item.from.toLowerCase()) {
-          let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.to));
-          if (detail) {
-            name = detail.addressName;
-          }
-          type = 'Send';
-        } else {
-          let detail = find(this.detailsList, (items) => web3.utils.toChecksumAddress(items.address) == web3.utils.toChecksumAddress(item.from));
-          if (detail) {
-            name = detail.addressName;
-          }
-          type = 'Receive';
-        }
-        if (item.tokenSymbol) {
-          symbol = item.tokenSymbol;
-        } else {
-          symbol = 'REI';
-        }
-        let timestamp = item.timeStamp * 1000;
-        let date = util.dateFormat(timestamp, 'YYYY-MM-dd');
-        let gasUsed = web3.utils.fromWei(item.gasUsed, 'Gwei');
-        let gasPrice = item.gasPrice / 1e9;
-        let value = 0;
-        if (item.tokenSymbol) {
-          value = item.value / 10 ** item.tokenDecimal;
-        } else {
-          value = item.value / 1e18;
-        }
-        let hash = '';
-        if (item.hash) {
-          hash = item.hash;
-        } else {
-          hash = item.transactionHash;
-        }
-        return {
-          ...item,
-          date: date,
-          gasUsed: gasUsed,
-          gasPrice: gasPrice,
-          value: value,
-          addressName: name,
-          type: type,
-          symbol: symbol,
-          hash: hash
-        };
-      });
-      this.totalList = this.historyList;
-      this.getSortData();
-      let parameter = Object.keys(this.$route.query).length;
-      if (parameter > 0) {
-        this.typeFilter = this.$route.query.type;
-        this.tokenFilter = this.$route.query.token;
-        this.startDate = this.$route.query.startTime;
-        this.endDate = this.$route.query.endTime;
-      }
-      let addressTag = await getAddressTag();
-      this.detailsList = addressTag.data.data;
-      this.skeletonLoading = false;
-    },
     async getTransactionsData() {
       let data = await getHistoryTransactions({ user_addr: this.connection.address, offset: 0, limit: this.limit });
       this.transactionsList = data.data.data;
@@ -417,8 +346,13 @@ export default {
         let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
         let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
         let type = '';
-        let address = web3.utils.toChecksumAddress(this.connection.address);
-        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let address = '',from = '';
+        if(this.connection.address){
+          address = web3.utils.toChecksumAddress(this.connection.address);
+        }
+        if(item.from_address_hash){
+          from = web3.utils.toChecksumAddress(item.from_address_hash);
+        }
         let to_address, from_address;
         if (address == from) {
           type = 'Send';
@@ -458,8 +392,13 @@ export default {
         let date = util.dateFormat(item.timestamp, 'YYYY-MM-dd');
         let amount = web3.utils.fromWei(web3.utils.toBN(item.value));
         let type = '';
-        let address = web3.utils.toChecksumAddress(this.connection.address);
-        let from = web3.utils.toChecksumAddress(item.from_address_hash);
+        let address = '',from = '';
+        if(this.connection.address){
+          address = web3.utils.toChecksumAddress(this.connection.address);
+        }
+        if(item.from_address_hash){
+          from = web3.utils.toChecksumAddress(item.from_address_hash);
+        }
         let to_address, from_address;
         if (address == from) {
           type = 'Send';
@@ -493,8 +432,7 @@ export default {
     async loadingMore() {
       this.isLoading = true;
       this.offset++;
-      (this.transferList = []), (this.transactionsList = []);
-      this.internalList = [];
+      this.transferList = [], this.transactionsList = [],this.internalList = [];
       let total = this.offset * this.limit;
       if (this.transactionsTotal > total) {
         let data = await getTransactionsList({ user_addr: this.connection.address, offset: this.offset, limit: this.limit });
