@@ -766,7 +766,11 @@ export default {
       }
     },
     inDefaultList() {
-      return !this.defaultValidatorList.includes(web3.utils.toChecksumAddress(this.$route.params.address));
+      if(!this.$route.params.address){
+         return '';
+      } else {
+        return !this.defaultValidatorList.includes(web3?.utils?.toChecksumAddress(this.$route.params.address));
+      }
     },
     setCalculation() {
       this.calculationDialog = true;

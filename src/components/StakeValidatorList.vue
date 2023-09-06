@@ -516,23 +516,24 @@ export default {
         cache: new InMemoryCache()
       });
       const getStakeinfos = gql`
-         query stakeInfos {
-            stakeInfos(first:1000, where: { validator: "${this.$route.params.address}" }) {
+         query stakeInfoMores {
+            stakeInfoMores(first:1000, where: { validator: "${this.$route.params.address}" }) {
                 id
                 from
+                to
                 timestamp
                 validator
             }
         }
         `;
       const {
-        data: { stakeInfos }
+        data: { stakeInfoMores }
       } = await client.query({
         query: getStakeinfos,
         variables: {},
         fetchPolicy: 'cache-first'
       });
-      let delegatorList = stakeInfos;
+      let delegatorList = stakeInfoMores;
       if (delegatorList.length > 0) {
         let balanceOfShareMap = delegatorList.map((item) => {
           return this.getBalanceOfShare(item);
@@ -549,7 +550,7 @@ export default {
         var arr = [];
         for (let i = 0; i < delegatorList.length; i++) {
           let _addressName = '';
-          let _address = web3.utils.toChecksumAddress(delegatorList[i].from);
+          let _address = web3.utils.toChecksumAddress(delegatorList[i].to);
           if (addressTagMap[_address]) {
             _addressName = addressTagMap[_address].addressName;
           }
@@ -653,8 +654,8 @@ export default {
     },
     async getBalanceOfShare(item) {
       let balance = 0;
-      if (item.from) {
-        balance = await this.commissionShareInstance.methods.balanceOf(item.from).call({ from: this.connection.address });
+      if (item.to) {
+        balance = await this.commissionShareInstance.methods.balanceOf(item.to).call({ from: this.connection.address });
       }
       return {
         balance
