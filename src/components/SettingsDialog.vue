@@ -148,7 +148,6 @@ export default {
         'https://ipfs.rei.network',
         'https://4everland.io',
         'https://ipfs.io',
-        'https://ipfs-gateway.cloud',
         'https://dweb.link'
       ],
       gateway:'',
