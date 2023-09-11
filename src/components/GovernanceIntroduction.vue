@@ -22,7 +22,7 @@
                 <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
                 <v-img v-else src="../assets/images/organization-dark.png" width="50" />
               </div>
-              <div class="font-grey">What Is The On-Chain Parameter Governance?</div>
+              <a target="_blank" href="https://forum.rei.network/t/what-is-the-on-chain-parameter-governance/134">What is the on-chain parameter governance?</a>
             </v-row>
           </v-card>
         </v-col>
@@ -33,7 +33,7 @@
                 <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
                 <v-img v-else src="../assets/images/apply-dark.png" width="50" />
               </div>
-              <div class="font-grey">How to initiate on-chain parameter governance changes?</div>
+              <a target="_blank" href="https://forum.rei.network/t/how-to-initiate-on-chain-parameter-governance-changes/135">How to initiate on-chain parameter governance changes?</a>
             </v-row>
           </v-card>
         </v-col>
@@ -95,7 +95,7 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-card class="Introduction" style="margin-top: 40px">
+    <!-- <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">REI DAO Governance Committee</h2>
       <v-row>
         <v-col cols="12" sm="6">
@@ -136,7 +136,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-card>
+    </v-card> -->
     <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">Governance Process</h2>
       <v-row class="process">
@@ -527,6 +527,12 @@ a:hover {
   }
   .step-content {
     margin-top: 28px;
+    a{
+      color: #868e9e !important;
+    }
+    a:hover{
+      color:#6979f8 !important;
+    }
   }
   .v-list-item {
     padding: 0;
