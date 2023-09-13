@@ -514,8 +514,8 @@ export default {
         cache: new InMemoryCache()
       });
       const getStakeinfos = gql`
-         query stakeInfoMores {
-            stakeInfoMores(first:1000, where: { validator: "${this.$route.params.address}" }) {
+         query stakeInfos {
+            stakeInfos(first:1000, where: { validator: "${this.$route.params.address}" }) {
                 id
                 from
                 to
@@ -525,13 +525,13 @@ export default {
         }
         `;
       const {
-        data: { stakeInfoMores }
+        data: { stakeInfos }
       } = await client.query({
         query: getStakeinfos,
         variables: {},
         fetchPolicy: 'cache-first'
       });
-      let delegatorList = stakeInfoMores;
+      let delegatorList = stakeInfos;
       if (delegatorList.length > 0) {
         let balanceOfShareMap = delegatorList.map((item) => {
           return this.getBalanceOfShare(item);

@@ -389,7 +389,7 @@ export default {
       const myStakesInfo = gql`
             query stakeInfos {
             stakeInfos(where:{
-                from:"${this.connection.address}"
+                to:"${this.connection.address}"
             }){
                 id
                 from

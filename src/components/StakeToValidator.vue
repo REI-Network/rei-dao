@@ -1052,7 +1052,7 @@ export default {
 
       const getStakeinfos = gql`
          query stakeInfos {
-            stakeInfos(where: { from: "${this.connection.address}" }) {
+            stakeInfos(where: { to: "${this.connection.address}" }) {
                 id
                 from
                 timestamp
