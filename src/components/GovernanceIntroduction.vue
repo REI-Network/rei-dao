@@ -14,34 +14,6 @@
     </v-card>
     <v-card class="Introduction" style="margin: 40px 0">
       <h2 class="title">On-Chain Parameter Governance</h2>
-      <!-- <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>What Is The On-Chain Parameter Governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO On-Chain Parameterized Governance Allows Community Members To Change REI</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more" @click="stepClick1">
-                <div @click="stepClick1" class="more">More></div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col cols="12" sm="4">
-          <v-card :class="dark ? 'chip-dark parameter' : 'chip-light elevation-0 parameter'">
-            <v-row align="center">
-              <v-col cols="12" md="10">
-                <h4>How do community users initiate on-chain parameter governance?</h4>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="font-grey">REI DAO on-chain parameterized governance allows community members to change REI...</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-col>
-              <v-col cols="12" md="2" class="font-grey more"> More> </v-col>
-            </v-row>-->
       <v-row>
         <v-col cols="12" sm="6">
           <v-card class="step-content elevation-0 committee">
@@ -50,7 +22,7 @@
                 <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
                 <v-img v-else src="../assets/images/organization-dark.png" width="50" />
               </div>
-              <div class="font-grey">What Is The On-Chain Parameter Governance?</div>
+              <a target="_blank" href="https://forum.rei.network/t/what-is-the-on-chain-parameter-governance/134">What is the on-chain parameter governance?</a>
             </v-row>
           </v-card>
         </v-col>
@@ -61,7 +33,7 @@
                 <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
                 <v-img v-else src="../assets/images/apply-dark.png" width="50" />
               </div>
-              <div class="font-grey">How to initiate on-chain parameter governance changes?</div>
+              <a target="_blank" href="https://forum.rei.network/t/how-to-initiate-on-chain-parameter-governance-changes/135">How to initiate on-chain parameter governance changes?</a>
             </v-row>
           </v-card>
         </v-col>
@@ -88,7 +60,7 @@
                       {{ item.parameter }}
                     </span>
                   </v-tooltip>
-                  <v-tooltip right>
+                  <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
                         <v-icon size="14" style="margin-bottom: 16px">mdi-help-circle-outline</v-icon>
@@ -123,7 +95,7 @@
         </v-col>
       </v-row>
     </v-card>
-    <v-card class="Introduction" style="margin-top: 40px">
+    <!-- <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">REI DAO Governance Committee</h2>
       <v-row>
         <v-col cols="12" sm="6">
@@ -164,7 +136,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-card>
+    </v-card> -->
     <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">Governance Process</h2>
       <v-row class="process">
@@ -555,6 +527,12 @@ a:hover {
   }
   .step-content {
     margin-top: 28px;
+    a{
+      color: #868e9e !important;
+    }
+    a:hover{
+      color:#6979f8 !important;
+    }
   }
   .v-list-item {
     padding: 0;
@@ -581,7 +559,7 @@ a:hover {
   }
   .param-name {
     .overflow {
-      width: 100px;
+      // width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
