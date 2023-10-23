@@ -40,7 +40,7 @@
       </v-row>
       <v-row class="list-title" align="center" justify="space-between">
         <h2 class="title">On-Chain Parameter</h2>
-        <div class="font-grey">Participate in on-chain proposal governance ></div>
+        <!-- <div class="font-grey">Participate in on-chain proposal governance ></div> -->
       </v-row>
       <v-row justify="start" align="start">
         <v-col cols="12" sm="4" v-for="(item, index) in parameterList" :key="index">
