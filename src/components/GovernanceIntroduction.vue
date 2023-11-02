@@ -95,7 +95,7 @@
         </v-col>
       </v-row>
     </v-card>
-    <!-- <v-card class="Introduction" style="margin-top: 40px">
+    <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">REI DAO Governance Committee</h2>
       <v-row>
         <v-col cols="12" sm="6">
@@ -105,7 +105,7 @@
                 <v-img v-if="!dark" src="../assets/images/organization.png" width="50" />
                 <v-img v-else src="../assets/images/organization-dark.png" width="50" />
               </div>
-              <div class="font-grey">What is the REI DAO Governance Committee? ></div>
+              <a target="_blank" href="https://medium.com/gxchain-project/committee-of-governance-applications-now-open-an-opportunity-to-transform-rei-network-d46b46cc9ae1">Committee of Governance Applications Now Open!</a>
             </v-row>
           </v-card>
         </v-col>
@@ -116,12 +116,12 @@
                 <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
                 <v-img v-else src="../assets/images/apply-dark.png" width="50" />
               </div>
-              <div class="font-grey">Apply to join the REI DAO Governance Committee ></div>
+              <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeSHh8YwQnf27HLeAQ_GKT_mHnF3GNxaaXJY6Z0GOTBRlPx7Q/viewform">REI Network Committee registration</a>
             </v-row>
           </v-card>
         </v-col>
       </v-row>
-      <h2 class="members-title title">Governance Committee Members<span class="progress">Election in progress</span></h2>
+      <h2 class="members-title title">Governance Committee Members<span class="progress">In progress</span></h2>
       <v-row justify="space-between">
         <v-col align-self="center" v-for="n in 10" :key="n">
           <v-card class="step-content elevation-0 members">
@@ -136,7 +136,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-card> -->
+    </v-card>
     <v-card class="Introduction" style="margin-top: 40px">
       <h2 class="title">Governance Process</h2>
       <v-row class="process">
