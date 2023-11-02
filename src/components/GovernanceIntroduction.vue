@@ -116,7 +116,7 @@
                 <v-img v-if="!dark" src="../assets/images/apply.png" width="50" />
                 <v-img v-else src="../assets/images/apply-dark.png" width="50" />
               </div>
-              <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeSHh8YwQnf27HLeAQ_GKT_mHnF3GNxaaXJY6Z0GOTBRlPx7Q/viewform">REI Network Committee registration</a>
+              <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSeSHh8YwQnf27HLeAQ_GKT_mHnF3GNxaaXJY6Z0GOTBRlPx7Q/viewform">REI Network Committee registration></a>
             </v-row>
           </v-card>
         </v-col>
