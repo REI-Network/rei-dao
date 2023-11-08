@@ -603,7 +603,8 @@ export default {
       this.receiveBalance = 0;
       this.claimForm.amount = 0;
       const allowance = await this.commissionShareInstance.methods.allowance(this.connection.address, this.stakeManagerContract).call();
-      if (allowance != 0) {
+      let balance = await this.commissionShareInstance.methods.balanceOf(this.connection.address).call();
+      if (allowance != 0 && Number(allowance)> Number(balance)) {
         this.approved = true;
       } else {
         this.approved = false;
