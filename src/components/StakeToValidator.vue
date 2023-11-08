@@ -1188,7 +1188,9 @@ export default {
         commissionShare = new web3.eth.Contract(abiCommissionShare, item.commissionAddress);
       }
       const allowance = await commissionShare.methods.allowance(this.connection.address, this.stakeManagerContract).call();
-      if (allowance != 0) {
+      let balance = await commissionShare.methods.balanceOf(this.connection.address).call();
+
+      if (allowance != 0 && Number(allowance)> Number(balance)) {
         this.approved = true;
       } else {
         this.approved = false;
