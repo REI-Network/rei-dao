@@ -49,6 +49,12 @@ export default {
     return fmt;
   },
   numFormat(num){
+   
+    let flag = true;
+    if(num<0){
+      flag = false;
+    }
+    num = Math.abs(num);
     num=num.toString().split(".");  // 分隔小数点
     var arr=num[0].split("").reverse();  // 转换成字符数组并且倒序排列
     var res=[];
@@ -64,7 +70,7 @@ export default {
     }else{
       res=res.join("");
     }
-    return res;
+    return flag ? res:'-'+res;
 },
 
   accMult(arg1, arg2) {
