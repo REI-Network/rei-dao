@@ -77,14 +77,28 @@
                 <v-tooltip top v-if="index == 5 || index == 9">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn class="param-name" v-bind="attrs" v-on="on">
-                      <span class="overflow" style="width: 68px">{{ item.default }} </span>
+                      <span class="overflow" style="width: 68px">{{ item.default }}
+                        <v-skeleton-loader
+                          v-if="!item.default"
+                          height="20"
+                          width="50"
+                          type="text"
+                        ></v-skeleton-loader>
+                      </span>
                     </v-btn>
                   </template>
                   <span>
                     {{ item.default }}
                   </span>
                 </v-tooltip>
-                <div class="parameter-data item-default" v-else>{{ item.default }}</div>
+                <div class="parameter-data item-default" v-else>{{ item.default }}
+                  <v-skeleton-loader
+                    v-if="!item.default"
+                    height="20"
+                    width="50"
+                    type="text"
+                  ></v-skeleton-loader>
+                </div>
               </v-col>
               <!-- <v-col cols="12" align-self="start" md="3" style="padding: 0">
                 <div class="font-grey">Interval</div>
@@ -327,7 +341,11 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import abiConfig from '../abis/abiConfig';
 import filters from '../filters';
+
+const config_contract = process.env.VUE_APP_CONFIG_CONTRACT
+
 /* eslint-disable no-undef */
 export default {
   filters,
@@ -339,74 +357,74 @@ export default {
         {
           parameter: 'UnstakeDelay',
           description: 'The lock time required to withdraw the staked',
-          default: '7 days',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'WithdrawDelay',
           description: 'The lock time required to withdraw the staked to get free gas',
-          default: '3 days',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'CommissionRateInterval',
           description: 'Validator setting allocation ratio interval',
-          default: '1 day',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'FeePoolInterval',
           description: ' 	The interval for reward distribution by the gas pool',
-          default: '1 day',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'Forfeit',
           description: ' The amount of penalty required for the validator to come out of the jail',
-          default: '20000 REI',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'JailThreshold',
           description: 'The block loss threshold for being locked in the jail',
-          default: '	300 every 21,600 blocks',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'MaxValidatorsCount',
           description: 'Maximum number of validators',
-          default: '21',
+          default: '',
           interval: '6%~10%'
         },
 
         {
           parameter: 'MinValidatorsCount',
           description: 'Minimum number of validators',
-          default: '21',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'MinTotalLockedAmount',
           description: '	Total minimum staked',
-          default: '100 million',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'MinerReward',
           description: 'Miner rewards',
-          default: '0.951293759512937595 REI',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'DailyFee',
           description: 'The total amount of free gas per day',
-          default: '1400 REI',
+          default: '',
           interval: '6%~10%'
         },
         {
           parameter: 'MinerRewardFactor',
           description: 'Proportion of rewards for block producers',
-          default: '90%',
+          default: '',
           interval: '6%~10%'
         }
       ]
@@ -415,6 +433,7 @@ export default {
   watch: {},
   mounted() {
     this.windowWidth();
+    this.init();
   },
   computed: {
     ...mapGetters({
@@ -427,6 +446,41 @@ export default {
     ...mapActions({
       addTx: 'addTx'
     }),
+    async init() {
+        let contract = new web3.eth.Contract(abiConfig,config_contract);
+        let unstakeDelay = await contract.methods.unstakeDelay().call();
+        
+        let withdrawDelay = await contract.methods.withdrawDelay().call();
+        let setCommissionRateInterval = await contract.methods.setCommissionRateInterval().call();
+        let feePoolInterval = await contract.methods.feePoolInterval().call();
+        let forfeit = await contract.methods.forfeit().call();
+        let jailThreshold = await contract.methods.jailThreshold().call();
+        let maxValidatorsCount = await contract.methods.maxValidatorsCount().call();
+        let minValidatorsCount = await contract.methods.minValidatorsCount().call();
+        let minTotalLockedAmount = await contract.methods.minTotalLockedAmount().call();
+        let minerReward = await contract.methods.minerReward().call();
+        let dailyFee = await contract.methods.dailyFee().call();
+        let minerRewardFactor = await contract.methods.minerRewardFactor().call();
+
+        this.parameterList[0].default = unstakeDelay/86400 + ' Days';
+        this.parameterList[1].default = withdrawDelay/86400 + ' Days';
+        this.parameterList[2].default = setCommissionRateInterval/86400 +' Days';
+        this.parameterList[3].default = feePoolInterval/86400 +' Days';
+        this.parameterList[4].default = forfeit/1e18 +' REI';
+        this.parameterList[5].default = jailThreshold +' every 21,600 blocks';
+        this.parameterList[6].default = maxValidatorsCount;
+        this.parameterList[7].default = minValidatorsCount;
+        this.parameterList[8].default = minTotalLockedAmount/1e24 +' million';
+        this.parameterList[9].default = minerReward/1e18 +' REI';
+        this.parameterList[10].default = dailyFee/1e18 +' REI';
+        this.parameterList[11].default = minerRewardFactor +' %';
+        
+        
+
+
+
+        console.log('unstakeDelay',unstakeDelay,withdrawDelay,setCommissionRateInterval,feePoolInterval,forfeit,jailThreshold,maxValidatorsCount,minValidatorsCount,minTotalLockedAmount,minerReward,dailyFee,minerRewardFactor);
+    },
     stepClick1() {
       this.stepDialog1 = true;
     },
