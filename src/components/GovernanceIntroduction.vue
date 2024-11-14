@@ -448,8 +448,8 @@ export default {
     }),
     async init() {
         let contract = new web3.eth.Contract(abiConfig,config_contract);
+        // get parameter from contract
         let unstakeDelay = await contract.methods.unstakeDelay().call();
-        
         let withdrawDelay = await contract.methods.withdrawDelay().call();
         let setCommissionRateInterval = await contract.methods.setCommissionRateInterval().call();
         let feePoolInterval = await contract.methods.feePoolInterval().call();
@@ -461,7 +461,7 @@ export default {
         let minerReward = await contract.methods.minerReward().call();
         let dailyFee = await contract.methods.dailyFee().call();
         let minerRewardFactor = await contract.methods.minerRewardFactor().call();
-
+        // set and format parameter to parameterList
         this.parameterList[0].default = unstakeDelay/86400 + ' Days';
         this.parameterList[1].default = withdrawDelay/86400 + ' Days';
         this.parameterList[2].default = setCommissionRateInterval/86400 +' Days';
