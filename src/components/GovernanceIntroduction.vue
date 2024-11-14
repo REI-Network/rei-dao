@@ -474,12 +474,6 @@ export default {
         this.parameterList[9].default = minerReward/1e18 +' REI';
         this.parameterList[10].default = dailyFee/1e18 +' REI';
         this.parameterList[11].default = minerRewardFactor +' %';
-        
-        
-
-
-
-        console.log('unstakeDelay',unstakeDelay,withdrawDelay,setCommissionRateInterval,feePoolInterval,forfeit,jailThreshold,maxValidatorsCount,minValidatorsCount,minTotalLockedAmount,minerReward,dailyFee,minerRewardFactor);
     },
     stepClick1() {
       this.stepDialog1 = true;
