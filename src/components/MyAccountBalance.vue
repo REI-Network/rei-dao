@@ -392,6 +392,7 @@ export default {
         if(unStakeInfos.length>0){
             let total = 0;
             for(let i = 0;i < unStakeInfos.length;i++){
+                if(unStakeInfos[i].state == true)continue;
                 total = web3.utils.toBN(total).add(web3.utils.toBN(unStakeInfos[i].values))
             }
             this.myTotalUnStake = web3.utils.fromWei(total);
