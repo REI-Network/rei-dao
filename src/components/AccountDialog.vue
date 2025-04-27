@@ -6,8 +6,33 @@
         <v-icon small class="btn-icon">mdi-resistor</v-icon>
         {{$t('msg.neterror')}}
       </v-btn>
-      <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded @click="connect('metamask')">
-        {{ $t('account.unlock') }}
+      <v-btn v-if="!connection.address" depressed class="grey" :class="dark ? 'darken-2' : 'lighten-2'" rounded>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              depressed
+              class="grey"
+              :class="dark ? 'darken-2' : 'lighten-2'"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ $t('account.unlock') }}
+              <v-icon right>mdi-menu-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
+              @click="connect(item.key)"
+            >
+              <v-list-item-icon>
+                <v-img :src="item.img" width="20" height="20" />
+              </v-list-item-icon>
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-btn>
       <div class="account-balance" v-if="connection.address">
         <span class="amount">
@@ -101,11 +126,13 @@
 /* eslint-disable no-undef */
 import Web3 from 'web3';
 import { mapGetters, mapActions } from 'vuex';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import { getAssetInfo } from '../service/CommonService'
 import filters from '../filters';
 import Jazzicon from 'vue-jazzicon';
 import * as txStatusTask from '../tasks/txStatusTask';
+
+import SignClient from "@walletconnect/sign-client";
+import { WalletConnectModal } from "@walletconnect/modal";
 
 const LAST_CONNECTION = 'LAST_CONNECTION';
 const NETWORKS = {
@@ -156,7 +183,8 @@ export default {
           img: require('../assets/images/walletconnect.svg'),
           text: 'WalletConnect'
         }
-      ]
+      ],
+      walletInfo: null
     };
   },
   mounted() {
@@ -221,7 +249,8 @@ export default {
           connected = await this.connectMetaMask();
           break;
         case 'walletconnect':
-          connected = await this.connectWalletConnect();
+          this.walletInfo = await this.connectWalletConnect();
+          connected = this.walletInfo.account? true : false;
           break;
         default:
           console.warn('Unknow connection');
@@ -266,18 +295,163 @@ export default {
     },
     async connectWalletConnect() {
       try {
-        //  Create WalletConnect Provider
-        const provider = new WalletConnectProvider({
-          infuraId: '939c76fc756341f389051729d8a2f13a' // Required
+        const walletConnectModal = new WalletConnectModal({
+          projectId: "32edd8479445f5ebfac9d8af02cd0695",
+          standaloneChains: ["eip155:47805"],
+          themeVariables: {
+            "--wcm-background-color": "#735EA1",
+            "--wcm-z-index": "1000",
+          },
         });
-        //  Enable session (triggers QR Code modal)
-        await provider.enable();
-        //  Create Web3
-        window.web3 = new Web3(provider);
-        return true;
+
+        const provider = await SignClient.init({
+          projectId: "32edd8479445f5ebfac9d8af02cd0695",
+          metadata: {
+            name: "REI Network Dao",
+            description: "REI Network Dao",
+            url: "https://dao.rei.network/",
+            icons: ["https://static.rei.network/imgs/rei.svg"],
+          },
+        });
+
+        // 创建新的连接请求
+        const { uri, approval } = await provider.connect({
+          requiredNamespaces: {
+            eip155: {
+              methods: [
+                "eth_sendTransaction",
+                "eth_signTransaction",
+                "eth_sign",
+                "personal_sign",
+                "eth_signTypedData",
+                "eth_getBalance",
+                "eth_blockNumber",
+                "eth_chainId",
+                "eth_accounts",
+                "eth_requestAccounts",
+                "eth_call",
+                "eth_estimateGas",
+                "eth_gasPrice",
+                "eth_getTransactionCount",
+                "eth_getTransactionReceipt",
+                "eth_getBlockByNumber"
+              ],
+              chains: ["eip155:47805"],
+              events: ["chainChanged", "accountsChanged"],
+              rpcMap: {
+                "47805": "https://rpc.rei.network"
+              }
+            }
+          },
+          optionalNamespaces: {
+            eip155: {
+              methods: [
+                "eth_sendTransaction",
+                "eth_signTransaction",
+                "eth_sign",
+                "personal_sign",
+                "eth_signTypedData",
+                "eth_getBalance",
+                "eth_blockNumber",
+                "eth_chainId",
+                "eth_accounts",
+                "eth_requestAccounts",
+                "eth_call",
+                "eth_estimateGas",
+                "eth_gasPrice",
+                "eth_getTransactionCount",
+                "eth_getTransactionReceipt",
+                "eth_getBlockByNumber"
+              ],
+              chains: ["eip155:47805"],
+              events: ["chainChanged", "accountsChanged"],
+              rpcMap: {
+                "47805": "https://rpc.rei.network"
+              }
+            }
+          }
+        });
+
+        if (uri) {
+          walletConnectModal.openModal({ uri });
+          
+          // 等待用户批准连接
+          const session = await approval();
+          walletConnectModal.closeModal();
+          
+          if (session) {
+            // 获取账户信息
+            const accounts = Object.values(session.namespaces)
+              .map(namespace => namespace.accounts)
+              .flat()
+              .map(account => account.split(':')[2]);
+
+            console.log('accounts', accounts);
+
+            if (accounts.length > 0) {
+              // 创建 EIP-1193 提供者
+              const eip1193Provider = {
+                request: async ({ method, params }) => {
+                  // 检查方法是否在允许列表中
+                  const allowedMethods = [
+                    "eth_sendTransaction",
+                    "eth_signTransaction",
+                    "eth_sign",
+                    "personal_sign",
+                    "eth_signTypedData",
+                    "eth_getBalance",
+                    "eth_blockNumber",
+                    "eth_chainId",
+                    "eth_accounts",
+                    "eth_requestAccounts",
+                    "eth_call",
+                    "eth_estimateGas",
+                    "eth_gasPrice",
+                    "eth_getTransactionCount",
+                    "eth_getTransactionReceipt",
+                    "eth_getBlockByNumber"
+                  ];
+
+                  if (!allowedMethods.includes(method)) {
+                    throw new Error(`Method ${method} is not allowed`);
+                  }
+
+                  // 请求账户访问权限
+                  if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
+                    await provider.request({
+                      topic: session.topic,
+                      chainId: "eip155:47805",
+                      request: {
+                        method: 'eth_requestAccounts',
+                        params: []
+                      }
+                    });
+                  }
+
+                  return provider.request({ 
+                    topic: session.topic,
+                    chainId: "eip155:47805",
+                    request: { method, params } 
+                  });
+                },
+                on: (event, callback) => {
+                  provider.on(event, callback);
+                },
+                removeListener: (event, callback) => {
+                  provider.removeListener(event, callback);
+                }
+              };
+
+              window.web3 = new Web3(eip1193Provider);
+              return { session, account: accounts[0], provider: eip1193Provider };
+            }
+          }
+        }
+        
+        return false;
       } catch (ex) {
-        console.error(ex);
-        this.$dialog.notify.error(`Failed to connect to WalletConnect:${ex.message}`);
+        console.error('WalletConnect error:', ex);
+        this.$dialog.notify.error(`Failed to connect to WalletConnect: ${ex.message}`);
         return false;
       }
     },
@@ -311,56 +485,80 @@ export default {
         })
     },
     async loadAccount(key) {
-      let accounts = await web3.eth.getAccounts();
-      if (accounts.length > 0) {
-        let connection = { ...this.connection, loading: true, address: accounts[0] };
-        this.setConnection({
-          connection
-        });
-        let balance = await web3.eth.getBalance(accounts[0]);
-        let chainId = await web3.eth.getChainId();
-        localStorage.setItem(LAST_CONNECTION, key);
-        connection = {
-          address: accounts[0],
-          balance: web3.utils.fromWei(web3.utils.toBN(balance)),
-          chainId,
-          network: NETWORKS[chainId] || 'unknown',
-          walletName: key,
-          loading: false
-        };
-        this.setConnection({
-          connection
-        });
-        this.getApiUrl();
-        this.loadAsset();
-        txStatusTask.start((tx, success) => {
-          if (success) {
-            this.$dialog.notify.success(this.$t(`txs.${tx.type}`, tx.data), {
-              position: 'top-right',
-              timeout: 5000
+      try {
+        let accounts;
+        if (key === 'walletconnect') {
+          const result = this.walletInfo;
+          if (!result) return;
+          accounts = [result.account];
+          // 设置 web3 提供者
+          window.web3 = new Web3(result.provider);
+          console.log('accounts', accounts);
+        } else {
+          accounts = await web3.eth.getAccounts();
+        }
+
+        if (accounts.length > 0) {
+          let connection = { ...this.connection, loading: true, address: accounts[0] };
+          this.setConnection({ connection });
+
+          // 设置默认链 ID
+          const chainId = 47805;
+          connection = {
+            address: accounts[0],
+            balance: "0", // 初始化为 0，稍后更新
+            chainId,
+            network: NETWORKS[chainId] || 'unknown',
+            walletName: key,
+            loading: false
+          };
+          
+          this.setConnection({ connection });
+          this.getApiUrl();
+          this.loadAsset();
+
+          // 获取余额
+          try {
+            const balance = await web3.eth.getBalance(accounts[0]);
+            connection.balance = web3.utils.fromWei(web3.utils.toBN(balance));
+            this.setConnection({ connection });
+          } catch (error) {
+            console.error('Error getting balance:', error);
+          }
+          
+          txStatusTask.start((tx, success) => {
+            if (success) {
+              this.$dialog.notify.success(this.$t(`txs.${tx.type}`, tx.data), {
+                position: 'top-right',
+                timeout: 5000
+              });
+              this.setFinishedTxs({finishedTxs:tx});
+            } else {
+              this.$dialog.notify.error(this.$t(`txs.${tx.type}`, tx.data), {
+                position: 'top-right',
+                timeout: 5000
+              });
+            }
+          });
+
+          if (web3.currentProvider && web3.currentProvider.on) {
+            web3.currentProvider.on('accountsChanged', () => {
+              window.location.reload();
             });
-            this.setFinishedTxs({finishedTxs:tx})
-          } else {
-            this.$dialog.notify.error(this.$t(`txs.${tx.type}`, tx.data), {
-              position: 'top-right',
-              timeout: 5000
+            web3.currentProvider.on('chainChanged', () => {
+              window.location.reload();
+            });
+            web3.currentProvider.on('message', (payload) => {
+              console.log(payload, arguments);
+            });
+            web3.currentProvider.on('disconnect', (code, reason) => {
+              console.log(`Ethereum Provider connection closed: ${reason}. Code: ${code}`);
             });
           }
-        });
-        web3.currentProvider.on('accountsChanged', () => {
-          // console.log(accounts);
-          window.location.reload();
-        });
-        web3.currentProvider.on('chainChanged', () => {
-          // console.log(chainId);
-          window.location.reload();
-        });
-        web3.currentProvider.on('message', (payload) => {
-          console.log(payload, arguments);
-        });
-        web3.currentProvider.on('disconnect', (code, reason) => {
-          console.log(`Ethereum Provider connection closed: ${reason}. Code: ${code}`);
-        });
+        }
+      } catch (error) {
+        console.error('Error loading account:', error);
+        this.$dialog.notify.error(this.$t('notify.connect_failed') + ': ' + error.message);
       }
     },
     async addREI() {

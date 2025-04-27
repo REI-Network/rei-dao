@@ -1,7 +1,7 @@
 var path = require('path');
 process.env.VUE_APP_VERSION = require('./package.json').version;
 module.exports = {
-  transpileDependencies: ['vuetify'],
+  transpileDependencies: ['vuetify','@walletconnect'],
   pluginOptions: {
     i18n: {
       locale: 'en',
@@ -23,6 +23,21 @@ module.exports = {
         'webworkify-webpack': path.resolve(__dirname, 'src/polyfills/webworkify')
         // module: 'module-deps'
       }
+    },
+    module: {
+      rules: [
+        {
+          test: /\.m?js$/,
+          include: /node_modules\/@walletconnect/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-transform-numeric-separator']
+            }
+          }
+        }
+      ]
     }
   }
 };
