@@ -295,22 +295,23 @@ export default {
     },
     async connectWalletConnect() {
       try {
+        
+        const provider = await SignClient.init({
+          projectId: "32edd8479445f5ebfac9d8af02cd0695",
+          metadata: {
+            name: "REIDao",
+            description: "REI Network Dao",
+            url: "https://dao.rei.network/",
+            icons: ["https://static.rei.network/imgs/rei.png"],
+          },
+        });
+
         const walletConnectModal = new WalletConnectModal({
           projectId: "32edd8479445f5ebfac9d8af02cd0695",
           standaloneChains: ["eip155:47805"],
           themeVariables: {
             "--wcm-background-color": "#735EA1",
             "--wcm-z-index": "1000",
-          },
-        });
-
-        const provider = await SignClient.init({
-          projectId: "32edd8479445f5ebfac9d8af02cd0695",
-          metadata: {
-            name: "REI Network Dao",
-            description: "REI Network Dao",
-            url: "https://dao.rei.network/",
-            icons: ["https://static.rei.network/imgs/rei.svg"],
           },
         });
 
