@@ -519,10 +519,10 @@ export default {
       let minedInfoDay1 = await getValidatorMinedInfo({ miner: address, starttimestamp: startTimestampDay1 });
       let minedInfoDay7 = await getValidatorMinedInfo({ miner: address, starttimestamp: startTimestampDay7 });
 
-      this.minedInfo = minedInfo.data ? minedInfo.data[0] : {};
+      this.minedInfo = minedInfo?.data&&minedInfo.data.length>0 ? minedInfo?.data[0] : {};
 
-      this.minedInfo.minerMissRecordNumberDay1 = minedInfoDay1.data[0].minerMissRecordNumber;
-      this.minedInfo.minerMissRecordNumberDay7 = minedInfoDay7.data[0].minerMissRecordNumber;
+      this.minedInfo.minerMissRecordNumberDay1 = minedInfoDay1?.data.length>0 ? minedInfoDay1?.data[0]?.minerMissRecordNumber: 0;
+      this.minedInfo.minerMissRecordNumberDay7 = minedInfoDay7?.data.length>0 ? minedInfoDay7?.data[0]?.minerMissRecordNumber: 0;
 
       this.responseRate = this.calResponseRate(this.minedInfo);
       let validatorInfo = validatorDetails.data.data;
