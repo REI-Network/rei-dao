@@ -133,6 +133,11 @@ const locationData = [
     name: "Singapore", 
     value: [680.8583, 221.2011],
     address:"0x15bBF66d26B216DAEE83B482A8Db90AAAD2a9EAc"
+  },
+  { 
+    name: "Penang", 
+    value: [675.3582, 215.1088],
+    address:"0x6cb47b176f2b69ec88f9bdc83b7fff8d61c64409"
   }
 ];
 

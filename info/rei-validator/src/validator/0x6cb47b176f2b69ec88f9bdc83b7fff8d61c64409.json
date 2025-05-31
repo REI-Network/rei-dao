@@ -1,0 +1,13 @@
+{
+  "nodeName": "REI Horizon",
+  "nodeAddress": "0x6cb47b176f2b69ec88f9bdc83b7fff8d61c64409",
+  "logo": "bafkreialmxydygyy6s2eyifgsmvfm65e4lgpkxji6mbhpj5inl6dlw7abu",
+  "nodeDesc": "Run by a Southeast Asia community lead, REI Horizon aims to onboard developers and users across the region. With a focus on network reliability and cross-chain growth, the node supports REI’s expansion into emerging Web3 markets.",
+  "website": "",
+  "location": {
+    "country": "Malaysia",
+    "city": "Penang",
+    "longitude": "100.30475",
+    "latitude": "5.33814"
+  }
+}
