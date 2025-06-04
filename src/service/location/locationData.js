@@ -148,7 +148,13 @@ const locationData = [
     name: "Stuttgart", 
     value: [322.3582, 88.6078],
     address:"0xb6c52920a0ff0bbd57ca96a38f89fe6880b7eaa3"
+  },
+  { 
+    name: "Matrix REI", 
+    value: [777.3811, 105.5073],
+    address:"0xf32e744edf88e2e379873ac48b6949ed8c287844"
   }
+
 ];
 
 export default locationData;
