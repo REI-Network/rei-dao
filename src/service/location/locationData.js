@@ -143,6 +143,11 @@ const locationData = [
     name: "Dubai", 
     value: [522.3582, 153.5073],
     address:"0x77478e3abe9bb2d1b0a1c2591dacc19f51e8eef5"
+  },
+  { 
+    name: "Stuttgart", 
+    value: [322.3582, 88.6078],
+    address:"0xb6c52920a0ff0bbd57ca96a38f89fe6880b7eaa3"
   }
 ];
 
