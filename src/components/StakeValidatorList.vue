@@ -515,53 +515,203 @@ export default {
         uri: `${url}chainMonitorEvent`,
         cache: new InMemoryCache()
       });
-      const getStakeinfos = gql`
-         query stakeInfos {
-            stakeInfos(first:1000, where: { validator: "${this.$route.params.address}" }) {
-                id
-                from
-                to
-                timestamp
-                validator
-            }
-        }
-        `;
-      const {
-        data: { stakeInfos }
-      } = await client.query({
-        query: getStakeinfos,
-        variables: {},
-        fetchPolicy: 'cache-first'
-      });
-      let delegatorList = stakeInfos;
-      if (delegatorList.length > 0) {
-        let balanceOfShareMap = delegatorList.map((item) => {
-          return this.getBalanceOfShare(item);
-        });
-        let {
-          data: { data: addressTag }
-        } = await getAddressTag();
-        let addressTagMap = {};
-        for (let i = 0; i < addressTag.length; i++) {
-          let key = web3.utils.toChecksumAddress(addressTag[i].address);
-          addressTagMap[key] = addressTag[i];
-        }
-        let balanceOfShare = await Promise.all(balanceOfShareMap);
-        var arr = [];
-        for (let i = 0; i < delegatorList.length; i++) {
-          let _addressName = '';
-          let _address = web3.utils.toChecksumAddress(delegatorList[i].to);
-          if (addressTagMap[_address]) {
-            _addressName = addressTagMap[_address].addressName;
+      
+      // Enhanced pagination function to fetch all data
+      let totalDelegator = {};
+      let totalStakeinfoArr = [];
+      let stakeInfosQl = gql`
+        query stakeInfos($skip: Int, $validator: String) {
+          stakeInfos(skip: $skip, first: 1000, where: { validator: $validator }) {
+            id
+            from
+            to
+            timestamp
+            validator
           }
-          arr.push({
-            delegator: _address,
-            amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
-            addressName: _addressName
-          });
         }
-        this.delegatorList = arr;
+      `;
+      
+      let item = 0;
+      let maxRetries = 3; // Maximum retry attempts
+      
+      let getStakesInfo = async function(retryCount = 0) {
+        try {
+          console.log(`Fetching page ${item + 1} data...`);
+          
+          const { data: { stakeInfos } } = await client.query({
+            query: stakeInfosQl,
+            variables: { 
+              skip: item * 1000,
+              validator: this.$route.params.address
+            },
+            fetchPolicy: 'cache-first'
+          });
+          
+          if (stakeInfos && stakeInfos.length > 0) {
+             let _stakeInfos = stakeInfos;
+             if (_stakeInfos.length > 0) {
+               // Batch processing for balanceOfShare to prevent rate limiting
+               let batchSize = 100; // Initial batch size, adjustable based on network conditions
+               const delayBetweenBatches = 100; // Delay between batches in ms
+               const maxRetries = 3; // Maximum retry attempts per batch
+               
+               let balanceOfShare = [];
+               
+               // Split data into multiple batches
+               for (let i = 0; i < _stakeInfos.length; i += batchSize) {
+                 const batch = _stakeInfos.slice(i, i + batchSize);
+                 const batchNumber = Math.floor(i / batchSize) + 1;
+                 console.log(`Processing batch ${batchNumber}, ${batch.length} items`);
+                 
+                 let batchSuccess = false;
+                 let retryCount = 0;
+                 
+                 while (!batchSuccess && retryCount <= maxRetries) {
+                   try {
+                     // Create Promise array for current batch
+                     const batchPromises = batch.map((item1) => {
+                       return this.getBalanceOfShare(item1);
+                     });
+                     
+                     // Wait for current batch to complete
+                     const batchResults = await Promise.all(batchPromises);
+                     balanceOfShare = balanceOfShare.concat(batchResults);
+                     batchSuccess = true;
+                     
+                     console.log(`Batch ${batchNumber} processed successfully`);
+                     
+                   } catch (error) {
+                     retryCount++;
+                     console.error(`Batch ${batchNumber} processing failed (retry ${retryCount}/${maxRetries}):`, error);
+                     
+                     if (retryCount <= maxRetries) {
+                       // Wait longer before retry and reduce batch size
+                       const retryDelay = 1000 * retryCount;
+                       console.log(`Waiting ${retryDelay}ms before retry...`);
+                       await new Promise(resolve => setTimeout(resolve, retryDelay));
+                       
+                       // Reduce batch size if retrying
+                       if (retryCount > 1 && batchSize > 10) {
+                         batchSize = Math.max(10, Math.floor(batchSize * 0.7));
+                         console.log(`Adjusted batch size to: ${batchSize}`);
+                       }
+                     } else {
+                       // Reached maximum retry attempts, use default values
+                       console.error(`Batch ${batchNumber} reached maximum retry attempts, using default values`);
+                       const defaultResults = batch.map(() => ({ balance: '0' }));
+                       balanceOfShare = balanceOfShare.concat(defaultResults);
+                       batchSuccess = true;
+                     }
+                   }
+                 }
+                 
+                 // Add delay if not the last batch
+                 if (i + batchSize < _stakeInfos.length) {
+                   await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+                 }
+               }
+               
+               console.log('balanceOfShare fetch completed, total:', balanceOfShare.length);
+               
+               // Get address tags (only once to avoid duplicate requests)
+               let addressTagMap = {};
+               try {
+                 let {
+                   data: { data: addressTag }
+                 } = await getAddressTag();
+                 for (let i = 0; i < addressTag.length; i++) {
+                   let key = web3.utils.toChecksumAddress(addressTag[i].address);
+                   addressTagMap[key] = addressTag[i];
+                 }
+               } catch (error) {
+                 console.error('Failed to get address tags:', error);
+               }
+               
+               // Process data
+               var arr = [];
+               for (let i = 0; i < _stakeInfos.length; i++) {
+                 let _addressName = '';
+                 let _address = web3.utils.toChecksumAddress(_stakeInfos[i].to);
+                 if (addressTagMap[_address]) {
+                   _addressName = addressTagMap[_address].addressName;
+                 }
+                 arr.push({
+                   delegator: _address,
+                   amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+                   addressName: _addressName
+                 });
+               }
+               
+               totalStakeinfoArr = totalStakeinfoArr.concat(arr);
+             }
+
+            
+            console.log(`Page ${item + 1} fetched ${stakeInfos.length} items, total accumulated: ${totalStakeinfoArr.length}`);
+            
+            // If returned data equals requested amount, there might be more data
+            if (stakeInfos.length === 1000) {
+              item++;
+              // Add small delay to avoid too frequent requests
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              await getStakesInfo.call(this, 0); // Reset retry count
+            }
+          } else {
+            console.log('No more data available');
+          }
+        } catch (error) {
+          console.error(`Error fetching page ${item + 1}:`, error);
+          
+          if (retryCount < maxRetries) {
+            console.log(`Retry attempt ${retryCount + 1}...`);
+            // Wait longer before retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+            await getStakesInfo.call(this, retryCount + 1);
+          } else {
+            console.error('Reached maximum retry attempts, stopping data fetch');
+            throw error;
+          }
+        }
+      };
+      
+      try {
+        await getStakesInfo.call(this);
+        console.log(`Data fetch completed, total records: ${totalStakeinfoArr.length}`);
+      } catch (error) {
+        console.error('Data fetch failed:', error);
+        this.stakeListLoading = false;
+        return;
       }
+      console.log('totalStakeinfoArr', totalStakeinfoArr);
+      // let delegatorList = totalStakeinfoArr;
+      // if (delegatorList.length > 0) {
+      //   let balanceOfShareMap = delegatorList.map((item) => {
+      //     return this.getBalanceOfShare(item);
+      //   });
+      //   let {
+      //     data: { data: addressTag }
+      //   } = await getAddressTag();
+      //   let addressTagMap = {};
+      //   for (let i = 0; i < addressTag.length; i++) {
+      //     let key = web3.utils.toChecksumAddress(addressTag[i].address);
+      //     addressTagMap[key] = addressTag[i];
+      //   }
+      //   let balanceOfShare = await Promise.all(balanceOfShareMap);
+      //   var arr = [];
+      //   for (let i = 0; i < delegatorList.length; i++) {
+      //     let _addressName = '';
+      //     let _address = web3.utils.toChecksumAddress(delegatorList[i].to);
+      //     if (addressTagMap[_address]) {
+      //       _addressName = addressTagMap[_address].addressName;
+      //     }
+      //     arr.push({
+      //       delegator: _address,
+      //       amount: web3.utils.fromWei(web3.utils.toBN(balanceOfShare[i].balance)),
+      //       addressName: _addressName
+      //     });
+      //   }
+      //   this.delegatorList = arr;
+      // }
+      this.delegatorList = totalStakeinfoArr;
       function sortArr(attr) {
         return function (a, b) {
           return b[attr] - a[attr];
