@@ -111,7 +111,7 @@ export default {
             },
             itemGap: 24,
             icon: 'circle',
-            data: ['unique Address','total Transactions']
+            data: ['Unique Address','Total Transactions']
           },
           xAxis: {
             type: 'time',
@@ -178,7 +178,7 @@ export default {
           ],
           series: [
             {
-              name: 'total Transactions',
+              name: 'Total Transactions',
               data: [],
               type: 'bar',
               symbol: 'none',
@@ -188,7 +188,7 @@ export default {
               }
             },
             {
-              name: 'unique Address',
+              name: 'Unique Address',
               data: [],
               symbol: 'circle',
               type: 'line',
