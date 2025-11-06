@@ -78,7 +78,7 @@
                     </div> -->
           <div class="block">
             <div class="font-grey">24H Transaction</div>
-            <div class="node-number">{{ activityData.totalTransactions | asset(0) }}</div>
+            <div class="node-number">{{ activityData.totalTransactions | asset(0) }} <span class="font-grey">Txns</span></div>
           </div>
         </v-card>
       </v-col>
