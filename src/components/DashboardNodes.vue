@@ -76,6 +76,10 @@
                         <div class="font-grey">Pending Transactions</div>
                         <div class="node-number">48,443 <span class="font-grey">txns</span></div>
                     </div> -->
+          <div class="block">
+            <div class="font-grey">24H Transaction</div>
+            <div class="node-number">{{ activityData.totalTransactions | asset(0) }} <span class="font-grey">Txns</span></div>
+          </div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="3">
@@ -120,6 +124,12 @@
               <!-- <span class="font-green">+47</span> -->
             </div>
           </div>
+          <div class="block">
+            <div class="font-grey">24H Active Addresses</div>
+            <div class="node-number">
+              {{ activityData.uniqueAddressCount | asset(0) }}
+            </div>
+          </div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="3">
@@ -146,7 +156,7 @@ import util from '../utils/util';
 import * as echarts from 'echarts';
 import { mapGetters } from 'vuex';
 import { recoverMinerAddress } from '../service/RecoverMinerAddress';
-import { getReiSatistic, getValidatorList, getValidatorDetails } from '../service/CommonService';
+import { getReiSatistic, getValidatorList, getValidatorDetails, getActivityTotal } from '../service/CommonService';
 import { postRpcRequest } from '../service/CommonService';
 import locationData from '../service/location/locationData';
 import Address from '../components/Address';
@@ -170,7 +180,8 @@ export default {
       locationData: [],
       myChart: null,
       intervalNode: null,
-      forkedBlock: null
+      forkedBlock: null,
+      activityData: {}
     };
   },
   computed: {
@@ -194,6 +205,7 @@ export default {
     this.getRei();
     this.myCharts();
     this.getBlock();
+    this.getActivityData();
   },
   methods: {
     connect() {
@@ -445,23 +457,34 @@ export default {
       return res;
     },
     async getBlock() {
-      if (this.connection && this.connection.network){
-          if (this.connection.network == 'REI Testnet') {
-            this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET;
-          } else if (this.connection.network == 'REI Network') {
-            this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_MAINNET;
-          }
+      if (this.connection && this.connection.network) {
+        if (this.connection.network == 'REI Testnet') {
+          this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_TESTNET;
+        } else if (this.connection.network == 'REI Network') {
+          this.forkedBlock = process.env.VUE_APP_BLS_HARDFORK_HEIGHT_MAINNET;
+        }
       }
       let { data: resBlock } = await this.getBlockNumberInfo();
       let blockHeight = web3.utils.hexToNumber(resBlock.result.number);
       let block = resBlock.result;
 
-      let _miner = recoverMinerAddress(blockHeight, block.hash, block.extraData,this.forkedBlock);
+      let _miner = recoverMinerAddress(blockHeight, block.hash, block.extraData, this.forkedBlock);
       let miner = web3.utils.toChecksumAddress(_miner);
       return {
         blockHeight,
         miner
       };
+    },
+    async getActivityData() {
+      try {
+        const res = await getActivityTotal();
+        const body = res.data;  
+        if (body.success) {
+          this.activityData = body.data;
+        }
+      } catch (error) {
+        console.error('Error fetching activity data:', error);
+      }
     },
     async getRei() {
       let ReiSatistic = await getReiSatistic();

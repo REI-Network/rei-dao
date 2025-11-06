@@ -11,6 +11,11 @@
     </v-row>
     <v-row>
       <v-col>
+        <DashboardActivity></DashboardActivity>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <DashboardReward></DashboardReward>
       </v-col>
     </v-row>
@@ -39,6 +44,7 @@ import DashboardTrends from '../components/DashboardTrends';
 import DashboardPrice from '../components/DashboardPrice';
 import DashboardTokenFAQ from '../components/DashboardTokenFAQ';
 import DashboardNodes from '../components/DashboardNodes';
+import DashboardActivity from '../components/DashboardActivity';
 
 export default {
   components: {
@@ -46,6 +52,7 @@ export default {
     DashboardNodes,
     DashboardTrends,
     DashboardPrice,
+    DashboardActivity,
     DashboardTokenFAQ
   },
   data() {

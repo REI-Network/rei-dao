@@ -21,8 +21,14 @@ export const getAssetPrice = (apiurl,params) => http(`${apiurl}market/asset/char
 export const getAssetInfo = (apiurl, params) => http(`${apiurl}market/asset/info`,{
   params
 });
-
 export const getPrice = (params) => http('https://api-market-main.rei.network/market/asset/price',{
+  params
+});
+
+export const getActivity = (params) => http('https://stats.rei.network/api/stats/7days',{
+  params
+});
+export const getActivityTotal = (params) => http('https://stats.rei.network/api/stats/24h',{
   params
 });
 
