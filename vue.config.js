@@ -28,12 +28,26 @@ module.exports = {
       rules: [
         {
           test: /\.m?js$/,
-          include: /node_modules\/@walletconnect/,
+          include: [
+            /node_modules\/@walletconnect/,
+            /node_modules\/@msgpack/,
+            /node_modules\/graphql/
+          ],
           use: {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env'],
-              plugins: ['@babel/plugin-transform-numeric-separator']
+              presets: [
+                ['@babel/preset-env', {
+                  targets: {
+                    browsers: ['> 1%', 'last 2 versions', 'not dead']
+                  }
+                }]
+              ],
+              plugins: [
+                '@babel/plugin-transform-numeric-separator',
+                '@babel/plugin-transform-optional-chaining',
+                '@babel/plugin-transform-nullish-coalescing-operator'
+              ]
             }
           }
         }

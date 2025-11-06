@@ -9,8 +9,8 @@
   "scripts": {
     "serve": "npm run build:validator && npm run build:addressTag && vue-cli-service serve --mode development",
     "build": "npm run build:validator && npm run build:addressTag && vue-cli-service build --mode production",
-    "build:validator": "ts-node ./info/rei-validator/build/index.ts",
-    "build:addressTag": "ts-node ./info/rei-address-tag/build/index.ts",
+    "build:validator": "ts-node --project ./info/rei-validator/tsconfig.json ./info/rei-validator/build/index.ts",
+    "build:addressTag": "ts-node --project ./info/rei-address-tag/tsconfig.json ./info/rei-address-tag/build/index.ts",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.js'",
     "deploy": "npm run build && surge --project dist && vercel --prod",
@@ -49,8 +49,13 @@
     "web3": "^1.3.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
     "@babel/plugin-proposal-numeric-separator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
     "@babel/plugin-transform-numeric-separator": "^7.25.9",
+    "@babel/plugin-transform-optional-chaining": "^7.28.5",
+    "@types/minimatch": "^6.0.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "^4.5.6",

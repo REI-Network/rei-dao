@@ -39,8 +39,6 @@ getValidator()
 
 const data = new Uint8Array(Buffer.from(JSON.stringify(obj)));
 
-const dir = '../../../public/data/address/';
-
 const dist = path.resolve(__dirname, '../../../public/data/address')
 
 if (!fs.existsSync(dist)) {

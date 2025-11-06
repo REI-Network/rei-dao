@@ -24,8 +24,6 @@ const obj = {
 
 const data = new Uint8Array(Buffer.from(JSON.stringify(obj)));
 
-const dir = '../../../public/data/validator/';
-
 const dist = path.resolve(__dirname, '../../../public/data/validator')
 
 if (!fs.existsSync(dist)) {
