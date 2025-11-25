@@ -108,7 +108,8 @@
                     <div>
                     <div class="name-pri">
                         <div>{{ $t(`txs.${tx.type}`, tx.data) }}</div>
-                        <a class="text-body-2 text-decoration-none" :href="`https://scan.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+                        <a class="text-body-2 text-decoration-none" v-if="tx.data.to != 'REI Network'" :href="`https://scan.rei.network/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
+                        <a class="text-body-2 text-decoration-none" v-if="tx.data.to == 'REI Network'" :href="`https://bscscan.com/tx/${tx.txid}`" target="_blank"><v-icon small color="primary" class="mr-1">mdi-open-in-new</v-icon></a>
                     </div>
                     <div>{{ new Date(tx.timestamp).format('yyyy-MM-dd hh:mm:ss') }}</div>
                     </div>
@@ -262,6 +263,10 @@ export default {
     },
     async connectMetaMask() {
       if (window.ethereum) {
+        await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0xbabd' }],
+            });
         window.web3 = new Web3(window.ethereum);
         // await window.ethereum.enable();
         try {
@@ -295,7 +300,6 @@ export default {
     },
     async connectWalletConnect() {
       try {
-        
         const provider = await SignClient.init({
           projectId: "32edd8479445f5ebfac9d8af02cd0695",
           metadata: {
@@ -521,6 +525,7 @@ export default {
           // 获取余额
           try {
             const balance = await web3.eth.getBalance(accounts[0]);
+            console.log('balance',balance)
             connection.balance = web3.utils.fromWei(web3.utils.toBN(balance));
             this.setConnection({ connection });
           } catch (error) {
@@ -547,7 +552,7 @@ export default {
               window.location.reload();
             });
             web3.currentProvider.on('chainChanged', () => {
-              window.location.reload();
+              //window.location.reload();
             });
             web3.currentProvider.on('message', (payload) => {
               console.log(payload, arguments);

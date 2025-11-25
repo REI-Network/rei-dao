@@ -1,19 +1,20 @@
 <template>
   <v-container class="dashboard stake_background">
      <div class="header-title">
-      <h1>Bridges Asset Management</h1>
-      <div class="title-detailed">Easier Management of Bridge Assets on REI Network</div>
+      <h1>Bridge</h1>
+      
     </div>
-    <BridgeUser></BridgeUser>
+    <BridgeAsset></BridgeAsset>
+    
   </v-container>
 </template>
 
 <script>
-import BridgeUser from '../components/BridgeUser';
+import BridgeAsset from '../components/BridgeAsset';
 
 export default { 
   components:{
-   BridgeUser,
+   BridgeAsset,
   },
   data() {
     return {

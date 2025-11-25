@@ -48,7 +48,8 @@ export default {
     setMintCap: 'Set Mint Cap to {to}',
     issue: 'Issue a new contract {name}',
     unjail: 'Pay {amount}{symbol} for forfeit',
-    setBLSPublicKey:'Set BLS publicKey to {publicKey}'
+    setBLSPublicKey:'Set BLS publicKey to {publicKey}',
+    bridge: 'Bridge {amount}{symbol} to {to}'
   },
   stake: {
     node_list: 'Validator List',
