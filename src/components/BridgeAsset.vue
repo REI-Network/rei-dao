@@ -76,6 +76,9 @@
             <v-icon size="16" class="wallet-icon">mdi-wallet</v-icon>
             <span class="balance-text">{{ toBalance | asset(4) }}</span>
             <v-progress-circular size="18" width="2" v-if="loading" class="mr-1" indeterminate color="primary"></v-progress-circular>
+            <v-btn text x-small @click="handleAddToken" v-if="!alreadyAddedToken && toNetwork === 'BNB Chain'">
+              Add Token
+            </v-btn>
           </div>
         </div>
         <div class="token-selector">
@@ -141,7 +144,8 @@ export default {
       showFromTokenMenu: false,
       showToTokenMenu: false,
       bridgeLoading: false,
-      loading: false
+      loading: false,
+      alreadyAddedToken: localStorage.getItem('addToken') == 'true' ? true : false
     };
   },
   computed: {
@@ -154,6 +158,9 @@ export default {
     }),
     canBridge() {
       return parseFloat(this.fromAmount) > 0 ;
+    },
+    addTokened(){
+      return localStorage.getItem('addToken') === 'true';
     }
   },
   mounted() {
@@ -167,11 +174,11 @@ export default {
         if (this.fromNetwork === 'REI Network') {
           this.fromBalance = newBalance;
         }else {
-          const web3Bsc = this.getBscWeb3();
-        const contract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
-        console.log('connection.address',this.connection.address);
-        const balanceWei = await contract.methods.balanceOf(this.connection.address).call();
-          this.toBalance = balanceWei;
+        //   const web3Bsc = this.getBscWeb3();
+        // const contract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
+        // console.log('connection.address',this.connection.address);
+        // const balanceWei = await contract.methods.balanceOf(this.connection.address).call();
+        //   this.toBalance = balanceWei;
         }
       }
     },
@@ -185,7 +192,7 @@ export default {
           this.toBalance = '0';
         }
       }
-    }
+    },
   },
   methods: {
     ...mapActions({
@@ -264,14 +271,14 @@ export default {
               method: 'wallet_addEthereumChain',
               params: [{
                 chainId: this.bscChainId,
-                chainName: 'BSC Testnet',
+                chainName: 'BSC Smart Chain',
                 nativeCurrency: {
                   name: 'BNB',
                   symbol: 'BNB',
                   decimals: 18
                 },
                 rpcUrls: [this.bscProviderUrl],
-                blockExplorerUrls: ['https://testnet.bscscan.com']
+                blockExplorerUrls: ['https://bscscan.com']
               }],
             });
           } catch (addError) {
@@ -474,6 +481,30 @@ export default {
       return new Promise((resolve) => {
         setTimeout(resolve, timestamp);
       });
+    },
+    async handleAddToken() {
+      try {
+        await this.switchToBscNetwork();
+        await window.ethereum.request({
+              method: "wallet_watchAsset",
+              params: {
+                type: "ERC20",
+                options: {
+                  address: REI_Token_Address,
+                  symbol: "wREI",
+                  decimals: 18,
+                  image: require('../assets/images/rei.svg'),
+                },
+              },
+            }
+        ) 
+        localStorage.setItem('addToken', 'true');
+        this.alreadyAddedToken = true;
+        console.log('alreadyAddedToken',this.alreadyAddedToken);
+        } catch (error) {
+          console.error('Error adding token:', error);
+        }
+      
     },
   }
 };

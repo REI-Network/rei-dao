@@ -394,50 +394,91 @@ export default {
             console.log('accounts', accounts);
 
             if (accounts.length > 0) {
-              // 创建 EIP-1193 提供者
-              const eip1193Provider = {
-                request: async ({ method, params }) => {
-                  // 检查方法是否在允许列表中
-                  const allowedMethods = [
-                    "eth_sendTransaction",
-                    "eth_signTransaction",
-                    "eth_sign",
-                    "personal_sign",
-                    "eth_signTypedData",
-                    "eth_getBalance",
-                    "eth_blockNumber",
-                    "eth_chainId",
-                    "eth_accounts",
-                    "eth_requestAccounts",
-                    "eth_call",
-                    "eth_estimateGas",
-                    "eth_gasPrice",
-                    "eth_getTransactionCount",
-                    "eth_getTransactionReceipt",
-                    "eth_getBlockByNumber"
-                  ];
+              // 创建 RPC provider 用于只读方法
+              const rpcWeb3 = new Web3('https://rpc.rei.network');
+              
+              // 只读方法列表 - 直接通过 RPC 调用
+              const readOnlyMethods = [
+                "eth_getBalance",
+                "eth_blockNumber",
+                "eth_chainId",
+                "eth_call",
+                "eth_estimateGas",
+                "eth_gasPrice",
+                "eth_getTransactionCount",
+                "eth_getTransactionReceipt",
+                "eth_getBlockByNumber"
+              ];
+              
+              // 需要用户交互的方法 - 通过 WalletConnect 会话调用
+              const interactiveMethods = [
+                "eth_sendTransaction",
+                "eth_signTransaction",
+                "eth_sign",
+                "personal_sign",
+                "eth_signTypedData",
+                "wallet_switchEthereumChain"
+              ];
 
-                  if (!allowedMethods.includes(method)) {
-                    throw new Error(`Method ${method} is not allowed`);
-                  }
-
-                  // 请求账户访问权限
-                  if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
-                    await provider.request({
-                      topic: session.topic,
-                      chainId: "eip155:47805",
-                      request: {
-                        method: 'eth_requestAccounts',
-                        params: []
+              // 创建混合 provider：只读方法用 RPC，交互方法用 WalletConnect
+              const requestMethod = async ({ method, params }) => {
+                // 只读方法直接通过 RPC 调用
+                if (readOnlyMethods.includes(method)) {
+                  return new Promise((resolve, reject) => {
+                    rpcWeb3.currentProvider.send({
+                      jsonrpc: '2.0',
+                      method: method,
+                      params: params || [],
+                      id: Date.now()
+                    }, (error, result) => {
+                      if (error) {
+                        reject(error);
+                      } else if (result.error) {
+                        reject(new Error(result.error.message));
+                      } else {
+                        resolve(result.result);
                       }
                     });
-                  }
-
+                  });
+                }
+                
+                // 账户相关方法
+                if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
+                  return [accounts[0]];
+                }
+                
+                // 需要用户交互的方法通过 WalletConnect 会话调用
+                if (interactiveMethods.includes(method)) {
                   return provider.request({ 
                     topic: session.topic,
                     chainId: "eip155:47805",
                     request: { method, params } 
                   });
+                }
+                
+                throw new Error(`Method ${method} is not supported`);
+              };
+
+              const eip1193Provider = {
+                request: requestMethod,
+                send: (payload, callback) => {
+                  // Web3.js 的 send 方法支持回调或 Promise
+                  const method = payload.method;
+                  const params = payload.params || [];
+                  
+                  if (callback) {
+                    // 回调模式
+                    requestMethod({ method, params })
+                      .then(result => callback(null, { jsonrpc: '2.0', id: payload.id, result }))
+                      .catch(error => callback(error, null));
+                  } else {
+                    // Promise 模式
+                    return requestMethod({ method, params })
+                      .then(result => ({ jsonrpc: '2.0', id: payload.id, result }));
+                  }
+                },
+                sendAsync: (payload, callback) => {
+                  eip1193Provider.send(payload, callback);
                 },
                 on: (event, callback) => {
                   provider.on(event, callback);
@@ -492,19 +533,22 @@ export default {
     async loadAccount(key) {
       try {
         let accounts;
+        let provider = null;
         if (key === 'walletconnect') {
           const result = this.walletInfo;
           if (!result) return;
           accounts = [result.account];
           // 设置 web3 提供者
           window.web3 = new Web3(result.provider);
+          provider = new Web3(result.provider);
           console.log('accounts', accounts);
         } else {
           accounts = await web3.eth.getAccounts();
+          provider = new Web3(window.web3);
         }
 
         if (accounts.length > 0) {
-          let connection = { ...this.connection, loading: true, address: accounts[0] };
+          let connection = { ...this.connection, loading: true, address: accounts[0], provider: provider.currentProvider };
           this.setConnection({ connection });
 
           // 设置默认链 ID
@@ -515,7 +559,8 @@ export default {
             chainId,
             network: NETWORKS[chainId] || 'unknown',
             walletName: key,
-            loading: false
+            loading: false,
+            provider: provider.currentProvider
           };
           
           this.setConnection({ connection });
@@ -524,9 +569,10 @@ export default {
 
           // 获取余额
           try {
-            const balance = await web3.eth.getBalance(accounts[0]);
+            const web3Provider = new Web3(provider);
+            const balance = await web3Provider.eth.getBalance(accounts[0]);
             console.log('balance',balance)
-            connection.balance = web3.utils.fromWei(web3.utils.toBN(balance));
+            connection.balance = web3Provider.utils.fromWei(web3Provider.utils.toBN(balance));
             this.setConnection({ connection });
           } catch (error) {
             console.error('Error getting balance:', error);
@@ -549,6 +595,7 @@ export default {
 
           if (web3.currentProvider && web3.currentProvider.on) {
             web3.currentProvider.on('accountsChanged', () => {
+              console.log('accountsChanged');
               window.location.reload();
             });
             web3.currentProvider.on('chainChanged', () => {
@@ -687,3 +734,4 @@ export default {
     }
   }
 </style>
+

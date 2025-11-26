@@ -12,7 +12,8 @@ const state = {
     chainId: '',
     network: '',
     walletName: '',
-    balance: 0
+    balance: 0,
+    provider: null
   },
   txs: [],
   finishedTxs: [],
