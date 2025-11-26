@@ -34,7 +34,8 @@
             <span class="amount-value">
               <v-text-field
                 v-model="fromAmount"
-                placeholder="0.0"
+                placeholder="Minimum 1 REI"
+                min="1"
                 outlined
                 dense
                 hide-details
@@ -98,10 +99,12 @@
       class="bridge-button"
       block
       large
-      :disabled="!canBridge || bridgeLoading"
+      :disabled="!canBridge || bridgeLoading || fromAmount < 1"
       @click="handleBridge"
+      :loading="bridgeLoading"
     >
       {{ bridgeLoading ? 'Bridging...' : 'Bridge' }}
+      <v-progress-circular v-if="bridgeLoading" size="20" width="2" indeterminate color="white"></v-progress-circular>
     </v-btn>
   </v-card>
 </template>
@@ -131,7 +134,7 @@ export default {
       toTokenLogo: require('../assets/images/bnbchain.png'),
       fromToken: 'REI',
       toToken: 'REI',
-      fromAmount: '0.0',
+      fromAmount: '0',
       toAmount: '0.0',
       fromBalance: '0',
       toBalance: '0',
@@ -250,9 +253,9 @@ export default {
       const tempTokenLogo = this.fromTokenLogo;
       this.fromTokenLogo = this.toTokenLogo;
       this.toTokenLogo = tempTokenLogo;
-      this.fromAmount = '0.0';
+      this.fromAmount = '0';
       
-      this.toAmount = '0.0';
+      this.toAmount = '0';
     },
     async switchToBscNetwork() {
       if (!window.ethereum) {
