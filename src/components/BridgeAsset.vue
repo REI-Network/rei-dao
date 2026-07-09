@@ -1,10 +1,5 @@
 <template>
   <v-card class="bridge-card" rounded="lg">
-    <!-- <div class="bridge-header" >
-      <h2 class="bridge-title">Bridge</h2>
-      <v-icon class="settings-icon" size="20">mdi-dots-vertical</v-icon>
-    </div> -->
-
     <div class="bridge-content">
       <!-- From Section -->
       <div class="bridge-section from-section">
@@ -12,7 +7,7 @@
             <div class="from-section-header-left">
               <div class="section-label">From</div>
               <div class="network-info">
-                <img class="network-logo" :src="fromTokenLogo" width="24" height="24"  />
+                <img class="network-logo" :src="fromNetworkLogo" width="24" height="24"  />
                 <span class="network-name">{{ fromNetwork }}</span>
               </div>
             </div>
@@ -24,25 +19,38 @@
             </div>
         </div>
         <div class="token-selector">
-          <div class="token-display" @click="showFromTokenMenu = !showFromTokenMenu">
-            <img class="token-logo" src="../assets/images/rei.svg" width="48" height="48"  />
-            <span class="token-symbol">REI</span>
-            <!-- <v-icon size="16" class="dropdown-icon">mdi-chevron-down</v-icon> -->
+          <div class="token-display-wrap">
+            <div class="token-display" @click="showTokenMenu = !showTokenMenu">
+              <img class="token-logo" :src="selectedAssetLogo" width="48" height="48"  />
+              <span class="token-symbol">{{ selectedAsset }}</span>
+              <v-icon size="16" class="dropdown-icon">mdi-chevron-down</v-icon>
+            </div>
+            <div v-if="showTokenMenu" class="token-menu">
+              <div
+                v-for="asset in assets"
+                :key="asset.symbol"
+                class="token-menu-item"
+                :class="{ active: selectedAsset === asset.symbol }"
+                @click="selectAsset(asset.symbol)"
+              >
+                <img class="token-logo" :src="asset.logo" width="24" height="24" />
+                <span>{{ asset.symbol }}</span>
+              </div>
+            </div>
           </div>
           <div class="amount-display">
-            
             <span class="amount-value">
               <v-text-field
                 v-model="fromAmount"
-                placeholder="Minimum 1 REI"
-                min="1"
+                :placeholder="amountPlaceholder"
+                min="0"
                 outlined
                 dense
                 hide-details
                 class="amount-input"
               >
               <template v-slot:append>
-                <v-btn text x-small @click="setAll('fromAmount', 'fromBalance')">
+                <v-btn text x-small @click="setAll">
                   {{ $t('stake.max') }}
                 </v-btn>
               </template>
@@ -69,7 +77,7 @@
           <div class="from-section-header-left">
             <div class="section-label">To</div>
             <div class="network-info">
-              <img class="network-logo" :src="toTokenLogo" width="24" height="24"  />
+              <img class="network-logo" :src="toNetworkLogo" width="24" height="24"  />
               <span class="network-name">{{ toNetwork }}</span>
             </div>
           </div>
@@ -83,10 +91,9 @@
           </div>
         </div>
         <div class="token-selector">
-          <div class="token-display" @click="showToTokenMenu = !showToTokenMenu">
-            <img class="token-logo" src="../assets/images/rei.svg" width="48" height="48"  />
-            <span class="token-symbol">REI</span>
-            <!-- <v-icon size="16" class="dropdown-icon">mdi-chevron-down</v-icon> -->
+          <div class="token-display">
+            <img class="token-logo" :src="selectedAssetLogo" width="48" height="48"  />
+            <span class="token-symbol">{{ selectedAsset }}</span>
           </div>
           <span class="amount-value">{{ fromAmount }}</span>
         </div>
@@ -99,7 +106,7 @@
       class="bridge-button"
       block
       large
-      :disabled="!canBridge || bridgeLoading || fromAmount < 1"
+      :disabled="!canBridge || bridgeLoading"
       @click="handleBridge"
       :loading="bridgeLoading"
     >
@@ -113,15 +120,23 @@
 import { mapActions, mapGetters } from 'vuex';
 import Web3 from 'web3';
 
-//import batchAbi from '../abis/batch';
 import abiBscBridge from '../abis/abiBscBridge';
 import abiREIBridge from '../abis/abiREIBridge';
 import wrapReiAbi from '../abis/abiWrapRei';
 import filters from '../filters';
+
 const REI_Token_Address = process.env.VUE_APP_REI_BSCTOKEN_CONTRACT;
 const REI_Bridge_Address = process.env.VUE_APP_REI_BRIDGE_CONTRACT;
 const BSC_Bridge_Address = process.env.VUE_APP_BSC_BRIDGE_CONTRACT;
+const BSC_USDT_Address = process.env.VUE_APP_BSC_USDT_ADDRESS || '0x55d398326f99059fF775485246999027B3197955';
+const REI_USDT_Address = process.env.VUE_APP_REI_USDT_ADDRESS || '0x988a631Caf24E14Bb77EE0f5cA881e8B5dcfceC7';
+// REI USDT uses 6 decimals; BSC USDT (BEP20) uses 18 decimals
+const REI_USDT_DECIMALS = 6;
+const BSC_USDT_DECIMALS = 18;
 
+const REI_LOGO = require('../assets/images/rei.svg');
+const USDT_LOGO = require('../assets/images/usdt.svg');
+const BNB_LOGO = require('../assets/images/bnbchain.png');
 
 export default {
   filters,
@@ -130,10 +145,13 @@ export default {
     return {
       fromNetwork: 'REI Network',
       toNetwork: 'BNB Chain',
-      fromTokenLogo: require('../assets/images/rei.svg'),
-      toTokenLogo: require('../assets/images/bnbchain.png'),
-      fromToken: 'REI',
-      toToken: 'REI',
+      fromNetworkLogo: REI_LOGO,
+      toNetworkLogo: BNB_LOGO,
+      selectedAsset: 'REI',
+      assets: [
+        { symbol: 'REI', logo: REI_LOGO },
+        { symbol: 'USDT', logo: USDT_LOGO },
+      ],
       fromAmount: '0',
       toAmount: '0.0',
       fromBalance: '0',
@@ -144,11 +162,10 @@ export default {
       bscWeb3: null,
       reiWeb3: null,
       toAddress: '',
-      showFromTokenMenu: false,
-      showToTokenMenu: false,
+      showTokenMenu: false,
       bridgeLoading: false,
       loading: false,
-      alreadyAddedToken: localStorage.getItem('addToken') == 'true' ? true : false
+      alreadyAddedToken: false,
     };
   },
   computed: {
@@ -159,39 +176,41 @@ export default {
       apiUrl: 'apiUrl',
       dark: 'dark'
     }),
-    canBridge() {
-      return parseFloat(this.fromAmount) > 0 ;
+    selectedAssetLogo() {
+      return this.selectedAsset === 'USDT' ? USDT_LOGO : REI_LOGO;
     },
-    addTokened(){
-      return localStorage.getItem('addToken') === 'true';
-    }
+    amountPlaceholder() {
+      return this.selectedAsset === 'REI' ? 'Minimum 1 REI' : 'Enter USDT amount';
+    },
+    canBridge() {
+      const amount = parseFloat(this.fromAmount);
+      if (!(amount > 0)) return false;
+      if (this.selectedAsset === 'REI') return amount >= 1;
+      return true;
+    },
+    addTokenStorageKey() {
+      return this.selectedAsset === 'USDT' ? 'addToken_USDT' : 'addToken';
+    },
   },
   mounted() {
-   this.fromBalance = (this.connection && this.connection.balance) || '0';
-   this.switchToREINetwork();
-   //this.fetchBscBalance();
+    this.alreadyAddedToken = localStorage.getItem(this.addTokenStorageKey) === 'true';
+    this.switchToREINetwork().catch(() => {});
+    this.refreshBalances();
   },
   watch: {
     async 'connection.balance'(newBalance) {
-      if (typeof newBalance !== 'undefined') {
-        if (this.fromNetwork === 'REI Network') {
-          this.fromBalance = newBalance;
-        }else {
-        //   const web3Bsc = this.getBscWeb3();
-        // const contract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
-        // console.log('connection.address',this.connection.address);
-        // const balanceWei = await contract.methods.balanceOf(this.connection.address).call();
-        //   this.toBalance = balanceWei;
-        }
+      if (typeof newBalance === 'undefined') return;
+      if (this.selectedAsset === 'REI' && this.fromNetwork === 'REI Network') {
+        this.fromBalance = newBalance;
       }
     },
     'connection.address': {
       immediate: true,
       handler(newAddress) {
-        console.log('newAddress',newAddress);
         if (newAddress) {
-          this.fetchBscBalance();
+          this.refreshBalances();
         } else {
+          this.fromBalance = '0';
           this.toBalance = '0';
         }
       }
@@ -215,47 +234,174 @@ export default {
       }
       return this.reiWeb3;
     },
-    async setAll(){
+    getWeb3WithWallet() {
+      if (!window.ethereum) {
+        throw new Error('Please install MetaMask or other supported wallets');
+      }
+      return new Web3(window.ethereum);
+    },
+    async selectAsset(symbol) {
+      if (this.selectedAsset === symbol) {
+        this.showTokenMenu = false;
+        return;
+      }
+      this.selectedAsset = symbol;
+      this.showTokenMenu = false;
+      this.fromAmount = '0';
+      this.fromBalance = '0';
+      this.toBalance = '0';
+      this.alreadyAddedToken = localStorage.getItem(this.addTokenStorageKey) === 'true';
+      await this.refreshBalances();
+    },
+    async setAll() {
       this.fromAmount = this.fromBalance;
+    },
+    formatUnits(value, decimals) {
+      const bn = Web3.utils.toBN(value || '0');
+      const base = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+      const whole = bn.div(base).toString();
+      let fraction = bn.mod(base).toString().padStart(decimals, '0');
+      fraction = fraction.replace(/0+$/, '');
+      return fraction ? `${whole}.${fraction}` : whole;
+    },
+    parseUnits(amount, decimals) {
+      const value = String(amount || '0').trim();
+      if (!value || Number.isNaN(Number(value))) {
+        throw new Error('Invalid amount');
+      }
+      const [wholePart, fractionPart = ''] = value.split('.');
+      if (fractionPart.length > decimals) {
+        throw new Error(`Amount exceeds ${decimals} decimals`);
+      }
+      const fraction = fractionPart.padEnd(decimals, '0');
+      return Web3.utils.toBN(wholePart || '0')
+        .mul(Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals)))
+        .add(Web3.utils.toBN(fraction || '0'))
+        .toString();
+    },
+    async getErc20Balance(web3, tokenAddress, account, decimals = 18) {
+      if (!tokenAddress) {
+        throw new Error('Token address is not configured');
+      }
+      const contract = new web3.eth.Contract(wrapReiAbi, tokenAddress);
+      const balanceRaw = await contract.methods.balanceOf(account).call();
+      return this.formatUnits(balanceRaw, decimals);
+    },
+    async refreshBalances() {
+      if (!this.connection || !this.connection.address) {
+        this.fromBalance = '0';
+        this.toBalance = '0';
+        return;
+      }
+      const requestId = (this._balanceRequestId = (this._balanceRequestId || 0) + 1);
+      const asset = this.selectedAsset;
+      this.loading = true;
+      try {
+        const [reiBalance, bscBalance] = await Promise.all([
+          this.fetchREISideBalance(),
+          this.fetchBscSideBalance(),
+        ]);
+        // Ignore stale responses when asset/network changed mid-flight
+        if (requestId !== this._balanceRequestId || asset !== this.selectedAsset) {
+          return;
+        }
+        if (this.fromNetwork === 'REI Network') {
+          this.fromBalance = reiBalance;
+          this.toBalance = bscBalance;
+        } else {
+          this.fromBalance = bscBalance;
+          this.toBalance = reiBalance;
+        }
+      } catch (error) {
+        console.error('Error refreshing balances:', error);
+      } finally {
+        if (requestId === this._balanceRequestId) {
+          this.loading = false;
+        }
+      }
+    },
+    async fetchREISideBalance() {
+      const web3REI = this.getREIWeb3();
+      if (this.selectedAsset === 'USDT') {
+        return this.getErc20Balance(
+          web3REI,
+          REI_USDT_Address,
+          this.connection.address,
+          REI_USDT_DECIMALS
+        );
+      }
+      const balance = await web3REI.eth.getBalance(this.connection.address);
+      return web3REI.utils.fromWei(web3REI.utils.toBN(balance));
+    },
+    async fetchBscSideBalance() {
+      const web3Bsc = this.getBscWeb3();
+      if (this.selectedAsset === 'USDT') {
+        return this.getErc20Balance(
+          web3Bsc,
+          BSC_USDT_Address,
+          this.connection.address,
+          BSC_USDT_DECIMALS
+        );
+      }
+      return this.getErc20Balance(web3Bsc, REI_Token_Address, this.connection.address, 18);
     },
     async fetchBscBalance() {
       try {
         if (!this.connection || !this.connection.address) {
-          this.toBalance = '0';
+          if (this.toNetwork === 'BNB Chain') this.toBalance = '0';
+          else this.fromBalance = '0';
           return;
         }
-        const web3Bsc = this.getBscWeb3();
-        const contract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
-        console.log('connection.address',this.connection.address);
-        const balanceWei = await contract.methods.balanceOf(this.connection.address).call();
-        this.toBalance = web3Bsc.utils.fromWei(balanceWei);
-        console.log('toBalance',this.toBalance);
+        const balance = await this.fetchBscSideBalance();
+        if (this.toNetwork === 'BNB Chain') {
+          this.toBalance = balance;
+        } else {
+          this.fromBalance = balance;
+        }
       } catch (error) {
         console.error('Error fetching BSC balance:', error);
       }
     },
+    async fetchREIBalance() {
+      try {
+        const balance = await this.fetchREISideBalance();
+        if (this.toNetwork === 'REI Network') {
+          this.toBalance = balance;
+        } else {
+          this.fromBalance = balance;
+        }
+        if (this.selectedAsset === 'REI') {
+          const connection = { ...this.connection, balance };
+          this.setConnection({ connection });
+        }
+      } catch (error) {
+        console.error('Error fetching REI balance:', error);
+      }
+    },
 
-    swapNetworks() {
+    async swapNetworks() {
       const tempNetwork = this.fromNetwork;
-      const tempToken = this.fromToken;
-      const tempBalance = this.fromBalance;
-
       this.fromNetwork = this.toNetwork;
-      this.fromToken = this.toToken;
-
       this.toNetwork = tempNetwork;
 
-      this.toToken = tempToken;
-      
+      const tempLogo = this.fromNetworkLogo;
+      this.fromNetworkLogo = this.toNetworkLogo;
+      this.toNetworkLogo = tempLogo;
+
+      const tempBalance = this.fromBalance;
       this.fromBalance = this.toBalance;
       this.toBalance = tempBalance;
-      
-      const tempTokenLogo = this.fromTokenLogo;
-      this.fromTokenLogo = this.toTokenLogo;
-      this.toTokenLogo = tempTokenLogo;
+
       this.fromAmount = '0';
-      
       this.toAmount = '0';
+      this.showTokenMenu = false;
+
+      if (this.fromNetwork === 'BNB Chain') {
+        await this.switchToBscNetwork().catch(() => {});
+      } else {
+        await this.switchToREINetwork().catch(() => {});
+      }
+      this.refreshBalances();
     },
     async switchToBscNetwork() {
       if (!window.ethereum) {
@@ -299,7 +445,6 @@ export default {
       }
 
       try {
-        
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0xbabd' }],
@@ -330,154 +475,160 @@ export default {
         }
       }
     },
-    getWeb3WithWallet() {
-      if (!window.ethereum) {
-        throw new Error('Please install MetaMask or other supported wallets');
+    async ensureAllowance(web3, tokenAddress, owner, spender, amountWei, txOptions) {
+      const erc20Contract = new web3.eth.Contract(wrapReiAbi, tokenAddress);
+      const allowance = await erc20Contract.methods.allowance(owner, spender).call();
+      if (web3.utils.toBN(allowance).lt(web3.utils.toBN(amountWei))) {
+        await erc20Contract.methods.approve(
+          spender,
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+        ).send(txOptions);
       }
-      return new Web3(window.ethereum);
     },
     async handleBridge() {
-      console.log('handleBridge', this.fromNetwork);
       if (this.fromNetwork === 'REI Network') {
-         await this.handleBridgeToBsc();
+        await this.handleBridgeToBsc();
       } else {
-         await this.handleBridgeToREI();
+        await this.handleBridgeToREI();
       }
     },
     async handleBridgeToBsc() {
-        try {
-          // Handle bridge action
-          console.log('Bridging...', {
-            from: { network: this.fromNetwork, token: this.fromToken, amount: this.fromAmount },
-            to: { network: this.toNetwork, token: this.toToken, address: this.toAddress }
-          });
-          this.bridgeLoading = true;
-          await this.switchToREINetwork();
+      try {
+        this.bridgeLoading = true;
+        await this.switchToREINetwork();
 
-          const web3Bsc = this.getWeb3WithWallet();
-          const contract = new web3Bsc.eth.Contract(abiREIBridge, REI_Bridge_Address);
-          
-          console.log(contract,this.connection.address, web3Bsc.utils.toWei(this.fromAmount));
-          const res = await contract.methods.lockforBsc(
+        const web3 = this.getWeb3WithWallet();
+        const contract = new web3.eth.Contract(abiREIBridge, REI_Bridge_Address);
+        let res;
+
+        if (this.selectedAsset === 'USDT') {
+          const amountRaw = this.parseUnits(this.fromAmount, REI_USDT_DECIMALS);
+          await this.ensureAllowance(
+            web3,
+            REI_USDT_Address,
+            this.connection.address,
+            REI_Bridge_Address,
+            amountRaw,
+            { from: this.connection.address }
+          );
+          res = await contract.methods.lockforBscUSDT(
+            this.connection.address,
+            amountRaw
+          ).send({
+            from: this.connection.address,
+          });
+        } else {
+          const amountWei = web3.utils.toWei(this.fromAmount);
+          res = await contract.methods.lockforBsc(
             this.connection.address
           ).send({
             from: this.connection.address,
-            value: web3Bsc.utils.numberToHex(web3Bsc.utils.toWei(this.fromAmount))
+            value: web3.utils.numberToHex(amountWei)
           });
-          if (res.transactionHash) {
-            this.addTx({
-              tx: {
-                txid: res.transactionHash,
-                type: 'bridge',
-                status: 'PENDING',
-                data: {
-                  amount: this.fromAmount,
-                  symbol: this.fromToken,
-                  to: 'BNB Chain'
-                },
-                timestamp: new Date().getTime()
-              }
-            });
-            this.bridgeLoading = false;
-          }
-          
-          console.log(res);
-          const balance = await web3Bsc.eth.getBalance(this.connection.address);
-            console.log('balance',balance)
-            const connection = { ...this.connection, balance: web3Bsc.utils.fromWei(web3Bsc.utils.toBN(balance)) };
-            this.fromBalance = web3Bsc.utils.fromWei(web3Bsc.utils.toBN(balance));
-            this.setConnection({ connection });
-          
-          this.loading = true;
-          await this.sleep(20000);
-          this.fetchBscBalance();
-          this.loading = false;
-        } catch (e) {
-          console.log(e);
-          this.$dialog.notify.warning(e.message);
-          this.bridgeLoading = false;
         }
-      
+
+        if (res.transactionHash) {
+          this.addTx({
+            tx: {
+              txid: res.transactionHash,
+              type: 'bridge',
+              status: 'PENDING',
+              data: {
+                amount: this.fromAmount,
+                symbol: this.selectedAsset,
+                to: 'BNB Chain'
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+        }
+
+        await this.refreshBalances();
+        if (this.selectedAsset === 'REI') {
+          const balance = await web3.eth.getBalance(this.connection.address);
+          const connection = { ...this.connection, balance: web3.utils.fromWei(web3.utils.toBN(balance)) };
+          this.setConnection({ connection });
+        }
+
+        this.loading = true;
+        await this.sleep(20000);
+        await this.fetchBscBalance();
+        this.loading = false;
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      } finally {
+        this.bridgeLoading = false;
+        this.loading = false;
+      }
     },
     
     async handleBridgeToREI() {
-      if (this.canBridge) {
-        try {
-          await this.switchToBscNetwork();
-          this.bridgeLoading = true;
-          const web3Bsc = this.getWeb3WithWallet();
-          const gasPrice = await web3Bsc.eth.getGasPrice();
-          const legacyTxOptions = {
-            from: this.connection.address,
-            gasPrice
-          };
-          console.log('BSC_Bridge_Address',await web3Bsc.eth.getChainId());
-          const contract = new web3Bsc.eth.Contract(abiBscBridge, BSC_Bridge_Address);
-
-          const erc20Contract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
-          const allowance = await erc20Contract.methods.allowance(this.connection.address, BSC_Bridge_Address).call();
-          const amountWei = web3Bsc.utils.toWei(this.fromAmount);
-          console.log('allowance',allowance, amountWei);
-
-          if (web3Bsc.utils.toBN(allowance).lt(web3Bsc.utils.toBN(amountWei))) {
-            await erc20Contract.methods.approve(BSC_Bridge_Address, '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff').send(legacyTxOptions);
-          }
-          
-          console.log('Bridging...', {
-            from: { network: this.fromNetwork, token: this.fromToken, amount: this.fromAmount,'wei': web3Bsc.utils.toWei(this.fromAmount) },
-            to: { network: this.toNetwork, token: this.toToken, address: this.toAddress }
-          });
-
-          const res = await contract.methods.burnForRei(
-            this.connection.address,
-            web3Bsc.utils.toWei(this.fromAmount)
-          ).send(legacyTxOptions);
-
-          if (res.transactionHash) {
-            this.addTx({
-              tx: {
-                txid: res.transactionHash,
-                type: 'bridge',
-                status: 'PENDING',
-                data: {
-                  amount: this.fromAmount,
-                  symbol: this.fromToken,
-                  to: 'REI Network'
-                },
-                timestamp: new Date().getTime()
-              }
-            });
-            this.bridgeLoading = false;
-          }
-          
-          console.log(res);
-
-          const reiContract = new web3Bsc.eth.Contract(wrapReiAbi, REI_Token_Address);
-        console.log('connection.address',this.connection.address);
-        const balanceWei = await reiContract.methods.balanceOf(this.connection.address).call();
-        this.fromBalance = web3Bsc.utils.fromWei(balanceWei);
-          this.loading = true;
-          await this.sleep(20000);
-          this.fetchREIBalance();
-          this.loading = false;
-          //this.fetchBscBalance();
-        } catch (e) {
-          console.log(e);
-          this.$dialog.notify.warning(e.message);
-        }
-        this.bridgeLoading = false;
-      }
-    },
-    async fetchREIBalance() {
+      if (!this.canBridge) return;
       try {
-        const web3REI = this.getREIWeb3();
-        const balance = await web3REI.eth.getBalance(this.connection.address);
-        console.log('balance',balance)
-        const connection = { ...this.connection, balance: web3REI.utils.fromWei(web3REI.utils.toBN(balance)) };
-        this.toBalance = web3REI.utils.fromWei(web3REI.utils.toBN(balance));
-        this.setConnection({ connection });
-      } catch (error) {
-        console.error('Error fetching REI balance:', error);
+        await this.switchToBscNetwork();
+        this.bridgeLoading = true;
+        const web3Bsc = this.getWeb3WithWallet();
+        const gasPrice = await web3Bsc.eth.getGasPrice();
+        const legacyTxOptions = {
+          from: this.connection.address,
+          gasPrice
+        };
+        const contract = new web3Bsc.eth.Contract(abiBscBridge, BSC_Bridge_Address);
+        const amountRaw = this.selectedAsset === 'USDT'
+          ? this.parseUnits(this.fromAmount, BSC_USDT_DECIMALS)
+          : web3Bsc.utils.toWei(this.fromAmount);
+        const tokenAddress = this.selectedAsset === 'USDT' ? BSC_USDT_Address : REI_Token_Address;
+
+        await this.ensureAllowance(
+          web3Bsc,
+          tokenAddress,
+          this.connection.address,
+          BSC_Bridge_Address,
+          amountRaw,
+          legacyTxOptions
+        );
+
+        let res;
+        if (this.selectedAsset === 'USDT') {
+          res = await contract.methods.burnForUsdt(
+            this.connection.address,
+            amountRaw
+          ).send(legacyTxOptions);
+        } else {
+          res = await contract.methods.burnForRei(
+            this.connection.address,
+            amountRaw
+          ).send(legacyTxOptions);
+        }
+
+        if (res.transactionHash) {
+          this.addTx({
+            tx: {
+              txid: res.transactionHash,
+              type: 'bridge',
+              status: 'PENDING',
+              data: {
+                amount: this.fromAmount,
+                symbol: this.selectedAsset,
+                to: 'REI Network'
+              },
+              timestamp: new Date().getTime()
+            }
+          });
+        }
+
+        this.fromBalance = await this.fetchBscSideBalance();
+        this.loading = true;
+        await this.sleep(20000);
+        await this.fetchREIBalance();
+        this.loading = false;
+      } catch (e) {
+        console.log(e);
+        this.$dialog.notify.warning(e.message);
+      } finally {
+        this.bridgeLoading = false;
+        this.loading = false;
       }
     },
     sleep(timestamp) {
@@ -488,26 +639,24 @@ export default {
     async handleAddToken() {
       try {
         await this.switchToBscNetwork();
+        const isUsdt = this.selectedAsset === 'USDT';
         await window.ethereum.request({
-              method: "wallet_watchAsset",
-              params: {
-                type: "ERC20",
-                options: {
-                  address: REI_Token_Address,
-                  symbol: "wREI",
-                  decimals: 18,
-                  image: require('../assets/images/rei.svg'),
-                },
-              },
-            }
-        ) 
-        localStorage.setItem('addToken', 'true');
+          method: "wallet_watchAsset",
+          params: {
+            type: "ERC20",
+            options: {
+              address: isUsdt ? BSC_USDT_Address : REI_Token_Address,
+              symbol: isUsdt ? "USDT" : "wREI",
+              decimals: 18,
+              image: isUsdt ? USDT_LOGO : REI_LOGO,
+            },
+          },
+        });
+        localStorage.setItem(this.addTokenStorageKey, 'true');
         this.alreadyAddedToken = true;
-        console.log('alreadyAddedToken',this.alreadyAddedToken);
-        } catch (error) {
-          console.error('Error adding token:', error);
-        }
-      
+      } catch (error) {
+        console.error('Error adding token:', error);
+      }
     },
   }
 };
@@ -629,6 +778,10 @@ export default {
   margin-bottom: 12px;
 }
 
+.token-display-wrap {
+  position: relative;
+}
+
 .token-display {
   display: flex;
   align-items: center;
@@ -642,6 +795,34 @@ export default {
     background-color: rgba(255, 255, 255, 0.8);
   }
 }
+
+.token-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 10;
+  min-width: 140px;
+  padding: 4px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.token-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  &:hover,
+  &.active {
+    background-color: rgba(105, 121, 248, 0.1);
+  }
+}
+
 .from-section-header {
   display: flex;
   justify-content: space-between;
@@ -773,7 +954,6 @@ export default {
 .bridge-button {
   margin-top: 24px;
   height: 48px;
-  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   text-transform: none;
@@ -802,6 +982,10 @@ export default {
     &:hover {
       background-color: rgba(255, 255, 255, 0.15);
     }
+  }
+
+  .token-menu {
+    background: #2a2a2a;
   }
   
   .swap-button {
@@ -848,4 +1032,3 @@ export default {
   }
 }
 </style>
-

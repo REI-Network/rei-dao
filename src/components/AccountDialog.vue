@@ -147,6 +147,18 @@ const NETWORKS = {
   23579: 'REI Devnet'
 };
 
+const REI_CHAIN_PARAMS = {
+  chainId: '0xbabd',
+  chainName: 'REI Network',
+  rpcUrls: ['https://rpc.rei.network'],
+  nativeCurrency: {
+    name: 'REI',
+    symbol: 'REI',
+    decimals: 18
+  },
+  blockExplorerUrls: ['https://scan.rei.network/']
+};
+
 export default {
   filters,
   components: {
@@ -261,12 +273,27 @@ export default {
         this.loadAccount(key);
       }
     },
+    async ensureREINetwork() {
+      if (!window.ethereum) return;
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: REI_CHAIN_PARAMS.chainId }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [REI_CHAIN_PARAMS],
+          });
+        } else {
+          throw switchError;
+        }
+      }
+    },
     async connectMetaMask() {
       if (window.ethereum) {
-        await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0xbabd' }],
-            });
+        await this.ensureREINetwork();
         window.web3 = new Web3(window.ethereum);
         // await window.ethereum.enable();
         try {
@@ -614,45 +641,14 @@ export default {
         this.$dialog.notify.error(this.$t('notify.connect_failed') + ': ' + error.message);
       }
     },
-    async addREI() {
-        try {
-            await window.ethereum.request({
-                method:'wallet_addEthereumChain',
-                params:[{
-                "chainId": "0xbabd",
-                "chainName": "REI Network",
-                "rpcUrls": ["https://rpc.rei.network"],
-                "nativeCurrency": {
-                    "name": "REINetwork",
-                    "symbol": "REI",
-                    "decimals": 18
-                },
-                "blockExplorerUrls": ["https://scan.rei.network/"],
-                }],
-                
-            },this.connection.address)
-        } catch (addError) {
-            console.log('res',addError)
-        }
-    },
     async switchGXChainNet() {
-        
-        try {
-            this.addREI()
-            let res = await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0xbabd' }],
-            });
-            console.log('res',res)
-            if(res && res.error){
-                this.addREI()
-            }
-        } catch (error) {
-            console.log('error',error)
-            if (error.code === 4902) {
-                this.addREI()
-            }
-        }
+      try {
+        await this.ensureREINetwork();
+        window.location.reload();
+      } catch (error) {
+        console.error('Failed to switch to REI Network:', error);
+        this.$dialog.notify.warning(this.$t('notify.connect_failed') + ': ' + error.message);
+      }
     },
   }
 };
